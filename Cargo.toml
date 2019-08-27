@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 simulator = { path = "./src/simulator" }
+chrono = "0.4.7"
