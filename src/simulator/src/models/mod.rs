@@ -1,8 +1,8 @@
-mod league;
-mod country;
-mod club;
-mod player;
-mod schedule;
+pub mod league;
+pub mod country;
+pub mod club;
+pub mod player;
+pub mod schedule;
 
 extern crate chrono;
 

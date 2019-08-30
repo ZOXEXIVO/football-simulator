@@ -6,3 +6,4 @@ edition = "2018"
 
 [dependencies]
 chrono = "0.4.7"
+rand = "0.7.0"
