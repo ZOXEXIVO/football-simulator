@@ -23,7 +23,7 @@ impl Player{
 
             if self.birth_date.month() == current_date.month() && self.birth_date.day() == current_date.day() {
                   context.send( SimulationEvent {
-                         eventType: EventType::Birthday 
+                         event_type: EventType::Birthday 
                   })
             }            
 

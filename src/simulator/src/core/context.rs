@@ -20,7 +20,7 @@ impl SimulationContext {
 }
 
 pub struct SimulationEvent {       
-     pub eventType: EventType
+     pub event_type: EventType
 }
 
 pub enum EventType{

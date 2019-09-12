@@ -1,11 +1,19 @@
+use std::time::Duration;
+use std::thread;
+
 extern crate simulator;
 
 use simulator::{ FootballSimulator, SimulationContext };
+
+extern crate indicatif;
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 
 extern crate chrono;
 pub use chrono::prelude::NaiveDate;
 
 fn main() {
+    //let pb = ProgressBar::new(1024);
+
     let mut simulator = FootballSimulator::new(10);
 
     let mut context = SimulationContext::new(
@@ -14,6 +22,10 @@ fn main() {
 
     loop {
         simulator.simulate(&mut context);
-        println!("simulate, date: {0}", context.date);
+        //println!("simulate, date: {0}", context.date);
+
+        //pb.inc(1);
+
+        thread::sleep(Duration::from_millis(100));
     }
 }
