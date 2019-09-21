@@ -8,7 +8,10 @@ pub struct Country {
 
 impl Country{      
       pub fn new(name: String, leagues: Vec<League>) -> Country {
-            Country { name: name, leagues: leagues }
+            Country { 
+                  name: name, 
+                  leagues: leagues 
+            }
       }
 
       pub fn items_count(&self) -> usize {

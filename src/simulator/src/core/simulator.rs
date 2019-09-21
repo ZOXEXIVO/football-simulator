@@ -19,6 +19,9 @@ impl FootballSimulator{
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext){
+        for country in &mut self.coutries{
+            country.simulate(context);
+        }
         context.date = context.date + Duration::days(1);
     }
 }

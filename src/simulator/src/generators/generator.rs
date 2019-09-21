@@ -8,7 +8,7 @@ use crate::utils::{StringUtils, IntegerUtils};
 
 use chrono::NaiveDate;
 
-pub struct CountryGenerator {}
+pub struct CountryGenerator;
 
 impl CountryGenerator {
       pub fn generate(count: usize) -> Vec<Country> {
@@ -27,7 +27,7 @@ impl CountryGenerator {
       }
 }
 
-pub struct LeagueGenerator {}
+pub struct LeagueGenerator;
 
 impl LeagueGenerator {
       pub fn generate(count: usize) -> Vec<League> {
@@ -46,7 +46,7 @@ impl LeagueGenerator {
       }
 }
 
-pub struct ClubGenerator {}
+pub struct ClubGenerator;
 
 impl ClubGenerator {
       pub fn generate(count: usize) -> Vec<Club> {
@@ -65,7 +65,7 @@ impl ClubGenerator {
       }
 }
 
-pub struct PlayerGenerator {}
+pub struct PlayerGenerator;
 
 impl PlayerGenerator {
       pub fn generate(count: usize) -> Vec<Player> {
