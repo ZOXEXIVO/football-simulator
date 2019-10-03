@@ -22,10 +22,10 @@ fn main() {
 
     loop {
         simulator.simulate(&mut context);
-        //println!("simulate, date: {0}", context.date);
+        println!("simulate, date: {0}", context.date);
 
         //pb.inc(1);
 
-        thread::sleep(Duration::from_millis(100));
+        //thread::sleep(Duration::from_millis(100));
     }
 }

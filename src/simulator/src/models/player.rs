@@ -1,3 +1,4 @@
+use crate::core::visitor::Visitor;
 use crate::core::{ SimulationContext, SimulationEvent, EventType };
 
 use chrono::prelude::*;
@@ -36,3 +37,4 @@ pub struct FullName{
       pub last_name: String,
       pub middle_name: String
 }
+

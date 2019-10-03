@@ -1,3 +1,5 @@
+use crate::generators::Generator;
+
 use crate::models::player::FullName;
 use crate::models::player::Player;
 use crate::models::club::Club;
@@ -8,90 +10,75 @@ use crate::utils::{StringUtils, IntegerUtils};
 
 use chrono::NaiveDate;
 
-pub struct CountryGenerator;
+impl Generator for Country {
+      fn generate() -> Country {
+            let n = 10;
 
-impl CountryGenerator {
-      pub fn generate(count: usize) -> Vec<Country> {
-            let mut res = Vec::with_capacity(count);
+            let mut vec = Vec::with_capacity(n);
 
-            for _ in 0..count {
-                  let country = Country {
-                        name: StringUtils::random_string(10),
-                        leagues: LeagueGenerator::generate(3),
-                  };
-
-                  res.push(country)
+            for i in 0..n {
+                  vec.push(Generator::generate());
             }
 
-            res
+            Country {
+               name: StringUtils::random_string(10),
+               leagues: vec
+            }
       }
 }
 
-pub struct LeagueGenerator;
+impl Generator for League {
+      fn generate() -> League {
+            let n = 10;
 
-impl LeagueGenerator {
-      pub fn generate(count: usize) -> Vec<League> {
-            let mut res = Vec::with_capacity(count);
+            let mut vec = Vec::with_capacity(n);
 
-            for _ in 0..count {
-                  let country = League::new(
-                        StringUtils::random_string(10),
-                        ClubGenerator::generate(50),
-                  );
-
-                  res.push(country)
+            for i in 0..n {
+                  vec.push(Generator::generate());
             }
-
-            res
+            
+            League{
+                name: StringUtils::random_string(10),
+                clubs: vec,
+                schedule: None
+            }
       }
 }
 
-pub struct ClubGenerator;
+impl Generator for Club {
+      fn generate() -> Club {
+            let n = 10;
 
-impl ClubGenerator {
-      pub fn generate(count: usize) -> Vec<Club> {
-            let mut res = Vec::with_capacity(count);
+            let mut vec = Vec::with_capacity(n);
 
-            for _i in 0..count {
-                  let club = Club {
-                        name: StringUtils::random_string(5),
-                        players: PlayerGenerator::generate(60),
-                  };
-
-                  res.push(club)
+            for i in 0..n {
+                  vec.push(Generator::generate());
             }
 
-            res
+            Club {
+               name: StringUtils::random_string(5),
+               players: vec
+            }
       }
 }
 
-pub struct PlayerGenerator;
+impl Generator for Player {
+      fn generate() -> Player {
+            let n = 10;
 
-impl PlayerGenerator {
-      pub fn generate(count: usize) -> Vec<Player> {
-            let mut res = Vec::with_capacity(count);
-
-            for _i in 0..count {
-                  let player = Player::new(
+            let year = IntegerUtils::random(1980, 2010);
+            let month = IntegerUtils::random(1, 12);
+            let day = IntegerUtils::random(1, 29);
+            
+            let player = Player::new(
                         FullName {
                               first_name: StringUtils::random_string(5),
                               last_name: StringUtils::random_string(10),
                               middle_name: StringUtils::random_string(15),
                         },
-                        PlayerGenerator::get_random_birthday() 
+                        NaiveDate::from_ymd(year as i32, month, day)
                   );
 
-                  res.push(player);
-            }
-
-            res
-      }
-
-      fn get_random_birthday() -> NaiveDate {
-          let year = IntegerUtils::random(1980, 2010);
-          let month = IntegerUtils::random(1, 12);
-          let day = IntegerUtils::random(1, 29);
-
-          NaiveDate::from_ymd(year as i32, month, day)
+            player
       }
 }

@@ -2,4 +2,6 @@ mod generator;
 
 pub use crate::models::*;
 
-pub use generator::CountryGenerator;
+pub trait Generator{
+    fn generate() -> Self;
+}

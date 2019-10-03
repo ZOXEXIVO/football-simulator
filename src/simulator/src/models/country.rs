@@ -6,14 +6,7 @@ pub struct Country {
       pub leagues: Vec<League>
 }
 
-impl Country{      
-      pub fn new(name: String, leagues: Vec<League>) -> Country {
-            Country { 
-                  name: name, 
-                  leagues: leagues 
-            }
-      }
-
+impl Country{           
       pub fn items_count(&self) -> usize {
             let mut count: usize = 0;
     

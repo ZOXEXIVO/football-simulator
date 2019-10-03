@@ -1,7 +1,6 @@
 use crate::models::country::Country;
 use crate::core::context::SimulationContext;
-
-use crate::generators::CountryGenerator;
+use crate::generators::Generator;
 
 use chrono::{ Duration };
 
@@ -12,9 +11,18 @@ pub struct FootballSimulator{
 
 impl FootballSimulator{
     pub fn new(thread_count: i32) -> Self{
+             let n = 10;
+
+            let mut vec = Vec::with_capacity(n);
+
+            for i in 0..n {
+                  vec.push(Generator::generate());
+            }
+
+
         Self{
             thread_count: thread_count,
-            coutries: CountryGenerator::generate(10)
+            coutries: vec
         }
     }
 
