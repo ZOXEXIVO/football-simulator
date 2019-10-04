@@ -21,8 +21,9 @@ fn main() {
     );
 
     loop {
-        simulator.simulate(&mut context);
-        println!("simulate, date: {0}", context.date);
+        let count = simulator.simulate(&mut context);
+
+        println!("simulate, date: {0}, count: {1}", context.date, count);
 
         //pb.inc(1);
 

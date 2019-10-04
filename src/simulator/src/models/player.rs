@@ -26,8 +26,7 @@ impl Player{
                   context.send( SimulationEvent {
                          event_type: EventType::Birthday 
                   })
-            }            
-
+            }
             
       }
 }

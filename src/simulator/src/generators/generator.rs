@@ -1,84 +1,56 @@
 use crate::generators::Generator;
 
+use crate::models::club::Club;
+use crate::models::country::Country;
+use crate::models::league::League;
 use crate::models::player::FullName;
 use crate::models::player::Player;
-use crate::models::club::Club;
-use crate::models::league::League;
-use crate::models::country::Country;
 
-use crate::utils::{StringUtils, IntegerUtils};
+use crate::utils::{IntegerUtils, StringUtils};
 
 use chrono::NaiveDate;
 
 impl Generator for Country {
       fn generate() -> Country {
-            let n = 10;
-
-            let mut vec = Vec::with_capacity(n);
-
-            for i in 0..n {
-                  vec.push(Generator::generate());
-            }
-
             Country {
-               name: StringUtils::random_string(10),
-               leagues: vec
+                  name: StringUtils::random_string(10),
+                  leagues: (0..20).map(|_| Generator::generate()).collect(),
             }
       }
 }
 
 impl Generator for League {
       fn generate() -> League {
-            let n = 10;
-
-            let mut vec = Vec::with_capacity(n);
-
-            for i in 0..n {
-                  vec.push(Generator::generate());
-            }
-            
-            League{
-                name: StringUtils::random_string(10),
-                clubs: vec,
-                schedule: None
+            League {
+                  name: StringUtils::random_string(10),
+                  clubs: (0..30).map(|_| Generator::generate()).collect(),
+                  schedule: None,
             }
       }
 }
 
 impl Generator for Club {
       fn generate() -> Club {
-            let n = 10;
-
-            let mut vec = Vec::with_capacity(n);
-
-            for i in 0..n {
-                  vec.push(Generator::generate());
-            }
-
             Club {
-               name: StringUtils::random_string(5),
-               players: vec
+                  name: StringUtils::random_string(5),
+                  players: (0..100).map(|_| Generator::generate()).collect(),
             }
       }
 }
 
 impl Generator for Player {
       fn generate() -> Player {
-            let n = 10;
-
             let year = IntegerUtils::random(1980, 2010);
             let month = IntegerUtils::random(1, 12);
             let day = IntegerUtils::random(1, 29);
-            
-            let player = Player::new(
-                        FullName {
-                              first_name: StringUtils::random_string(5),
-                              last_name: StringUtils::random_string(10),
-                              middle_name: StringUtils::random_string(15),
-                        },
-                        NaiveDate::from_ymd(year as i32, month, day)
-                  );
 
-            player
+            return Player::new(
+                  FullName {
+                        first_name: StringUtils::random_string(5),
+                        last_name: StringUtils::random_string(10),
+                        middle_name: StringUtils::random_string(15),
+                  },
+                  NaiveDate::from_ymd(year as i32, month, day),
+            );
       }
 }

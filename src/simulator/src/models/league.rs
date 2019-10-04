@@ -10,13 +10,7 @@ pub struct League {
 
 impl League {
    pub fn items_count(&self) -> usize {
-            let mut count: usize = 0;
-    
-            for club in &self.clubs {
-                count = count + club.items_count(); 
-            }
-
-            count
+            return self.clubs.iter().map(|club| club.items_count()).sum();
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {
