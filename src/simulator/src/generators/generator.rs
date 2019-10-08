@@ -1,5 +1,3 @@
-use crate::generators::Generator;
-
 use crate::models::club::Club;
 use crate::models::country::Country;
 use crate::models::league::League;
@@ -9,6 +7,10 @@ use crate::models::player::Player;
 use crate::utils::{IntegerUtils, StringUtils};
 
 use chrono::NaiveDate;
+
+pub trait Generator{
+    fn generate() -> Self;
+}
 
 impl Generator for Country {
       fn generate() -> Country {
