@@ -1,6 +1,3 @@
-use std::time::Duration;
-use std::thread;
-
 extern crate simulator;
 
 use simulator::{ FootballSimulator, SimulationContext };
@@ -16,6 +13,8 @@ fn main() {
 
     let mut simulator = FootballSimulator::new(10);
 
+    simulator.generate();
+
     let mut context = SimulationContext::new(
         NaiveDate::from_ymd(2015, 3, 14)
     );
@@ -23,7 +22,7 @@ fn main() {
     loop {
         let count = simulator.simulate(&mut context);
 
-        println!("simulate, date: {0}, count: {1}", context.date, count);
+        println!("simulate, date: {0}", context.date);
 
         //pb.inc(1);
 

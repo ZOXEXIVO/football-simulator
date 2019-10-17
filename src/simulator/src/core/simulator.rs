@@ -1,32 +1,58 @@
-use crate::models::country::Country;
+use std::sync::Arc;
+use std::thread;
+
 use crate::core::context::SimulationContext;
 use crate::generators::Generator;
+use crate::models::country::Country;
 
-use chrono::{ Duration };
-
-pub struct FootballSimulator{
-    thread_count: i32,
-    coutries: Vec<Country>
+pub struct FootballSimulator {
+    cpu_count: usize,
+    data: Option<SimulatorData>
 }
 
-impl FootballSimulator{
-    pub fn new(thread_count: i32) -> Self {      
+pub struct SimulatorData {
+     countries: Vec<Country>
+}
+
+impl FootballSimulator {
+    pub fn new(cpu_count: usize) -> Self {
         Self {
-            thread_count: thread_count,
-            coutries: (0..10).map(|_| Generator::generate()).collect()               
+            cpu_count: cpu_count,
+            data: None
         }
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) -> usize {
-        let mut total_count = 0;
+    pub fn generate(&mut self){
+        let simulator_data = SimulatorData{
+            countries: (0..10).map(|_| Generator::generate()).collect()
+        };
 
-        for country in &mut self.coutries{
-            country.simulate(context);
+        self.data = Some(simulator_data);
+    }
 
-            total_count += country.items_count();
+    pub fn simulate(&mut self, context: &mut SimulationContext) {
+        let thread_handles = Vec::with_capacity(self.cpu_count);
+
+        let batch_size = self.data.unwrap().countries.len()  / self.cpu_count;
+
+        for i in 0..thread_handles.len() {
+            let local_country = self.data.unwrap().countries;
+
+          
+
+            let mut local_simulation_context = context.clone();
+
+            let thread_handle = thread::spawn(move || {
+                local_country.simulate(&mut local_simulation_context);
+            });
+
+            thread_handles.push(thread_handle);
         }
-        context.date = context.date + Duration::days(1);
 
-        total_count
+        for thread_handle in thread_handles{
+            thread_handle.join();
+        }
+
+        context.next_date();
     }
 }
