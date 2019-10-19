@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::sync::{ Arc, Mutex };
 use std::thread;
 
 use crate::core::context::SimulationContext;
@@ -7,11 +7,11 @@ use crate::models::country::Country;
 
 pub struct FootballSimulator {
     cpu_count: usize,
-    data: Option<SimulatorData>
+    data: Option<Arc<SimulatorData>>
 }
 
 pub struct SimulatorData {
-     countries: Vec<Country>
+     countries: Vec<Mutex<Country>>
 }
 
 impl FootballSimulator {
@@ -24,26 +24,32 @@ impl FootballSimulator {
 
     pub fn generate(&mut self){
         let simulator_data = SimulatorData{
-            countries: (0..10).map(|_| Generator::generate()).collect()
+            countries: (0..10).map(|_| Mutex::new(Generator::generate())).collect()
         };
 
-        self.data = Some(simulator_data);
+        self.data = Some(Arc::new(simulator_data));
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         let thread_handles = Vec::with_capacity(self.cpu_count);
 
-        let batch_size = self.data.unwrap().countries.len()  / self.cpu_count;
+        let batch_size = self.data.unwrap().countries.len() / self.cpu_count;
 
         for i in 0..thread_handles.len() {
-            let local_country = self.data.unwrap().countries;
+            let local_countries = self.data.unwrap().clone();
 
-          
+            let current_batch = local_countries.countries
+            .iter()
+            .skip(i - 1)
+            .take(batch_size)
+            .collect::<&Mutex<Country>>();
 
             let mut local_simulation_context = context.clone();
 
             let thread_handle = thread::spawn(move || {
-                local_country.simulate(&mut local_simulation_context);
+                for ti in current_batch{
+                    ti.simulate();
+                }
             });
 
             thread_handles.push(thread_handle);
