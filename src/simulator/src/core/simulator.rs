@@ -11,7 +11,7 @@ pub struct FootballSimulator {
 }
 
 pub struct SimulatorData {
-     countries: Vec<Mutex<Country>>
+     countries: Vec<Country>
 }
 
 impl FootballSimulator {
@@ -24,7 +24,7 @@ impl FootballSimulator {
 
     pub fn generate(&mut self){
         let simulator_data = SimulatorData{
-            countries: (0..10).map(|_| Mutex::new(Generator::generate())).collect()
+            countries: (0..10).map(|_| Generator::generate()).collect()
         };
 
         self.data = Some(Arc::new(simulator_data));
@@ -36,19 +36,16 @@ impl FootballSimulator {
         let batch_size = self.data.unwrap().countries.len() / self.cpu_count;
 
         for i in 0..thread_handles.len() {
-            let local_countries = self.data.unwrap().clone();
+            let local_data = self.data.unwrap().clone();
 
-            let current_batch = local_countries.countries
-            .iter()
-            .skip(i - 1)
-            .take(batch_size)
-            .collect::<&Mutex<Country>>();
-
-            let mut local_simulation_context = context.clone();
+            let start_idx = i * batch_size;
+            let end_idx = start_idx + batch_size;
 
             let thread_handle = thread::spawn(move || {
-                for ti in current_batch{
-                    ti.simulate();
+                let countries_slice = local_data.countries.iter().skip(start_idx).take(batch_size).collect();
+
+                for country in countries_slice{
+                    country.simulate();
                 }
             });
 
