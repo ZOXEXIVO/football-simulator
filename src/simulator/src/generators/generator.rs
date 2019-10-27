@@ -10,39 +10,39 @@ use crate::utils::{IntegerUtils, StringUtils};
 use chrono::NaiveDate;
 
 pub trait Generator {
-      fn generate() -> Self;
+      fn generate(index: i32) -> Self;
 }
 
 impl Generator for Country {
-      fn generate() -> Country {
+      fn generate(index: i32) -> Country {
             Country {
-                  name: StringUtils::random_string(10),
-                  leagues: (0..10).map(|_| Generator::generate()).collect(),
+                  name: index.to_string(),
+                  leagues: (0..3).map(|i| Generator::generate(i)).collect(),
             }
       }
 }
 
 impl Generator for League {
-      fn generate() -> League {
+      fn generate(index: i32) -> League {
             League {
                   name: StringUtils::random_string(10),
-                  clubs: (0..30).map(|_| Generator::generate()).collect(),
+                  clubs: (0..5).map(|i| Generator::generate(i)).collect(),
                   schedule: None,
             }
       }
 }
 
 impl Generator for Club {
-      fn generate() -> Club {
+      fn generate(index: i32) -> Club {
             Club {
                   name: StringUtils::random_string(5),
-                  players: (0..500).map(|_| Generator::generate()).collect(),
+                  players: (0..10).map(|i| Generator::generate(i)).collect(),
             }
       }
 }
 
 impl Generator for PlayerClubContract {
-      fn generate() -> PlayerClubContract {
+      fn generate(index: i32) -> PlayerClubContract {
             return PlayerClubContract::new(
                   generate_player(),
                   NaiveDate::from_ymd(2020, 3, 14)
