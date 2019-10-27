@@ -1,6 +1,7 @@
 use crate::models::club::Club;
 use crate::models::country::Country;
 use crate::models::league::League;
+use crate::models::player::contract::PlayerClubContract;
 use crate::models::player::FullName;
 use crate::models::player::Player;
 
@@ -8,8 +9,8 @@ use crate::utils::{IntegerUtils, StringUtils};
 
 use chrono::NaiveDate;
 
-pub trait Generator{
-    fn generate() -> Self;
+pub trait Generator {
+      fn generate() -> Self;
 }
 
 impl Generator for Country {
@@ -40,19 +41,26 @@ impl Generator for Club {
       }
 }
 
-impl Generator for Player {
-      fn generate() -> Player {
-            let year = IntegerUtils::random(1980, 2010);
-            let month = IntegerUtils::random(1, 12);
-            let day = IntegerUtils::random(1, 29);
-
-            return Player::new(
-                  FullName {
-                        first_name: StringUtils::random_string(5),
-                        last_name: StringUtils::random_string(10),
-                        middle_name: StringUtils::random_string(15),
-                  },
-                  NaiveDate::from_ymd(year as i32, month, day),
+impl Generator for PlayerClubContract {
+      fn generate() -> PlayerClubContract {
+            return PlayerClubContract::new(
+                  generate_player(),
+                  NaiveDate::from_ymd(2020, 3, 14)
             );
+
+            fn generate_player() -> Player {
+                  let year = IntegerUtils::random(1980, 2010);
+                  let month = IntegerUtils::random(1, 12);
+                  let day = IntegerUtils::random(1, 29);
+
+                  Player::new(
+                        FullName {
+                              first_name: StringUtils::random_string(5),
+                              last_name: StringUtils::random_string(10),
+                              middle_name: StringUtils::random_string(15),
+                        },
+                        NaiveDate::from_ymd(year as i32, month, day),
+                  )
+            }
       }
 }

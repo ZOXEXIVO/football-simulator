@@ -1,13 +1,13 @@
+use crate::models::player::contract::PlayerClubContract;
 use crate::core::SimulationContext;
-use crate::models::player::Player;
 
 pub struct Club {
       pub name: String,
-      pub players: Vec<Player>,
+      pub players: Vec<PlayerClubContract>,
 }
 
 impl Club {
-      pub fn new(name: String, players: Vec<Player>) -> Club {
+      pub fn new(name: String, players: Vec<PlayerClubContract>) -> Club {
             Club {
                   name: name,
                   players: players,
