@@ -8,7 +8,6 @@ mod generators;
 pub use generators::*;
 
 mod utils;
-
 pub use utils::*;
 
 #[cfg(test)]

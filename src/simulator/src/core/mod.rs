@@ -8,3 +8,5 @@ pub use context::EventType;
 
 pub mod visitor;
 pub use visitor::Visitor;
+
+pub use crate::utils::*;

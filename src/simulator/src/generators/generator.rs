@@ -16,7 +16,7 @@ impl Generator for Country {
       fn generate() -> Country {
             Country {
                   name: StringUtils::random_string(10),
-                  leagues: (0..20).map(|_| Generator::generate()).collect(),
+                  leagues: (0..10).map(|_| Generator::generate()).collect(),
             }
       }
 }
@@ -35,7 +35,7 @@ impl Generator for Club {
       fn generate() -> Club {
             Club {
                   name: StringUtils::random_string(5),
-                  players: (0..100).map(|_| Generator::generate()).collect(),
+                  players: (0..500).map(|_| Generator::generate()).collect(),
             }
       }
 }

@@ -11,9 +11,7 @@ pub use chrono::prelude::NaiveDate;
 fn main() {
     //let pb = ProgressBar::new(1024);
 
-    let mut simulator = FootballSimulator::new(10);
-
-    simulator.generate();
+    let mut simulator = FootballSimulator::new(num_cpus::get());
 
     let mut context = SimulationContext::new(
         NaiveDate::from_ymd(2015, 3, 14)
