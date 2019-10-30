@@ -11,16 +11,16 @@ use crate::core::context::SimulationContext;
 use crate::generators::Generator;
 use crate::models::country::Country;
 
-pub struct FootballSimulator<'c>  {
+pub struct FootballSimulator  {
     cpu_count: usize,
-    data: SimulatorData<'c>
+    data: SimulatorData
 }
 
-pub struct SimulatorData<'c>  {
-    countries: Vec<RefCell<Country<'c>>>
+pub struct SimulatorData  {
+    countries: Vec<RefCell<Country>>
 }
 
-impl<'c> FootballSimulator<'c>  {
+impl FootballSimulator  {
     pub fn new(cpu_count: usize) -> Self {
         println!("sumulator init with {} cores", cpu_count);
 

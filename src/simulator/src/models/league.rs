@@ -2,13 +2,13 @@ use crate::core::SimulationContext;
 use crate::models::club::Club;
 use crate::models::schedule::Schedule;
 
-pub struct League<'c> {
+pub struct League {
       pub name: String,
       pub clubs: Vec<Club>,
-      pub schedule: Option<Schedule<'c>>,
+      pub schedule: Option<Schedule>
 }
 
-impl<'c> League<'c> {
+impl League {
       pub fn items_count(&self) -> usize {
             return self.clubs.iter().map(|club| club.items_count()).sum();
       }
@@ -17,5 +17,7 @@ impl<'c> League<'c> {
             for club in &mut self.clubs {
                   club.simulate(context);
             }
+
+            self.schedule = Some(Schedule::generate(&self.clubs).unwrap());
       }
 }

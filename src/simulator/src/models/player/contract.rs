@@ -2,7 +2,7 @@
 use crate::models::player::player::Player;
 use crate::core::context::SimulationContext;
 
-pub use chrono::prelude::{NaiveDate, DateTime, Utc};
+pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
 pub struct PlayerClubContract {
       player: Player,
@@ -20,13 +20,11 @@ impl PlayerClubContract {
       pub fn is_expired(&self) -> bool {
             let now = Utc::now();
 
-            return false;
+            let naive_now = NaiveDate::from_ymd(
+                  now.year(), now.month(), now.day()
+            );
 
-            // let naive_now = NaiveDate::from_ymd(
-            //       now.year(), now.month(), now.day()
-            // );
-
-            // self.expired. >= naive_now
+            self.expired >= naive_now
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {

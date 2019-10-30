@@ -1,12 +1,12 @@
 use crate::core::SimulationContext;
 use crate::models::league::League;
 
-pub struct Country<'c>{
+pub struct Country{
       pub name: String,
-      pub leagues: Vec<League<'c>>,
+      pub leagues: Vec<League>,
 }
 
-impl<'c> Country<'c> {
+impl Country {
       pub fn items_count(&self) -> usize {
             return self.leagues.iter().map(|league| league.items_count()).sum();
       }

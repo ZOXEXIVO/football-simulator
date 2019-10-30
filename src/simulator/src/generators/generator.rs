@@ -3,9 +3,8 @@ use crate::models::staff::staff::Staff;
 use crate::models::club::Club;
 use crate::models::country::Country;
 use crate::models::league::League;
-use crate::models::player::contract::PlayerClubContract;
-use crate::models::player::FullName;
-use crate::models::player::Player;
+use crate::models::player::*;
+use crate::models::Schedule;
 
 use crate::utils::{IntegerUtils, StringUtils};
 
@@ -15,8 +14,8 @@ pub trait Generator {
       fn generate(index: i32) -> Self;
 }
 
-impl<'c>  Generator for Country<'c>  {
-      fn generate(index: i32) -> Country<'c>  {
+impl  Generator for Country  {
+      fn generate(index: i32) -> Country  {
             Country {
                   name: index.to_string(),
                   leagues: (0..10).map(|i| Generator::generate(i)).collect(),
@@ -24,11 +23,11 @@ impl<'c>  Generator for Country<'c>  {
       }
 }
 
-impl<'c> Generator for League<'c> {
-      fn generate(index: i32) -> League<'c> {
+impl Generator for League {
+      fn generate(index: i32) -> League {
             League {
                   name: StringUtils::random_string(10),
-                  clubs: (0..5).map(|i| Generator::generate(i)).collect(),
+                  clubs: (0..30).map(|i| Generator::generate(i)).collect(),
                   schedule: None,
             }
       }
@@ -37,6 +36,7 @@ impl<'c> Generator for League<'c> {
 impl Generator for Club {
       fn generate(index: i32) -> Club {
             Club {
+                  id: IntegerUtils::random(0, 1000000),
                   name: StringUtils::random_string(5),
                   players: (0..10).map(|i| Generator::generate(i)).collect(),
                   staffs: (0..10).map(|i| Generator::generate(i)).collect(),

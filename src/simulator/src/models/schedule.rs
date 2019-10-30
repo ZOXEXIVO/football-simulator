@@ -1,12 +1,12 @@
 use crate::models::club::Club;
 use chrono::NaiveDate;
 
-pub struct Schedule<'a> {
-    pub items: Vec<ScheduleItem<'a>>,
+pub struct Schedule {
+    pub items: Vec<ScheduleItem>
 }
 
-impl<'a> Schedule<'a> {
-    pub fn generate(clubs: &'a Vec<Club>) -> Result<Schedule, ()> {
+impl Schedule {
+    pub fn generate(clubs: &Vec<Club>) -> Result<Schedule, ()> {
         let mut schedule_items = Vec::with_capacity(clubs.len());
 
         let club_len = clubs.len();
@@ -20,8 +20,8 @@ impl<'a> Schedule<'a> {
             }
             
             let item = ScheduleItem {
-                home_club: &clubs[first_index],
-                guest_club: &clubs[last_index],
+                home_club_id: clubs[first_index].id,
+                guest_club_id: clubs[last_index].id,
                 date: NaiveDate::from_ymd(2019, 10, 1),
             };
 
@@ -36,10 +36,10 @@ impl<'a> Schedule<'a> {
     }
 }
 
-pub struct ScheduleItem<'a> {
+pub struct ScheduleItem {
     pub date: NaiveDate,
-    pub home_club: &'a Club,
-    pub guest_club: &'a Club,
+    pub home_club_id: u32,
+    pub guest_club_id: u32
 }
 
 #[cfg(test)]
