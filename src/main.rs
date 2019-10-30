@@ -43,5 +43,4 @@ fn run_recieved_thread(reciever: Receiver<i32>) {
             }
         }        
     });
-
 }

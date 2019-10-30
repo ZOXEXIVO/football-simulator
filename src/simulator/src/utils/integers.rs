@@ -1,9 +1,7 @@
 extern crate rand;
 use rand::*;
 
-pub struct IntegerUtils {
-
-}
+pub struct IntegerUtils;
 
 impl IntegerUtils {
       pub fn random(min: u32, max: u32) -> u32 {
