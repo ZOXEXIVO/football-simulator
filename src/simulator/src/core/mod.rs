@@ -3,8 +3,9 @@ pub use simulator::FootballSimulator;
 
 pub mod context;
 pub use context::SimulationContext;
-pub use context::SimulationEvent;
-pub use context::EventType;
+
+mod events;
+pub use events::EventType;
 
 pub mod visitor;
 pub use visitor::Visitor;

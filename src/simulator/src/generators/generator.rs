@@ -10,6 +10,7 @@ use crate::utils::{IntegerUtils, StringUtils};
 
 use chrono::NaiveDate;
 
+
 pub trait Generator {
       fn generate(index: i32) -> Self;
 }
@@ -36,7 +37,7 @@ impl Generator for League {
 impl Generator for Club {
       fn generate(index: i32) -> Club {
             Club {
-                  id: IntegerUtils::random(0, 1000000),
+                  id: IntegerUtils::random(1, 10000000),
                   name: StringUtils::random_string(5),
                   players: (0..10).map(|i| Generator::generate(i)).collect(),
                   staffs: (0..10).map(|i| Generator::generate(i)).collect(),
@@ -57,7 +58,8 @@ impl Generator for PlayerClubContract {
                   let day = IntegerUtils::random(1, 29);
 
                   Player::new(
-                        FullName {
+                        IntegerUtils::random(1, 1000000),
+                        FullName {                              
                               first_name: StringUtils::random_string(5),
                               last_name: StringUtils::random_string(10),
                               middle_name: StringUtils::random_string(15),
@@ -81,7 +83,8 @@ impl Generator for StaffClubContract {
                   let day = IntegerUtils::random(1, 29);
 
                   Staff::new(
-                        FullName {
+                        IntegerUtils::random(1, 10000000),
+                        FullName {                              
                               first_name: StringUtils::random_string(5),
                               last_name: StringUtils::random_string(10),
                               middle_name: StringUtils::random_string(15),

@@ -35,11 +35,12 @@ impl FootballSimulator  {
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext, progress_sender: &Sender<i32>) {
-        let chunk_size =
-            ParallelUtils::get_chunk_size(self.data.countries.len(), self.cpu_count);
+        
+        let chunk_size = ParallelUtils::get_chunk_size(
+            self.data.countries.len(), self.cpu_count
+        );
 
         progress_sender.send(0).unwrap();
-
 
         crossbeam::scope(|scope| {            
             for countries_chunk in self.data.countries.chunks_mut(chunk_size) {
@@ -50,6 +51,10 @@ impl FootballSimulator  {
                         country.borrow_mut().simulate(&mut cloned_context);
                         
                         progress_sender.send(1).unwrap();
+                    }
+
+                    for event in cloned_context.events{
+
                     }
                 });
             }

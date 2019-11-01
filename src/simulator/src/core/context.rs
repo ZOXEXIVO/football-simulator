@@ -1,11 +1,12 @@
 extern crate chrono;
+use crate::core::events::EventType;
 pub use chrono::prelude::*;
 
 use chrono::{ Duration };
 
 #[derive(Clone)]
 pub struct SimulationContext {       
-    pub events: Vec<SimulationEvent>,
+    pub events: Vec<EventType>,
     pub date: NaiveDate
 }
 
@@ -21,17 +22,7 @@ impl SimulationContext {
            self.date = self.date + Duration::days(1);
       }
 
-      pub fn send(&mut self, event: SimulationEvent){
+      pub fn send(&mut self, event: EventType){
             self.events.push(event);
       }
-}
-
-#[derive(Clone)]
-pub struct SimulationEvent {       
-     pub event_type: EventType
-}
-
-#[derive(Clone)]
-pub enum EventType{
-     Birthday
 }
