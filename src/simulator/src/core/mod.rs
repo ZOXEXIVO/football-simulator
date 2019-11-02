@@ -1,5 +1,6 @@
 mod simulator;
 pub use simulator::FootballSimulator;
+pub use simulator::SimulatorData;
 
 pub mod context;
 pub use context::SimulationContext;

@@ -1,11 +1,13 @@
 use crate::core::SimulationContext;
 use crate::models::club::Club;
 use crate::models::schedule::Schedule;
+use crate::models::chrono::Datelike;
 
 pub struct League {
       pub name: String,
       pub clubs: Vec<Club>,
-      pub schedule: Option<Schedule>
+      pub schedule: Option<Schedule>,
+      pub settings: LeagueSettings
 }
 
 impl League {
@@ -18,10 +20,19 @@ impl League {
                   club.simulate(context);
             }
 
-            
-            std::thread::sleep_ms(600);
-
-
-            self.schedule = Some(Schedule::generate(&self.clubs).unwrap());
+            if self.settings.is_time_for_new_schedule(context) {
+                  self.schedule = Some(Schedule::generate(&self.clubs).unwrap());
+            }            
       }
+}
+
+pub struct LeagueSettings{
+      pub season_starting: (u8, u8),
+      pub season_ending: (u8, u8) 
+}
+
+impl LeagueSettings{
+   pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool{
+        (context.date.day() as u8)== self.season_starting.0 && (context.date.month() as u8)  == self.season_starting.1
+   }     
 }

@@ -1,4 +1,4 @@
-use core::cell::RefCell;
+use crate::core::events::EventType;
 
 use crate::utils::ParallelUtils;
 
@@ -17,7 +17,7 @@ pub struct FootballSimulator  {
 }
 
 pub struct SimulatorData  {
-    countries: Vec<Country>
+    pub countries: Vec<Country>
 }
 
 impl FootballSimulator  {
@@ -26,16 +26,11 @@ impl FootballSimulator  {
 
         Self {
             cpu_count: cpu_count,
-            data: SimulatorData {
-                countries: (0..16)
-                    .map(|i| Generator::generate(i))
-                    .collect()
-            }
+            data: SimulatorData::generate(0)
         }
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext, progress_sender: &Sender<i32>) {
-        
+    pub fn simulate(&mut self, context: &mut SimulationContext, progress_sender: &Sender<i32>) {        
         let chunk_size = ParallelUtils::get_chunk_size(
             self.data.countries.len(), self.cpu_count
         );
@@ -52,15 +47,19 @@ impl FootballSimulator  {
                         
                         progress_sender.send(1).unwrap();
                     }
-
-                    for event in cloned_context.events{
-                        
-                    }
                 });
             }
         })
         .unwrap();
 
         context.next_date();
+    }
+}
+
+struct EventProcessor;
+
+impl EventProcessor{
+    pub fn process(event: EventType, simulator_data: &mut SimulatorData){
+
     }
 }
