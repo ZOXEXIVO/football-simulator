@@ -19,7 +19,7 @@ impl  Generator for Country  {
       fn generate(index: i32) -> Country  {
             Country {
                   name: index.to_string(),
-                  leagues: (0..10).map(|i| Generator::generate(i)).collect(),
+                  leagues: (0..3).map(|i| Generator::generate(i)).collect(),
             }
       }
 }

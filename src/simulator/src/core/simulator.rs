@@ -17,7 +17,7 @@ pub struct FootballSimulator  {
 }
 
 pub struct SimulatorData  {
-    countries: Vec<RefCell<Country>>
+    countries: Vec<Country>
 }
 
 impl FootballSimulator  {
@@ -28,7 +28,7 @@ impl FootballSimulator  {
             cpu_count: cpu_count,
             data: SimulatorData {
                 countries: (0..16)
-                    .map(|i| RefCell::new(Generator::generate(i)))
+                    .map(|i| Generator::generate(i))
                     .collect()
             }
         }
@@ -48,13 +48,13 @@ impl FootballSimulator  {
   
                 scope.spawn(move |_| {
                     for country in countries_chunk.iter_mut() {             
-                        country.borrow_mut().simulate(&mut cloned_context);
+                        country.simulate(&mut cloned_context);
                         
                         progress_sender.send(1).unwrap();
                     }
 
                     for event in cloned_context.events{
-
+                        
                     }
                 });
             }

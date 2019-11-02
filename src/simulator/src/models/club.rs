@@ -32,5 +32,8 @@ impl Club {
             for player in &mut self.players {
                   player.simulate(context);
             }
+            for staff in &mut self.staffs {
+                  staff.simulate(context);
+            }
       }
 }

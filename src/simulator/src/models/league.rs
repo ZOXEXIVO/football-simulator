@@ -18,6 +18,10 @@ impl League {
                   club.simulate(context);
             }
 
+            
+            std::thread::sleep_ms(600);
+
+
             self.schedule = Some(Schedule::generate(&self.clubs).unwrap());
       }
 }
