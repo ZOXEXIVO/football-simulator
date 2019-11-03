@@ -1,5 +1,5 @@
 use crate::core::SimulatorData;
-use crate::models::club::Club;
+use crate::models::club::{Club, ClubBoard};
 use crate::models::country::Country;
 use crate::models::league::{League, LeagueSettings};
 use crate::models::player::*;
@@ -7,6 +7,8 @@ use crate::models::shared::fullname::FullName;
 use crate::models::staff::contract::StaffClubContract;
 use crate::models::staff::staff::Staff;
 use crate::utils::{IntegerUtils, StringUtils};
+
+extern crate crossbeam;
 
 use chrono::NaiveDate;
 
@@ -16,8 +18,12 @@ pub trait Generator {
 
 impl Generator for SimulatorData {
       fn generate(index: i32) -> SimulatorData {
+            let generated_countries = (0..900).map(|i| Generator::generate(i)).collect();
+
             SimulatorData {
-                  countries: (0..900).map(|i| Generator::generate(i)).collect(),
+                  countries: generated_countries,
+                  free_players: (0..1000).map(|i| Generator::generate(i)).collect(),
+                  free_staff: (0..1000).map(|i| Generator::generate(i)).collect(),
             }
       }
 }
@@ -50,6 +56,7 @@ impl Generator for Club {
             Club {
                   id: IntegerUtils::random(1, 10000000) as u32,
                   name: StringUtils::random_string(5),
+                  board: ClubBoard::new(),
                   players: (0..60).map(|i| Generator::generate(i)).collect(),
                   staffs: (0..20).map(|i| Generator::generate(i)).collect(),
             }
@@ -58,24 +65,29 @@ impl Generator for Club {
 
 impl Generator for PlayerClubContract {
       fn generate(index: i32) -> PlayerClubContract {
-            return PlayerClubContract::new(generate_player(), NaiveDate::from_ymd(2020, 3, 14));
+            return PlayerClubContract::new(
+                  Generator::generate(index),
+                  NaiveDate::from_ymd(2020, 3, 14),
+            );
+      }
+}
 
-            fn generate_player() -> Player {
-                  let year = IntegerUtils::random(1980, 2010) as u32;
-                  let month = IntegerUtils::random(1, 12) as u32;
-                  let day = IntegerUtils::random(1, 29) as u32;
+impl Generator for Player {
+      fn generate(index: i32) -> Player {
+            let year = IntegerUtils::random(1980, 2010) as u32;
+            let month = IntegerUtils::random(1, 12) as u32;
+            let day = IntegerUtils::random(1, 29) as u32;
 
-                  return Player::new(
-                        IntegerUtils::random(1, 1000000) as u32,
-                        FullName {
-                              first_name: StringUtils::random_string(5),
-                              last_name: StringUtils::random_string(10),
-                              middle_name: StringUtils::random_string(15),
-                        },
-                        NaiveDate::from_ymd(year as i32, month, day),
-                        generate_skills(),
-                  );
-            }
+            return Player::new(
+                  IntegerUtils::random(1, 1000000) as u32,
+                  FullName {
+                        first_name: StringUtils::random_string(5),
+                        last_name: StringUtils::random_string(10),
+                        middle_name: StringUtils::random_string(15),
+                  },
+                  NaiveDate::from_ymd(year as i32, month, day),
+                  generate_skills(),
+            );
 
             fn generate_skills() -> PlayerSkills {
                   PlayerSkills {
@@ -128,22 +140,27 @@ impl Generator for PlayerClubContract {
 
 impl Generator for StaffClubContract {
       fn generate(index: i32) -> StaffClubContract {
-            return StaffClubContract::new(generate_staff(), NaiveDate::from_ymd(2020, 3, 14));
+            return StaffClubContract::new(
+                  Generator::generate(index),
+                  NaiveDate::from_ymd(2020, 3, 14),
+            );
+      }
+}
 
-            fn generate_staff() -> Staff {
-                  let year = IntegerUtils::random(1980, 2010) as u32;
-                  let month = IntegerUtils::random(1, 12) as u32;
-                  let day = IntegerUtils::random(1, 29) as u32;
+impl Generator for Staff {
+      fn generate(index: i32) -> Staff {
+            let year = IntegerUtils::random(1980, 2010) as u32;
+            let month = IntegerUtils::random(1, 12) as u32;
+            let day = IntegerUtils::random(1, 29) as u32;
 
-                  Staff::new(
-                        IntegerUtils::random(1, 10000000) as u32,
-                        FullName {
-                              first_name: StringUtils::random_string(5),
-                              last_name: StringUtils::random_string(10),
-                              middle_name: StringUtils::random_string(15),
-                        },
-                        NaiveDate::from_ymd(year as i32, month, day),
-                  )
-            }
+            Staff::new(
+                  IntegerUtils::random(1, 10000000) as u32,
+                  FullName {
+                        first_name: StringUtils::random_string(5),
+                        last_name: StringUtils::random_string(10),
+                        middle_name: StringUtils::random_string(15),
+                  },
+                  NaiveDate::from_ymd(year as i32, month, day),
+            )
       }
 }
