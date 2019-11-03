@@ -1,51 +1,55 @@
-use std::fmt::{Formatter, Display, Result};
 use crate::core::{EventType, SimulationContext};
+use crate::models::shared::fullname::FullName;
+use crate::player::skills::*;
+use crate::utils::{DateUtils, IntegerUtils};
+use std::fmt::{Display, Formatter, Result};
 
-use chrono::prelude::*;
+use chrono::NaiveDate;
 
 pub struct Player {
       id: u32,
       full_name: FullName,
       birth_date: NaiveDate,
-      //behaviour: Behavior
+      skills: PlayerSkills,
+      prefered_foot: PlayerFoot
 }
 
 impl Player {
-      pub fn new(id: u32, full_name: FullName, birth_date: NaiveDate) -> Player {
+      pub fn new(
+            id: u32,
+            full_name: FullName,
+            birth_date: NaiveDate,
+            skills: PlayerSkills,
+      ) -> Player {
             Player {
-                  id: id,
+                  id: id,                  
                   full_name: full_name,
                   birth_date: birth_date,
-                  // behaviour: Behavior::new()
+                  skills: skills,
+                  prefered_foot: PlayerFoot::Right
             }
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {
-            let current_date = context.date;
-
-            if self.birth_date.month() == current_date.month()
-                  && self.birth_date.day() == current_date.day()
-            {
-                  context.send(EventType::Birthday(self.id))
+            if DateUtils::is_birthday(self.birth_date, context.date) {
+                  context.send(EventType::Birthday(self.id));
             }
+
+            let change_val = IntegerUtils::random(-3,3) as u8;
+
+            self.skills.train(change_val);
       }
 }
 
-pub struct FullName {
-      pub first_name: String,
-      pub last_name: String,
-      pub middle_name: String,
+pub enum PlayerFoot{
+      Left,
+      Right,
+      Both
 }
 
 //DISPLAY
 impl Display for Player {
       fn fmt(&self, f: &mut Formatter<'_>) -> Result {
             write!(f, "{}, {}", self.full_name, self.birth_date)
-      }
-}
-
-impl Display for FullName {
-      fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-            write!(f, "{} {} {}", self.last_name, self.first_name, self.middle_name)
       }
 }

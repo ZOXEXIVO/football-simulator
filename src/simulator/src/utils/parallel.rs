@@ -5,3 +5,13 @@ impl ParallelUtils {
         data_len / cpu_count
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn get_chunk_size_is_correct() {       
+        assert_eq!(2, ParallelUtils.get_chunk_size(16, 8));
+    }
+}

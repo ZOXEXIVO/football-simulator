@@ -6,6 +6,7 @@ pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
 pub struct PlayerClubContract {
       player: Player,
+      salary: f64,
       expired: NaiveDate,
 }
 
@@ -13,6 +14,7 @@ impl PlayerClubContract {
       pub fn new(player: Player, expired: NaiveDate) -> Self {
             PlayerClubContract {
                   player: player,
+                  salary: 100000.0,
                   expired: expired,
             }
       }

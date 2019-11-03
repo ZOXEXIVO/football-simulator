@@ -51,22 +51,28 @@ mod tests {
         let mut clubs = Vec::new();
 
         clubs.push(Club{
+            id: 1,
             name: "1".to_string(), 
-            players: vec![]
+            players: vec![],
+            staffs: vec![]
         });
 
         clubs.push(Club{
+            id: 2,
             name: "2".to_string(), 
-            players: vec![]
+            players: vec![],
+            staffs: vec![]
         });
 
         clubs.push(Club{
+            id: 3,
             name: "3".to_string(), 
-            players: vec![]
+            players: vec![],
+            staffs: vec![]
         });
 
         let schedule = Schedule::generate(&clubs).unwrap();
-        
-        assert_eq!(6, schedule.items.len());
+
+        assert_eq!(2, schedule.items.len());
     }
 }

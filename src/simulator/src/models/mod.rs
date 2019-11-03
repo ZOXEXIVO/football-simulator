@@ -4,6 +4,7 @@ pub mod club;
 pub mod player;
 pub mod schedule;
 pub mod staff;
+pub mod shared;
 
 extern crate chrono;
 
@@ -14,5 +15,6 @@ pub use player::*;
 pub use schedule::*;
 pub use core::*;
 pub use staff::*;
+pub use shared::*;
 
 pub use chrono::prelude::NaiveDate;

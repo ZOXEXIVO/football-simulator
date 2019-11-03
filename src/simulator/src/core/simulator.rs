@@ -1,5 +1,3 @@
-use crate::core::events::EventType;
-
 use crate::utils::ParallelUtils;
 
 extern crate crossbeam;
@@ -11,55 +9,51 @@ use crate::core::context::SimulationContext;
 use crate::generators::Generator;
 use crate::models::country::Country;
 
-pub struct FootballSimulator  {
+pub struct FootballSimulator {
     cpu_count: usize,
-    data: SimulatorData
+    data: SimulatorData,
 }
 
-pub struct SimulatorData  {
-    pub countries: Vec<Country>
+pub struct SimulatorData {
+    pub countries: Vec<Country>,
 }
 
-impl FootballSimulator  {
+impl FootballSimulator {
     pub fn new(cpu_count: usize) -> Self {
         println!("sumulator init with {} cores", cpu_count);
 
         Self {
             cpu_count: cpu_count,
-            data: SimulatorData::generate(0)
+            data: SimulatorData::generate(0),
         }
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext, progress_sender: &Sender<i32>) {        
-        let chunk_size = ParallelUtils::get_chunk_size(
-            self.data.countries.len(), self.cpu_count
-        );
+    pub fn items_count(&self) -> usize {
+        return self
+            .data
+            .countries
+            .iter()
+            .map(|country| country.items_count())
+            .sum();
+    }
+
+    pub fn simulate(&mut self, context: &mut SimulationContext, progress_sender: &Sender<i32>) {
+        let chunk_size = ParallelUtils::get_chunk_size(self.data.countries.len(), self.cpu_count);
 
         progress_sender.send(0).unwrap();
 
-        crossbeam::scope(|scope| {            
+        crossbeam::scope(|scope| {
             for countries_chunk in self.data.countries.chunks_mut(chunk_size) {
                 let mut cloned_context = context.clone();
-  
                 scope.spawn(move |_| {
-                    for country in countries_chunk.iter_mut() {             
+                    for country in countries_chunk.iter_mut() {
                         country.simulate(&mut cloned_context);
-                        
                         progress_sender.send(1).unwrap();
                     }
                 });
             }
-        })
-        .unwrap();
+        }).unwrap();
 
         context.next_date();
-    }
-}
-
-struct EventProcessor;
-
-impl EventProcessor{
-    pub fn process(event: EventType, simulator_data: &mut SimulatorData){
-
     }
 }

@@ -17,7 +17,7 @@ impl Club {
             staffs: Vec<StaffClubContract>,
       ) -> Self {
             Club {
-                  id: IntegerUtils::random(0, 1000000),
+                  id: IntegerUtils::random(0, 1000000) as u32,
                   name: name,
                   players: players,
                   staffs: staffs,

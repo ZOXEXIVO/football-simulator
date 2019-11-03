@@ -1,7 +1,9 @@
-use crate::models::player::player::FullName;
+use crate::models::shared::fullname::FullName;
+use std::fmt::{Formatter, Display, Result};
 use crate::core::{EventType, SimulationContext };
+use crate::utils::DateUtils;
 
-use chrono::prelude::*;
+use chrono::NaiveDate;
 
 pub struct Staff {
       pub id: u32,
@@ -21,12 +23,15 @@ impl Staff {
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {
-            let current_date = context.date;
-
-            if self.birth_date.month() == current_date.month()
-                  && self.birth_date.day() == current_date.day()
-            {
+            if DateUtils::is_birthday(self.birth_date, context.date){
                   context.send(EventType::Birthday(self.id));
             }
+      }
+}
+
+//DISPLAY
+impl Display for Staff {
+      fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+            write!(f, "{}, {}", self.full_name, self.birth_date)
       }
 }
