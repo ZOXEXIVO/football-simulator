@@ -1,5 +1,5 @@
 use crate::core::context::SimulationContext;
-use crate::models::{Staff, StaffClubContract};
+use crate::{Staff, StaffClubContract};
 
 pub struct ClubBoard {
     pub director: Option<StaffClubContract>, 

@@ -1,11 +1,11 @@
 use crate::core::SimulatorData;
-use crate::models::club::{Club, ClubBoard};
-use crate::models::country::Country;
-use crate::models::league::{League, LeagueSettings};
-use crate::models::player::*;
-use crate::models::shared::fullname::FullName;
-use crate::models::staff::contract::StaffClubContract;
-use crate::models::staff::staff::Staff;
+use crate::club::{Club, ClubBoard};
+use crate::country::Country;
+use crate::league::{League, LeagueSettings};
+use crate::player::*;
+use crate::shared::fullname::FullName;
+use crate::staff::contract::StaffClubContract;
+use crate::staff::staff::Staff;
 use crate::utils::{IntegerUtils, StringUtils};
 
 extern crate crossbeam;

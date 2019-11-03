@@ -1,7 +1,7 @@
-use crate::models::club::board::ClubBoard;
+use crate::club::board::ClubBoard;
 use crate::core::SimulationContext;
-use crate::models::player::contract::PlayerClubContract;
-use crate::models::staff::contract::StaffClubContract;
+use crate::player::contract::PlayerClubContract;
+use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 
 pub struct Club {

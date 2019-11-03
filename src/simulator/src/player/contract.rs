@@ -1,5 +1,5 @@
 
-use crate::models::player::player::Player;
+use crate::player::player::Player;
 use crate::core::context::SimulationContext;
 
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};

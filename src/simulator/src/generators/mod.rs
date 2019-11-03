@@ -1,4 +1,4 @@
 mod generator;
 
-pub use crate::models::*;
+pub use crate::*;
 pub use generator::Generator;

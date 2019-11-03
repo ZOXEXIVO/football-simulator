@@ -1,4 +1,4 @@
-use crate::models::club::Club;
+use crate::club::Club;
 use chrono::NaiveDate;
 
 pub struct Schedule {

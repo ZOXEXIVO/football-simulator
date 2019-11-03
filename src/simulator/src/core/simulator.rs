@@ -1,15 +1,12 @@
-use crate::models::staff::staff::Staff;
-use crate::models::player::player::Player;
+use crate::staff::staff::Staff;
+use crate::player::player::Player;
 use crate::utils::ParallelUtils;
 
 extern crate crossbeam;
-extern crate crossbeam_channel;
-
-use crossbeam_channel::Sender;
 
 use crate::core::context::SimulationContext;
 use crate::generators::Generator;
-use crate::models::country::Country;
+use crate::country::Country;
 
 pub struct SimulatorData {
     pub countries: Vec<Country>,

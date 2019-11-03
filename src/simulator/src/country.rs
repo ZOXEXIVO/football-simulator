@@ -1,5 +1,5 @@
 use crate::core::SimulationContext;
-use crate::models::league::League;
+use crate::league::League;
 
 pub struct Country{
       pub name: String,

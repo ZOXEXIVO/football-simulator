@@ -1,12 +1,16 @@
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
-pub fn inspect_duration<F>(action: F) -> u32
-where
-    F: FnOnce() -> ()
-{
-    let now = Instant::now();
+pub struct TimeEstimation;
 
-    action();
-    
-    now.elapsed().as_millis() as u32
+impl TimeEstimation {
+    pub fn estimate<F>(action: F) -> u32
+    where
+        F: FnOnce() -> (),
+    {
+        let now = Instant::now();
+
+        action();
+
+        now.elapsed().as_millis() as u32
+    }
 }

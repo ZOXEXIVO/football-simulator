@@ -1,5 +1,5 @@
 
-use crate::models::staff::staff::Staff;
+use crate::staff::staff::Staff;
 use crate::core::{EventType, SimulationContext };
 
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};

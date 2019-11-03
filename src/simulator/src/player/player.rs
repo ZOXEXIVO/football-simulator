@@ -1,5 +1,5 @@
 use crate::core::{EventType, SimulationContext};
-use crate::models::shared::fullname::FullName;
+use crate::shared::fullname::FullName;
 use crate::player::skills::*;
 use crate::utils::{DateUtils, IntegerUtils};
 use std::fmt::{Display, Formatter, Result};

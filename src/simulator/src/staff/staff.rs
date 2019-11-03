@@ -1,4 +1,4 @@
-use crate::models::shared::fullname::FullName;
+use crate::shared::fullname::FullName;
 use std::fmt::{Formatter, Display, Result};
 use crate::core::{EventType, SimulationContext };
 use crate::utils::DateUtils;

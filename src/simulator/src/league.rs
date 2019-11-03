@@ -1,7 +1,7 @@
 use crate::core::SimulationContext;
-use crate::models::club::Club;
-use crate::models::schedule::Schedule;
-use crate::models::chrono::Datelike;
+use crate::club::Club;
+use crate::schedule::Schedule;
+use crate::chrono::Datelike;
 
 use chrono::NaiveDate;
 
