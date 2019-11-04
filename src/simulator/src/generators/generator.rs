@@ -1,4 +1,4 @@
-use crate::core::SimulatorData;
+use crate::simulator::SimulatorData;
 use crate::club::{Club, ClubBoard};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings};
@@ -12,13 +12,15 @@ extern crate crossbeam;
 
 use chrono::NaiveDate;
 
+use std::sync::Mutex;
+
 pub trait Generator {
       fn generate(index: i32) -> Self;
 }
 
 impl Generator for SimulatorData {
       fn generate(index: i32) -> SimulatorData {
-            let generated_countries = (0..900).map(|i| Generator::generate(i)).collect();
+            let generated_countries = (0..900).map(|i| Mutex::new(Generator::generate(i))).collect();
 
             SimulatorData {
                   countries: generated_countries,

@@ -3,8 +3,6 @@ use crate::club::Club;
 use crate::schedule::Schedule;
 use crate::chrono::Datelike;
 
-use chrono::NaiveDate;
-
 pub struct League {
       pub name: String,
       pub clubs: Vec<Club>,
@@ -20,7 +18,9 @@ impl League {
       pub fn simulate(&mut self, context: &mut SimulationContext) {            
             if self.settings.is_time_for_new_schedule(context) {
                   self.schedule = Some(Schedule::generate(&self.clubs).unwrap());
-            }     
+            }           
+
+            
 
             for club in &mut self.clubs {
                   club.simulate(context);

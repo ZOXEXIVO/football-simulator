@@ -5,14 +5,17 @@ pub mod club;
 pub mod player;
 pub mod schedule;
 pub mod staff;
+pub mod play;
+pub mod simulator;
+
 pub mod shared;
 pub mod utils;
+
 mod generators;
 
 extern crate chrono;
 pub use chrono::prelude::NaiveDate;
 
-pub use crate::core::FootballSimulator;
 pub use crate::core::SimulationContext;
 pub use crate::core::EventType;
 
@@ -26,5 +29,7 @@ pub use schedule::*;
 pub use self::core::*;
 pub use staff::*;
 pub use shared::*;
+pub use play::*;
+pub use simulator::*;
 
 

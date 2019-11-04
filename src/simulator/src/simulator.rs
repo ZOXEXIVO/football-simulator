@@ -8,8 +8,10 @@ use crate::core::context::SimulationContext;
 use crate::generators::Generator;
 use crate::country::Country;
 
+use std::sync::Mutex;
+
 pub struct SimulatorData {
-    pub countries: Vec<Country>,
+    pub countries: Vec<Mutex<Country>>,
 
     pub free_players: Vec<Player>,
     pub free_staff: Vec<Staff>
@@ -41,7 +43,7 @@ impl FootballSimulator {
             .unwrap()
             .countries
             .iter()
-            .map(|country| country.items_count())
+            .map(|country| country.lock().unwrap().items_count())
             .sum();
     }
 
@@ -55,7 +57,8 @@ impl FootballSimulator {
                 let mut cloned_context = context.clone();
                 scope.spawn(move |_| {
                     for country in countries_chunk.iter_mut() {
-                        country.simulate(&mut cloned_context);
+                        let mut unlocked_country = country.lock().unwrap();
+                        unlocked_country.simulate(&mut cloned_context);
                     }
                 });
             }

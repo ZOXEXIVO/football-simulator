@@ -1,6 +1,3 @@
-mod simulator;
-pub use self::simulator::{FootballSimulator, SimulatorData};
-
 pub mod context;
 pub use context::SimulationContext;
 
