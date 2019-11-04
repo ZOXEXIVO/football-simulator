@@ -6,7 +6,6 @@ pub struct StringUtils;
 
 impl StringUtils {
       pub fn random_string(n: i32) -> String {
-          "0".to_string()
-          //(0..n).map(|_| random::<char>()).collect()
+          (0..n).map(|_| random::<char>()).collect()
       }
 }

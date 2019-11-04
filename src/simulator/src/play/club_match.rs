@@ -1,5 +1,4 @@
 use std::fmt::{Formatter, Display, Result};
-use std::cell::RefCell;
 use crate::club::Club;
 
 pub struct Match<'c>{

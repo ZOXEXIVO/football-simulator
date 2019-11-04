@@ -1,16 +1,19 @@
 use crate::club::Club;
 use chrono::NaiveDate;
+use chrono::Duration;
 
 pub struct Schedule {
     pub items: Vec<ScheduleItem>
 }
 
 impl Schedule {
-    pub fn generate(clubs: &Vec<Club>) -> Result<Schedule, ()> {
+    pub fn generate(clubs: &Vec<Club>, date: NaiveDate) -> Result<Schedule, ()> {
         let mut schedule_items = Vec::with_capacity(clubs.len());
 
         let club_len = clubs.len();
 
+        let mut starting_date = date;
+        
         for idx in 0..club_len {
             let first_index = idx;
             let last_index = club_len - idx - 1;
@@ -18,12 +21,14 @@ impl Schedule {
             if first_index == last_index{
                 continue;
             }
-            
+
             let item = ScheduleItem {
                 home_club_id: clubs[first_index].id,
                 guest_club_id: clubs[last_index].id,
-                date: NaiveDate::from_ymd(2019, 10, 1),
+                date: starting_date,
             };
+
+            starting_date = starting_date.checked_add_signed(Duration::days(7)).unwrap();
 
             schedule_items.push(item);
         }
