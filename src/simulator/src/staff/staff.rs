@@ -5,6 +5,7 @@ use crate::utils::DateUtils;
 
 use chrono::NaiveDate;
 
+#[derive(Clone)]
 pub struct Staff {
       pub id: u32,
       full_name: FullName,

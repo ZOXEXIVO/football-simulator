@@ -1,6 +1,7 @@
 use crate::core::context::SimulationContext;
-use crate::{Staff, StaffClubContract};
+use crate::{ StaffClubContract};
 
+#[derive(Clone)]
 pub struct ClubBoard {
     pub director: Option<StaffClubContract>, 
     pub sport_director: Option<StaffClubContract>

@@ -1,26 +1,7 @@
 const SKILL_MIN_VALUE: u8 = 1;
 const SKILL_MAX_VALUE: u8 = 20;
 
-fn safe_modify(skill: &mut u8, val: i8) {
-    if val < 0 {
-        let abs_val = (val * -1) as u8;
-
-        if *skill <= abs_val {
-            *skill = SKILL_MIN_VALUE;
-        } else {
-            *skill = *skill - abs_val;
-        }
-    } else {
-        let abs_val = val as u8;
-
-        if *skill + abs_val > SKILL_MAX_VALUE {
-            *skill = SKILL_MAX_VALUE;
-        } else {
-            *skill = *skill + abs_val;
-        }
-    }
-}
-
+#[derive(Clone)]
 pub struct PlayerSkills {
     pub technical: Technical,
     pub metal: Metal,
@@ -35,6 +16,7 @@ impl PlayerSkills {
     }
 }
 
+#[derive(Clone)]
 pub struct Technical {
     pub corners: u8,
     pub crossing: u8,
@@ -71,6 +53,7 @@ impl Technical {
     }
 }
 
+#[derive(Clone)]
 pub struct Metal {
     pub aggression: u8,
     pub anticipation: u8,
@@ -108,6 +91,7 @@ impl Metal {
     }
 }
 
+#[derive(Clone)]
 pub struct Physical {
     pub acceleration: u8,
     pub agility: u8,
@@ -129,5 +113,26 @@ impl Physical {
         safe_modify(&mut self.pace, val);
         safe_modify(&mut self.stamina, val);
         safe_modify(&mut self.strength, val);
+    }
+}
+
+
+fn safe_modify(skill: &mut u8, val: i8) {
+    if val < 0 {
+        let abs_val = (val * -1) as u8;
+
+        if *skill <= abs_val {
+            *skill = SKILL_MIN_VALUE;
+        } else {
+            *skill = *skill - abs_val;
+        }
+    } else {
+        let abs_val = val as u8;
+
+        if *skill + abs_val > SKILL_MAX_VALUE {
+            *skill = SKILL_MAX_VALUE;
+        } else {
+            *skill = *skill + abs_val;
+        }
     }
 }

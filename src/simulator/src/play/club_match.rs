@@ -1,20 +1,21 @@
 use std::fmt::{Formatter, Display, Result};
 use crate::club::Club;
 
-pub struct Match<'c>{
-    home_club: &'c Club,
-    away_club: &'c Club
+#[derive(Clone)]
+pub struct Match{
+    home_club: Club,
+    away_club: Club
 }
 
-impl<'c> Match<'c> {
-    pub fn make(home_club: &'c Club, away_club: &'c Club) -> Match<'c> {
+impl Match {
+    pub fn make(home_club: Club, away_club: Club) -> Match {
         Match{
             home_club: home_club,
             away_club: away_club
         }
     }
 
-    pub fn play(&mut self) -> MatchResult {
+    pub fn play(self) -> MatchResult {
         let home_players = self.home_club.players.len();
         let away_players = self.home_club.players.len();
 
@@ -26,14 +27,15 @@ impl<'c> Match<'c> {
     }
 }
 
-pub struct MatchResult<'a> {
-    original_match: &'a Match<'a>,
+#[derive(Clone)]
+pub struct MatchResult {
+    original_match: Match,
     home_goals: u32,
     away_goals: u32,
 }
 
 //DISPLAY
-impl<'a> Display for MatchResult<'a> {
+impl Display for MatchResult {
       fn fmt(&self, f: &mut Formatter<'_>) -> Result {
             write!(f, "{} {}:{} {}", 
             self.original_match.home_club.name, 

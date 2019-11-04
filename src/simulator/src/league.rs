@@ -3,40 +3,38 @@ use crate::club::Club;
 use crate::core::SimulationContext;
 use crate::play::{Match, MatchResult};
 use crate::schedule::Schedule;
+use std::collections::HashMap;
 use std::fmt::{Display, Formatter, Result};
 
 pub struct League {
       pub name: String,
-      pub clubs: Vec<Club>,
+      pub clubs: HashMap<u32, Club>,
       pub schedule: Option<Schedule>,
       pub settings: LeagueSettings,
 }
 
 impl League {
       pub fn items_count(&self) -> usize {
-            return self.clubs.iter().map(|club| club.items_count()).sum();
-      }
-
-      pub fn get_club(&self, id: u32) -> &Club {
-            self.clubs.iter().find(|c| c.id == id).unwrap()
+            return self.clubs.iter().map(|club| club.1.items_count()).sum();
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {
             if self.schedule.is_none() || self.settings.is_time_for_new_schedule(context) {
-                  self.schedule = Some(Schedule::generate(&self.clubs, context.date).unwrap());
+                  let club_vec = self.clubs.iter().map(|c| c.1).collect();
+                  self.schedule = Some(Schedule::generate(club_vec, context.date).unwrap());
             }
 
             for club in &mut self.clubs {
-                  club.simulate(context);
+                  club.1.simulate(context);
             }
 
             let matches_to_play = self.schedule.as_ref().unwrap().get_matches(context.date);
 
             for m in matches_to_play {
-                  let home_club = self.get_club(m.home_club_id);
-                  let away_club = self.get_club(m.guest_club_id);
+                  let home_club = self.clubs[&m.home_club_id].clone();
+                  let away_club = self.clubs[&m.guest_club_id].clone();
 
-                  let mut club_match = Match::make(home_club, away_club);
+                  let club_match = Match::make(home_club, away_club);
 
                   let match_result = club_match.play();
 

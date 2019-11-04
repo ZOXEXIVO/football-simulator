@@ -4,6 +4,7 @@ use crate::player::contract::PlayerClubContract;
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 
+#[derive(Clone)]
 pub struct Club {
       pub id: u32,
       pub name: String,
