@@ -20,12 +20,12 @@ pub trait Generator {
 
 impl Generator for SimulatorData {
       fn generate(index: i32) -> SimulatorData {
-            let generated_countries = (0..900).map(|i| Mutex::new(Generator::generate(i))).collect();
+            let generated_countries = (0..4).map(|i| Mutex::new(Generator::generate(i))).collect();
 
             SimulatorData {
                   countries: generated_countries,
-                  free_players: (0..1000).map(|i| Generator::generate(i)).collect(),
-                  free_staff: (0..1000).map(|i| Generator::generate(i)).collect(),
+                  free_players: (0..100).map(|i| Generator::generate(i)).collect(),
+                  free_staff: (0..100).map(|i| Generator::generate(i)).collect(),
             }
       }
 }

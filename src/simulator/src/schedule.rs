@@ -34,8 +34,13 @@ impl Schedule {
         
         return Ok(result);
     }
+
+    pub fn get_matches(&self, date: NaiveDate) -> Vec<&ScheduleItem>{
+        self.items.iter().filter(|x| x.date == date).collect()
+    }
 }
 
+#[derive(Clone, Copy)]
 pub struct ScheduleItem {
     pub date: NaiveDate,
     pub home_club_id: u32,

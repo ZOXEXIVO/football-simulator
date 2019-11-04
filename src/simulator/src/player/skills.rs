@@ -1,3 +1,26 @@
+const SKILL_MIN_VALUE: u8 = 1;
+const SKILL_MAX_VALUE: u8 = 20;
+
+fn safe_modify(skill: &mut u8, val: i8) {
+    if val < 0 {
+        let abs_val = (val * -1) as u8;
+
+        if *skill <= abs_val {
+            *skill = SKILL_MIN_VALUE;
+        } else {
+            *skill = *skill - abs_val;
+        }
+    } else {
+        let abs_val = val as u8;
+
+        if *skill + abs_val > SKILL_MAX_VALUE {
+            *skill = SKILL_MAX_VALUE;
+        } else {
+            *skill = *skill + abs_val;
+        }
+    }
+}
+
 pub struct PlayerSkills {
     pub technical: Technical,
     pub metal: Metal,
@@ -5,7 +28,7 @@ pub struct PlayerSkills {
 }
 
 impl PlayerSkills {
-    pub fn train(&mut self, val: u8) {
+    pub fn train(&mut self, val: i8) {
         self.technical.train(val);
         self.metal.train(val);
         self.physical.train(val);
@@ -30,9 +53,21 @@ pub struct Technical {
 }
 
 impl Technical {
-    pub fn train(&mut self, val: u8) {
-        self.corners += val;
-        self.long_shots += val;
+    pub fn train(&mut self, val: i8) {
+        safe_modify(&mut self.corners, val);
+        safe_modify(&mut self.crossing, val);
+        safe_modify(&mut self.dribbling, val);
+        safe_modify(&mut self.finishing, val);
+        safe_modify(&mut self.first_touch, val);
+        safe_modify(&mut self.free_kick_taking, val);
+        safe_modify(&mut self.heading, val);
+        safe_modify(&mut self.long_shots, val);
+        safe_modify(&mut self.long_throws, val);
+        safe_modify(&mut self.marking, val);
+        safe_modify(&mut self.passing, val);
+        safe_modify(&mut self.penalty_taking, val);
+        safe_modify(&mut self.tackling, val);
+        safe_modify(&mut self.technique, val);
     }
 }
 
@@ -54,15 +89,22 @@ pub struct Metal {
 }
 
 impl Metal {
-    pub fn train(&mut self, val: u8) {
-        self.aggression += val;
-        self.anticipation += val;
-        self.positioning += val;
-        self.determination += val;
-        self.teamwork += val;
-        self.vision += val;
-        self.work_rate += val;
-        self.off_the_ball += val;
+    pub fn train(&mut self, val: i8) {
+        safe_modify(&mut self.aggression, val);
+        safe_modify(&mut self.anticipation, val);
+        safe_modify(&mut self.brawery, val);
+        safe_modify(&mut self.composure, val);
+        safe_modify(&mut self.contentration, val);
+        safe_modify(&mut self.decisions, val);
+        safe_modify(&mut self.determination, val);
+        safe_modify(&mut self.flair, val);
+        safe_modify(&mut self.leadership, val);
+        safe_modify(&mut self.off_the_ball, val);
+        safe_modify(&mut self.positioning, val);
+        safe_modify(&mut self.teamwork, val);
+        safe_modify(&mut self.vision, val);
+        safe_modify(&mut self.work_rate, val);
+
     }
 }
 
@@ -78,10 +120,14 @@ pub struct Physical {
 }
 
 impl Physical {
-    pub fn train(&mut self, val: u8) {
-        self.acceleration += val;
-        self.agility += val;
-        self.balance += val;
-        self.jumping_reach += val;
+    pub fn train(&mut self, val: i8) {
+        safe_modify(&mut self.acceleration, val);
+        safe_modify(&mut self.agility, val);
+        safe_modify(&mut self.balance, val);
+        safe_modify(&mut self.jumping_reach, val);
+        safe_modify(&mut self.natural_fitness, val);
+        safe_modify(&mut self.pace, val);
+        safe_modify(&mut self.stamina, val);
+        safe_modify(&mut self.strength, val);
     }
 }

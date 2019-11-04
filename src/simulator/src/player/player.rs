@@ -35,7 +35,7 @@ impl Player {
                   context.send(EventType::Birthday(self.id));
             }
 
-            let change_val = IntegerUtils::random(-3,3) as u8;
+            let change_val = IntegerUtils::random(-3,3) as i8;
 
             self.skills.train(change_val);
       }
