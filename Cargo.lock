@@ -86,7 +86,6 @@ name = "football"
 version = "0.1.0"
 dependencies = [
  "chrono 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)",
- "num_cpus 1.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "simulator 0.1.0",
 ]
 

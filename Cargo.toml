@@ -7,4 +7,3 @@ edition = "2018"
 [dependencies]
 simulator = { path = "./src/simulator" }
 chrono = "0.4.7"
-num_cpus = "1.10.1"

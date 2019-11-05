@@ -7,7 +7,6 @@ pub struct FullName {
       pub middle_name: String,
 }
 
-
 impl Display for FullName {
       fn fmt(&self, f: &mut Formatter<'_>) -> Result {
             write!(f, "{} {} {}", self.last_name, self.first_name, self.middle_name)

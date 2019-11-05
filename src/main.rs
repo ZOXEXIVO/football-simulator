@@ -7,7 +7,7 @@ use simulator::{FootballSimulator, SimulationContext};
 pub use chrono::prelude::NaiveDate;
 
 fn main() {
-    let mut simulator = FootballSimulator::new(num_cpus::get());
+    let mut simulator = FootballSimulator::new();
 
     println!("generated with {} ms", TimeEstimation::estimate(|| simulator.generate()));
 
@@ -20,10 +20,10 @@ fn main() {
     loop {
         println!("simulated with {} ms", TimeEstimation::estimate(|| simulator.simulate(&mut context)));
 
-        // let mut input = String::new();
+        let mut input = String::new();
         
-        // std::io::stdin().read_line(&mut input)
-        // .ok()
-        // .expect("Couldn't read line");    
+        std::io::stdin().read_line(&mut input)
+        .ok()
+        .expect("Couldn't read line");    
     }
 }

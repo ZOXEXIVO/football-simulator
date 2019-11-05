@@ -1,6 +1,5 @@
 use crate::staff::staff::Staff;
 use crate::player::player::Player;
-use crate::utils::ParallelUtils;
 
 use crate::core::context::SimulationContext;
 use crate::generators::Generator;
@@ -16,16 +15,12 @@ pub struct SimulatorData {
 }
 
 pub struct FootballSimulator {
-    cpu_count: usize,
     data: Option<SimulatorData>,
 }
 
 impl FootballSimulator {
-    pub fn new(cpu_count: usize) -> Self {
-        println!("sumulator init with {} cores", cpu_count);
-
+    pub fn new() -> Self {
         Self {
-            cpu_count: cpu_count,
             data: None
         }
     }
