@@ -4,11 +4,7 @@ version = "0.1.0"
 authors = ["ZOXEXIVO <zoxexivo@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 simulator = { path = "./src/simulator" }
 chrono = "0.4.7"
-crossbeam = "0.7.2"
-crossbeam-channel = "0.3.9"
 num_cpus = "1.10.1"

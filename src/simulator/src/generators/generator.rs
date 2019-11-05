@@ -7,10 +7,11 @@ use crate::simulator::SimulatorData;
 use crate::staff::contract::StaffClubContract;
 use crate::staff::staff::Staff;
 use crate::utils::{IntegerUtils, StringUtils};
-
-extern crate crossbeam;
+use std::collections::HashMap;
 
 use chrono::NaiveDate;
+
+use rayon::prelude::*;
 
 pub trait Generator {
       fn generate() -> Self;
@@ -19,152 +20,198 @@ pub trait Generator {
 impl Generator for SimulatorData {
       fn generate() -> SimulatorData {
             SimulatorData {
-                  countries: vec![Country {
-                        name: "Russia".to_string(),
-                        leagues: vec![League {
-                              name: "Russian Football Premier League".to_string(),
-                              clubs: [(
-                                    0,
-                                    Club {
-                                          id: 0,
-                                          name: "Zenith".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..30).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    1,
-                                    Club {
-                                          id: 1,
-                                          name: "Spartak Moscow".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    2,
-                                    Club {
-                                          id: 2,
-                                          name: "Lokomotiv Moscow".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    3,
-                                    Club {
-                                          id: 3,
-                                          name: "Krasnodar".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    4,
-                                    Club {
-                                          id: 4,
-                                          name: "Rostov".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    5,
-                                    Club {
-                                          id: 5,
-                                          name: "CSKA Moscow".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              )]
-                              .iter()
-                              .cloned()
-                              .collect(),
-                              schedule: None,
-                              settings: LeagueSettings {
-                                    season_starting: (5, 1),
-                                    season_ending: (1, 12),
-                              },
-                        }, League {
-                              name: "Football National League".to_string(),
-                              clubs: [(
-                                    0,
-                                    Club {
-                                          id: 0,
-                                          name: "Tom".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..30).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    1,
-                                    Club {
-                                          id: 1,
-                                          name: "Spartak-2".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    2,
-                                    Club {
-                                          id: 2,
-                                          name: "Chertanovo".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    3,
-                                    Club {
-                                          id: 3,
-                                          name: "Khimki".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    4,
-                                    Club {
-                                          id: 4,
-                                          name: "Spartak Moscow - 2".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              ),
-                              (
-                                    5,
-                                    Club {
-                                          id: 5,
-                                          name: "Baltika".to_string(),
-                                          board: ClubBoard::new(),
-                                          players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
-                                    },
-                              )]
-                              .iter()
-                              .cloned()
-                              .collect(),
-                              schedule: None,
-                              settings: LeagueSettings {
-                                    season_starting: (5, 1),
-                                    season_ending: (1, 12),
-                              },
-                        }],
-                  }],
-                  free_players: (0..100).map(|_| Generator::generate()).collect(),
-                  free_staff: (0..100).map(|_| Generator::generate()).collect(),
+                  countries: (0..9000).into_par_iter().map(|_| Generator::generate()).collect(),
+                  // countries: vec![Country {
+                  //       name: "Russia".to_string(),
+                  //       leagues: vec![League {
+                  //             name: "Russian Football Premier League".to_string(),
+                  //             clubs: [(
+                  //                   0,
+                  //                   Club {
+                  //                         id: 0,
+                  //                         name: "Zenith".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..30).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   1,
+                  //                   Club {
+                  //                         id: 1,
+                  //                         name: "Spartak Moscow".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   2,
+                  //                   Club {
+                  //                         id: 2,
+                  //                         name: "Lokomotiv Moscow".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   3,
+                  //                   Club {
+                  //                         id: 3,
+                  //                         name: "Krasnodar".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   4,
+                  //                   Club {
+                  //                         id: 4,
+                  //                         name: "Rostov".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   5,
+                  //                   Club {
+                  //                         id: 5,
+                  //                         name: "CSKA Moscow".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             )]
+                  //             .iter()
+                  //             .cloned()
+                  //             .collect(),
+                  //             schedule: None,
+                  //             settings: LeagueSettings {
+                  //                   season_starting: (5, 1),
+                  //                   season_ending: (1, 12),
+                  //             },
+                  //       }, League {
+                  //             name: "Football National League".to_string(),
+                  //             clubs: [(
+                  //                   0,
+                  //                   Club {
+                  //                         id: 0,
+                  //                         name: "Tom".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..30).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   1,
+                  //                   Club {
+                  //                         id: 1,
+                  //                         name: "Spartak-2".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   2,
+                  //                   Club {
+                  //                         id: 2,
+                  //                         name: "Chertanovo".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   3,
+                  //                   Club {
+                  //                         id: 3,
+                  //                         name: "Khimki".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   4,
+                  //                   Club {
+                  //                         id: 4,
+                  //                         name: "Spartak Moscow - 2".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             ),
+                  //             (
+                  //                   5,
+                  //                   Club {
+                  //                         id: 5,
+                  //                         name: "Baltika".to_string(),
+                  //                         board: ClubBoard::new(),
+                  //                         players: (0..60).map(|_| Generator::generate()).collect(),
+                  //                         staffs: (0..20).map(|_| Generator::generate()).collect(),
+                  //                   },
+                  //             )]
+                  //             .iter()
+                  //             .cloned()
+                  //             .collect(),
+                  //             schedule: None,
+                  //             settings: LeagueSettings {
+                  //                   season_starting: (5, 1),
+                  //                   season_ending: (1, 12),
+                  //             },
+                  //       }],
+                  // }],
+                  free_players: (0..1000).into_par_iter().map(|_| Generator::generate()).collect(),
+                  free_staff: (0..1000).map(|_| Generator::generate()).collect(),
+            }
+      }
+}
+
+impl  Generator for Country  {
+      fn generate() -> Country  {
+            Country {
+                  name: StringUtils::random_string(10),
+                  leagues: (0..10).map(|_| Generator::generate()).collect(),
+            }
+      }
+}
+
+impl Generator for League {
+      fn generate() -> League {
+            let clubs = (0..30)
+            .map(|_| Generator::generate())
+            .map(|club: Club| (club.id, club));
+
+            let mut hash_set = HashMap::new();
+
+            for club in clubs{
+                  hash_set.insert(club.0, club.1);
+            }
+           
+            League {
+                  name: StringUtils::random_string(10),
+                  clubs: hash_set,
+                  schedule: None,
+                  settings: LeagueSettings {
+                        season_starting: (1, 1),
+                        season_ending: (1, 12),
+                  }
+            }
+      }
+}
+
+impl Generator for Club {
+      fn generate() -> Club {
+            Club {
+                  id: IntegerUtils::random(1, 10000000) as u32,
+                  name: StringUtils::random_string(5),
+                  board: ClubBoard::new(),
+                  players: (0..10).map(|_| Generator::generate()).collect(),
+                  staffs: (0..10).map(|_| Generator::generate()).collect(),
             }
       }
 }

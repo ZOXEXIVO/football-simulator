@@ -38,7 +38,7 @@ impl League {
 
                   let match_result = club_match.play();
 
-                  println!("{}", match_result);
+                  //println!("{}", match_result);
             }
       }
 }

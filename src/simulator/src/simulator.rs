@@ -2,12 +2,11 @@ use crate::staff::staff::Staff;
 use crate::player::player::Player;
 use crate::utils::ParallelUtils;
 
-extern crate crossbeam;
-
 use crate::core::context::SimulationContext;
 use crate::generators::Generator;
 use crate::country::Country;
 
+pub use rayon::prelude::*;
 
 pub struct SimulatorData {
     pub countries: Vec<Country>,
@@ -41,7 +40,7 @@ impl FootballSimulator {
             .as_ref()
             .unwrap()
             .countries
-            .iter()
+            .par_iter()
             .map(|country| country.items_count())
             .sum();
     }
@@ -49,18 +48,9 @@ impl FootballSimulator {
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         let unwraped_data = self.data.as_mut().unwrap();
 
-        let chunk_size = ParallelUtils::get_chunk_size(unwraped_data.countries.len(), self.cpu_count);
-
-        crossbeam::scope(|scope| {
-            for countries_chunk in unwraped_data.countries.chunks_mut(chunk_size) {
-                let mut cloned_context = context.clone();
-                scope.spawn(move |_| {
-                    for country in countries_chunk.iter_mut() {
-                        country.simulate(&mut cloned_context);
-                    }
-                });
-            }
-        }).unwrap();
+        unwraped_data.countries.par_iter_mut().for_each(|country|{
+             country.simulate(&mut context.clone());
+        });
 
         context.next_date();
     }

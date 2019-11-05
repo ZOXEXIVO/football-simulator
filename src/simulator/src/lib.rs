@@ -1,3 +1,8 @@
+extern crate chrono;
+extern crate rayon;
+
+pub use chrono::prelude::NaiveDate;
+
 pub mod core;
 pub mod league;
 pub mod country;
@@ -12,9 +17,6 @@ pub mod shared;
 pub mod utils;
 
 mod generators;
-
-extern crate chrono;
-pub use chrono::prelude::NaiveDate;
 
 pub use crate::core::SimulationContext;
 pub use crate::core::EventType;

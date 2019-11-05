@@ -1,4 +1,3 @@
-extern crate chrono;
 use crate::core::events::EventType;
 pub use chrono::prelude::*;
 
