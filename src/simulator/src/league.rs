@@ -20,8 +20,8 @@ impl League {
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {
             if self.schedule.is_none() || self.settings.is_time_for_new_schedule(context) {
-                  let club_vec = self.clubs.iter().map(|c| c.1).collect();
-                  self.schedule = Some(Schedule::generate(club_vec, context.date).unwrap());
+                  let club_list = self.clubs.values().collect();
+                  self.schedule = Some(Schedule::generate(club_list, context.date).unwrap());
             }
 
             for club in &mut self.clubs {
@@ -38,7 +38,7 @@ impl League {
 
                   let match_result = club_match.play();
 
-                  println!("{}", match_result);
+                  //println!("{}", match_result);
             }
       }
 }
