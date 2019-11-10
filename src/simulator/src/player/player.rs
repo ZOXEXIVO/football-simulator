@@ -49,6 +49,14 @@ pub enum PlayerFoot{
       Both
 }
 
+#[derive(Clone)]
+pub enum PlayerPosition{
+      Left,
+      Right,
+      Both
+}
+
+
 //DISPLAY
 impl Display for Player {
       fn fmt(&self, f: &mut Formatter<'_>) -> Result {
