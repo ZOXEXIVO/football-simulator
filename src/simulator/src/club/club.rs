@@ -1,3 +1,4 @@
+use crate::club::tactics::Tactics;
 use crate::club::board::ClubBoard;
 use crate::core::SimulationContext;
 use crate::player::contract::PlayerClubContract;
@@ -11,6 +12,7 @@ pub struct Club {
       pub board: ClubBoard,
       pub players: Vec<PlayerClubContract>,
       pub staffs: Vec<StaffClubContract>,
+      pub tactics: Option<Tactics>
 }
 
 impl Club {
@@ -25,6 +27,7 @@ impl Club {
                   name: name,
                   players: players,
                   staffs: staffs,
+                  tactics: None
             }
       }
 

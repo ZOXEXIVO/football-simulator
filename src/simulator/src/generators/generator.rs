@@ -33,6 +33,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..30).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -43,6 +44,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -53,6 +55,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -63,6 +66,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -73,6 +77,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -83,6 +88,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               )]
                               .iter()
@@ -103,6 +109,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..30).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -113,6 +120,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -123,6 +131,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -133,6 +142,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -143,6 +153,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               ),
                               (
@@ -153,6 +164,7 @@ impl Generator for SimulatorData {
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
                                           staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          tactics: None
                                     },
                               )]
                               .iter()
@@ -208,6 +220,7 @@ impl Generator for Club {
                   board: ClubBoard::new(),
                   players: (0..10).map(|_| Generator::generate()).collect(),
                   staffs: (0..10).map(|_| Generator::generate()).collect(),
+                  tactics: None
             }
       }
 }

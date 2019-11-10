@@ -19,6 +19,8 @@ impl Match {
         let home_players = self.home_club.players.len();
         let away_players = self.home_club.players.len();
 
+        
+
         MatchResult{
             original_match: self,
             home_goals: home_players as u32,
