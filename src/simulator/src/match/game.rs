@@ -8,30 +8,28 @@ pub struct Match{
 }
 
 impl Match {
-    pub fn make(home_club: Club, away_club: Club) -> Match {
-        Match{
+    pub fn make(home_club: Club, away_club: Club) -> Self {
+        Match {
             home_club: home_club,
             away_club: away_club
         }
     }
 
     pub fn play(self) -> MatchResult {
-        let home_players = self.home_club.players.len();
-        let away_players = self.home_club.players.len();
-
-        
-
+        let home_players = self.home_club.get_players_for_match();
+        let away_players = self.home_club.get_players_for_match();
+       
         MatchResult{
-            original_match: self,
-            home_goals: home_players as u32,
-            away_goals: away_players as u32
+            original_game: self,
+            home_goals: 0,
+            away_goals: 0
         }
     }
 }
 
 #[derive(Clone)]
 pub struct MatchResult {
-    original_match: Match,
+    original_game: Match,
     home_goals: u32,
     away_goals: u32,
 }
@@ -40,9 +38,9 @@ pub struct MatchResult {
 impl Display for MatchResult {
       fn fmt(&self, f: &mut Formatter<'_>) -> Result {
             write!(f, "{} {}:{} {}", 
-            self.original_match.home_club.name, 
+            self.original_game.home_club.name, 
             self.home_goals, 
             self.away_goals,
-            self.original_match.away_club.name)
+            self.original_game.away_club.name)
       }
 }

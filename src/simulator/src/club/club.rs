@@ -1,7 +1,8 @@
-use crate::club::tactics::Tactics;
 use crate::club::board::ClubBoard;
+use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
 use crate::player::contract::PlayerClubContract;
+use crate::player::player::Player;
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 
@@ -12,7 +13,7 @@ pub struct Club {
       pub board: ClubBoard,
       pub players: Vec<PlayerClubContract>,
       pub staffs: Vec<StaffClubContract>,
-      pub tactics: Option<Tactics>
+      pub tactics: Option<Tactics>,
 }
 
 impl Club {
@@ -27,7 +28,7 @@ impl Club {
                   name: name,
                   players: players,
                   staffs: staffs,
-                  tactics: None
+                  tactics: None,
             }
       }
 
@@ -35,11 +36,21 @@ impl Club {
             self.players.len()
       }
 
+      pub fn get_players_for_match(&self) -> Vec<&Player> {
+            let actual_players = self
+                  .players
+                  .iter()
+                  .filter(|player_contract| !player_contract.is_expired())
+                  .map(|p_contract| &p_contract.player)
+                  .collect();
+
+            actual_players
+      }
+
       pub fn simulate(&mut self, context: &mut SimulationContext) {
             for player in &mut self.players {
                   player.simulate(context);
             }
-            
             for staff in &mut self.staffs {
                   staff.simulate(context);
             }

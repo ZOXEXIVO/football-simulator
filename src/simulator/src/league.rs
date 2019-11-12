@@ -1,10 +1,13 @@
 use crate::chrono::Datelike;
 use crate::club::Club;
 use crate::core::SimulationContext;
-use crate::play::{Match, MatchResult};
+use crate::r#match::{Match, MatchResult};
 use crate::schedule::Schedule;
+use crate::utils::TimeEstimation;
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter, Result};
+
+use rayon::prelude::*;
 
 pub struct League {
       pub name: String,
@@ -30,15 +33,19 @@ impl League {
 
             let matches_to_play = self.schedule.as_ref().unwrap().get_matches(context.date);
 
-            for m in matches_to_play {
-                  let home_club = self.clubs[&m.home_club_id].clone();
-                  let away_club = self.clubs[&m.guest_club_id].clone();
+            let match_results: Vec<MatchResult> = matches_to_play
+                  .par_iter()
+                  .map(|game| {
+                        Match::make(
+                              self.clubs[&game.home_club_id].clone(),
+                              self.clubs[&game.guest_club_id].clone(),
+                        )
+                  })
+                  .map(|game| game.play())
+                  .collect();
 
-                  let club_match = Match::make(home_club, away_club);
-
-                  let match_result = club_match.play();
-
-                  //println!("{}", match_result);
+            for match_result in match_results {
+                  println!("{}", match_result);
             }
       }
 }

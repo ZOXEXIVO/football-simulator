@@ -10,7 +10,7 @@ pub mod club;
 pub mod player;
 pub mod schedule;
 pub mod staff;
-pub mod play;
+pub mod r#match;
 pub mod simulator;
 
 pub mod shared;
@@ -31,7 +31,7 @@ pub use schedule::*;
 pub use self::core::*;
 pub use staff::*;
 pub use shared::*;
-pub use play::*;
+pub use r#match::*;
 pub use simulator::*;
 
 

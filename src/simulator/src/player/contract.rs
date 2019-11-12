@@ -6,9 +6,9 @@ pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
 #[derive(Clone)]
 pub struct PlayerClubContract {
-      player: Player,
-      salary: f64,
-      expired: NaiveDate,
+      pub player: Player,
+      pub salary: f64,
+      pub expired: NaiveDate,
 }
 
 impl PlayerClubContract {
