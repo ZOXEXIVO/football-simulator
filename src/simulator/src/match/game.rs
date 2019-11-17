@@ -1,6 +1,6 @@
 use std::fmt::{Formatter, Display, Result};
 use crate::club::Club;
-use crate::r#match::simulation::{FootballMatch};
+use crate::r#match::simulation::{FootballEngine};
 
 #[derive(Clone)]
 pub struct Match{
@@ -17,19 +17,21 @@ impl Match {
     }
 
     pub fn play(self) -> MatchResult {
-        let home_players = self.home_club.get_players_for_match();
-        let away_players = self.home_club.get_players_for_match();
+        let home_players = self.home_club.get_match_squad();
+        let away_players = self.home_club.get_match_squad();
        
-        let details = FootballMatch::play(home_players, away_players);
+        let mut engine = FootballEngine::new(home_players, away_players);
 
-        for player_change in details.player_changes{
+        let result = engine.play();
 
+        for player_change in result.player_changes{
+                
         }
 
         MatchResult{
             original_game: self,
-            home_goals: details.score.home,
-            away_goals: details.score.away
+            home_goals: result.score.home,
+            away_goals: result.score.away
         }
     }
 }

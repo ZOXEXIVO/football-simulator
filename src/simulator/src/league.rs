@@ -45,7 +45,7 @@ impl League {
                   .collect();
 
             for match_result in match_results {
-                  println!("{}", match_result);
+                  //println!("{}", match_result);
             }
       }
 }

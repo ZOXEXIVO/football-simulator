@@ -1,8 +1,9 @@
+use crate::club::squad::Squad;
 use crate::club::board::ClubBoard;
 use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
 use crate::player::contract::PlayerClubContract;
-use crate::player::player::Player;
+use crate::player::player::{Player, PlayerPosition};
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 
@@ -36,15 +37,22 @@ impl Club {
             self.players.len()
       }
 
-      pub fn get_players_for_match(&self) -> Vec<&Player> {
-            let actual_players = self
+      fn select_tactics(&mut self){
+
+      }
+
+      pub fn get_match_squad(&self) -> Squad {
+            let players = self
                   .players
                   .iter()
                   .filter(|player_contract| !player_contract.is_expired())
-                  .map(|p_contract| &p_contract.player)
+                  .map(|p_contract| (PlayerPosition::Goalkeeper, p_contract.player.clone()))
                   .collect();
 
-            actual_players
+            Squad{
+                  tactics: self.tactics.as_ref().unwrap().clone(),
+                  players: players
+            }
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {

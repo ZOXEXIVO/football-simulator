@@ -14,6 +14,10 @@ impl PlayerSkills {
         self.metal.train(val);
         self.physical.train(val);
     }
+
+    pub fn rest(&mut self){
+        
+    }
 }
 
 #[derive(Clone)]
@@ -116,7 +120,7 @@ impl Physical {
     }
 }
 
-
+#[inline]
 fn safe_modify(skill: &mut u8, val: i8) {
     if val < 0 {
         let abs_val = (val * -1) as u8;

@@ -8,11 +8,11 @@ use chrono::NaiveDate;
 
 #[derive(Clone)]
 pub struct Player {
-      id: u32,
-      full_name: FullName,
-      birth_date: NaiveDate,
-      skills: PlayerSkills,
-      prefered_foot: PlayerFoot
+      pub id: u32,
+      pub full_name: FullName,
+      pub birth_date: NaiveDate,
+      pub skills: PlayerSkills,
+      pub prefered_foot: PlayerFoot
 }
 
 impl Player {
@@ -51,9 +51,7 @@ pub enum PlayerFoot{
 
 #[derive(Clone)]
 pub enum PlayerPosition{
-      Left,
-      Right,
-      Both
+      Goalkeeper
 }
 
 
