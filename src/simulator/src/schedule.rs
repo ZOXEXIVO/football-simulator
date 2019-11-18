@@ -3,6 +3,7 @@ use chrono::prelude::*;
 use chrono::Duration;
 use chrono::NaiveDate;
 
+#[derive(Debug)]
 pub struct Schedule {
     pub items: Vec<ScheduleItem>,
 }
@@ -49,7 +50,7 @@ impl Schedule {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct ScheduleItem {
     pub date: NaiveDate,
     pub home_club_id: u32,

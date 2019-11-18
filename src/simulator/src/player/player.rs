@@ -6,7 +6,7 @@ use std::fmt::{Display, Formatter, Result};
 
 use chrono::NaiveDate;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Player {
       pub id: u32,
       pub full_name: FullName,
@@ -42,14 +42,14 @@ impl Player {
       }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum PlayerFoot{
       Left,
       Right,
       Both
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum PlayerPosition{
       Goalkeeper
 }

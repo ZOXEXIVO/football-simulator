@@ -4,7 +4,7 @@ use crate::core::context::SimulationContext;
 
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PlayerClubContract {
       pub player: Player,
       pub salary: f64,

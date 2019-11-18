@@ -7,7 +7,7 @@ use crate::player::player::{Player, PlayerPosition};
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Club {
       pub id: u32,
       pub name: String,

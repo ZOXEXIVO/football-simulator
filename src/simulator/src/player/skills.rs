@@ -1,7 +1,7 @@
 const SKILL_MIN_VALUE: u8 = 1;
 const SKILL_MAX_VALUE: u8 = 20;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PlayerSkills {
     pub technical: Technical,
     pub metal: Metal,
@@ -20,7 +20,7 @@ impl PlayerSkills {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Technical {
     pub corners: u8,
     pub crossing: u8,
@@ -57,7 +57,7 @@ impl Technical {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Metal {
     pub aggression: u8,
     pub anticipation: u8,
@@ -95,7 +95,7 @@ impl Metal {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Physical {
     pub acceleration: u8,
     pub agility: u8,

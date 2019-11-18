@@ -9,6 +9,7 @@ use std::fmt::{Display, Formatter, Result};
 
 use rayon::prelude::*;
 
+#[derive(Debug)]
 pub struct League {
       pub name: String,
       pub clubs: HashMap<u32, Club>,
@@ -33,9 +34,11 @@ impl League {
 
             let matches_to_play = self.schedule.as_ref().unwrap().get_matches(context.date);
 
+            
             let match_results: Vec<MatchResult> = matches_to_play
                   .par_iter()
                   .map(|game| {
+                        
                         Match::make(
                               self.clubs[&game.home_club_id].clone(),
                               self.clubs[&game.guest_club_id].clone(),
@@ -50,6 +53,7 @@ impl League {
       }
 }
 
+#[derive(Debug)]
 pub struct LeagueSettings {
       pub season_starting: (u8, u8),
       pub season_ending: (u8, u8),
