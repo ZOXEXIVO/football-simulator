@@ -6,11 +6,11 @@ use chrono::{ Duration };
 #[derive(Clone)]
 pub struct SimulationContext {       
     pub events: Vec<EventType>,
-    pub date: NaiveDate
+    pub date: NaiveDateTime
 }
 
 impl SimulationContext {
-      pub fn new(date: NaiveDate) -> SimulationContext {
+      pub fn new(date: NaiveDateTime) -> SimulationContext {
             SimulationContext { 
                   events: vec![],
                   date: date

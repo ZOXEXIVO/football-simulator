@@ -32,7 +32,7 @@ impl Player {
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {
-            if DateUtils::is_birthday(self.birth_date, context.date) {
+            if DateUtils::is_birthday(self.birth_date, context.date.date()) {
                   context.send(EventType::Birthday(self.id));
             }
 

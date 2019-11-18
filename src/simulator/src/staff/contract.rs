@@ -19,7 +19,7 @@ impl StaffClubContract {
       }
 
       pub fn is_expired(&self, context: &mut SimulationContext) -> bool {
-            self.expired >= context.date
+            self.expired >= context.date.date()
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {

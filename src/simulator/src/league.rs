@@ -25,27 +25,32 @@ impl League {
       pub fn simulate(&mut self, context: &mut SimulationContext) {
             if self.schedule.is_none() || self.settings.is_time_for_new_schedule(context) {
                   let club_list = self.clubs.values().collect();
-                  self.schedule = Some(Schedule::generate(club_list, context.date).unwrap());
+                  self.schedule = Some(Schedule::generate(club_list, context.date.date()).unwrap());
             }
 
             for club in &mut self.clubs {
                   club.1.simulate(context);
             }
 
-            let matches_to_play = self.schedule.as_ref().unwrap().get_matches(context.date);
+            let matches: Vec<Match> = {
+                  let actual_schedule = self.schedule.as_ref().unwrap();
 
-            
-            let match_results: Vec<MatchResult> = matches_to_play
-                  .par_iter()
-                  .map(|game| {
-                        
-                        Match::make(
-                              self.clubs[&game.home_club_id].clone(),
-                              self.clubs[&game.guest_club_id].clone(),
-                        )
-                  })
-                  .map(|game| game.play())
-                  .collect();
+                  let matches_to_play = actual_schedule.get_matches(context.date.date());
+
+                  matches_to_play
+                        .iter()
+                        .map(|m| {
+                              let home_club = self.clubs[&m.home_club_id].clone();
+                              let guest_club = self.clubs[&m.guest_club_id].clone();
+
+                              Match::make(home_club, guest_club)
+                        })
+                        .collect()
+            };
+
+            let match_results: Vec<MatchResult> =
+                  matches.into_par_iter()
+                  .map(|game| game.play()).collect();
 
             for match_result in match_results {
                   //println!("{}", match_result);

@@ -4,14 +4,17 @@ use simulator::TimeEstimation;
 
 use simulator::{FootballSimulator, SimulationContext};
 
-pub use chrono::prelude::NaiveDate;
+pub use chrono::prelude::{NaiveDate, NaiveTime, NaiveDateTime};
 
 fn main() {
     let mut simulator = FootballSimulator::new();
 
     println!("generated with {} ms", TimeEstimation::estimate(|| simulator.generate()));
 
-    let mut context = SimulationContext::new(NaiveDate::from_ymd(2020, 11, 15));
+    let date = NaiveDate::from_ymd(2020, 11, 15);
+    let time = NaiveTime::from_hms(0, 0, 0);
+
+    let mut context = SimulationContext::new(NaiveDateTime::new(date, time));
 
     let total_items = simulator.items_count();
 
