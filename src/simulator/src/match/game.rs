@@ -22,6 +22,7 @@ impl Match {
        
         let mut engine = FootballEngine::new(home_players, away_players);
 
+
         let result = engine.play();
 
         for player_change in result.player_changes{

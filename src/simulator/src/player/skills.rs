@@ -16,7 +16,9 @@ impl PlayerSkills {
     }
 
     pub fn rest(&mut self){
-        
+        self.technical.rest();
+        self.metal.rest();
+        self.physical.rest();
     }
 }
 
@@ -55,6 +57,10 @@ impl Technical {
         safe_modify(&mut self.tackling, val);
         safe_modify(&mut self.technique, val);
     }
+
+    pub fn rest(&mut self){
+        
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -91,7 +97,10 @@ impl Metal {
         safe_modify(&mut self.teamwork, val);
         safe_modify(&mut self.vision, val);
         safe_modify(&mut self.work_rate, val);
+    }
 
+    pub fn rest(&mut self) {
+        
     }
 }
 
@@ -103,7 +112,7 @@ pub struct Physical {
     pub jumping_reach: u8,
     pub natural_fitness: u8,
     pub pace: u8,
-    pub stamina: u8,
+    pub stamina: u8, 
     pub strength: u8,
 }
 
@@ -117,6 +126,10 @@ impl Physical {
         safe_modify(&mut self.pace, val);
         safe_modify(&mut self.stamina, val);
         safe_modify(&mut self.strength, val);
+    }
+
+    pub fn rest(&mut self){
+        
     }
 }
 

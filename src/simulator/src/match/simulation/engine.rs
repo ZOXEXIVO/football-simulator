@@ -43,7 +43,7 @@ impl FootballEngine {
             }
 
             for player in &self.away_squad.players{
-            
+                
             }
         }       
     }
