@@ -23,10 +23,10 @@ impl Player {
             skills: PlayerSkills,
       ) -> Player {
             Player {
-                  id: id,                  
-                  full_name: full_name,
-                  birth_date: birth_date,
-                  skills: skills,
+                  id,                  
+                  full_name,
+                  birth_date,
+                  skills,
                   prefered_foot: PlayerFoot::Right
             }
       }

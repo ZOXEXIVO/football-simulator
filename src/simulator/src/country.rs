@@ -8,7 +8,7 @@ pub struct Country{
 
 impl Country {
       pub fn items_count(&self) -> usize {
-            return self.leagues.iter().map(|league| league.items_count()).sum();
+            self.leagues.iter().map(|league| league.items_count()).sum()
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {

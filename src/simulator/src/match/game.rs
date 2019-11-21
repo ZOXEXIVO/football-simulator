@@ -11,8 +11,8 @@ pub struct Match{
 impl Match {
     pub fn make(home_club: Club, away_club: Club) -> Self {
         Match {
-            home_club: home_club,
-            away_club: away_club
+            home_club,
+            away_club
         }
     }
 

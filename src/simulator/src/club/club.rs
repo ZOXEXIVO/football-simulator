@@ -1,9 +1,9 @@
-use crate::club::squad::Squad;
 use crate::club::board::ClubBoard;
+use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
 use crate::player::contract::PlayerClubContract;
-use crate::player::player::{Player, PlayerPosition};
+use crate::player::player::{PlayerPosition};
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 
@@ -24,11 +24,11 @@ impl Club {
             staffs: Vec<StaffClubContract>,
       ) -> Self {
             Club {
-                  id: IntegerUtils::random(0, 1000000) as u32,
+                  id: IntegerUtils::random(0, 1_000_000) as u32,
                   board: ClubBoard::new(),
-                  name: name,
-                  players: players,
-                  staffs: staffs,
+                  name,
+                  players,
+                  staffs,
                   tactics: None,
             }
       }
@@ -37,9 +37,7 @@ impl Club {
             self.players.len()
       }
 
-      fn select_tactics(&mut self){
-
-      }
+      fn select_tactics(&mut self) {}
 
       pub fn get_match_squad(&self) -> Squad {
             let players = self
@@ -49,9 +47,9 @@ impl Club {
                   .map(|p_contract| (PlayerPosition::Goalkeeper, p_contract.player.clone()))
                   .collect();
 
-            Squad{
+            Squad {
                   tactics: self.tactics.as_ref().unwrap().clone(),
-                  players: players
+                  players,
             }
       }
 

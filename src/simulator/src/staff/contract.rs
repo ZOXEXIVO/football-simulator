@@ -13,8 +13,8 @@ pub struct StaffClubContract {
 impl StaffClubContract {
       pub fn new(staff: Staff, expired: NaiveDate) -> Self {
             StaffClubContract {
-                  staff: staff,
-                  expired: expired,
+                  staff,
+                  expired,
             }
       }
 

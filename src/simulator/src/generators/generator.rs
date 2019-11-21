@@ -227,10 +227,10 @@ impl Generator for Club {
 
 impl Generator for PlayerClubContract {
       fn generate() -> PlayerClubContract {
-            return PlayerClubContract::new(
+            PlayerClubContract::new(
                   Generator::generate(),
                   NaiveDate::from_ymd(2020, 3, 14),
-            );
+            )
       }
 }
 
@@ -241,7 +241,7 @@ impl Generator for Player {
             let day = IntegerUtils::random(1, 29) as u32;
 
             return Player::new(
-                  IntegerUtils::random(1, 1000000) as u32,
+                  IntegerUtils::random(1, 1_000_000) as u32,
                   FullName {
                         first_name: StringUtils::random_string(5),
                         last_name: StringUtils::random_string(10),

@@ -141,7 +141,7 @@ fn safe_modify(skill: &mut u8, val: i8) {
         if *skill <= abs_val {
             *skill = SKILL_MIN_VALUE;
         } else {
-            *skill = *skill - abs_val;
+            *skill -= abs_val;
         }
     } else {
         let abs_val = val as u8;
@@ -149,7 +149,7 @@ fn safe_modify(skill: &mut u8, val: i8) {
         if *skill + abs_val > SKILL_MAX_VALUE {
             *skill = SKILL_MAX_VALUE;
         } else {
-            *skill = *skill + abs_val;
+            *skill += abs_val;
         }
     }
 }

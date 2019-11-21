@@ -5,7 +5,7 @@ use crate::r#match::{Match, MatchResult};
 use crate::schedule::Schedule;
 use crate::utils::TimeEstimation;
 use std::collections::HashMap;
-use std::fmt::{Display, Formatter, Result};
+
 
 use rayon::prelude::*;
 
@@ -19,7 +19,7 @@ pub struct League {
 
 impl League {
       pub fn items_count(&self) -> usize {
-            return self.clubs.iter().map(|club| club.1.items_count()).sum();
+            self.clubs.iter().map(|club| club.1.items_count()).sum()
       }
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {

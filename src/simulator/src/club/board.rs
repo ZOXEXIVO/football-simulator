@@ -2,6 +2,7 @@ use crate::core::context::SimulationContext;
 use crate::{ StaffClubContract};
 
 #[derive(Debug, Clone)]
+#[derive(Default)]
 pub struct ClubBoard {
     pub director: Option<StaffClubContract>, 
     pub sport_director: Option<StaffClubContract>

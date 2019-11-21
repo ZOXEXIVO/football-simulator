@@ -14,9 +14,9 @@ pub struct PlayerClubContract {
 impl PlayerClubContract {
       pub fn new(player: Player, expired: NaiveDate) -> Self {
             PlayerClubContract {
-                  player: player,
-                  salary: 100000.0,
-                  expired: expired,
+                  player,
+                  salary: 100_000.0,
+                  expired,
             }
       }
 

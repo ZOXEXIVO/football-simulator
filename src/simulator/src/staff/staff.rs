@@ -16,9 +16,9 @@ pub struct Staff {
 impl Staff {
       pub fn new(id: u32, full_name: FullName, birth_date: NaiveDate) -> Staff {
             Staff {
-                  id: id,
-                  full_name: full_name,
-                  birth_date: birth_date,
+                  id,
+                  full_name,
+                  birth_date,
                   // behaviour: Behavior::new()
             }
       }

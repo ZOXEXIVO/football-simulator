@@ -14,6 +14,7 @@ pub struct SimulatorData {
     pub free_staff: Vec<Staff>
 }
 
+#[derive(Default)]
 pub struct FootballSimulator {
     data: Option<SimulatorData>,
 }
@@ -30,14 +31,14 @@ impl FootballSimulator {
     }
 
     pub fn items_count(&self) -> usize {
-        return self
+        self
             .data            
             .as_ref()
             .unwrap()
             .countries
             .par_iter()
             .map(|country| country.items_count())
-            .sum();
+            .sum()
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {

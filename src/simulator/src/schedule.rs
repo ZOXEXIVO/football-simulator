@@ -16,7 +16,7 @@ impl Schedule {
 
         let mut starting_date = date;
 
-        for odx in 0..club_len {
+        for _odx in 0..club_len {
             for idx in 0..club_len / 2 {
                 let first_index = idx;
                 let last_index = club_len - idx - 1;
@@ -42,7 +42,8 @@ impl Schedule {
         let result = Schedule {
             items: schedule_items,
         };
-        return Ok(result);
+
+        Ok(result)
     }
 
     pub fn get_matches(&self, date: NaiveDate) -> Vec<&ScheduleItem> {
