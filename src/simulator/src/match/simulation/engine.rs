@@ -1,5 +1,4 @@
 use crate::club::squad::Squad;
-use crate::player::player::Player;
 
 pub struct FootballEngine {
     home_squad: Squad,
@@ -11,8 +10,8 @@ const TOTAL_HALF_SECONDS: u16 = 45 * 60;
 impl FootballEngine {  
     pub fn new(home_squad: Squad, away_squad: Squad) -> Self {
         FootballEngine {
-            home_squad: home_squad,
-            away_squad: away_squad
+            home_squad,
+            away_squad
         }
     }
 
