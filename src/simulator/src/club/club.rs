@@ -3,7 +3,7 @@ use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
 use crate::player::contract::PlayerClubContract;
-use crate::player::player::{PlayerPosition};
+use crate::player::player::PlayerPosition;
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 
@@ -13,7 +13,7 @@ pub struct Club {
       pub name: String,
       pub board: ClubBoard,
       pub players: Vec<PlayerClubContract>,
-      pub staffs: Vec<StaffClubContract>,
+      pub staffs: StaffCollection,
       pub tactics: Option<Tactics>,
 }
 
@@ -37,7 +37,9 @@ impl Club {
             self.players.len()
       }
 
-      fn select_tactics(&mut self) {}
+      fn select_tactics(&mut self) {
+
+      }
 
       pub fn get_match_squad(&self) -> Squad {
             let players = self

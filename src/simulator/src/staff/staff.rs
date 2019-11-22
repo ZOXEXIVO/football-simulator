@@ -13,6 +13,8 @@ pub struct Staff {
       //behaviour: Behavior
 }
 
+
+
 impl Staff {
       pub fn new(id: u32, full_name: FullName, birth_date: NaiveDate) -> Staff {
             Staff {
