@@ -26,7 +26,7 @@ impl PlayerClubContract {
             let naive_now = NaiveDate::from_ymd(
                   now.year(), now.month(), now.day()
             );
-
+            
             self.expired >= naive_now
       }
 
