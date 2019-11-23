@@ -1,3 +1,4 @@
+use crate::staff::contract::StaffCollection;
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
@@ -21,7 +22,7 @@ impl Club {
       pub fn new(
             name: String,
             players: Vec<PlayerClubContract>,
-            staffs: Vec<StaffClubContract>,
+            staffs: StaffCollection,
       ) -> Self {
             Club {
                   id: IntegerUtils::random(0, 1_000_000) as u32,
@@ -59,8 +60,7 @@ impl Club {
             for player in &mut self.players {
                   player.simulate(context);
             }
-            for staff in &mut self.staffs {
-                  staff.simulate(context);
-            }
+
+            self.staffs.simulate(context);
       }
 }

@@ -32,6 +32,8 @@ impl Schedule {
                     guest_club_id: clubs[last_index].id,
                     date: starting_date,
                 };
+                
+                
 
                 schedule_items.push(item);
             }

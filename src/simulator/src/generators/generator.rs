@@ -4,8 +4,8 @@ use crate::league::{League, LeagueSettings};
 use crate::player::*;
 use crate::shared::fullname::FullName;
 use crate::simulator::SimulatorData;
-use crate::staff::contract::StaffClubContract;
-use crate::staff::staff::Staff;
+use crate::staff::contract::{StaffClubContract, StaffCollection, StaffPosition};
+use crate::staff::staff::{Staff};
 use crate::utils::{IntegerUtils, StringUtils};
 use std::collections::HashMap;
 
@@ -32,7 +32,7 @@ impl Generator for SimulatorData {
                                           name: "Zenith".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..30).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -43,7 +43,7 @@ impl Generator for SimulatorData {
                                           name: "Spartak Moscow".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -54,7 +54,7 @@ impl Generator for SimulatorData {
                                           name: "Lokomotiv Moscow".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -65,7 +65,7 @@ impl Generator for SimulatorData {
                                           name: "Krasnodar".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -76,7 +76,7 @@ impl Generator for SimulatorData {
                                           name: "Rostov".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -87,7 +87,7 @@ impl Generator for SimulatorData {
                                           name: "CSKA Moscow".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               )]
@@ -108,7 +108,7 @@ impl Generator for SimulatorData {
                                           name: "Tom".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..30).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -119,7 +119,7 @@ impl Generator for SimulatorData {
                                           name: "Spartak-2".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -130,7 +130,7 @@ impl Generator for SimulatorData {
                                           name: "Chertanovo".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -141,7 +141,7 @@ impl Generator for SimulatorData {
                                           name: "Khimki".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -152,7 +152,7 @@ impl Generator for SimulatorData {
                                           name: "Spartak Moscow - 2".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               ),
@@ -163,7 +163,7 @@ impl Generator for SimulatorData {
                                           name: "Baltika".to_string(),
                                           board: ClubBoard::new(),
                                           players: (0..60).map(|_| Generator::generate()).collect(),
-                                          staffs: (0..20).map(|_| Generator::generate()).collect(),
+                                          staffs: StaffCollection::new((0..20).map(|_| Generator::generate()).collect()),
                                           tactics: None
                                     },
                               )]
@@ -202,7 +202,7 @@ impl Generator for League {
 
             League {
                   name: StringUtils::random_string(10),
-                  clubs: clubs,
+                  clubs,
                   schedule: None,
                   settings: LeagueSettings {
                         season_starting: (1, 1),
@@ -215,11 +215,11 @@ impl Generator for League {
 impl Generator for Club {
       fn generate() -> Club {
             Club {
-                  id: IntegerUtils::random(1, 10000000) as u32,
+                  id: IntegerUtils::random(1, 10_000_000) as u32,
                   name: StringUtils::random_string(5),
                   board: ClubBoard::new(),
                   players: (0..10).map(|_| Generator::generate()).collect(),
-                  staffs: (0..10).map(|_| Generator::generate()).collect(),
+                  staffs: StaffCollection::new((0..10).map(|_| Generator::generate()).collect()),
                   tactics: None
             }
       }
@@ -302,7 +302,11 @@ impl Generator for Player {
 
 impl Generator for StaffClubContract {
       fn generate() -> StaffClubContract {
-            return StaffClubContract::new(Generator::generate(), NaiveDate::from_ymd(2020, 3, 14));
+            StaffClubContract::new(
+                  Generator::generate(), 
+                  NaiveDate::from_ymd(2020, 3, 14), 
+                  StaffPosition::MainCoach
+            )
       }
 }
 
@@ -313,7 +317,7 @@ impl Generator for Staff {
             let day = IntegerUtils::random(1, 29) as u32;
 
             Staff::new(
-                  IntegerUtils::random(1, 10000000) as u32,
+                  IntegerUtils::random(1, 10_000_000) as u32,
                   FullName {
                         first_name: StringUtils::random_string(5),
                         last_name: StringUtils::random_string(10),

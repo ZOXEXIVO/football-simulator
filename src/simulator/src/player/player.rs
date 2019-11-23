@@ -12,7 +12,7 @@ pub struct Player {
       pub full_name: FullName,
       pub birth_date: NaiveDate,
       pub skills: PlayerSkills,
-      pub prefered_foot: PlayerFoot
+      pub preferred_foot: PlayerFoot
 }
 
 impl Player {
@@ -27,7 +27,7 @@ impl Player {
                   full_name,
                   birth_date,
                   skills,
-                  prefered_foot: PlayerFoot::Right
+                  preferred_foot: PlayerFoot::Right
             }
       }
 

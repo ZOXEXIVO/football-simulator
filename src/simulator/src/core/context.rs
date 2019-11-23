@@ -10,7 +10,7 @@ pub struct SimulationContext {
 }
 
 impl SimulationContext {
-      pub fn new(date: NaiveDateTime) -> SimulationContext {
+      pub fn new(date: NaiveDateTime) -> Self {
             SimulationContext { 
                   events: vec![],
                   date
@@ -18,10 +18,10 @@ impl SimulationContext {
       }
 
       pub fn next_date(&mut self){
-           self.date += Duration::days(1);
+          self.date += Duration::days(1);
       }
 
-      pub fn send(&mut self, event: EventType){
-            self.events.push(event);
+      pub fn send(&mut self, event: EventType){            
+          self.events.push(event);
       }
 }
