@@ -1,5 +1,5 @@
 use crate::core::context::SimulationContext;
-use crate::{ StaffClubContract};
+use crate::staff::StaffClubContract;
 
 #[derive(Debug, Clone)]
 #[derive(Default)]

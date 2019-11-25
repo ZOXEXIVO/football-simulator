@@ -42,7 +42,7 @@ impl Club {
             
       }
 
-      fn get_match_squad(&self) -> Squad {
+      pub fn get_match_squad(&self) -> Squad {
             self.players.get_match_squad()
       }
       

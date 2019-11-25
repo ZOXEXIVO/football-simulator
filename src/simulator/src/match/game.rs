@@ -21,8 +21,7 @@ impl Match {
         let away_players = self.home_club.get_match_squad();
        
         let mut engine = FootballEngine::new(home_players, away_players);
-
-
+        
         let result = engine.play();
 
         for player_change in result.player_changes{

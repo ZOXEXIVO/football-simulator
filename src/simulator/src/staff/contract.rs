@@ -53,6 +53,10 @@ impl StaffCollection {
         }
     }
 
+    pub fn len(&self) -> usize{
+        self.staffs.len()
+    }
+
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         for staff in &mut self.staffs {
             staff.simulate(context);

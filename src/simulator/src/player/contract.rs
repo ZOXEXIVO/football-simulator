@@ -1,7 +1,8 @@
 
-use crate::player::player::Player;
+use crate::player::player::{Player, PlayerPosition};
 use crate::core::context::SimulationContext;
-
+use crate::club::tactics::Tactics;
+use crate::club::squad::Squad;
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
 #[derive(Debug, Clone)]
@@ -41,12 +42,15 @@ pub struct PlayerCollection {
 }
 
 impl PlayerCollection {
-      pub fn new(staffs: Vec<PlayerClubContract>) -> Self {
-            StaffCollection {
-                  staffs
+      pub fn new(players: Vec<PlayerClubContract>) -> Self {
+            PlayerCollection {
+                  players
             }
       }
 
+      pub fn len(&self) -> usize{
+            self.players.len()
+      }
 
       pub fn get_match_squad(&self) -> Squad {
             let players = self
@@ -57,7 +61,7 @@ impl PlayerCollection {
                 .collect();
 
             Squad {
-                  tactics: self.tactics.as_ref().unwrap().clone(),
+                  tactics: Tactics::new(),
                   players,
             }
       }

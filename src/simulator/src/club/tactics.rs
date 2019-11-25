@@ -4,7 +4,11 @@ pub struct Tactics{
 }
 
 impl Tactics{
-
+    pub fn new() -> Self{
+        Tactics{
+            positioning: TacticsPositioning::P442
+        }
+    }
 }
 
 #[derive(Debug, Clone)]

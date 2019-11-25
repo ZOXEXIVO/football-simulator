@@ -2,7 +2,7 @@ use crate::chrono::Datelike;
 use crate::club::Club;
 use crate::core::SimulationContext;
 use crate::r#match::{Match, MatchResult};
-use crate::schedule::Schedule;
+use crate::league::Schedule;
 use crate::utils::TimeEstimation;
 use std::collections::HashMap;
 
