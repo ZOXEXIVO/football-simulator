@@ -34,3 +34,37 @@ impl PlayerClubContract {
             self.player.simulate(context);
       }
 }
+
+#[derive(Debug, Clone)]
+pub struct PlayerCollection {
+      pub players: Vec<PlayerClubContract>
+}
+
+impl PlayerCollection {
+      pub fn new(staffs: Vec<PlayerClubContract>) -> Self {
+            StaffCollection {
+                  staffs
+            }
+      }
+
+
+      pub fn get_match_squad(&self) -> Squad {
+            let players = self
+                .players
+                .iter()
+                .filter(|player_contract| !player_contract.is_expired())
+                .map(|p_contract| (PlayerPosition::Goalkeeper, p_contract.player.clone()))
+                .collect();
+
+            Squad {
+                  tactics: self.tactics.as_ref().unwrap().clone(),
+                  players,
+            }
+      }
+      
+      pub fn simulate(&mut self, context: &mut SimulationContext) {
+            for player in &mut self.players {
+                  player.simulate(context);
+            }
+      }
+}

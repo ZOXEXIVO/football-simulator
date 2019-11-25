@@ -21,7 +21,7 @@ impl Player {
             full_name: FullName,
             birth_date: NaiveDate,
             skills: PlayerSkills,
-      ) -> Player {
+      ) -> Self {
             Player {
                   id,                  
                   full_name,

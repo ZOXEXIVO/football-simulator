@@ -6,3 +6,7 @@ pub struct Squad {
     pub tactics: Tactics,
     pub players: Vec<(PlayerPosition, Player)>
 }
+
+impl Squad{
+    
+}

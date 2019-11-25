@@ -3,7 +3,7 @@ use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
-use crate::player::contract::PlayerClubContract;
+use crate::player::contract::PlayerCollection;
 use crate::player::player::PlayerPosition;
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
@@ -13,7 +13,7 @@ pub struct Club {
       pub id: u32,
       pub name: String,
       pub board: ClubBoard,
-      pub players: Vec<PlayerClubContract>,
+      pub players: PlayerCollection,
       pub staffs: StaffCollection,
       pub tactics: Option<Tactics>,
 }
@@ -21,7 +21,7 @@ pub struct Club {
 impl Club {
       pub fn new(
             name: String,
-            players: Vec<PlayerClubContract>,
+            players: PlayerCollection,
             staffs: StaffCollection,
       ) -> Self {
             Club {
@@ -39,28 +39,15 @@ impl Club {
       }
 
       fn select_tactics(&mut self) {
-
+            
       }
 
-      pub fn get_match_squad(&self) -> Squad {
-            let players = self
-                  .players
-                  .iter()
-                  .filter(|player_contract| !player_contract.is_expired())
-                  .map(|p_contract| (PlayerPosition::Goalkeeper, p_contract.player.clone()))
-                  .collect();
-
-            Squad {
-                  tactics: self.tactics.as_ref().unwrap().clone(),
-                  players,
-            }
+      fn get_match_squad(&self) -> Squad {
+            self.players.get_match_squad()
       }
-
+      
       pub fn simulate(&mut self, context: &mut SimulationContext) {
-            for player in &mut self.players {
-                  player.simulate(context);
-            }
-
+            self.players.simulate(context);
             self.staffs.simulate(context);
       }
 }
