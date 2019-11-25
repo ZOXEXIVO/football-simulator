@@ -18,10 +18,10 @@ impl SimulationContext {
       }
 
       pub fn next_date(&mut self){
-          self.date += Duration::days(1);
+          self.date += Duration::hours(1);
       }
 
-      pub fn send(&mut self, event: EventType){            
+      pub fn send(&mut self, event: EventType){
           self.events.push(event);
       }
 }
