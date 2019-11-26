@@ -1,4 +1,3 @@
-
 use crate::player::player::{Player, PlayerPosition};
 use crate::core::context::SimulationContext;
 use crate::club::tactics::Tactics;
@@ -10,6 +9,12 @@ pub struct PlayerClubContract {
       pub player: Player,
       pub salary: f64,
       pub expired: NaiveDate,
+      pub additional_options: AdditionalOptions
+}
+
+#[derive(Debug, Clone)]
+pub struct AdditionalOptions{
+      pub yearly_increase_wage: u16
 }
 
 impl PlayerClubContract {
@@ -18,6 +23,9 @@ impl PlayerClubContract {
                   player,
                   salary: 100_000.0,
                   expired,
+                  additional_options: AdditionalOptions{
+                        yearly_increase_wage: 15     
+                  }
             }
       }
 
@@ -31,7 +39,13 @@ impl PlayerClubContract {
             self.expired >= naive_now
       }
 
-      pub fn simulate(&mut self, context: &mut SimulationContext) {
+      pub fn simulate(&mut self, context: &mut SimulationContext) {   
+            if context.check_contract_expiration(){
+                  if self.is_expired(){
+                        
+                  }
+            }
+            
             self.player.simulate(context);
       }
 }

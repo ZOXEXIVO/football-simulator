@@ -1,6 +1,6 @@
 use crate::shared::fullname::FullName;
 use std::fmt::{Formatter, Display, Result};
-use crate::core::{EventType, SimulationContext};
+use crate::core::{SimulationContext};
 use crate::utils::DateUtils;
 
 use chrono::NaiveDate;
@@ -26,7 +26,7 @@ impl Staff {
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         if DateUtils::is_birthday(self.birth_date, context.date.date()) {
-            context.send(EventType::Birthday(self.id));
+           
         }
     }
 }

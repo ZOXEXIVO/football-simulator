@@ -1,4 +1,4 @@
-use crate::core::{EventType, SimulationContext};
+use crate::core::{SimulationContext};
 use crate::shared::fullname::FullName;
 use crate::player::skills::*;
 use crate::utils::{DateUtils, IntegerUtils};
@@ -33,7 +33,7 @@ impl Player {
 
       pub fn simulate(&mut self, context: &mut SimulationContext) {
             if DateUtils::is_birthday(self.birth_date, context.date.date()) {
-                  context.send(EventType::Birthday(self.id));
+                  
             }
 
             let change_val = IntegerUtils::random(-3,3) as i8;

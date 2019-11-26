@@ -1,5 +1,5 @@
 use crate::staff::staff::Staff;
-use crate::core::{EventType, SimulationContext};
+use crate::core::{SimulationContext};
 
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
@@ -34,7 +34,7 @@ impl StaffClubContract {
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         if self.is_expired(context) {
-            context.send(EventType::StaffContractExpired(self.staff.id))
+           
         }
 
         self.staff.simulate(context);

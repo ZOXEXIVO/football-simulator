@@ -1,18 +1,15 @@
-use crate::core::events::EventType;
 pub use chrono::prelude::*;
 
 use chrono::{ Duration };
 
 #[derive(Clone)]
 pub struct SimulationContext {       
-    pub events: Vec<EventType>,
     pub date: NaiveDateTime
 }
 
 impl SimulationContext {
       pub fn new(date: NaiveDateTime) -> Self {
             SimulationContext { 
-                  events: vec![],
                   date
             }
       }
@@ -21,7 +18,7 @@ impl SimulationContext {
           self.date += Duration::hours(1);
       }
 
-      pub fn send(&mut self, event: EventType){
-          self.events.push(event);
-      }
+      pub fn check_contract_expiration(&self) -> bool {
+          self.date.time().hour() == 0
+      }  
 }

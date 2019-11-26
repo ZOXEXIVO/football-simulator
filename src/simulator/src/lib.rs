@@ -18,7 +18,6 @@ pub mod utils;
 mod generators;
 
 pub use crate::core::SimulationContext;
-pub use crate::core::EventType;
 
 pub use generators::*;
 pub use utils::*;
