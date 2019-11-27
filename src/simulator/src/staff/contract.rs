@@ -43,13 +43,24 @@ impl StaffClubContract {
 
 #[derive(Debug, Clone)]
 pub struct StaffCollection {
-    pub staffs: Vec<StaffClubContract>
+    pub staffs: Vec<StaffClubContract>,
+    pub roles: StaffRoles
+}
+
+#[derive(Debug, Clone)]
+pub struct StaffRoles{
+    main_coach: Option<StaffClubContract>,
+    contract_resolver: Option<StaffClubContract>
 }
 
 impl StaffCollection {
     pub fn new(staffs: Vec<StaffClubContract>) -> Self {
         StaffCollection {
-            staffs
+            staffs,
+            roles: StaffRoles{
+                main_coach: None,
+                contract_resolver: None
+            }
         }
     }
 

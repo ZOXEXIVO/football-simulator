@@ -33,8 +33,6 @@ impl Schedule {
                     date: starting_date,
                 };
                 
-                
-
                 schedule_items.push(item);
             }
 

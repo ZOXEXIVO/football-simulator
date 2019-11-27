@@ -47,7 +47,13 @@ impl Club {
       }
       
       pub fn simulate(&mut self, context: &mut SimulationContext) {
-            self.players.simulate(context);
-            self.staffs.simulate(context);
+            let player_events = self.players.simulate(context);
+            
+            for pe in player_events{
+                  match pe{
+                  }
+            }
+            
+            let staff_events = self.staffs.simulate(context);
       }
 }

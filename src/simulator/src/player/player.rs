@@ -31,7 +31,13 @@ impl Player {
             }
       }
 
-      pub fn simulate(&mut self, context: &mut SimulationContext) {
+      pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvents>{
+            let result_events = Vec::new();
+
+            if context.check_contract_expiration() {
+                  
+            }
+            
             if DateUtils::is_birthday(self.birth_date, context.date.date()) {
                   
             }
@@ -39,8 +45,17 @@ impl Player {
             let change_val = IntegerUtils::random(-3,3) as i8;
 
             self.skills.train(change_val);
+
+            result_events
       }
 }
+
+#[derive(Debug, Clone)]
+pub enum PlayerEvents{
+      Birthday(i32),
+      ContractExpired(i32)
+}
+
 
 #[derive(Debug, Clone)]
 pub enum PlayerFoot{
