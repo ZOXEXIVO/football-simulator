@@ -6,7 +6,6 @@ use crate::league::Schedule;
 use crate::utils::TimeEstimation;
 use std::collections::HashMap;
 
-
 use rayon::prelude::*;
 
 #[derive(Debug)]
@@ -38,7 +37,7 @@ impl League {
                   let matches_to_play = actual_schedule.get_matches(context.date.date());
 
                   matches_to_play
-                        .iter()
+                        .par_iter()
                         .map(|m| {
                               let home_club = self.clubs[&m.home_club_id].clone();
                               let guest_club = self.clubs[&m.guest_club_id].clone();
@@ -84,8 +83,7 @@ mod tests {
                   season_ending: (4, 5),
             };
 
-            let mut context = SimulationContext {
-                  events: vec![],
+            let mut context = SimulationContext {                 
                   date: NaiveDate::from_ymd(2020, 3, 1),
             };
 

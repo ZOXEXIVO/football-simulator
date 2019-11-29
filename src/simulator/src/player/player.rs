@@ -31,7 +31,7 @@ impl Player {
             }
       }
 
-      pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvents>{
+      pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvent>{
             let result_events = Vec::new();
 
             if context.check_contract_expiration() {
@@ -51,7 +51,7 @@ impl Player {
 }
 
 #[derive(Debug, Clone)]
-pub enum PlayerEvents{
+pub enum PlayerEvent {
       Birthday(i32),
       ContractExpired(i32)
 }

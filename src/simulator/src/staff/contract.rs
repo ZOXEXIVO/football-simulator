@@ -4,6 +4,7 @@ use crate::core::{SimulationContext};
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
 use std::iter;
+use crate::StaffEvent;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum StaffPosition {
@@ -32,12 +33,12 @@ impl StaffClubContract {
         self.expired >= context.date.date()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
+    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent>{
         if self.is_expired(context) {
            
         }
 
-        self.staff.simulate(context);
+        self.staff.simulate(context)
     }
 }
 
@@ -68,10 +69,10 @@ impl StaffCollection {
         self.staffs.len()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
-        for staff in &mut self.staffs {
-            staff.simulate(context);
-        }
+    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
+        self.staffs.iter_mut()
+            .flat_map(|staff| staff.simulate(context))
+            .collect()
     }
 
     pub fn get_main_coach(&self) -> Option<&Staff> {

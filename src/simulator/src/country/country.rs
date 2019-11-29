@@ -4,6 +4,7 @@ use crate::league::League;
 pub struct Country{
       pub name: String,
       pub leagues: Vec<League>,
+      pub reputation: u16
 }
 
 impl Country {

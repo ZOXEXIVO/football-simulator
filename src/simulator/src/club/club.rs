@@ -7,6 +7,7 @@ use crate::player::contract::PlayerCollection;
 use crate::player::player::PlayerPosition;
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
+use crate::{PlayerEvent, StaffEvent};
 
 #[derive(Debug, Clone)]
 pub struct Club {
@@ -48,12 +49,38 @@ impl Club {
       
       pub fn simulate(&mut self, context: &mut SimulationContext) {
             let player_events = self.players.simulate(context);
+            self.handle_player_events(player_events);
             
-            for pe in player_events{
-                  match pe{
+            
+            let staff_events = self.staffs.simulate(context);            
+            self.handle_staff_events(staff_events);
+            
+            self.board.simulate(context);
+      }
+      
+      fn handle_player_events(&mut self, events: Vec<PlayerEvent>){
+            for player_event in events{
+                  match player_event{
+                        PlayerEvent::Birthday(age) => {
+
+                        },
+                        PlayerEvent::ContractExpired(days) => {
+
+                        }
                   }
             }
-            
-            let staff_events = self.staffs.simulate(context);
+      }
+
+      fn handle_staff_events(&mut self, events: Vec<StaffEvent>){
+            for player_event in events{
+                  match player_event{
+                        StaffEvent::Birthday(age) => {
+
+                        },
+                        StaffEvent::ContractExpired(days) => {
+
+                        }
+                  }
+            }
       }
 }

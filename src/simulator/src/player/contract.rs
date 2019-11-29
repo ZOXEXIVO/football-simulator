@@ -3,6 +3,7 @@ use crate::core::context::SimulationContext;
 use crate::club::tactics::Tactics;
 use crate::club::squad::Squad;
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
+use crate::PlayerEvent;
 
 #[derive(Debug, Clone)]
 pub struct PlayerClubContract {
@@ -39,14 +40,14 @@ impl PlayerClubContract {
             self.expired >= naive_now
       }
 
-      pub fn simulate(&mut self, context: &mut SimulationContext) {   
+      pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvent> {   
             if context.check_contract_expiration(){
                   if self.is_expired(){
                         
                   }
             }
             
-            self.player.simulate(context);
+            self.player.simulate(context)
       }
 }
 
@@ -80,9 +81,9 @@ impl PlayerCollection {
             }
       }
       
-      pub fn simulate(&mut self, context: &mut SimulationContext) {
-            for player in &mut self.players {
-                  player.simulate(context);
-            }
+      pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvent> {
+            self.players.iter_mut()
+                .flat_map(|player| player.simulate(context))
+                .collect()
       }
 }

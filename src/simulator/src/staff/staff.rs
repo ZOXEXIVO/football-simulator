@@ -24,11 +24,21 @@ impl Staff {
         }
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
+    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
+        let mut result = Vec::new();
+        
         if DateUtils::is_birthday(self.birth_date, context.date.date()) {
            
         }
+
+        result 
     }
+}
+
+#[derive(Debug, Clone)]
+pub enum StaffEvent {
+    Birthday(i32),
+    ContractExpired(i32)
 }
 
 //DISPLAY
