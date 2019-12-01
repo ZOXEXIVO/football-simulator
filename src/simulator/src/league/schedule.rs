@@ -9,7 +9,7 @@ pub struct Schedule {
 }
 
 impl Schedule {
-    pub fn generate(clubs: Vec<&Club>, date: NaiveDate) -> Result<Schedule, ()> {
+    pub fn generate(clubs: &Vec<Club>, date: NaiveDate) -> Result<Schedule, ()> {
         let club_len = clubs.len();
 
         let mut schedule_items = Vec::with_capacity(club_len * 2);
@@ -61,6 +61,7 @@ pub struct ScheduleItem {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{PlayerCollection, StaffCollection, ClubBoard};
 
     #[test]
     fn generate_is_correct() {
@@ -69,25 +70,31 @@ mod tests {
         clubs.push(Club {
             id: 1,
             name: "1".to_string(),
-            players: vec![],
-            staffs: vec![],
+            board: ClubBoard::new(),
+            players: PlayerCollection::new(vec![]),
+            staffs: StaffCollection::new(vec![]),
+            tactics: None
         });
 
         clubs.push(Club {
             id: 2,
             name: "2".to_string(),
-            players: vec![],
-            staffs: vec![],
+            board: ClubBoard::new(),
+            players: PlayerCollection::new(vec![]),
+            staffs: StaffCollection::new(vec![]),
+            tactics: None
         });
 
         clubs.push(Club {
             id: 3,
             name: "3".to_string(),
-            players: vec![],
-            staffs: vec![],
+            board: ClubBoard::new(),
+            players: PlayerCollection::new(vec![]),
+            staffs: StaffCollection::new(vec![]),
+            tactics: None
         });
 
-        let schedule = Schedule::generate(&clubs).unwrap();
+        let schedule = Schedule::generate(&clubs, NaiveDate::from_ymd(2020, 3, 1)).unwrap();
 
         assert_eq!(2, schedule.items.len());
     }
