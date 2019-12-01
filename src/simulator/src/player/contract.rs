@@ -47,6 +47,7 @@ impl PlayerClubContract {
                   }
             }
             
+            
             self.player.simulate(context)
       }
 }

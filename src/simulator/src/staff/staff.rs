@@ -13,7 +13,6 @@ pub struct Staff {
     //behaviour: Behavior
 }
 
-
 impl Staff {
     pub fn new(id: u32, full_name: FullName, birth_date: NaiveDate) -> Staff {
         Staff {
@@ -25,19 +24,19 @@ impl Staff {
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
-        let mut result = Vec::new();
+        let mut result_events = Vec::new();
         
         if DateUtils::is_birthday(self.birth_date, context.date.date()) {
-           
+            result_events.push(StaffEvent::Birthday(self.id));
         }
 
-        result 
+        result_events 
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum StaffEvent {
-    Birthday(i32),
+    Birthday(u32),
     ContractExpired(i32)
 }
 
