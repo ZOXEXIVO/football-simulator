@@ -68,7 +68,7 @@ impl PlayerCollection {
             self.players.len()
       }
 
-      pub fn get_match_squad(&self) -> Squad {
+      pub fn get_match_squad(&self, coach: Staff) -> Squad {
             let players = self
                 .players
                 .iter()

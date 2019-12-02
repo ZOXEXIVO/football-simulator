@@ -42,6 +42,8 @@ impl Club {
     fn select_tactics(&mut self) {}
 
     pub fn get_match_squad(&self) -> Squad {
+        let main_coach = self.staffs.get_main_coach();
+        
         self.players.get_match_squad()
     }
 
