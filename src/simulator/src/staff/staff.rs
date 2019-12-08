@@ -14,12 +14,24 @@ pub struct Staff {
 }
 
 impl Staff {
-    pub fn new(id: u32, full_name: FullName, birth_date: NaiveDate) -> Staff {
+    pub fn new(id: u32, full_name: FullName, birth_date: NaiveDate) -> Self {
         Staff {
             id,
             full_name,
             birth_date,
             // behaviour: Behavior::new()
+        }
+    }
+    
+    pub fn stub() -> Self {
+        Staff {
+            id: 0,
+            full_name: FullName {
+                first_name: "stub".to_string(),
+                last_name: "stub".to_string(),
+                middle_name: "stub".to_string()
+            },
+            birth_date: NaiveDate::from_ymd(2019, 1, 1)
         }
     }
 

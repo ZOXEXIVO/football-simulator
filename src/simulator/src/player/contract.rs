@@ -3,7 +3,7 @@ use crate::core::context::SimulationContext;
 use crate::club::tactics::Tactics;
 use crate::club::squad::Squad;
 pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
-use crate::PlayerEvent;
+use crate::{PlayerEvent, Staff};
 
 #[derive(Debug, Clone)]
 pub struct PlayerClubContract {
@@ -68,7 +68,7 @@ impl PlayerCollection {
             self.players.len()
       }
 
-      pub fn get_match_squad(&self, coach: Staff) -> Squad {
+      pub fn get_match_squad(&self, coach: &Staff) -> Squad {
             let players = self
                 .players
                 .iter()
