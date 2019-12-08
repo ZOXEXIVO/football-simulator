@@ -32,7 +32,13 @@ impl FootballEngine {
     }
 
     fn wait_next_half(&mut self, result: &mut FootballMatchDetails) {
-        
+        for player in &mut self.home_squad.players {
+            player.1.skills.rest();
+        }
+
+        for player in &mut self.away_squad.players {
+            player.1.skills.rest();
+        }
     }
 
     fn play_half(&mut self, result: &mut FootballMatchDetails) {
@@ -59,5 +65,5 @@ pub struct Score{
 }
 
 pub struct PlayerChanges{
-
+     
 }

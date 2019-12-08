@@ -16,11 +16,11 @@ impl Match {
         }
     }
 
-    pub fn play(self) -> MatchResult {
-        let home_players = self.home_club.get_match_squad();
-        let away_players = self.home_club.get_match_squad();
-       
-        let mut engine = FootballEngine::new(home_players, away_players);
+    pub fn play(self) -> MatchResult {      
+        let mut engine = FootballEngine::new(
+            self.home_club.get_match_squad(), 
+            self.home_club.get_match_squad()
+        );
         
         let result = engine.play();
 

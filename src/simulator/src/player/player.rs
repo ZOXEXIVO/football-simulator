@@ -5,6 +5,7 @@ use crate::utils::{DateUtils, IntegerUtils};
 use std::fmt::{Display, Formatter, Result};
 
 use chrono::NaiveDate;
+use crate::PlayerAttributes;
 
 #[derive(Debug, Clone)]
 pub struct Player {
@@ -12,7 +13,8 @@ pub struct Player {
       pub full_name: FullName,
       pub birth_date: NaiveDate,
       pub skills: PlayerSkills,
-      pub preferred_foot: PlayerFoot
+      pub preferred_foot: PlayerFoot,
+      pub attributes: PlayerAttributes
 }
 
 impl Player {
@@ -27,7 +29,8 @@ impl Player {
                   full_name,
                   birth_date,
                   skills,
-                  preferred_foot: PlayerFoot::Right
+                  preferred_foot: PlayerFoot::Right,
+                  attributes: PlayerAttributes::new()
             }
       }
 

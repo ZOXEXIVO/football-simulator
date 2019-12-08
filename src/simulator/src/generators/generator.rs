@@ -20,7 +20,7 @@ pub trait Generator {
 impl Generator for SimulatorData {
     fn generate() -> SimulatorData {
         SimulatorData {
-            countries: (0..1000).into_par_iter().map(|_| Generator::generate()).collect(),
+            countries: (0..196).into_par_iter().map(|_| Generator::generate()).collect(),
             free_players: (0..1000).into_par_iter().map(|_| Generator::generate()).collect(),
             free_staff: (0..1000).map(|_| Generator::generate()).collect(),
         }
