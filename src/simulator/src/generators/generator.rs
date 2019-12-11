@@ -12,6 +12,7 @@ use std::collections::HashMap;
 use chrono::NaiveDate;
 
 use rayon::prelude::*;
+use crate::continent::Continent;
 
 pub trait Generator {
     fn generate() -> Self;
@@ -20,9 +21,19 @@ pub trait Generator {
 impl Generator for SimulatorData {
     fn generate() -> SimulatorData {
         SimulatorData {
-            countries: (0..196).into_par_iter().map(|_| Generator::generate()).collect(),
+            continents: (0..7).into_par_iter().map(|_| Generator::generate()).collect(),
             free_players: (0..1000).into_par_iter().map(|_| Generator::generate()).collect(),
             free_staff: (0..1000).map(|_| Generator::generate()).collect(),
+        }
+    }
+}
+
+
+impl Generator for Continent {
+    fn generate() -> Continent {
+        Continent {
+            name: StringUtils::random_string(10),
+            countries: (0..40).map(|_| Generator::generate()).collect(),
         }
     }
 }

@@ -37,9 +37,9 @@
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winapi-0.3.8" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winapi-i686-pc-windows-gnu-0.4.0" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winapi-x86_64-pc-windows-gnu-0.4.0" t="IncludeRecursive" />
-    <e p="C:\Users\ZOXEXIVO\.Rider2019.2\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\ZOXEXIVO\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_.19.00" t="ExcludeRecursive" />
-    <e p="C:\Users\ZOXEXIVO\.Rider2019.2\system\rust_expanded_macros\SyiDVaqB\expansions" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_.19.00" t="ExcludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\rust_expanded_macros\SyiDVaqB\expansions" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\build_helper" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\liballoc" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libcore" t="IncludeRecursive" />

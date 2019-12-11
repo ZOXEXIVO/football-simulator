@@ -16,5 +16,9 @@ impl Country {
         for league in &mut self.leagues {
             league.simulate(context);
         }
+        
+        if context.is_month_beginning() {
+            
+        }
     }
 }

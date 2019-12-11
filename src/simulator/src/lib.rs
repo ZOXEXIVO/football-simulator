@@ -4,6 +4,7 @@ extern crate rayon;
 pub use chrono::prelude::NaiveDate;
 
 pub mod core;
+pub mod continent;
 pub mod league;
 pub mod country;
 pub mod club;

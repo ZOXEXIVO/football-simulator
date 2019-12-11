@@ -6,9 +6,10 @@ use crate::generators::Generator;
 use crate::country::Country;
 
 pub use rayon::prelude::*;
+use crate::continent::Continent;
 
 pub struct SimulatorData {
-    pub countries: Vec<Country>,
+    pub continents: Vec<Continent>,
 
     pub free_players: Vec<Player>,
     pub free_staff: Vec<Staff>
@@ -35,17 +36,17 @@ impl FootballSimulator {
             .data            
             .as_ref()
             .unwrap()
-            .countries
+            .continents
             .par_iter()
-            .map(|country| country.items_count())
+            .map(|continent| continent.items_count())
             .sum()
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         let unwrapped_data = self.data.as_mut().unwrap();
 
-        unwrapped_data.countries.par_iter_mut().for_each(|country|{
-             country.simulate(&mut context.clone());
+        unwrapped_data.continents.par_iter_mut().for_each(|continent|{
+            continent.simulate(&mut context.clone());
         });
 
         context.next_date();

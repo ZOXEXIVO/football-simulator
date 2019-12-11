@@ -29,8 +29,12 @@ impl League {
 
         for club in &mut self.clubs {
             club.simulate(context);
-        }
-
+        }        
+        
+        self.play_matches(context);
+    }
+    
+    fn play_matches(&mut self, context: &SimulationContext){
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
 
