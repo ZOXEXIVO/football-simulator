@@ -1,10 +1,16 @@
-#[derive(Debug, Clone)]
-pub trait PlayerMessage{
-
+pub enum PlayerMessage {
+    Greeting
 }
 
 #[derive(Debug, Clone)]
 pub struct PlayerMailbox {
-    messages: Vec<Box<dyn PlayerMessage>>
+    messages: Vec<PlayerMessage>
 }
 
+impl PlayerMailbox{
+    pub fn new() -> Self{
+        PlayerMailbox{
+            messages: Vec::new()
+        }
+    }
+}

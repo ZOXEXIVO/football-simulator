@@ -32,6 +32,7 @@ impl Player {
             skills,
             preferred_foot: PlayerFoot::Right,
             attributes: PlayerAttributes::new(),
+            mailbox: PlayerMailbox::new()
         }
     }
 
