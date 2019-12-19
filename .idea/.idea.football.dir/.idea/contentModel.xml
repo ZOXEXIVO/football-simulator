@@ -1,9 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$PROJECT_DIR$" t="IncludeFlat" />
-    <e p="$USER_HOME$/Library/Caches/Rider2019.3/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/Rider2019.3/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_.19.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/Library/Caches/Rider2019.3/rust_expanded_macros/aWQSAOsl/expansions" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\autocfg-0.1.7" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\c2-chacha-0.2.3" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\cfg-if-0.1.10" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\chrono-0.4.10" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\crossbeam-deque-0.7.2" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\crossbeam-epoch-0.8.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\crossbeam-queue-0.2.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\crossbeam-utils-0.7.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\either-1.5.3" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\getrandom-0.1.13" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\hermit-abi-0.1.5" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\lazy_static-1.4.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.66" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\memoffset-0.5.3" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\num-integer-0.1.41" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\num-traits-0.2.10" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\num_cpus-1.11.1" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\ppv-lite86-0.2.6" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand-0.7.2" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand_chacha-0.2.1" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand_core-0.5.1" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand_hc-0.2.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rayon-1.2.1" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rayon-core-1.6.1" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\redox_syscall-0.1.56" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rustc_version-0.2.3" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\scopeguard-1.0.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\semver-0.9.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\semver-parser-0.7.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\time-0.1.42" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\wasi-0.7.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winapi-0.3.8" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winapi-i686-pc-windows-gnu-0.4.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winapi-x86_64-pc-windows-gnu-0.4.0" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_.19.00" t="ExcludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\rust_expanded_macros\SyiDVaqB\expansions" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\build_helper" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\liballoc" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libcore" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libpanic_abort" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libpanic_unwind" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libproc_macro" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\librustc_asan" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\librustc_lsan" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\librustc_msan" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\librustc_tsan" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libstd" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libsyntax" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libterm" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libtest" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libunwind" t="IncludeRecursive" />
+    <e p="H:\rust\football" t="IncludeFlat">
+      <e p="src\simulator" t="IncludeRecursive" />
+    </e>
   </component>
 </project>

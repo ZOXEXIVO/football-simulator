@@ -5,9 +5,12 @@ pub struct FootballEngine {
     away_squad: Squad
 }
 
-const TOTAL_HALF_SECONDS: u16 = 45 * 60;
+const MATCH_DURATION_SECS: u16 = 90 * 60;
 
-impl FootballEngine {  
+
+impl FootballEngine {
+    const MATCH_ACTIONS: u16 = 100;
+    
     pub fn new(home_squad: Squad, away_squad: Squad) -> Self {
         FootballEngine {
             home_squad,
@@ -23,34 +26,12 @@ impl FootballEngine {
             },
             player_changes: vec![],
         };
+        
+                
+        
 
-        self.play_half(&mut result);
-        self.wait_next_half(&mut result);
-        self.play_half(&mut result);
 
         result
-    }
-
-    fn wait_next_half(&mut self, result: &mut FootballMatchDetails) {
-        for player in &mut self.home_squad.players {
-            player.1.skills.rest();
-        }
-
-        for player in &mut self.away_squad.players {
-            player.1.skills.rest();
-        }
-    }
-
-    fn play_half(&mut self, result: &mut FootballMatchDetails) {
-        for tick in 0..TOTAL_HALF_SECONDS {
-            for player in &self.home_squad.players{
-                
-            }
-
-            for player in &self.away_squad.players{
-                
-            }
-        }       
     }
 }
 

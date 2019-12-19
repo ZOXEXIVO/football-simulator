@@ -37,7 +37,7 @@ impl FootballSimulator {
             .as_ref()
             .unwrap()
             .continents
-            .par_iter()
+            .iter()
             .map(|continent| continent.items_count())
             .sum()
     }
@@ -46,7 +46,8 @@ impl FootballSimulator {
         let unwrapped_data = self.data.as_mut().unwrap();
 
         unwrapped_data.continents.par_iter_mut().for_each(|continent|{
-            continent.simulate(&mut context.clone());
+            let mut cloned_context = context.clone();
+            continent.simulate(&mut cloned_context);
         });
 
         context.next_date();

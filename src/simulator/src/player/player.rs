@@ -5,7 +5,7 @@ use crate::utils::{DateUtils, IntegerUtils};
 use std::fmt::{Display, Formatter, Result};
 
 use chrono::NaiveDate;
-use crate::PlayerAttributes;
+use crate::{PlayerAttributes, PlayerMailbox};
 
 #[derive(Debug, Clone)]
 pub struct Player {
@@ -13,6 +13,7 @@ pub struct Player {
     pub full_name: FullName,
     pub birth_date: NaiveDate,
     pub skills: PlayerSkills,
+    pub positions: Vec<PlayerPosition>,
     pub preferred_foot: PlayerFoot,
     pub attributes: PlayerAttributes,
     pub mailbox: PlayerMailbox
@@ -24,12 +25,14 @@ impl Player {
         full_name: FullName,
         birth_date: NaiveDate,
         skills: PlayerSkills,
+        positions: Vec<PlayerPosition>
     ) -> Self {
         Player {
             id,
             full_name,
             birth_date,
             skills,
+            positions,
             preferred_foot: PlayerFoot::Right,
             attributes: PlayerAttributes::new(),
             mailbox: PlayerMailbox::new()
@@ -50,6 +53,12 @@ impl Player {
         result_events
     }
 
+    pub fn get_skill(&self) -> u32 {
+        self.positions.iter().map(|position| {
+            self.skills.get_for_position(position)
+        }).sum()
+    } 
+    
     pub fn train(&mut self) {
         let change_val = IntegerUtils::random(-3, 3) as i8;
 
@@ -73,9 +82,16 @@ pub enum PlayerFoot {
 
 #[derive(Debug, Clone)]
 pub enum PlayerPosition {
-    Goalkeeper
+    //defenders
+    Goalkeeper,
+    Libero,
+    Sweeper,
+    Wingerback,
+    RightLeftBack,
+    LimitedDefender,
+    BallPlayingDefender,
+    CentralDefender,
 }
-
 
 //DISPLAY
 impl Display for Player {

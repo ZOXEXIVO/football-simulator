@@ -1,23 +1,31 @@
+use crate::PlayerPosition;
+
 const SKILL_MIN_VALUE: u8 = 1;
 const SKILL_MAX_VALUE: u8 = 20;
 
 #[derive(Debug, Clone)]
 pub struct PlayerSkills {
     pub technical: Technical,
-    pub metal: Metal,
+    pub mental: Mental,
     pub physical: Physical,
 }
 
 impl PlayerSkills {
+    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
+       self.technical.get_for_position(position) 
+           + self.mental.get_for_position(position) 
+           + self.physical.get_for_position(position)
+    }
+
     pub fn train(&mut self, val: i8) {
         self.technical.train(val);
-        self.metal.train(val);
+        self.mental.train(val);
         self.physical.train(val);
     }
 
-    pub fn rest(&mut self){
+    pub fn rest(&mut self) {
         self.technical.rest();
-        self.metal.rest();
+        self.mental.rest();
         self.physical.rest();
     }
 }
@@ -41,6 +49,31 @@ pub struct Technical {
 }
 
 impl Technical {
+    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
+        return match position {
+            PlayerPosition::Libero => {
+                return (
+                    self.dribbling
+                        + self.heading
+                        + self.marking
+                        + self.passing
+                        + self.tackling
+                ) as u32;
+            },
+
+            PlayerPosition::Sweeper => {
+                return (
+                    self.heading
+                        + self.marking
+                        + self.passing
+                        + self.passing
+                        + self.tackling
+                ) as u32;
+            }
+            _ => { 0 }
+        };
+    }
+
     pub fn train(&mut self, val: i8) {
         safe_modify(&mut self.corners, val);
         safe_modify(&mut self.crossing, val);
@@ -58,18 +91,16 @@ impl Technical {
         safe_modify(&mut self.technique, val);
     }
 
-    pub fn rest(&mut self){
-        
-    }
+    pub fn rest(&mut self) {}
 }
 
 #[derive(Debug, Clone)]
-pub struct Metal {
+pub struct Mental {
     pub aggression: u8,
     pub anticipation: u8,
-    pub brawery: u8,
+    pub bravery: u8,
     pub composure: u8,
-    pub contentration: u8,
+    pub concentration: u8,
     pub decisions: u8,
     pub determination: u8,
     pub flair: u8,
@@ -81,13 +112,41 @@ pub struct Metal {
     pub work_rate: u8,
 }
 
-impl Metal {
+impl Mental {
+    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
+        return match position {
+            PlayerPosition::Libero => {
+                return (
+                    self.anticipation
+                        + self.composure
+                        + self.concentration
+                        //+ self.creativity
+                        + self.decisions
+                        + self.positioning
+                        + self.teamwork
+                ) as u32;
+            },
+            
+            PlayerPosition::Sweeper => {
+                return (
+                    self.anticipation
+                        + self.composure
+                        + self.concentration
+                        + self.decisions
+                        + self.positioning
+                ) as u32;
+            }
+
+            _ => { 0 }
+        };
+    }
+
     pub fn train(&mut self, val: i8) {
         safe_modify(&mut self.aggression, val);
         safe_modify(&mut self.anticipation, val);
-        safe_modify(&mut self.brawery, val);
+        safe_modify(&mut self.bravery, val);
         safe_modify(&mut self.composure, val);
-        safe_modify(&mut self.contentration, val);
+        safe_modify(&mut self.concentration, val);
         safe_modify(&mut self.decisions, val);
         safe_modify(&mut self.determination, val);
         safe_modify(&mut self.flair, val);
@@ -99,9 +158,7 @@ impl Metal {
         safe_modify(&mut self.work_rate, val);
     }
 
-    pub fn rest(&mut self) {
-        
-    }
+    pub fn rest(&mut self) {}
 }
 
 #[derive(Debug, Clone)]
@@ -112,11 +169,34 @@ pub struct Physical {
     pub jumping_reach: u8,
     pub natural_fitness: u8,
     pub pace: u8,
-    pub stamina: u8, 
+    pub stamina: u8,
     pub strength: u8,
 }
 
 impl Physical {
+    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
+        return match position {
+            PlayerPosition::Libero => {
+                return (
+                    self.acceleration
+                        + self.balance
+                        + self.jumping_reach
+                ) as u32;
+            },
+
+            PlayerPosition::Sweeper => {
+                return (
+                    self.acceleration
+                        + self.balance
+                        + self.jumping_reach                    
+   
+                ) as u32;
+            }
+            
+            _ => { 0 }
+        };
+    }
+
     pub fn train(&mut self, val: i8) {
         safe_modify(&mut self.acceleration, val);
         safe_modify(&mut self.agility, val);
@@ -128,9 +208,7 @@ impl Physical {
         safe_modify(&mut self.strength, val);
     }
 
-    pub fn rest(&mut self){
-        
-    }
+    pub fn rest(&mut self) {}
 }
 
 #[inline]

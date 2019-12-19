@@ -9,7 +9,7 @@ pub struct Continent{
 
 impl Continent{
     pub fn items_count(&self) -> usize {
-        self.countries.par_iter().map(|country| country.items_count()).sum()
+        self.countries.iter().map(|country| country.items_count()).sum()
     }
     
     pub fn simulate(&mut self, context: &mut SimulationContext) {

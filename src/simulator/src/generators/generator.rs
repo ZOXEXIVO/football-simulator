@@ -96,6 +96,14 @@ impl Generator for Player {
         let month = IntegerUtils::random(1, 12) as u32;
         let day = IntegerUtils::random(1, 29) as u32;
 
+        let positions_to_generate = IntegerUtils::random(1, 4) as u32;
+
+        let mut positions = Vec::with_capacity(positions_to_generate as usize);
+  
+        for pos in 0..positions_to_generate {
+            positions.push(PlayerPositionGenerator::generate())
+        }
+        
         return Player::new(
             IntegerUtils::random(1, 1_000_000) as u32,
             FullName {
@@ -105,6 +113,7 @@ impl Generator for Player {
             },
             NaiveDate::from_ymd(year as i32, month, day),
             generate_skills(),
+            positions
         );
 
         fn generate_skills() -> PlayerSkills {
@@ -125,12 +134,12 @@ impl Generator for Player {
                     tackling: 10,
                     technique: 10,
                 },
-                metal: Metal {
+                mental: Mental {
                     aggression: 10,
                     anticipation: 10,
-                    brawery: 10,
+                    bravery: 10,
                     composure: 10,
-                    contentration: 10,
+                    concentration: 10,
                     decisions: 10,
                     determination: 10,
                     flair: 10,
@@ -166,6 +175,7 @@ impl Generator for StaffClubContract {
     }
 }
 
+
 impl Generator for Staff {
     fn generate() -> Staff {
         let year = IntegerUtils::random(1980, 2010) as u32;
@@ -181,5 +191,26 @@ impl Generator for Staff {
             },
             NaiveDate::from_ymd(year as i32, month, day),
         )
+    }
+}
+
+
+pub struct PlayerPositionGenerator;
+
+impl PlayerPositionGenerator{
+    pub fn generate() -> PlayerPosition {
+        return match IntegerUtils::random(0, 7) {
+            0 => PlayerPosition::Goalkeeper,
+            1 => PlayerPosition::Libero,
+            2 => PlayerPosition::Sweeper,
+            3 => PlayerPosition::Wingerback,
+            4 => PlayerPosition::RightLeftBack,
+            5 => PlayerPosition::LimitedDefender,
+            6 => PlayerPosition::BallPlayingDefender,
+            7 => PlayerPosition::CentralDefender,
+            _ => {
+                PlayerPosition::CentralDefender
+            }            
+        }
     }
 }
