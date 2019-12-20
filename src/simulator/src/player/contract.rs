@@ -1,4 +1,4 @@
-use crate::player::player::{Player, PlayerPosition};
+use crate::player::player::{Player, PlayerPositionType};
 use crate::core::context::SimulationContext;
 use crate::club::tactics::Tactics;
 use crate::club::squad::Squad;
@@ -76,7 +76,7 @@ impl PlayerCollection {
             .players
             .iter()
             .filter(|player_contract| !player_contract.is_expired())
-            .map(|p_contract| (PlayerPosition::Goalkeeper, p_contract.player.clone()))
+            .map(|p_contract| (PlayerPositionType::Goalkeeper, p_contract.player.clone()))
             .collect();
 
         Squad {

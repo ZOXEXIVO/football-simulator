@@ -3,6 +3,7 @@ use crate::shared::fullname::FullName;
 use crate::player::skills::*;
 use crate::utils::{DateUtils, IntegerUtils};
 use std::fmt::{Display, Formatter, Result};
+use std::slice;
 
 use chrono::NaiveDate;
 use crate::{PlayerAttributes, PlayerMailbox};
@@ -25,8 +26,10 @@ impl Player {
         full_name: FullName,
         birth_date: NaiveDate,
         skills: PlayerSkills,
-        positions: Vec<PlayerPosition>
+        mut positions: Vec<PlayerPosition>
     ) -> Self {
+        positions.sort_by_key(|c| c.level);
+        
         Player {
             id,
             full_name,
@@ -53,10 +56,12 @@ impl Player {
         result_events
     }
 
+    pub fn position(&self) -> &PlayerPositionType {
+        &self.positions.first().unwrap().position
+    }
+    
     pub fn get_skill(&self) -> u32 {
-        self.positions.iter().map(|position| {
-            self.skills.get_for_position(position)
-        }).sum()
+        self.skills.get_for_position(self.position())
     } 
     
     pub fn train(&mut self) {
@@ -81,16 +86,17 @@ pub enum PlayerFoot {
 }
 
 #[derive(Debug, Clone)]
-pub enum PlayerPosition {
-    //defenders
+pub enum PlayerPositionType {
     Goalkeeper,
-    Libero,
-    Sweeper,
-    Wingerback,
-    RightLeftBack,
-    LimitedDefender,
-    BallPlayingDefender,
-    CentralDefender,
+    Defender,
+    Midfielder,
+    Striker
+}
+
+#[derive(Debug, Clone)]
+pub struct PlayerPosition {
+    pub position: PlayerPositionType,
+    pub level: u8
 }
 
 //DISPLAY

@@ -1,4 +1,4 @@
-use crate::PlayerPosition;
+use crate::PlayerPositionType;
 
 const SKILL_MIN_VALUE: u8 = 1;
 const SKILL_MAX_VALUE: u8 = 20;
@@ -11,10 +11,10 @@ pub struct PlayerSkills {
 }
 
 impl PlayerSkills {
-    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
-       self.technical.get_for_position(position) 
-           + self.mental.get_for_position(position) 
-           + self.physical.get_for_position(position)
+    pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
+        self.technical.get_for_position(position)
+            + self.mental.get_for_position(position)
+            + self.physical.get_for_position(position)
     }
 
     pub fn train(&mut self, val: i8) {
@@ -49,9 +49,9 @@ pub struct Technical {
 }
 
 impl Technical {
-    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
+    pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
         return match position {
-            PlayerPosition::Libero => {
+            PlayerPositionType::Defender => {
                 return (
                     self.dribbling
                         + self.heading
@@ -59,17 +59,29 @@ impl Technical {
                         + self.passing
                         + self.tackling
                 ) as u32;
-            },
+            }
 
-            PlayerPosition::Sweeper => {
+            PlayerPositionType::Midfielder => {
                 return (
-                    self.heading
+                    self.dribbling
+                        + self.crossing
                         + self.marking
                         + self.passing
-                        + self.passing
                         + self.tackling
+                        + self.technique
+                        + self.long_shots
                 ) as u32;
             }
+
+            PlayerPositionType::Striker => {
+                return (
+                    self.dribbling
+                        + self.first_touch
+                        + self.finishing
+                        + self.passing
+                ) as u32;
+            }
+
             _ => { 0 }
         };
     }
@@ -113,26 +125,32 @@ pub struct Mental {
 }
 
 impl Mental {
-    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
+    pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
         return match position {
-            PlayerPosition::Libero => {
+            PlayerPositionType::Defender => {
                 return (
-                    self.anticipation
-                        + self.composure
-                        + self.concentration
-                        //+ self.creativity
-                        + self.decisions
+                    self.aggression
                         + self.positioning
-                        + self.teamwork
+                        + self.off_the_ball
+                        + self.anticipation
                 ) as u32;
-            },
-            
-            PlayerPosition::Sweeper => {
+            }
+
+            PlayerPositionType::Midfielder => {
                 return (
-                    self.anticipation
-                        + self.composure
-                        + self.concentration
+                    self.work_rate
+                        + self.teamwork
+                        + self.positioning
                         + self.decisions
+                        + self.vision
+                        + self.off_the_ball
+                ) as u32;
+            }
+
+            PlayerPositionType::Striker => {
+                return (
+                    self.concentration
+                        + self.vision
                         + self.positioning
                 ) as u32;
             }
@@ -174,25 +192,33 @@ pub struct Physical {
 }
 
 impl Physical {
-    pub fn get_for_position(&self, position: &PlayerPosition) -> u32 {
+    pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
         return match position {
-            PlayerPosition::Libero => {
+            PlayerPositionType::Defender => {
                 return (
-                    self.acceleration
-                        + self.balance
-                        + self.jumping_reach
-                ) as u32;
-            },
-
-            PlayerPosition::Sweeper => {
-                return (
-                    self.acceleration
-                        + self.balance
-                        + self.jumping_reach                    
-   
+                    self.agility
+                        + self.natural_fitness
+                        + self.stamina
+                        + self.pace
                 ) as u32;
             }
-            
+
+            PlayerPositionType::Midfielder => {
+                return (
+                    self.acceleration
+                        + self.natural_fitness
+                        + self.pace
+                        + self.stamina
+                        + self.strength
+                ) as u32;
+            }
+
+            PlayerPositionType::Striker => {
+                return (
+                    self.acceleration
+                        + self.stamina
+                ) as u32;
+            }
             _ => { 0 }
         };
     }

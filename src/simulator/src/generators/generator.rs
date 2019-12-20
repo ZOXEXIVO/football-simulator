@@ -96,14 +96,6 @@ impl Generator for Player {
         let month = IntegerUtils::random(1, 12) as u32;
         let day = IntegerUtils::random(1, 29) as u32;
 
-        let positions_to_generate = IntegerUtils::random(1, 4) as u32;
-
-        let mut positions = Vec::with_capacity(positions_to_generate as usize);
-  
-        for pos in 0..positions_to_generate {
-            positions.push(PlayerPositionGenerator::generate())
-        }
-        
         return Player::new(
             IntegerUtils::random(1, 1_000_000) as u32,
             FullName {
@@ -113,7 +105,7 @@ impl Generator for Player {
             },
             NaiveDate::from_ymd(year as i32, month, day),
             generate_skills(),
-            positions
+            generate_positions()
         );
 
         fn generate_skills() -> PlayerSkills {
@@ -162,6 +154,21 @@ impl Generator for Player {
                 },
             }
         }
+
+        fn generate_positions() -> Vec<PlayerPosition> {            
+            let positions_to_generate = IntegerUtils::random(1, 4) as u32;
+
+            let mut positions = Vec::with_capacity(positions_to_generate as usize);
+
+            for pos in 0..positions_to_generate {                
+                positions.push( PlayerPosition{
+                    position: PlayerPositionGenerator::generate(),
+                    level: IntegerUtils::random(0, 20) as u8
+                })
+            }
+
+            positions
+        }
     }
 }
 
@@ -198,18 +205,14 @@ impl Generator for Staff {
 pub struct PlayerPositionGenerator;
 
 impl PlayerPositionGenerator{
-    pub fn generate() -> PlayerPosition {
-        return match IntegerUtils::random(0, 7) {
-            0 => PlayerPosition::Goalkeeper,
-            1 => PlayerPosition::Libero,
-            2 => PlayerPosition::Sweeper,
-            3 => PlayerPosition::Wingerback,
-            4 => PlayerPosition::RightLeftBack,
-            5 => PlayerPosition::LimitedDefender,
-            6 => PlayerPosition::BallPlayingDefender,
-            7 => PlayerPosition::CentralDefender,
+    pub fn generate() -> PlayerPositionType {
+        return match IntegerUtils::random(0, 3) {
+            0 => PlayerPositionType::Goalkeeper,
+            1 => PlayerPositionType::Defender,
+            2 => PlayerPositionType::Midfielder,
+            3 => PlayerPositionType::Striker,
             _ => {
-                PlayerPosition::CentralDefender
+                PlayerPositionType::Goalkeeper
             }            
         }
     }
