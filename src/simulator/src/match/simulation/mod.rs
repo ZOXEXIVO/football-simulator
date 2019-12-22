@@ -1,5 +1,6 @@
 pub mod engine;
 
-mod poisson;
+mod distributions;
 
 pub use engine::*;
+pub use distributions::*;

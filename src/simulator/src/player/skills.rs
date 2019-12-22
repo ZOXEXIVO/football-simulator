@@ -51,6 +51,14 @@ pub struct Technical {
 impl Technical {
     pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
         return match position {
+            PlayerPositionType::Goalkeeper => {
+                return (
+                    self.penalty_taking
+                        + self.first_touch
+                        + self.free_kick_taking
+                ) as u32;
+            },
+            
             PlayerPositionType::Defender => {
                 return (
                     self.dribbling
@@ -127,6 +135,14 @@ pub struct Mental {
 impl Mental {
     pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
         return match position {
+            PlayerPositionType::Goalkeeper => {
+                return (
+                    self.vision
+                        + self.off_the_ball
+                        + self.leadership
+                ) as u32;
+            },
+            
             PlayerPositionType::Defender => {
                 return (
                     self.aggression
@@ -194,6 +210,15 @@ pub struct Physical {
 impl Physical {
     pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
         return match position {
+            PlayerPositionType::Goalkeeper => {
+                return (
+                    self.agility
+                        + self.balance
+                        + self.pace
+                        + self.jumping_reach
+                ) as u32;
+            },
+            
             PlayerPositionType::Defender => {
                 return (
                     self.agility

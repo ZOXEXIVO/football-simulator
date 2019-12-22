@@ -14,6 +14,7 @@
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\hermit-abi-0.1.5" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\lazy_static-1.4.0" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\libc-0.2.66" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\libm-0.2.1" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\memoffset-0.5.3" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\num-integer-0.1.41" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\num-traits-0.2.10" t="IncludeRecursive" />
@@ -22,6 +23,7 @@
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand-0.7.2" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand_chacha-0.2.1" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand_core-0.5.1" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand_distr-0.2.2" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rand_hc-0.2.0" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rayon-1.2.1" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\rayon-core-1.6.1" t="IncludeRecursive" />

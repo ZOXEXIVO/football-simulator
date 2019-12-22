@@ -8,6 +8,7 @@ use crate::player::player::{ PlayerPosition};
 use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
 use crate::{PlayerEvent, StaffEvent, PlayerEventHandlers, StaffEventHandlers, Staff};
+use std::borrow::Borrow;
 
 #[derive(Debug, Clone)]
 pub struct Club {
@@ -42,17 +43,25 @@ impl Club {
     fn select_tactics(&mut self) {}
 
     pub fn get_match_squad(&self) -> Squad {
-        match self.staffs.get_main_coach(){
-            Some(coach) => {
-                self.players.get_match_squad(&coach)
-            },
-            None => {
-                let staff_stub = Staff::stub();
-                self.players.get_match_squad(&staff_stub)
-            }
-        }        
-    }
+        let main_coach: Staff = self.staffs.get_main_coach().into();
 
+        let mut squad = Squad{
+            club_id: self.id,
+            tactics: Tactics::new(),
+            players: Vec::new()
+        };
+        
+        for player in &self.players.players {
+            let position = player.player.position().clone();
+            
+            squad.players.push(
+                (position, player.player.clone())
+            );
+        }
+        
+        squad
+    }
+    
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         for player_event in self.players.simulate(context) {
             PlayerEventHandlers::handle(player_event, context);

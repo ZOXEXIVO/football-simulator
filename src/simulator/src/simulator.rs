@@ -45,7 +45,7 @@ impl FootballSimulator {
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         let unwrapped_data = self.data.as_mut().unwrap();
 
-        unwrapped_data.continents.par_iter_mut().for_each(|continent|{
+        unwrapped_data.continents.iter_mut().for_each(|continent|{
             let mut cloned_context = context.clone();
             continent.simulate(&mut cloned_context);
         });

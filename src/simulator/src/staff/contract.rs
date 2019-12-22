@@ -5,12 +5,14 @@ pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
 
 use std::iter;
 use crate::StaffEvent;
+use std::borrow::Cow;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum StaffPosition {
     SportDirector,
     MainCoach,
     Coach,
+    Physio
 }
 
 #[derive(Debug, Clone)]
@@ -75,14 +77,14 @@ impl StaffCollection {
             .collect()
     }
 
-    pub fn get_main_coach(&self) -> Option<&Staff> {
+    pub fn get_main_coach<'a>(&self) -> Staff {
         let main_coach_contract = self.staffs.iter()
             .find(|c| c.position == StaffPosition::MainCoach);
 
         if main_coach_contract.is_none() {
-            return None;
+            return Staff::stub();
         }
 
-        Some(&main_coach_contract.unwrap().staff)
+        main_coach_contract.unwrap().staff.clone()
     }
 }

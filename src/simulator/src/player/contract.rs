@@ -71,20 +71,6 @@ impl PlayerCollection {
         self.players.len()
     }
 
-    pub fn get_match_squad(&self, coach: &Staff) -> Squad {
-        let players = self
-            .players
-            .iter()
-            .filter(|player_contract| !player_contract.is_expired())
-            .map(|p_contract| (PlayerPositionType::Goalkeeper, p_contract.player.clone()))
-            .collect();
-
-        Squad {
-            tactics: Tactics::new(),
-            players,
-        }
-    }
-
     pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvent> {
         self.players.iter_mut()
             .flat_map(|player| player.simulate(context))
