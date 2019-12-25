@@ -1,11 +1,11 @@
 use crate::club::squad::Squad;
 use crate::player::player::PlayerPositionType;
-use std::rc::Rc;
 use crate::r#match::simulation::random_gamma;
+use std::rc::Rc;
 
 pub struct FootballEngine {
     home_squad: Squad,
-    away_squad: Squad
+    away_squad: Squad,
 }
 
 const MATCH_DURATION_SECS: u16 = 90 * 60;
@@ -23,10 +23,7 @@ impl FootballEngine {
         let mut field_zone = MatchFieldZone::Midfield;
 
         let mut result = FootballMatchDetails {
-            score: Score {
-                home: 0,
-                away: 0,
-            },
+            score: Score { home: 0, away: 0 },
             player_changes: vec![],
         };
 
@@ -38,26 +35,26 @@ impl FootballEngine {
 
         for i in 0..MATCH_ACTIONS {
             let winner_team = self.get_battle_winner(&attacking_team, &defending_team, &field_zone);
-            
+
             if winner_team.id == attacking_team.id {
                 if attacking_team.id == home_team.id {
                     if field_zone == MatchFieldZone::BGoal {
                         result.score.home += 1;
                         field_zone = MatchFieldZone::Midfield;
                         self.swap_ball();
-                    }else{
+                    } else {
                         field_zone = Self::up_field(&field_zone);
                     }
-                }else{
+                } else {
                     if field_zone == MatchFieldZone::AGoal {
                         result.score.away += 1;
                         field_zone = MatchFieldZone::Midfield;
                         self.swap_ball();
-                    }else{
+                    } else {
                         field_zone = Self::down_field(&field_zone);
                     }
                 }
-            }else{
+            } else {
                 field_zone = MatchFieldZone::Midfield;
                 self.swap_ball();
             }
@@ -65,33 +62,36 @@ impl FootballEngine {
 
         result
     }
-    
-    fn up_field(field: &MatchFieldZone) -> MatchFieldZone{
+
+    fn up_field(field: &MatchFieldZone) -> MatchFieldZone {
         return match field {
             MatchFieldZone::AGoal => MatchFieldZone::AField,
             MatchFieldZone::AField => MatchFieldZone::Midfield,
             MatchFieldZone::Midfield => MatchFieldZone::BField,
             MatchFieldZone::BGoal => MatchFieldZone::BField,
-            _ => MatchFieldZone::Midfield
-        }
+            _ => MatchFieldZone::Midfield,
+        };
     }
 
-    fn down_field(field: &MatchFieldZone) -> MatchFieldZone{
+    fn down_field(field: &MatchFieldZone) -> MatchFieldZone {
         return match field {
             MatchFieldZone::BGoal => MatchFieldZone::BField,
             MatchFieldZone::BField => MatchFieldZone::Midfield,
             MatchFieldZone::Midfield => MatchFieldZone::AField,
             MatchFieldZone::AField => MatchFieldZone::Midfield,
             MatchFieldZone::AGoal => MatchFieldZone::AField,
-            _ => MatchFieldZone::Midfield
-        }
+            _ => MatchFieldZone::Midfield,
+        };
     }
-    
-    fn swap_ball(&self){
-        
-    }
-    
-    fn get_battle_winner<'a>(&self, attacking_team: &'a MatchTeam, defending_team: &'a MatchTeam, current_zone: &MatchFieldZone) -> &'a MatchTeam {
+
+    fn swap_ball(&self) {}
+
+    fn get_battle_winner<'a>(
+        &self,
+        attacking_team: &'a MatchTeam,
+        defending_team: &'a MatchTeam,
+        current_zone: &MatchFieldZone,
+    ) -> &'a MatchTeam {
         let mut attacking_team_skill = 0.0;
         let mut defending_team_skill = 0.0;
 
@@ -99,25 +99,24 @@ impl FootballEngine {
             MatchFieldZone::AField | MatchFieldZone::BField => {
                 attacking_team_skill = attacking_team.striker_skill;
                 defending_team_skill = defending_team.defender_skill;
-            },
+            }
             MatchFieldZone::AGoal | MatchFieldZone::BGoal => {
                 attacking_team_skill = attacking_team.defender_skill;
                 defending_team_skill = defending_team.striker_skill;
-            },
+            }
             MatchFieldZone::Midfield => {
                 attacking_team_skill = attacking_team.midfielder_skill;
                 defending_team_skill = defending_team.midfielder_skill;
-            },
+            }
             _ => {}
         }
 
         let random_a = random_gamma(attacking_team_skill as f64, 0.5);
         let random_d = random_gamma(defending_team_skill as f64, 0.5);
-        
+
         if random_a > random_d {
             return attacking_team;
-        }
-        else{
+        } else {
             return defending_team;
         }
     }
@@ -131,11 +130,11 @@ impl FootballEngine {
                     team.goalkeeping_skill += player.get_skill() as f32;
                 }
                 PlayerPositionType::Defender => {
-                    team.defender_skill += player.get_skill()  as f32;
+                    team.defender_skill += player.get_skill() as f32;
                 }
                 PlayerPositionType::Midfielder => {
                     team.defender_skill += 0.5 * player.get_skill() as f32;
-                    team.midfielder_skill += player.get_skill()  as f32;
+                    team.midfielder_skill += player.get_skill() as f32;
                     team.striker_skill += 0.5 * player.get_skill() as f32;
                 }
                 PlayerPositionType::Striker => {
@@ -151,7 +150,7 @@ impl FootballEngine {
 
 struct MatchTeam {
     pub id: u32,
-    
+
     pub goalkeeping_skill: f32,
     pub defender_skill: f32,
     pub midfielder_skill: f32,
@@ -160,7 +159,7 @@ struct MatchTeam {
 
 impl MatchTeam {
     pub fn new(id: u32) -> Self {
-        MatchTeam {        
+        MatchTeam {
             id,
             goalkeeping_skill: 0.0,
             defender_skill: 0.0,
