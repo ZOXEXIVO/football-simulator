@@ -11,8 +11,8 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use rayon::prelude::*;
 use crate::continent::Continent;
+use rayon::prelude::*;
 
 pub trait Generator {
     fn generate() -> Self;
@@ -21,19 +21,24 @@ pub trait Generator {
 impl Generator for SimulatorData {
     fn generate() -> SimulatorData {
         SimulatorData {
-            continents: (0..7).into_par_iter().map(|_| Generator::generate()).collect(),
-            free_players: (0..1000).into_par_iter().map(|_| Generator::generate()).collect(),
+            continents: (0..7)
+                .into_par_iter()
+                .map(|_| Generator::generate())
+                .collect(),
+            free_players: (0..1000)
+                .into_par_iter()
+                .map(|_| Generator::generate())
+                .collect(),
             free_staff: (0..1000).map(|_| Generator::generate()).collect(),
         }
     }
 }
 
-
 impl Generator for Continent {
     fn generate() -> Continent {
         Continent {
             name: StringUtils::random_string(10),
-            countries: (0..10).map(|_| Generator::generate()).collect(),
+            countries: (0..190).map(|_| Generator::generate()).collect(),
         }
     }
 }
@@ -50,10 +55,7 @@ impl Generator for Country {
 
 impl Generator for League {
     fn generate() -> League {
-        let clubs = (0..30)
-            .map(|_| Generator::generate())        
-            .into_iter()
-            .collect();
+        let clubs = (0..30).map(|_| Generator::generate()).into_iter().collect();
 
         League {
             name: StringUtils::random_string(10),
@@ -83,10 +85,7 @@ impl Generator for Club {
 
 impl Generator for PlayerClubContract {
     fn generate() -> PlayerClubContract {
-        PlayerClubContract::new(
-            Generator::generate(),
-            NaiveDate::from_ymd(2020, 3, 14),
-        )
+        PlayerClubContract::new(Generator::generate(), NaiveDate::from_ymd(2020, 3, 14))
     }
 }
 
@@ -105,7 +104,7 @@ impl Generator for Player {
             },
             NaiveDate::from_ymd(year as i32, month, day),
             generate_skills(),
-            generate_positions()
+            generate_positions(),
         );
 
         fn generate_skills() -> PlayerSkills {
@@ -155,15 +154,15 @@ impl Generator for Player {
             }
         }
 
-        fn generate_positions() -> Vec<PlayerPosition> {            
+        fn generate_positions() -> Vec<PlayerPosition> {
             let positions_to_generate = IntegerUtils::random(1, 4) as u32;
 
             let mut positions = Vec::with_capacity(positions_to_generate as usize);
 
-            for pos in 0..positions_to_generate {                
-                positions.push( PlayerPosition{
+            for pos in 0..positions_to_generate {
+                positions.push(PlayerPosition {
                     position: PlayerPositionGenerator::generate(),
-                    level: IntegerUtils::random(0, 20) as u8
+                    level: IntegerUtils::random(0, 20) as u8,
                 })
             }
 
@@ -175,13 +174,12 @@ impl Generator for Player {
 impl Generator for StaffClubContract {
     fn generate() -> StaffClubContract {
         StaffClubContract::new(
-              Generator::generate(),
-              NaiveDate::from_ymd(2020, 3, 14),
-              StaffPosition::MainCoach,
+            Generator::generate(),
+            NaiveDate::from_ymd(2020, 3, 14),
+            StaffPosition::MainCoach,
         )
     }
 }
-
 
 impl Generator for Staff {
     fn generate() -> Staff {
@@ -201,19 +199,16 @@ impl Generator for Staff {
     }
 }
 
-
 pub struct PlayerPositionGenerator;
 
-impl PlayerPositionGenerator{
+impl PlayerPositionGenerator {
     pub fn generate() -> PlayerPositionType {
         return match IntegerUtils::random(0, 3) {
             0 => PlayerPositionType::Goalkeeper,
             1 => PlayerPositionType::Defender,
             2 => PlayerPositionType::Midfielder,
             3 => PlayerPositionType::Striker,
-            _ => {
-                PlayerPositionType::Goalkeeper
-            }            
-        }
+            _ => PlayerPositionType::Goalkeeper,
+        };
     }
 }

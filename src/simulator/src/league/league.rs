@@ -1,8 +1,8 @@
 use crate::chrono::Datelike;
 use crate::club::Club;
 use crate::core::SimulationContext;
-use crate::r#match::{Match, MatchResult};
 use crate::league::Schedule;
+use crate::r#match::{Match, MatchResult};
 use crate::utils::TimeEstimation;
 use std::collections::HashMap;
 
@@ -29,12 +29,12 @@ impl League {
 
         for club in &mut self.clubs {
             club.simulate(context);
-        }        
-        
+        }
+
         self.play_matches(context);
     }
-    
-    fn play_matches(&mut self, context: &SimulationContext){
+
+    fn play_matches(&mut self, context: &SimulationContext) {
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
 
@@ -43,22 +43,26 @@ impl League {
             matches_to_play
                 .iter()
                 .map(|m| {
-                    let home_club = self.clubs.iter()
+                    let home_club = self
+                        .clubs
+                        .iter()
                         .find(|c| c.id == m.home_club_id)
-                        .unwrap().clone();
+                        .unwrap()
+                        .clone();
 
-                    let guest_club = self.clubs.iter()
+                    let guest_club = self
+                        .clubs
+                        .iter()
                         .find(|c| c.id == m.guest_club_id)
-                        .unwrap().clone();
+                        .unwrap()
+                        .clone();
 
                     Match::make(home_club, guest_club)
                 })
                 .collect()
         };
 
-        let match_results: Vec<MatchResult> = matches.into_iter()
-            .map(|game| game.play())
-            .collect();
+        let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
 
         for match_result in match_results {
             //println!("{}", match_result);
@@ -84,23 +88,23 @@ impl LeagueSettings {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::NaiveDate;
     use chrono::prelude::*;
-    use chrono::prelude::{NaiveDate, NaiveTime, NaiveDateTime};
+    use chrono::prelude::{NaiveDate, NaiveDateTime, NaiveTime};
+    use chrono::NaiveDate;
 
     #[test]
     fn is_time_for_new_schedule_is_correct() {
-//        let mut settings = LeagueSettings {
-//            season_starting: (1, 3),
-//            season_ending: (4, 5),
-//        };
-//
-//        let mut context = SimulationContext::new(
-//            date: NaiveDate::from_ymd(2020, 3, 1)
-//        );
-//
-//        let result = settings.is_time_for_new_schedule(&mut context);
-//
-//        assert_eq!(true, result);
+        //        let mut settings = LeagueSettings {
+        //            season_starting: (1, 3),
+        //            season_ending: (4, 5),
+        //        };
+        //
+        //        let mut context = SimulationContext::new(
+        //            date: NaiveDate::from_ymd(2020, 3, 1)
+        //        );
+        //
+        //        let result = settings.is_time_for_new_schedule(&mut context);
+        //
+        //        assert_eq!(true, result);
     }
 }
