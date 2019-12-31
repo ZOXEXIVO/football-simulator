@@ -1,18 +1,18 @@
+use crate::core::SimulationContext;
 use crate::staff::staff::Staff;
-use crate::core::{SimulationContext};
 
-pub use chrono::prelude::{NaiveDate, DateTime, Utc, Datelike};
+pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
-use std::iter;
 use crate::StaffEvent;
 use std::borrow::Cow;
+use std::iter;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum StaffPosition {
     SportDirector,
     MainCoach,
     Coach,
-    Physio
+    Physio,
 }
 
 #[derive(Debug, Clone)]
@@ -35,10 +35,8 @@ impl StaffClubContract {
         self.expired >= context.date.date()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent>{
-        if self.is_expired(context) {
-           
-        }
+    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
+        if self.is_expired(context) {}
 
         self.staff.simulate(context)
     }
@@ -47,38 +45,41 @@ impl StaffClubContract {
 #[derive(Debug, Clone)]
 pub struct StaffCollection {
     pub staffs: Vec<StaffClubContract>,
-    pub roles: StaffRoles
+    pub roles: StaffRoles,
 }
 
 #[derive(Debug, Clone)]
-pub struct StaffRoles{
+pub struct StaffRoles {
     main_coach: Option<StaffClubContract>,
-    contract_resolver: Option<StaffClubContract>
+    contract_resolver: Option<StaffClubContract>,
 }
 
 impl StaffCollection {
     pub fn new(staffs: Vec<StaffClubContract>) -> Self {
         StaffCollection {
             staffs,
-            roles: StaffRoles{
+            roles: StaffRoles {
                 main_coach: None,
-                contract_resolver: None
-            }
+                contract_resolver: None,
+            },
         }
     }
 
-    pub fn len(&self) -> usize{
+    pub fn len(&self) -> usize {
         self.staffs.len()
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
-        self.staffs.iter_mut()
+        self.staffs
+            .iter_mut()
             .flat_map(|staff| staff.simulate(context))
             .collect()
     }
 
-    pub fn get_main_coach<'a>(&self) -> Staff {
-        let main_coach_contract = self.staffs.iter()
+    pub fn get_main_coach(&self) -> Staff {
+        let main_coach_contract = self
+            .staffs
+            .iter()
             .find(|c| c.position == StaffPosition::MainCoach);
 
         if main_coach_contract.is_none() {
