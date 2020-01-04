@@ -104,6 +104,7 @@ impl Generator for Player {
             },
             NaiveDate::from_ymd(year as i32, month, day),
             generate_skills(),
+            generate_attributes(),
             generate_positions(),
         );
 
@@ -167,6 +168,13 @@ impl Generator for Player {
             }
 
             positions
+        }
+
+        fn generate_attributes() -> PlayerAttributes {
+            PlayerAttributes::new(
+                IntegerUtils::random(0, 20) as u8,
+                IntegerUtils::random(-20, 20) as i8,
+            )
         }
     }
 }

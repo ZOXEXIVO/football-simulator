@@ -1,13 +1,11 @@
 #[derive(Debug, Clone)]
 pub struct Tactics {
-    pub positioning: TacticsPositioning
+    pub positioning: TacticsPositioning,
 }
 
 impl Tactics {
-    pub fn new() -> Self {
-        Tactics {
-            positioning: TacticsPositioning::P442
-        }
+    pub fn new(positioning: TacticsPositioning) -> Self {
+        Tactics { positioning }
     }
 }
 
