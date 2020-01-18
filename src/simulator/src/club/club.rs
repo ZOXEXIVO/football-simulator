@@ -1,13 +1,13 @@
-use crate::staff::contract::StaffCollection;
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
-use crate::player::contract::PlayerCollection;
-use crate::player::player::{ PlayerPosition};
-use crate::staff::contract::StaffClubContract;
 use crate::utils::IntegerUtils;
-use crate::{PlayerEvent, StaffEvent, PlayerEventHandlers, StaffEventHandlers, Staff};
+use crate::{
+    PlayerCollection, PlayerEvent, PlayerEventHandlers, Staff, StaffCollection, StaffEvent,
+    StaffEventHandlers, TacticsSelector,
+};
+
 use std::borrow::Borrow;
 
 #[derive(Debug, Clone)]
@@ -21,11 +21,7 @@ pub struct Club {
 }
 
 impl Club {
-    pub fn new(
-        name: String,
-        players: PlayerCollection,
-        staffs: StaffCollection,
-    ) -> Self {
+    pub fn new(name: String, players: PlayerCollection, staffs: StaffCollection) -> Self {
         Club {
             id: IntegerUtils::random(0, 1_000_000) as u32,
             board: ClubBoard::new(),
@@ -43,25 +39,21 @@ impl Club {
     fn select_tactics(&mut self) {}
 
     pub fn get_match_squad(&self) -> Squad {
-        let main_coach: Staff = self.staffs.get_main_coach().into();
-
-        let mut squad = Squad{
+        let mut squad = Squad {
             club_id: self.id,
-            tactics: Tactics::new(),
-            players: Vec::new()
+            tactics: TacticsSelector::select(self, &self.staffs.get_main_coach()),
+            players: Vec::new(),
         };
-        
+
         for player in &self.players.players {
             let position = player.player.position().clone();
-            
-            squad.players.push(
-                (position, player.player.clone())
-            );
+
+            squad.players.push((position, player.player.clone()));
         }
-        
+
         squad
     }
-    
+
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         for player_event in self.players.simulate(context) {
             PlayerEventHandlers::handle(player_event, context);

@@ -3,14 +3,13 @@ extern crate rayon;
 
 pub use chrono::prelude::NaiveDate;
 
-pub mod core;
-pub mod continent;
-pub mod league;
-pub mod country;
 pub mod club;
-pub mod player;
-pub mod staff;
+pub mod continent;
+pub mod core;
+pub mod country;
+pub mod league;
 pub mod r#match;
+pub mod people;
 pub mod simulator;
 
 pub mod shared;
@@ -20,16 +19,13 @@ mod generators;
 
 pub use crate::core::SimulationContext;
 
-pub use generators::*;
-pub use utils::*;
-pub use league::*;
-pub use country::*;
-pub use club::*;
-pub use player::*;
 pub use self::core::*;
-pub use staff::*;
-pub use shared::*;
+pub use club::*;
+pub use country::*;
+pub use generators::*;
+pub use league::*;
+pub use people::*;
 pub use r#match::*;
+pub use shared::*;
 pub use simulator::*;
-
-
+pub use utils::*;

@@ -1,3 +1,5 @@
+use crate::{Behaviour, BehaviourState, Club, Staff};
+
 #[derive(Debug, Clone)]
 pub struct Tactics {
     pub positioning: TacticsPositioning,
@@ -26,4 +28,16 @@ pub enum TacticsPositioning {
     T1333,
     T4312,
     T4222,
+}
+
+pub struct TacticsSelector;
+
+impl TacticsSelector {
+    pub fn select(club: &Club, staff: &Staff) -> Tactics {
+        match staff.behaviour.state {
+            BehaviourState::Normal => Tactics::new(TacticsPositioning::T343),
+            BehaviourState::Poor => Tactics::new(TacticsPositioning::T451),
+            _ => Tactics::new(TacticsPositioning::T442),
+        }
+    }
 }

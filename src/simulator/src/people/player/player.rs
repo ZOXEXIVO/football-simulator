@@ -1,11 +1,10 @@
 use crate::core::SimulationContext;
-use crate::player::skills::*;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, IntegerUtils};
 use std::fmt::{Display, Formatter, Result};
 use std::slice;
 
-use crate::{PlayerAttributes, PlayerMailbox};
+use crate::{Behaviour, PlayerAttributes, PlayerMailbox, PlayerSkills};
 use chrono::NaiveDate;
 
 #[derive(Debug, Clone)]
@@ -13,6 +12,7 @@ pub struct Player {
     pub id: u32,
     pub full_name: FullName,
     pub birth_date: NaiveDate,
+    pub behaviour: Behaviour,
     pub skills: PlayerSkills,
     pub positions: Vec<PlayerPosition>,
     pub preferred_foot: PlayerFoot,
@@ -35,6 +35,7 @@ impl Player {
             id,
             full_name,
             birth_date,
+            behaviour: Behaviour::default(),
             skills,
             positions,
             preferred_foot: PlayerFoot::Right,

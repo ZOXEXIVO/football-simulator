@@ -1,9 +1,7 @@
 use crate::core::SimulationContext;
-use crate::staff::staff::Staff;
-
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
-use crate::StaffEvent;
+use crate::{Staff, StaffEvent};
 use std::borrow::Cow;
 use std::iter;
 
@@ -46,6 +44,8 @@ impl StaffClubContract {
 pub struct StaffCollection {
     pub staffs: Vec<StaffClubContract>,
     pub roles: StaffRoles,
+
+    stub: Staff,
 }
 
 #[derive(Debug, Clone)]
@@ -62,6 +62,7 @@ impl StaffCollection {
                 main_coach: None,
                 contract_resolver: None,
             },
+            stub: Staff::stub(),
         }
     }
 
@@ -76,16 +77,16 @@ impl StaffCollection {
             .collect()
     }
 
-    pub fn get_main_coach(&self) -> Staff {
+    pub fn get_main_coach(&self) -> &Staff {
         let main_coach_contract = self
             .staffs
             .iter()
             .find(|c| c.position == StaffPosition::MainCoach);
 
         if main_coach_contract.is_none() {
-            return Staff::stub();
+            return &self.stub;
         }
 
-        main_coach_contract.unwrap().staff.clone()
+        &main_coach_contract.unwrap().staff
     }
 }

@@ -1,11 +1,9 @@
-use crate::player::player::Player;
-use crate::staff::staff::Staff;
-
 use crate::core::context::SimulationContext;
 use crate::country::Country;
 use crate::generators::Generator;
 
 use crate::continent::Continent;
+use crate::{Player, Staff};
 pub use rayon::prelude::*;
 
 pub struct SimulatorData {

@@ -1,17 +1,19 @@
 use crate::club::{Club, ClubBoard};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings};
-use crate::player::*;
 use crate::shared::fullname::FullName;
 use crate::simulator::SimulatorData;
-use crate::staff::contract::{StaffClubContract, StaffCollection, StaffPosition};
-use crate::staff::staff::Staff;
 use crate::utils::{IntegerUtils, StringUtils};
 use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
 use crate::continent::Continent;
+use crate::{
+    Mental, Physical, Player, PlayerAttributes, PlayerClubContract, PlayerCollection,
+    PlayerPosition, PlayerPositionType, PlayerSkills, Staff, StaffClubContract, StaffCollection,
+    StaffPosition, Technical,
+};
 use rayon::prelude::*;
 
 pub trait Generator {
