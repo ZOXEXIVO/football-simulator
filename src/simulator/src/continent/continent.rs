@@ -16,7 +16,7 @@ impl Continent {
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {
-        self.countries.iter_mut().for_each(|country| {
+        self.countries.par_iter_mut().for_each(|country| {
             country.simulate(&mut context.clone());
         });
     }

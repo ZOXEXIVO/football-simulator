@@ -22,14 +22,14 @@ impl Match {
             self.away_club.get_match_squad(),
         );
 
-        let result = engine.play();
+        let play_result = engine.play();
 
-        for player_change in result.player_changes {}
+        for player_change in play_result.player_changes {}
 
         MatchResult {
             original_game: self,
-            home_goals: result.score.home,
-            away_goals: result.score.away,
+            home_goals: play_result.score.home,
+            away_goals: play_result.score.away,
         }
     }
 }

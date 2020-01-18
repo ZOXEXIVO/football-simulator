@@ -32,13 +32,19 @@ impl ClubBoard {
     }
 
     fn is_director_contract_expiring(&self, context: &mut SimulationContext) -> bool {
-        self.director.as_ref().unwrap().is_expired(context)
+        match &self.director {
+            Some(d) => d.is_expired(context),
+            None => false,
+        }
     }
 
     fn run_director_election(&mut self, context: &mut SimulationContext) {}
 
     fn is_sport_director_contract_expiring(&self, context: &mut SimulationContext) -> bool {
-        self.director.as_ref().unwrap().is_expired(context)
+        match &self.director {
+            Some(d) => d.is_expired(context),
+            None => false,
+        }
     }
 
     fn run_sport_director_election(&mut self, context: &mut SimulationContext) {}
