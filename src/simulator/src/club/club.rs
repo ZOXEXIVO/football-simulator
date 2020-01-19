@@ -4,7 +4,7 @@ use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
 use crate::utils::IntegerUtils;
 use crate::{
-    PlayerCollection, PlayerEvent, PlayerEventHandlers, Staff, StaffCollection, StaffEvent,
+    Player, PlayerCollection, PlayerEvent, PlayerEventHandlers, Staff, StaffCollection, StaffEvent,
     StaffEventHandlers, TacticsSelector,
 };
 
@@ -36,7 +36,9 @@ impl Club {
         self.players.len()
     }
 
-    fn select_tactics(&mut self) {}
+    pub fn players(&self) -> Vec<&Player> {
+        self.players.players.iter().map(|p| &p.player).collect()
+    }
 
     pub fn get_match_squad(&self) -> Squad {
         let mut squad = Squad {

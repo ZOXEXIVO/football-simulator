@@ -5,12 +5,14 @@ use libm::{log, pow, sin};
 use std::f64::consts::E;
 
 #[inline]
+#[allow(dead_code)]
 pub(crate) fn uniform_random() -> f64 {
     let uniform_distribution = Uniform::new(0.0, 1.0);
     uniform_distribution.sample(&mut rand::thread_rng())
 }
 
 #[inline]
+#[allow(dead_code)]
 pub(crate) fn normal_random(mu: f64, sigma: f64) -> f64 {
     Normal::new(mu, sigma)
         .unwrap()

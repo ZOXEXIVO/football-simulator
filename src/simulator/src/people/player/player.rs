@@ -60,6 +60,14 @@ impl Player {
         &self.positions.first().unwrap().position
     }
 
+    pub fn is_ready_for_match(&self) -> bool {
+        match IntegerUtils::random(-100, 100) as i16 {
+            -100..0 => false,
+            1..=100 => true,
+            _ => false,
+        }
+    }
+
     pub fn get_skill(&self) -> u32 {
         self.skills.get_for_position(self.position())
     }
@@ -89,7 +97,7 @@ pub enum PlayerPositionType {
     Goalkeeper,
     Defender,
     Midfielder,
-    Striker,
+    Forward,
 }
 
 #[derive(Debug, Clone)]

@@ -136,7 +136,7 @@ impl FootballEngine {
                     team.midfielder_skill += player.get_skill() as f32;
                     team.striker_skill += 0.5 * player.get_skill() as f32;
                 }
-                PlayerPositionType::Striker => {
+                PlayerPositionType::Forward => {
                     team.striker_skill += player.get_skill() as f32;
                 }
                 _ => {}

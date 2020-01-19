@@ -13,6 +13,7 @@ impl Behaviour {
 
 #[derive(Debug, Clone)]
 pub enum BehaviourState {
-    Normal,
     Poor,
+    Normal,
+    Good,
 }

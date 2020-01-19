@@ -217,7 +217,7 @@ impl PlayerPositionGenerator {
             0 => PlayerPositionType::Goalkeeper,
             1 => PlayerPositionType::Defender,
             2 => PlayerPositionType::Midfielder,
-            3 => PlayerPositionType::Striker,
+            3 => PlayerPositionType::Forward,
             _ => PlayerPositionType::Goalkeeper,
         };
     }
