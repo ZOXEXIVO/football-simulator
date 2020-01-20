@@ -9,11 +9,12 @@ use std::collections::HashMap;
 use chrono::NaiveDate;
 
 use crate::continent::Continent;
-use crate::{
+use crate::people::{
     Mental, Physical, Player, PlayerAttributes, PlayerClubContract, PlayerCollection,
     PlayerPosition, PlayerPositionType, PlayerSkills, Staff, StaffClubContract, StaffCollection,
     StaffPosition, Technical,
 };
+
 use rayon::prelude::*;
 
 pub trait Generator {
@@ -213,12 +214,12 @@ pub struct PlayerPositionGenerator;
 
 impl PlayerPositionGenerator {
     pub fn generate() -> PlayerPositionType {
-        return match IntegerUtils::random(0, 3) {
+        match IntegerUtils::random(0, 3) {
             0 => PlayerPositionType::Goalkeeper,
             1 => PlayerPositionType::Defender,
             2 => PlayerPositionType::Midfielder,
             3 => PlayerPositionType::Forward,
             _ => PlayerPositionType::Goalkeeper,
-        };
+        }
     }
 }

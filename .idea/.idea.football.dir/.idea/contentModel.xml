@@ -55,8 +55,6 @@
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libterm" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libtest" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libunwind" t="IncludeRecursive" />
-    <e p="H:\rust\football" t="IncludeFlat">
-      <e p="src\simulator" t="IncludeRecursive" />
-    </e>
+    <e p="H:\rust\football" t="IncludeFlat" />
   </component>
 </project>

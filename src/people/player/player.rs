@@ -1,11 +1,10 @@
 use crate::core::SimulationContext;
+use crate::people::{Behaviour, PlayerAttributes, PlayerMailbox, PlayerSkills};
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, IntegerUtils};
+use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
 use std::slice;
-
-use crate::{Behaviour, PlayerAttributes, PlayerMailbox, PlayerSkills};
-use chrono::NaiveDate;
 
 #[derive(Debug, Clone)]
 pub struct Player {
@@ -62,7 +61,7 @@ impl Player {
 
     pub fn is_ready_for_match(&self) -> bool {
         match IntegerUtils::random(-100, 100) as i16 {
-            -100..0 => false,
+            -100..=0 => false,
             1..=100 => true,
             _ => false,
         }
@@ -92,7 +91,7 @@ pub enum PlayerFoot {
     Both,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PlayerPositionType {
     Goalkeeper,
     Defender,

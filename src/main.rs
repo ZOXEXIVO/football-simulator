@@ -1,15 +1,39 @@
-extern crate simulator;
+extern crate chrono;
+extern crate rayon;
 
-use simulator::TimeEstimation;
+use chrono::prelude::NaiveDate;
 
-use simulator::{FootballSimulator, SimulationContext};
+mod simulator;
 
-pub use chrono::prelude::{NaiveDate, NaiveTime, NaiveDateTime};
+mod club;
+mod continent;
+mod core;
+mod country;
+mod league;
+mod r#match;
+mod people;
+
+mod shared;
+mod utils;
+
+mod generators;
+
+use crate::core::SimulationContext;
+
+use club::*;
+use country::*;
+use simulator::FootballSimulator;
+
+use crate::utils::TimeEstimation;
+use chrono::prelude::{NaiveDateTime, NaiveTime};
 
 fn main() {
     let mut simulator = FootballSimulator::new();
 
-    println!("generated with {} ms", TimeEstimation::estimate(|| simulator.generate()));
+    println!(
+        "generated with {} ms",
+        TimeEstimation::estimate(|| simulator.generate())
+    );
 
     let date = NaiveDate::from_ymd(2020, 11, 15);
     let time = NaiveTime::from_hms(0, 0, 0);
@@ -21,12 +45,9 @@ fn main() {
     println!("running with {} items", total_items);
 
     loop {
-        println!("simulated with {} ms", TimeEstimation::estimate(|| simulator.simulate(&mut context)));
-
-        // let mut input = String::new();
-        
-        // std::io::stdin().read_line(&mut input)
-        // .ok()
-        // .expect("Couldn't read line");    
+        println!(
+            "simulated with {} ms",
+            TimeEstimation::estimate(|| simulator.simulate(&mut context))
+        );
     }
 }

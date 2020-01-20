@@ -1,4 +1,4 @@
-use crate::PlayerPositionType;
+use crate::people::PlayerPositionType;
 
 const SKILL_MIN_VALUE: u8 = 1;
 const SKILL_MAX_VALUE: u8 = 20;

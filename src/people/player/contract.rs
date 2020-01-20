@@ -1,7 +1,5 @@
-use crate::club::squad::Squad;
-use crate::club::tactics::Tactics;
 use crate::core::context::SimulationContext;
-use crate::{Player, PlayerEvent, Staff};
+use crate::people::{Player, PlayerEvent};
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
 #[derive(Debug, Clone)]
@@ -40,10 +38,8 @@ impl PlayerClubContract {
     pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvent> {
         let mut result = self.player.simulate(context);
 
-        if context.check_contract_expiration() {
-            if self.is_expired() {
-                result.push(PlayerEvent::ContractExpired(self.player.id));
-            }
+        if context.check_contract_expiration() && self.is_expired() {
+            result.push(PlayerEvent::ContractExpired(self.player.id));
         }
 
         result

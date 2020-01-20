@@ -1,10 +1,9 @@
 use crate::core::SimulationContext;
+use crate::people::Behaviour;
 use crate::shared::fullname::FullName;
 use crate::utils::DateUtils;
-use std::fmt::{Display, Formatter, Result};
-
-use crate::Behaviour;
 use chrono::NaiveDate;
+use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug, Clone)]
 pub struct Staff {

@@ -1,5 +1,5 @@
 use crate::core::context::SimulationContext;
-use crate::StaffClubContract;
+use crate::people::StaffClubContract;
 
 #[derive(Debug, Clone, Default)]
 pub struct ClubBoard {

@@ -1,7 +1,7 @@
 use crate::core::SimulationContext;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
-use crate::{Staff, StaffEvent};
+use crate::people::{Staff, StaffEvent};
 use std::borrow::Cow;
 use std::iter;
 

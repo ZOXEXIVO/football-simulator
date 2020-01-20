@@ -1,5 +1,6 @@
+use crate::people::PlayerPositionType;
 use crate::r#match::random_gamma;
-use crate::{PlayerPositionType, Squad};
+use crate::Squad;
 use std::mem;
 use std::rc::Rc;
 

@@ -1,10 +1,9 @@
 use crate::core::context::SimulationContext;
-use crate::country::Country;
 use crate::generators::Generator;
 
 use crate::continent::Continent;
-use crate::{Player, Staff};
 pub use rayon::prelude::*;
+use crate::people::{Staff, Player};
 
 pub struct SimulatorData {
     pub continents: Vec<Continent>,

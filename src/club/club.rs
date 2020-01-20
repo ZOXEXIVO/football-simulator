@@ -3,12 +3,8 @@ use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::core::SimulationContext;
 use crate::utils::IntegerUtils;
-use crate::{
-    Player, PlayerCollection, PlayerEvent, PlayerEventHandlers, Staff, StaffCollection, StaffEvent,
-    StaffEventHandlers, TacticsSelector,
-};
-
-use std::borrow::Borrow;
+use crate::people::{StaffCollection, PlayerCollection, Player, PlayerEventHandlers, StaffEventHandlers};
+use crate::club::TacticsSelector;
 
 #[derive(Debug, Clone)]
 pub struct Club {

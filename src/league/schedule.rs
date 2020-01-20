@@ -32,7 +32,7 @@ impl Schedule {
                     guest_club_id: clubs[last_index].id,
                     date: starting_date,
                 };
-                
+
                 schedule_items.push(item);
             }
 
@@ -61,7 +61,7 @@ pub struct ScheduleItem {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{PlayerCollection, StaffCollection, ClubBoard};
+    use crate::{ClubBoard, PlayerCollection, StaffCollection};
 
     #[test]
     fn generate_is_correct() {
@@ -73,7 +73,7 @@ mod tests {
             board: ClubBoard::new(),
             players: PlayerCollection::new(vec![]),
             staffs: StaffCollection::new(vec![]),
-            tactics: None
+            tactics: None,
         });
 
         clubs.push(Club {
@@ -82,7 +82,7 @@ mod tests {
             board: ClubBoard::new(),
             players: PlayerCollection::new(vec![]),
             staffs: StaffCollection::new(vec![]),
-            tactics: None
+            tactics: None,
         });
 
         clubs.push(Club {
@@ -91,7 +91,7 @@ mod tests {
             board: ClubBoard::new(),
             players: PlayerCollection::new(vec![]),
             staffs: StaffCollection::new(vec![]),
-            tactics: None
+            tactics: None,
         });
 
         let schedule = Schedule::generate(&clubs, NaiveDate::from_ymd(2020, 3, 1)).unwrap();

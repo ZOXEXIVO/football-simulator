@@ -1,5 +1,5 @@
-use crate::PlayerPositionType;
-use crate::{Behaviour, BehaviourState, Club, Staff};
+use crate::club::Club;
+use crate::people::{BehaviourState, Player, PlayerPositionType, Staff};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -38,8 +38,8 @@ impl TacticsSelector {
     pub fn select(club: &Club, staff: &Staff) -> Tactics {
         match staff.behaviour.state {
             BehaviourState::Poor => Tactics::new(TacticsPositioning::T451),
-            BehaviourState::Normal => Tactics::new(club_players),
-            BehaviourState::Good => Tactics::new(club_players),
+            BehaviourState::Normal => Tactics::new(Self::club_players(club)),
+            BehaviourState::Good => Tactics::new(Self::club_players(club)),
         }
     }
 
@@ -61,7 +61,7 @@ impl TacticsSelector {
             let mut midfielder_score: i8 = 0;
 
             match player_stats.get(&PlayerPositionType::Midfielder) {
-                Some(midfielders) => match defenders {
+                Some(midfielders) => match midfielders {
                     1..=2 => midfielder_score += 1,
                     3..=6 => midfielder_score += 2,
                     _ => midfielder_score += 3,
@@ -72,7 +72,7 @@ impl TacticsSelector {
             let mut forward_score: i8 = 0;
 
             match player_stats.get(&PlayerPositionType::Forward) {
-                Some(forwards) => match defenders {
+                Some(forwards) => match forwards {
                     1..=2 => forward_score += 1,
                     3..=6 => forward_score += 2,
                     _ => forward_score += 3,
@@ -83,9 +83,9 @@ impl TacticsSelector {
             (defending_score, midfielder_score, forward_score)
         };
 
-        let defending = score.0;
-        let midfielders = score.1;
-        let forwarding = score.2;
+        let defending = scores.0;
+        let midfielders = scores.1;
+        let forwarding = scores.2;
 
         if defending > midfielders && defending > forwarding {
             return TacticsPositioning::T442;
@@ -103,21 +103,18 @@ impl TacticsSelector {
     }
 
     fn players_by_position(club: &Club) -> HashMap<&PlayerPositionType, i16> {
-        let mut player_positions = HashMap::new();
+        let mut player_positions = HashMap::<&PlayerPositionType, i16>::new();
 
-        let ready_for_match_players = club.players().iter().filter(|p| p.is_ready_for_match());
+        let club_players = club.players();
+
+        let ready_for_match_players = club_players.iter().filter(|p| p.is_ready_for_match());
 
         for player in ready_for_match_players {
             let position = player.position();
 
-            match player_positions.get_mut(&position) {
-                Some(&mut val) => {
-                    *val += 1;
-                }
-                None => {
-                    player_positions.insert(position, 0i16);
-                }
-            }
+            let entry = player_positions.entry(position).or_insert(0);
+
+            *entry += 1;
         }
 
         player_positions

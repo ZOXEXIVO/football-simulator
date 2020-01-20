@@ -1,9 +1,10 @@
-use crate::{StaffEvent, SimulationContext};
+use crate::people::StaffEvent;
+use crate::SimulationContext;
 
 pub struct StaffEventHandlers;
 
-impl StaffEventHandlers{
-    pub fn handle(event: StaffEvent, context: &mut SimulationContext){
+impl StaffEventHandlers {
+    pub fn handle(event: StaffEvent, context: &mut SimulationContext) {
         match event {
             StaffEvent::Birthday(age) => {}
             StaffEvent::ContractExpired(days) => {}
