@@ -3,20 +3,20 @@ use crate::r#match::FootballEngine;
 use std::fmt::{Display, Formatter, Result};
 
 #[derive(Clone)]
-pub struct Match {
-    home_club: Club,
-    away_club: Club,
+pub struct Match<'c> {
+    home_club: &'c Club,
+    away_club: &'c Club,
 }
 
-impl Match {
-    pub fn make(home_club: Club, away_club: Club) -> Self {
+impl<'c> Match<'c> {
+    pub fn make(home_club: &'c Club, away_club: &'c Club) -> Self {
         Match {
             home_club,
             away_club,
         }
     }
 
-    pub fn play(self) -> MatchResult {
+    pub fn play(self) -> MatchResult<'c> {
         let mut engine = FootballEngine::new(
             self.home_club.get_match_squad(),
             self.away_club.get_match_squad(),
@@ -35,14 +35,14 @@ impl Match {
 }
 
 #[derive(Clone)]
-pub struct MatchResult {
-    original_game: Match,
+pub struct MatchResult<'m> {
+    original_game: Match<'m>,
     home_goals: u8,
     away_goals: u8,
 }
 
 //DISPLAY
-impl Display for MatchResult {
+impl<'m> Display for MatchResult<'m> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         write!(
             f,

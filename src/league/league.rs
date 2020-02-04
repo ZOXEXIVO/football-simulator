@@ -34,6 +34,13 @@ impl League {
         self.play_matches(context);
     }
 
+    fn get_club(&self, club_id: u32) -> Option<&Club>{
+        return self
+            .clubs
+            .iter()
+            .find(|c| c.id == club_id);
+    }
+    
     fn play_matches(&mut self, context: &SimulationContext) {
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
@@ -43,26 +50,17 @@ impl League {
             matches_to_play
                 .iter()
                 .map(|m| {
-                    let home_club = self
-                        .clubs
-                        .iter()
-                        .find(|c| c.id == m.home_club_id)
-                        .unwrap()
-                        .clone();
-
-                    let guest_club = self
-                        .clubs
-                        .iter()
-                        .find(|c| c.id == m.guest_club_id)
-                        .unwrap()
-                        .clone();
+                    let home_club = self.get_club(m.home_club_id).unwrap();
+                    let guest_club = self.get_club(m.guest_club_id).unwrap();
 
                     Match::make(home_club, guest_club)
                 })
                 .collect()
         };
 
-        let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
+        let match_results: Vec<MatchResult> = matches.into_iter()
+            .map(|game| game.play())
+            .collect();
 
         for match_result in match_results {
             //println!("{}", match_result);

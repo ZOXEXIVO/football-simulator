@@ -62,6 +62,7 @@ pub struct ScheduleItem {
 mod tests {
     use super::*;
     use crate::{ClubBoard, PlayerCollection, StaffCollection};
+    use crate::people::StaffCollection;
 
     #[test]
     fn generate_is_correct() {
