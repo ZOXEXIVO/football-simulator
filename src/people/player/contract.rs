@@ -48,20 +48,20 @@ impl PlayerClubContract {
 
 #[derive(Debug, Clone)]
 pub struct PlayerCollection {
-    pub players: Vec<PlayerClubContract>,
+    pub contracts: Vec<PlayerClubContract>,
 }
 
 impl PlayerCollection {
-    pub fn new(players: Vec<PlayerClubContract>) -> Self {
-        PlayerCollection { players }
+    pub fn new(contracts: Vec<PlayerClubContract>) -> Self {
+        PlayerCollection { contracts }
     }
 
     pub fn len(&self) -> usize {
-        self.players.len()
+        self.contracts.len()
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvent> {
-        self.players
+        self.contracts
             .iter_mut()
             .flat_map(|player| player.simulate(context))
             .collect()

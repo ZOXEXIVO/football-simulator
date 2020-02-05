@@ -1,4 +1,5 @@
 use crate::club::Club;
+use crate::r#match::engine::PlayerChanges;
 use crate::r#match::FootballEngine;
 use std::fmt::{Display, Formatter, Result};
 
@@ -24,19 +25,18 @@ impl<'c> Match<'c> {
 
         let play_result = engine.play();
 
-        for player_change in play_result.player_changes {}
-
         MatchResult {
             original_game: self,
+            player_changes: play_result.player_changes,
             home_goals: play_result.score.home,
             away_goals: play_result.score.away,
         }
     }
 }
 
-#[derive(Clone)]
 pub struct MatchResult<'m> {
     original_game: Match<'m>,
+    player_changes: Vec<PlayerChanges>,
     home_goals: u8,
     away_goals: u8,
 }

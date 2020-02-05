@@ -4,7 +4,6 @@ use crate::league::{League, LeagueSettings};
 use crate::shared::fullname::FullName;
 use crate::simulator::SimulatorData;
 use crate::utils::{IntegerUtils, StringUtils};
-use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
@@ -58,7 +57,7 @@ impl Generator for Country {
 
 impl Generator for League {
     fn generate() -> League {
-        let clubs = (0..30).map(|_| Generator::generate()).into_iter().collect();
+        let clubs = (0..30).map(|_| Generator::generate()).collect();
 
         League {
             name: StringUtils::random_string(10),

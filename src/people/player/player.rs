@@ -4,7 +4,6 @@ use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, IntegerUtils};
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
-use std::slice;
 
 #[derive(Debug, Clone)]
 pub struct Player {

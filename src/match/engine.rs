@@ -4,15 +4,15 @@ use crate::Squad;
 use std::mem;
 use std::rc::Rc;
 
-pub struct FootballEngine {
-    home_squad: Squad,
-    away_squad: Squad,
+pub struct FootballEngine<'s> {
+    home_squad: Squad<'s>,
+    away_squad: Squad<'s>,
 }
 
 const MATCH_ACTIONS: u16 = 100;
 
-impl FootballEngine {
-    pub fn new(home_squad: Squad, away_squad: Squad) -> Self {
+impl<'s> FootballEngine<'s> {
+    pub fn new(home_squad: Squad<'s>, away_squad: Squad<'s>) -> Self {
         FootballEngine {
             home_squad,
             away_squad,
@@ -124,7 +124,7 @@ impl FootballEngine {
     fn get_team_for_squad(&self, squad: &Squad) -> MatchTeam {
         let mut team = MatchTeam::new(squad.club_id);
 
-        for player in squad.players.iter().map(|p| &p.1) {
+        for player in squad.players.iter().map(|p| &p.player) {
             match &player.position() {
                 PlayerPositionType::Goalkeeper => {
                     team.goalkeeping_skill += player.get_skill() as f32;

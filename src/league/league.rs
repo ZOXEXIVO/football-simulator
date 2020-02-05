@@ -3,10 +3,6 @@ use crate::club::Club;
 use crate::core::SimulationContext;
 use crate::league::Schedule;
 use crate::r#match::{Match, MatchResult};
-use crate::utils::TimeEstimation;
-use std::collections::HashMap;
-
-use rayon::prelude::*;
 
 #[derive(Debug)]
 pub struct League {
@@ -34,13 +30,10 @@ impl League {
         self.play_matches(context);
     }
 
-    fn get_club(&self, club_id: u32) -> Option<&Club>{
-        return self
-            .clubs
-            .iter()
-            .find(|c| c.id == club_id);
+    fn get_club(&self, club_id: u32) -> Option<&Club> {
+        self.clubs.iter().find(|c| c.id == club_id)
     }
-    
+
     fn play_matches(&mut self, context: &SimulationContext) {
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
@@ -58,13 +51,9 @@ impl League {
                 .collect()
         };
 
-        let match_results: Vec<MatchResult> = matches.into_iter()
-            .map(|game| game.play())
-            .collect();
+        let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
 
-        for match_result in match_results {
-            //println!("{}", match_result);
-        }
+        for match_result in match_results {}
     }
 }
 

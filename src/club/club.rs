@@ -1,10 +1,13 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
+use crate::club::{SquadPlayer, TacticsSelector};
 use crate::core::SimulationContext;
+use crate::people::{
+    Player, PlayerCollection, PlayerEventHandlers, PlayerSelector, StaffCollection,
+    StaffEventHandlers,
+};
 use crate::utils::IntegerUtils;
-use crate::people::{StaffCollection, PlayerCollection, Player, PlayerEventHandlers, StaffEventHandlers};
-use crate::club::TacticsSelector;
 
 #[derive(Debug, Clone)]
 pub struct Club {
@@ -29,27 +32,21 @@ impl Club {
     }
 
     pub fn items_count(&self) -> usize {
-        self.players.len()
+        self.players.len() + self.staffs.len()
     }
 
     pub fn players(&self) -> Vec<&Player> {
-        self.players.players.iter().map(|p| &p.player).collect()
+        self.players.contracts.iter().map(|p| &p.player).collect()
     }
 
     pub fn get_match_squad(&self) -> Squad {
-        let mut squad = Squad {
+        let main_coach = self.staffs.get_main_coach();
+
+        Squad {
             club_id: self.id,
-            tactics: TacticsSelector::select(self, &self.staffs.get_main_coach()),
-            players: Vec::new(),
-        };
-
-        for player in &self.players.players {
-            let position = player.player.position().clone();
-
-            squad.players.push((position, player.player.clone()));
+            tactics: TacticsSelector::select(self, main_coach),
+            players: PlayerSelector::select(self, main_coach),
         }
-
-        squad
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {

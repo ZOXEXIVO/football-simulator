@@ -50,32 +50,31 @@ pub struct Technical {
 
 impl Technical {
     pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
-        return match position {
+        match position {
             PlayerPositionType::Goalkeeper => {
                 return (self.penalty_taking + self.first_touch + self.free_kick_taking) as u32;
             }
 
             PlayerPositionType::Defender => {
-                return (self.dribbling + self.heading + self.marking + self.passing + self.tackling)
-                    as u32;
+                (self.dribbling + self.heading + self.marking + self.passing + self.tackling) as u32
             }
 
             PlayerPositionType::Midfielder => {
-                return (self.dribbling
+                (self.dribbling
                     + self.crossing
                     + self.marking
                     + self.passing
                     + self.tackling
                     + self.technique
-                    + self.long_shots) as u32;
+                    + self.long_shots) as u32
             }
 
             PlayerPositionType::Forward => {
-                return (self.dribbling + self.first_touch + self.finishing + self.passing) as u32;
+                (self.dribbling + self.first_touch + self.finishing + self.passing) as u32
             }
 
             _ => 0,
-        };
+        }
     }
 
     pub fn train(&mut self, val: i8) {
@@ -118,31 +117,30 @@ pub struct Mental {
 
 impl Mental {
     pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
-        return match position {
+        match position {
             PlayerPositionType::Goalkeeper => {
-                return (self.vision + self.off_the_ball + self.leadership) as u32;
+                (self.vision + self.off_the_ball + self.leadership) as u32
             }
 
             PlayerPositionType::Defender => {
-                return (self.aggression + self.positioning + self.off_the_ball + self.anticipation)
-                    as u32;
+                (self.aggression + self.positioning + self.off_the_ball + self.anticipation) as u32
             }
 
             PlayerPositionType::Midfielder => {
-                return (self.work_rate
+                (self.work_rate
                     + self.teamwork
                     + self.positioning
                     + self.decisions
                     + self.vision
-                    + self.off_the_ball) as u32;
+                    + self.off_the_ball) as u32
             }
 
             PlayerPositionType::Forward => {
-                return (self.concentration + self.vision + self.positioning) as u32;
+                (self.concentration + self.vision + self.positioning) as u32
             }
 
             _ => 0,
-        };
+        }
     }
 
     pub fn train(&mut self, val: i8) {
@@ -179,28 +177,26 @@ pub struct Physical {
 
 impl Physical {
     pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
-        return match position {
+        match position {
             PlayerPositionType::Goalkeeper => {
-                return (self.agility + self.balance + self.pace + self.jumping_reach) as u32;
+                (self.agility + self.balance + self.pace + self.jumping_reach) as u32
             }
 
             PlayerPositionType::Defender => {
-                return (self.agility + self.natural_fitness + self.stamina + self.pace) as u32;
+                (self.agility + self.natural_fitness + self.stamina + self.pace) as u32
             }
 
             PlayerPositionType::Midfielder => {
-                return (self.acceleration
+                (self.acceleration
                     + self.natural_fitness
                     + self.pace
                     + self.stamina
-                    + self.strength) as u32;
+                    + self.strength) as u32
             }
 
-            PlayerPositionType::Forward => {
-                return (self.acceleration + self.stamina) as u32;
-            }
+            PlayerPositionType::Forward => (self.acceleration + self.stamina) as u32,
             _ => 0,
-        };
+        }
     }
 
     pub fn train(&mut self, val: i8) {
@@ -220,7 +216,7 @@ impl Physical {
 #[inline]
 fn safe_modify(skill: &mut u8, val: i8) {
     if val < 0 {
-        let abs_val = (val * -1) as u8;
+        let abs_val = -val as u8;
 
         if *skill <= abs_val {
             *skill = SKILL_MIN_VALUE;

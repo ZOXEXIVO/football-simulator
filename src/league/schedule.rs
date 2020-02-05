@@ -9,7 +9,7 @@ pub struct Schedule {
 }
 
 impl Schedule {
-    pub fn generate(clubs: &Vec<Club>, date: NaiveDate) -> Result<Schedule, ()> {
+    pub fn generate(clubs: &[Club], date: NaiveDate) -> Result<Schedule, ()> {
         let club_len = clubs.len();
 
         let mut schedule_items = Vec::with_capacity(club_len * 2);
@@ -61,8 +61,8 @@ pub struct ScheduleItem {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{ClubBoard, PlayerCollection, StaffCollection};
-    use crate::people::StaffCollection;
+    use crate::people::{PlayerCollection, StaffCollection};
+    use crate::ClubBoard;
 
     #[test]
     fn generate_is_correct() {

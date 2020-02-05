@@ -49,35 +49,32 @@ impl TacticsSelector {
         let scores = {
             let mut defending_score: i8 = 0;
 
-            match player_stats.get(&PlayerPositionType::Defender) {
-                Some(defenders) => match defenders {
+            if let Some(defenders) = player_stats.get(&PlayerPositionType::Defender) {
+                match defenders {
                     1..=2 => defending_score += 1,
                     3..=6 => defending_score += 2,
                     _ => defending_score += 3,
-                },
-                None => {}
+                }
             }
 
             let mut midfielder_score: i8 = 0;
 
-            match player_stats.get(&PlayerPositionType::Midfielder) {
-                Some(midfielders) => match midfielders {
+            if let Some(midfielders) = player_stats.get(&PlayerPositionType::Midfielder) {
+                match midfielders {
                     1..=2 => midfielder_score += 1,
                     3..=6 => midfielder_score += 2,
                     _ => midfielder_score += 3,
-                },
-                None => {}
+                }
             }
 
             let mut forward_score: i8 = 0;
 
-            match player_stats.get(&PlayerPositionType::Forward) {
-                Some(forwards) => match forwards {
+            if let Some(forwards) = player_stats.get(&PlayerPositionType::Forward) {
+                match forwards {
                     1..=2 => forward_score += 1,
                     3..=6 => forward_score += 2,
                     _ => forward_score += 3,
-                },
-                None => {}
+                }
             }
 
             (defending_score, midfielder_score, forward_score)

@@ -1,6 +1,6 @@
 mod board;
-mod club;
-mod squad;
+pub mod club;
+pub mod squad;
 mod tactics;
 
 pub use board::*;
