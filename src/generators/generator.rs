@@ -11,7 +11,7 @@ use crate::continent::Continent;
 use crate::people::{
     Mental, Physical, Player, PlayerAttributes, PlayerClubContract, PlayerCollection,
     PlayerPosition, PlayerPositionType, PlayerSkills, Staff, StaffClubContract, StaffCollection,
-    StaffPosition, Technical,
+    StaffPosition, StaffStatus, Technical,
 };
 
 use rayon::prelude::*;
@@ -153,6 +153,7 @@ impl Generator for Player {
                     pace: IntegerUtils::random(1, 20) as u8,
                     stamina: IntegerUtils::random(1, 20) as u8,
                     strength: IntegerUtils::random(1, 20) as u8,
+                    match_readiness: IntegerUtils::random(1, 20) as u8,
                 },
             }
         }
@@ -187,6 +188,7 @@ impl Generator for StaffClubContract {
             Generator::generate(),
             NaiveDate::from_ymd(2020, 3, 14),
             StaffPosition::MainCoach,
+            StaffStatus::Active,
         )
     }
 }

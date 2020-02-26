@@ -49,21 +49,9 @@ impl Staff {
         self.favorite_players.contains(&player.id)
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
-        let mut result_events = Vec::new();
-
-        if DateUtils::is_birthday(self.birth_date, context.date.date()) {
-            result_events.push(StaffEvent::Birthday(self.id));
-        }
-
-        result_events
+    pub fn simulate(&mut self, context: &mut SimulationContext) {
+        if DateUtils::is_birthday(self.birth_date, context.date.date()) {}
     }
-}
-
-#[derive(Debug, Clone)]
-pub enum StaffEvent {
-    Birthday(u32),
-    ContractExpired(i32),
 }
 
 //DISPLAY

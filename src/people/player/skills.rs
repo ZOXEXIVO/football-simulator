@@ -52,7 +52,7 @@ impl Technical {
     pub fn get_for_position(&self, position: &PlayerPositionType) -> u32 {
         match position {
             PlayerPositionType::Goalkeeper => {
-                return (self.penalty_taking + self.first_touch + self.free_kick_taking) as u32;
+                (self.penalty_taking + self.first_touch + self.free_kick_taking) as u32
             }
 
             PlayerPositionType::Defender => {
@@ -173,6 +173,8 @@ pub struct Physical {
     pub pace: u8,
     pub stamina: u8,
     pub strength: u8,
+
+    pub match_readiness: u8,
 }
 
 impl Physical {

@@ -42,16 +42,10 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<PlayerEvent> {
-        let mut result_events = Vec::new();
-
-        if DateUtils::is_birthday(self.birth_date, context.date.date()) {
-            result_events.push(PlayerEvent::Birthday(self.id));
-        }
+    pub fn simulate(&mut self, context: &mut SimulationContext) {
+        if DateUtils::is_birthday(self.birth_date, context.date.date()) {}
 
         self.train();
-
-        result_events
     }
 
     pub fn position(&self) -> &PlayerPositionType {
@@ -59,9 +53,9 @@ impl Player {
     }
 
     pub fn is_ready_for_match(&self) -> bool {
-        match IntegerUtils::random(-100, 100) as i16 {
-            -100..=0 => false,
-            1..=100 => true,
+        match self.skills.physical.match_readiness {
+            0..=10 => false,
+            10..=20 => true,
             _ => false,
         }
     }
@@ -75,12 +69,6 @@ impl Player {
 
         self.skills.train(change_val);
     }
-}
-
-#[derive(Debug, Clone)]
-pub enum PlayerEvent {
-    Birthday(u32),
-    ContractExpired(u32),
 }
 
 #[derive(Debug, Clone)]

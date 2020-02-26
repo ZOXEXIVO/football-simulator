@@ -1,7 +1,7 @@
 use crate::core::SimulationContext;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
-use crate::people::{Staff, StaffEvent};
+use crate::people::Staff;
 use std::borrow::Cow;
 use std::iter;
 
@@ -13,19 +13,32 @@ pub enum StaffPosition {
     Physio,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum StaffStatus {
+    Active,
+    ExpiredContract,
+}
+
 #[derive(Debug, Clone)]
 pub struct StaffClubContract {
     staff: Staff,
     expired: NaiveDate,
     position: StaffPosition,
+    pub status: StaffStatus,
 }
 
 impl StaffClubContract {
-    pub fn new(staff: Staff, expired: NaiveDate, position: StaffPosition) -> Self {
+    pub fn new(
+        staff: Staff,
+        expired: NaiveDate,
+        position: StaffPosition,
+        status: StaffStatus,
+    ) -> Self {
         StaffClubContract {
             staff,
             expired,
             position,
+            status,
         }
     }
 
@@ -33,10 +46,10 @@ impl StaffClubContract {
         self.expired >= context.date.date()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
-        if self.is_expired(context) {}
+    pub fn simulate(&mut self, context: &mut SimulationContext) {
+        self.staff.simulate(context);
 
-        self.staff.simulate(context)
+        if context.check_contract_expiration() && self.is_expired(context) {}
     }
 }
 
@@ -70,11 +83,10 @@ impl StaffCollection {
         self.staffs.len()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) -> Vec<StaffEvent> {
-        self.staffs
-            .iter_mut()
-            .flat_map(|staff| staff.simulate(context))
-            .collect()
+    pub fn simulate(&mut self, context: &mut SimulationContext) {
+        for staff_contract in &mut self.staffs {
+            staff_contract.simulate(context)
+        }
     }
 
     pub fn get_main_coach(&self) -> &Staff {
