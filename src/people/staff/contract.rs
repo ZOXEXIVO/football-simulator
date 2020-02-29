@@ -49,7 +49,9 @@ impl StaffClubContract {
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         self.staff.simulate(context);
 
-        if context.check_contract_expiration() && self.is_expired(context) {}
+        if context.check_contract_expiration() && self.is_expired(context) {
+            self.status = StaffStatus::ExpiredContract;
+        }
     }
 }
 
