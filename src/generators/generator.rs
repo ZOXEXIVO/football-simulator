@@ -1,4 +1,4 @@
-use crate::club::{Club, ClubBoard};
+use crate::club::{Club, ClubBoard, ClubMood};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings};
 use crate::shared::fullname::FullName;
@@ -15,6 +15,7 @@ use crate::people::{
 };
 
 use rayon::prelude::*;
+use std::sync::Mutex;
 
 pub trait Generator {
     fn generate() -> Self;
@@ -22,16 +23,23 @@ pub trait Generator {
 
 impl Generator for SimulatorData {
     fn generate() -> SimulatorData {
+        let free_players = (0..1000)
+            .into_par_iter()
+            .map(|_| Generator::generate())
+            .collect();
+
+        let free_staffs = (0..1000)
+            .into_par_iter()
+            .map(|_| Generator::generate())
+            .collect();
+
         SimulatorData {
             continents: (0..7)
                 .into_par_iter()
                 .map(|_| Generator::generate())
                 .collect(),
-            free_players: (0..1000)
-                .into_par_iter()
-                .map(|_| Generator::generate())
-                .collect(),
-            free_staff: (0..1000).map(|_| Generator::generate()).collect(),
+            free_players_pool: Mutex::new(free_players),
+            free_staffs_pool: Mutex::new(free_staffs),
         }
     }
 }
@@ -77,10 +85,12 @@ impl Generator for Club {
         Club {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(5),
+            mood: ClubMood::default(),
             board: ClubBoard::new(),
             players: PlayerCollection::new((0..10).map(|_| Generator::generate()).collect()),
             staffs: StaffCollection::new((0..10).map(|_| Generator::generate()).collect()),
             tactics: None,
+            //transfer_list: Vec::new(),
         }
     }
 }

@@ -24,12 +24,4 @@ impl SimulationContext {
         self.day = self.date.day() as u8;
         self.hour = self.date.time().hour() as u8;
     }
-
-    pub fn check_contract_expiration(&self) -> bool {
-        self.hour == 0
-    }
-
-    pub fn is_month_beginning(&self) -> bool {
-        self.day == 1
-    }
 }

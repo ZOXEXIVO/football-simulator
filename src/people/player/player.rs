@@ -1,3 +1,4 @@
+use crate::club::ClubSimulationContext;
 use crate::core::SimulationContext;
 use crate::people::{Behaviour, PlayerAttributes, PlayerMailbox, PlayerSkills};
 use crate::shared::fullname::FullName;
@@ -42,11 +43,15 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
-        if DateUtils::is_birthday(self.birth_date, context.date.date()) {}
+    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
+        if DateUtils::is_birthday(self.birth_date, context.date.date()) {
+            self.behaviour.try_increase();
+        }
 
         self.train();
     }
+
+    fn request_transfer(&self, context: &ClubSimulationContext) {}
 
     pub fn position(&self) -> &PlayerPositionType {
         &self.positions.first().unwrap().position

@@ -1,14 +1,18 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::TacticsSelector;
+use crate::club::{ClubMood, ClubSimulationContext, TacticsSelector};
 use crate::core::SimulationContext;
-use crate::people::{Player, PlayerCollection, PlayerSelector, StaffCollection};
+use crate::people::{
+    Player, PlayerCollection, PlayerSelector, StaffCollection, TransferRequestNegotiation,
+    TransferRequestNegotiationResult,
+};
 
 #[derive(Debug, Clone)]
 pub struct Club {
     pub id: u32,
     pub name: String,
+    pub mood: ClubMood,
     pub board: ClubBoard,
     pub players: PlayerCollection,
     pub staffs: StaffCollection,
@@ -35,7 +39,24 @@ impl Club {
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {
-        self.players.simulate(context);
-        self.staffs.simulate(context);
+        let mut club_context = ClubSimulationContext::new(context);
+
+        self.players.simulate(&mut club_context);
+        self.staffs.simulate(&mut club_context);
+
+        self.board.simulate(&mut club_context);
+
+        self.process_context(club_context);
+    }
+
+    fn process_context(&mut self, context: ClubSimulationContext) {
+        for transfer_request in context.transfer_requests {
+            match self.players.get_player(transfer_request) {
+                Some(player) => match TransferRequestNegotiation::negotiate(self, player) {
+                    TransferRequestNegotiationResult::Complete => {}
+                },
+                None => {}
+            }
+        }
     }
 }

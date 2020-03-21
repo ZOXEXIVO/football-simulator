@@ -15,11 +15,6 @@ impl Country {
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         for league in &mut self.leagues {
             league.simulate(context);
-            
-        }
-        
-        if context.is_month_beginning() {
-            
         }
     }
 }

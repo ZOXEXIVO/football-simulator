@@ -1,4 +1,4 @@
-use crate::core::SimulationContext;
+use crate::club::ClubSimulationContext;
 use crate::people::player::player::Player;
 use crate::people::Behaviour;
 use crate::shared::fullname::FullName;
@@ -49,7 +49,7 @@ impl Staff {
         self.favorite_players.contains(&player.id)
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
+    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
         if DateUtils::is_birthday(self.birth_date, context.date.date()) {}
     }
 }

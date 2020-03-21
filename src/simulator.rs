@@ -2,14 +2,15 @@ use crate::core::context::SimulationContext;
 use crate::generators::Generator;
 
 use crate::continent::Continent;
+use crate::people::{Player, Staff};
 pub use rayon::prelude::*;
-use crate::people::{Staff, Player};
+use std::sync::Mutex;
 
 pub struct SimulatorData {
     pub continents: Vec<Continent>,
 
-    pub free_players: Vec<Player>,
-    pub free_staff: Vec<Staff>,
+    pub free_players_pool: Mutex<Vec<Player>>,
+    pub free_staffs_pool: Mutex<Vec<Staff>>,
 }
 
 #[derive(Default)]
