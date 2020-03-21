@@ -7,7 +7,7 @@ use chrono::NaiveDate;
 use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Staff {
     pub id: u32,
     pub full_name: FullName,

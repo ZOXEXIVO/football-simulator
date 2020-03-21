@@ -6,7 +6,7 @@ use crate::people::Staff;
 use std::borrow::Cow;
 use std::iter;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum StaffPosition {
     SportDirector,
     MainCoach,
@@ -14,13 +14,13 @@ pub enum StaffPosition {
     Physio,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum StaffStatus {
     Active,
     ExpiredContract,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct StaffClubContract {
     staff: Staff,
     expired: NaiveDate,
@@ -56,7 +56,7 @@ impl StaffClubContract {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct StaffCollection {
     pub staffs: Vec<StaffClubContract>,
     pub roles: StaffRoles,
@@ -64,7 +64,7 @@ pub struct StaffCollection {
     stub: Staff,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct StaffRoles {
     main_coach: Option<StaffClubContract>,
     contract_resolver: Option<StaffClubContract>,
@@ -93,10 +93,15 @@ impl StaffCollection {
     }
 
     pub fn get_main_coach(&self) -> &Staff {
-        let main_coach_contract = self
-            .staffs
-            .iter()
-            .find(|c| c.position == StaffPosition::MainCoach);
+        self.get_by_position(&StaffPosition::MainCoach)
+    }
+
+    pub fn get_contract_resolver(&self) -> &Staff {
+        self.get_by_position(&StaffPosition::MainCoach)
+    }
+
+    fn get_by_position(&self, position: &StaffPosition) -> &Staff {
+        let main_coach_contract = self.staffs.iter().find(|c| c.position == *position);
 
         if main_coach_contract.is_none() {
             return &self.stub;

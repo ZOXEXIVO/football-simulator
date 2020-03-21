@@ -1,14 +1,15 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{ClubMood, ClubSimulationContext, TacticsSelector};
+use crate::club::{ClubMood, ClubSimulationContext, TacticsSelector, TransferItem};
 use crate::core::SimulationContext;
 use crate::people::{
-    Player, PlayerCollection, PlayerSelector, StaffCollection, TransferRequestNegotiation,
+    ContractImproveRequestNegotiation, ContractImproveRequestNegotiationResult, Player,
+    PlayerCollection, PlayerSelector, StaffCollection, TransferRequestNegotiation,
     TransferRequestNegotiationResult,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Club {
     pub id: u32,
     pub name: String,
@@ -17,6 +18,8 @@ pub struct Club {
     pub players: PlayerCollection,
     pub staffs: StaffCollection,
     pub tactics: Option<Tactics>,
+
+    pub transfer_list: Vec<TransferItem>,
 }
 
 impl Club {
@@ -50,13 +53,21 @@ impl Club {
     }
 
     fn process_context(&mut self, context: ClubSimulationContext) {
-        for transfer_request in context.transfer_requests {
-            match self.players.get_player(transfer_request) {
-                Some(player) => match TransferRequestNegotiation::negotiate(self, player) {
-                    TransferRequestNegotiationResult::Complete => {}
-                },
-                None => {}
-            }
-        }
+        // for transfer_request in context.transfer_requests {
+        //     let player = self.players.get(transfer_request);
+        //
+        //     match TransferRequestNegotiation::negotiate(self, player) {
+        //         TransferRequestNegotiationResult::Complete => {}
+        //     }
+        // }
+        //
+        // for improve_contract_request in context.contract_improve_requests {
+        //     match ContractImproveRequestNegotiation::negotiate(
+        //         self,
+        //         self.players.get(improve_contract_request),
+        //     ) {
+        //         ContractImproveRequestNegotiationResult::Complete => {}
+        //     }
+        // }
     }
 }

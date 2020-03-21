@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Behaviour {
     pub state: BehaviourState,
 }
@@ -23,7 +23,7 @@ impl Behaviour {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BehaviourState {
     Poor,
     Normal,

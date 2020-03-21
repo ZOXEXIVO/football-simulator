@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PlayerAttributes {
     pub current_ability: u8,
     pub potential_ability: i8,

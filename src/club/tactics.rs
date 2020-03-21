@@ -2,7 +2,7 @@ use crate::club::Club;
 use crate::people::{BehaviourState, Player, PlayerPositionType, Staff};
 use std::collections::HashMap;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Tactics {
     pub positioning: TacticsPositioning,
 }
@@ -13,7 +13,7 @@ impl Tactics {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TacticsPositioning {
     T235,
     T442,

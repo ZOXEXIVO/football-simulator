@@ -51,7 +51,7 @@ impl Schedule {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug)]
 pub struct ScheduleItem {
     pub date: NaiveDate,
     pub home_club_id: u32,

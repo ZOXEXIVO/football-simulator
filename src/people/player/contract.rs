@@ -1,9 +1,8 @@
 use crate::club::ClubSimulationContext;
-use crate::core::context::SimulationContext;
 use crate::people::Player;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PlayerClubContract {
     pub player: Player,
     pub salary: f64,
@@ -11,7 +10,7 @@ pub struct PlayerClubContract {
     pub additional_options: AdditionalOptions,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AdditionalOptions {
     pub yearly_increase_wage: u16,
 }
@@ -43,7 +42,7 @@ impl PlayerClubContract {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PlayerCollection {
     pub contracts: Vec<PlayerClubContract>,
 }
@@ -63,15 +62,13 @@ impl PlayerCollection {
         }
     }
 
-    pub fn get_player(&self, player_id: u32) -> Option<&Player> {
-        let contract_result = self
+    pub fn get(&mut self, player_id: u32) -> &Player {
+        let contract = self
             .contracts
-            .iter()
-            .find(|contract| contract.player.id == player_id);
+            .iter_mut()
+            .find(|c| c.player.id == player_id)
+            .unwrap();
 
-        match contract_result {
-            Some(contract) => Some(&contract.player),
-            None => None,
-        }
+        &contract.player
     }
 }

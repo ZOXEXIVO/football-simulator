@@ -3,7 +3,7 @@ use crate::people::PlayerPositionType;
 const SKILL_MIN_VALUE: u8 = 1;
 const SKILL_MAX_VALUE: u8 = 20;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PlayerSkills {
     pub technical: Technical,
     pub mental: Mental,
@@ -30,7 +30,7 @@ impl PlayerSkills {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Technical {
     pub corners: u8,
     pub crossing: u8,
@@ -97,7 +97,7 @@ impl Technical {
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Mental {
     pub aggression: u8,
     pub anticipation: u8,
@@ -163,7 +163,7 @@ impl Mental {
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Physical {
     pub acceleration: u8,
     pub agility: u8,

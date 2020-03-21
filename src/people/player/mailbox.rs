@@ -1,17 +1,17 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PlayerMessage {
-    Greeting
+    Greeting,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PlayerMailbox {
-    messages: Vec<PlayerMessage>
+    messages: Vec<PlayerMessage>,
 }
 
-impl PlayerMailbox{
-    pub fn new() -> Self{
-        PlayerMailbox{
-            messages: Vec::new()
+impl PlayerMailbox {
+    pub fn new() -> Self {
+        PlayerMailbox {
+            messages: Vec::new(),
         }
     }
 }

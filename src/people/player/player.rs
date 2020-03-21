@@ -1,12 +1,11 @@
 use crate::club::ClubSimulationContext;
-use crate::core::SimulationContext;
 use crate::people::{Behaviour, PlayerAttributes, PlayerMailbox, PlayerSkills};
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, IntegerUtils};
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Player {
     pub id: u32,
     pub full_name: FullName,
@@ -48,6 +47,9 @@ impl Player {
             self.behaviour.try_increase();
         }
 
+        context.request_contract_improvement(self.id);
+        context.request_transfer(self.id);
+
         self.train();
     }
 
@@ -76,14 +78,14 @@ impl Player {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PlayerFoot {
     Left,
     Right,
     Both,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub enum PlayerPositionType {
     Goalkeeper,
     Defender,
@@ -91,7 +93,7 @@ pub enum PlayerPositionType {
     Forward,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PlayerPosition {
     pub position: PlayerPositionType,
     pub level: u8,

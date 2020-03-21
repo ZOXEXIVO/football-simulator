@@ -90,7 +90,7 @@ impl Generator for Club {
             players: PlayerCollection::new((0..10).map(|_| Generator::generate()).collect()),
             staffs: StaffCollection::new((0..10).map(|_| Generator::generate()).collect()),
             tactics: None,
-            //transfer_list: Vec::new(),
+            transfer_list: Vec::new(),
         }
     }
 }
