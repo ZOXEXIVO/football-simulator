@@ -1,5 +1,4 @@
-use crate::club::ClubSimulationContext;
-use crate::people::Player;
+use crate::people::{Player, PlayerContext};
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
 #[derive(Debug)]
@@ -35,7 +34,7 @@ impl PlayerClubContract {
         self.expired >= naive_now
     }
 
-    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
+    pub fn simulate(&mut self, context: &mut PlayerContext) {
         if context.check_contract_expiration() && self.is_expired() {}
 
         self.player.simulate(context);
@@ -56,7 +55,7 @@ impl PlayerCollection {
         self.contracts.len()
     }
 
-    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
+    pub fn simulate(&mut self, context: &mut PlayerContext) {
         for player_contract in &mut self.contracts {
             player_contract.simulate(context)
         }

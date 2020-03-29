@@ -2,6 +2,11 @@ pub use chrono::prelude::*;
 
 use chrono::Duration;
 
+pub trait Context {
+    fn date(&self) -> NaiveDateTime;
+    fn hour(&self) -> u8;
+}
+
 #[derive(Clone)]
 pub struct SimulationContext {
     pub date: NaiveDateTime,
@@ -23,5 +28,15 @@ impl SimulationContext {
 
         self.day = self.date.day() as u8;
         self.hour = self.date.time().hour() as u8;
+    }
+}
+
+impl Context for SimulationContext {
+    fn date(&self) -> NaiveDateTime {
+        self.date
+    }
+
+    fn hour(&self) -> u8 {
+        self.hour
     }
 }

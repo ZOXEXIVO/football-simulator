@@ -1,15 +1,15 @@
-use crate::league::LeagueContext;
+use crate::core::SimulationContext;
 use chrono::NaiveDateTime;
 
-pub struct ClubContext {
+pub struct ContinentContext {
     pub date: NaiveDateTime,
     pub day: u8,
     pub hour: u8,
 }
 
-impl ClubContext {
-    pub fn new(context: &LeagueContext) -> Self {
-        ClubContext {
+impl ContinentContext {
+    pub fn new(context: &SimulationContext) -> Self {
+        ContinentContext {
             date: context.date,
             day: context.day,
             hour: context.hour,

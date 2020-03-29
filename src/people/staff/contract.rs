@@ -1,10 +1,6 @@
-use crate::core::SimulationContext;
+use crate::core::context::Context;
+use crate::people::{Staff, StaffContext};
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
-
-use crate::club::ClubSimulationContext;
-use crate::people::Staff;
-use std::borrow::Cow;
-use std::iter;
 
 #[derive(Debug, PartialEq)]
 pub enum StaffPosition {
@@ -43,11 +39,11 @@ impl StaffClubContract {
         }
     }
 
-    pub fn is_expired(&self, context: &mut ClubSimulationContext) -> bool {
-        self.expired >= context.date.date()
+    pub fn is_expired(&self, context: &mut dyn Context) -> bool {
+        self.expired >= context.date().date()
     }
 
-    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
+    pub fn simulate(&mut self, context: &mut StaffContext) {
         if context.check_contract_expiration() && self.is_expired(context) {
             self.status = StaffStatus::ExpiredContract;
         }
@@ -86,7 +82,7 @@ impl StaffCollection {
         self.staffs.len()
     }
 
-    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
+    pub fn simulate(&mut self, context: &mut StaffContext) {
         for staff_contract in &mut self.staffs {
             staff_contract.simulate(context)
         }

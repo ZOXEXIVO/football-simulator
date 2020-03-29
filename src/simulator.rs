@@ -1,7 +1,7 @@
 use crate::core::context::SimulationContext;
 use crate::generators::Generator;
 
-use crate::continent::Continent;
+use crate::continent::{Continent, ContinentContext};
 use crate::people::{Player, Staff};
 pub use rayon::prelude::*;
 use std::sync::Mutex;
@@ -40,13 +40,10 @@ impl FootballSimulator {
     pub fn simulate(&mut self, context: &mut SimulationContext) {
         let unwrapped_data = self.data.as_mut().unwrap();
 
-        unwrapped_data
-            .continents
-            .par_iter_mut()
-            .for_each(|continent| {
-                let mut cloned_context = context.clone();
-                continent.simulate(&mut cloned_context);
-            });
+        unwrapped_data.continents.iter_mut().for_each(|continent| {
+            let mut context = ContinentContext::new(context);
+            continent.simulate(&mut context);
+        });
 
         context.next_date();
     }

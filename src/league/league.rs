@@ -1,7 +1,6 @@
 use crate::chrono::Datelike;
-use crate::club::Club;
-use crate::core::SimulationContext;
-use crate::league::Schedule;
+use crate::club::{Club, ClubContext};
+use crate::league::{LeagueContext, Schedule};
 use crate::r#match::{Match, MatchResult};
 
 #[derive(Debug)]
@@ -18,13 +17,15 @@ impl League {
         self.clubs.iter().map(|club| club.items_count()).sum()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
+    pub fn simulate(&mut self, context: &mut LeagueContext) {
         if self.schedule.is_none() || self.settings.is_time_for_new_schedule(context) {
             self.schedule = Some(Schedule::generate(&self.clubs, context.date.date()).unwrap());
         }
 
         for club in &mut self.clubs {
-            club.simulate(context);
+            let mut context = ClubContext::new(context);
+
+            club.simulate(&mut context);
         }
 
         self.play_matches(context);
@@ -34,7 +35,7 @@ impl League {
         self.clubs.iter().find(|c| c.id == club_id)
     }
 
-    fn play_matches(&mut self, context: &SimulationContext) {
+    fn play_matches(&mut self, context: &LeagueContext) {
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
 
@@ -64,7 +65,7 @@ pub struct LeagueSettings {
 }
 
 impl LeagueSettings {
-    pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool {
+    pub fn is_time_for_new_schedule(&self, context: &LeagueContext) -> bool {
         let current_day = context.date.day() as u8;
         let current_month = context.date.month() as u8;
 

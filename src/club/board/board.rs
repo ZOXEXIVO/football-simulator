@@ -1,4 +1,4 @@
-use crate::club::ClubSimulationContext;
+use crate::club::BoardContext;
 use crate::people::StaffClubContract;
 
 #[derive(Debug)]
@@ -15,7 +15,7 @@ impl ClubBoard {
         }
     }
 
-    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
+    pub fn simulate(&mut self, context: &mut BoardContext) {
         if self.director.is_none() {
             self.run_director_election(context);
         }
@@ -31,21 +31,21 @@ impl ClubBoard {
         }
     }
 
-    fn is_director_contract_expiring(&self, context: &mut ClubSimulationContext) -> bool {
+    fn is_director_contract_expiring(&self, context: &mut BoardContext) -> bool {
         match &self.director {
             Some(d) => d.is_expired(context),
             None => false,
         }
     }
 
-    fn run_director_election(&mut self, context: &mut ClubSimulationContext) {}
+    fn run_director_election(&mut self, context: &mut BoardContext) {}
 
-    fn is_sport_director_contract_expiring(&self, context: &mut ClubSimulationContext) -> bool {
+    fn is_sport_director_contract_expiring(&self, context: &mut BoardContext) -> bool {
         match &self.director {
             Some(d) => d.is_expired(context),
             None => false,
         }
     }
 
-    fn run_sport_director_election(&mut self, context: &mut ClubSimulationContext) {}
+    fn run_sport_director_election(&mut self, context: &mut BoardContext) {}
 }

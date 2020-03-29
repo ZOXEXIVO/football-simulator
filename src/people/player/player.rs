@@ -1,5 +1,4 @@
-use crate::club::ClubSimulationContext;
-use crate::people::{Behaviour, PlayerAttributes, PlayerMailbox, PlayerSkills};
+use crate::people::{Behaviour, PlayerAttributes, PlayerContext, PlayerMailbox, PlayerSkills};
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, IntegerUtils};
 use chrono::NaiveDate;
@@ -42,7 +41,7 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, context: &mut ClubSimulationContext) {
+    pub fn simulate(&mut self, context: &mut PlayerContext) {
         if DateUtils::is_birthday(self.birth_date, context.date.date()) {
             self.behaviour.try_increase();
         }
@@ -53,7 +52,7 @@ impl Player {
         self.train();
     }
 
-    fn request_transfer(&self, context: &ClubSimulationContext) {}
+    fn request_transfer(&self, context: &PlayerContext) {}
 
     pub fn position(&self) -> &PlayerPositionType {
         &self.positions.first().unwrap().position

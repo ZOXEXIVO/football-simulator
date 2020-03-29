@@ -1,5 +1,5 @@
-use crate::core::SimulationContext;
-use crate::league::League;
+use crate::country::CountryContext;
+use crate::league::{League, LeagueContext};
 
 pub struct Country {
     pub name: String,
@@ -12,9 +12,10 @@ impl Country {
         self.leagues.iter().map(|league| league.items_count()).sum()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
+    pub fn simulate(&mut self, context: &mut CountryContext) {
         for league in &mut self.leagues {
-            league.simulate(context);
+            let mut context = LeagueContext::new(context);
+            league.simulate(&mut context);
         }
     }
 }

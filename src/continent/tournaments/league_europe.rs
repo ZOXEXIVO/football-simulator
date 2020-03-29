@@ -1,7 +1,9 @@
-pub struct LeagueEurope{
-    
-}
+use crate::continent::{Tournament, TournamentContext};
 
-impl LeagueEurope{
-    
+pub struct LeagueEurope {}
+
+impl LeagueEurope {}
+
+impl Tournament for LeagueEurope {
+    fn simulate(&mut self, context: &mut TournamentContext) {}
 }

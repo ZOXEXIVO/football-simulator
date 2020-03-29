@@ -1,10 +1,14 @@
 use crate::{Country, SimulationContext};
 
+use crate::continent::{ContinentContext, Tournament, TournamentContext};
+use crate::country::CountryContext;
 pub use rayon::prelude::*;
 
 pub struct Continent {
     pub name: String,
     pub countries: Vec<Country>,
+
+    pub tournaments: Vec<Box<dyn Tournament>>,
 }
 
 impl Continent {
@@ -15,9 +19,17 @@ impl Continent {
             .sum()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
+    pub fn simulate(&mut self, context: &mut ContinentContext) {
         self.countries.par_iter_mut().for_each(|country| {
-            country.simulate(&mut context.clone());
+            let mut context = CountryContext::new(context);
+
+            country.simulate(&mut context);
         });
+
+        for tournament in &mut self.tournaments {
+            let mut context = TournamentContext::new(context);
+
+            tournament.simulate(&mut context)
+        }
     }
 }

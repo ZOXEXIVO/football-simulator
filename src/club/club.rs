@@ -1,12 +1,10 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{ClubMood, ClubSimulationContext, TacticsSelector, TransferItem};
-use crate::core::SimulationContext;
+use crate::club::{BoardContext, ClubContext, ClubMood, TacticsSelector, TransferItem};
 use crate::people::{
-    ContractImproveRequestNegotiation, ContractImproveRequestNegotiationResult, Player,
-    PlayerCollection, PlayerSelector, StaffCollection, TransferRequestNegotiation,
-    TransferRequestNegotiationResult,
+    Player, PlayerCollection, PlayerContext, PlayerSelector, StaffCollection, StaffContext,
+    TransferRequestNegotiation, TransferRequestNegotiationResult,
 };
 
 #[derive(Debug)]
@@ -41,18 +39,20 @@ impl Club {
         }
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
-        let mut club_context = ClubSimulationContext::new(context);
+    pub fn simulate(&mut self, context: &mut ClubContext) {
+        let mut player_context = PlayerContext::new(context);
+        self.players.simulate(&mut player_context);
 
-        self.players.simulate(&mut club_context);
-        self.staffs.simulate(&mut club_context);
+        let mut staff_context = StaffContext::new(context);
+        self.staffs.simulate(&mut staff_context);
 
-        self.board.simulate(&mut club_context);
+        let mut board_context = BoardContext::new(context);
+        self.board.simulate(&mut board_context);
 
-        self.process_context(club_context);
+        //self.process_context(context);
     }
 
-    fn process_context(&mut self, context: ClubSimulationContext) {
+    fn process_context(&mut self, context: ClubContext) {
         // for transfer_request in context.transfer_requests {
         //     let player = self.players.get(transfer_request);
         //

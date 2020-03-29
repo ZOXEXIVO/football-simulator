@@ -34,10 +34,7 @@ impl Generator for SimulatorData {
             .collect();
 
         SimulatorData {
-            continents: (0..7)
-                .into_par_iter()
-                .map(|_| Generator::generate())
-                .collect(),
+            continents: (0..7).into_iter().map(|_| Generator::generate()).collect(),
             free_players_pool: Mutex::new(free_players),
             free_staffs_pool: Mutex::new(free_staffs),
         }
@@ -49,6 +46,7 @@ impl Generator for Continent {
         Continent {
             name: StringUtils::random_string(10),
             countries: (0..190).map(|_| Generator::generate()).collect(),
+            tournaments: Vec::new(),
         }
     }
 }
