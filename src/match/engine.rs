@@ -27,16 +27,14 @@ impl<'s> FootballEngine<'s> {
             player_changes: vec![],
         };
 
-        let home_team = Rc::new(self.get_team_for_squad(&self.home_squad));
-        let away_team = Rc::new(self.get_team_for_squad(&self.away_squad));
+        let home_team = self.get_team_for_squad(&self.home_squad);
+        let away_team = self.get_team_for_squad(&self.away_squad);
 
-        let mut attacking_team = Rc::clone(&home_team);
-        let mut defending_team = Rc::clone(&away_team);
+        let mut attacking_team = &home_team;
+        let mut defending_team = &away_team;
 
         for i in 0..MATCH_ACTIONS {
             let winner_team = self.get_battle_winner(&attacking_team, &defending_team, &field_zone);
-
-            let attid = attacking_team.id;
 
             if winner_team.id == attacking_team.id {
                 if attacking_team.id == home_team.id {

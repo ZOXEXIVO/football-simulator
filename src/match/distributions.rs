@@ -1,8 +1,4 @@
-use rand::prelude::ThreadRng;
 use rand_distr::{Distribution, Gamma, Normal, Uniform};
-
-use libm::{log, pow, sin};
-use std::f64::consts::E;
 
 #[inline]
 #[allow(dead_code)]
@@ -21,10 +17,7 @@ pub(crate) fn normal_random(mu: f64, sigma: f64) -> f64 {
 
 #[inline]
 pub(crate) fn random_gamma(alpha: f64, beta: f64) -> f64 {
-    let mut new_alpha = 0.000001;
-    if alpha != 0.0 {
-        new_alpha = alpha;
-    }
+    let new_alpha = if alpha != 0.0 { alpha } else { 0.000_001 };
 
     Gamma::new(new_alpha, beta)
         .unwrap()
