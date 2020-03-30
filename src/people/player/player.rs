@@ -84,7 +84,7 @@ pub enum PlayerFoot {
     Both,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum PlayerPositionType {
     Goalkeeper,
     Defender,

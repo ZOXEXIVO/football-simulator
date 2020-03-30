@@ -13,11 +13,11 @@ impl<'s> Squad<'s> {}
 #[derive(Debug)]
 pub struct SquadPlayer<'p> {
     pub player: &'p Player,
-    pub position: &'p PlayerPositionType,
+    pub position: PlayerPositionType,
 }
 
 impl<'p> SquadPlayer<'p> {
-    pub fn new(player: &'p Player, position: &'p PlayerPositionType) -> Self {
+    pub fn new(player: &'p Player, position: PlayerPositionType) -> Self {
         SquadPlayer { player, position }
     }
 }

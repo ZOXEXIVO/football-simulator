@@ -1,4 +1,4 @@
-use crate::{Country, SimulationContext};
+use crate::Country;
 
 use crate::continent::{ContinentContext, Tournament, TournamentContext};
 use crate::country::CountryContext;

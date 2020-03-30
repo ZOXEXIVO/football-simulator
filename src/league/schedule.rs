@@ -61,6 +61,7 @@ pub struct ScheduleItem {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::club::ClubMood;
     use crate::people::{PlayerCollection, StaffCollection};
     use crate::ClubBoard;
 
@@ -71,28 +72,34 @@ mod tests {
         clubs.push(Club {
             id: 1,
             name: "1".to_string(),
+            mood: ClubMood::default(),
             board: ClubBoard::new(),
             players: PlayerCollection::new(vec![]),
             staffs: StaffCollection::new(vec![]),
             tactics: None,
+            transfer_list: vec![],
         });
 
         clubs.push(Club {
             id: 2,
-            name: "2".to_string(),
+            name: "1".to_string(),
+            mood: ClubMood::default(),
             board: ClubBoard::new(),
             players: PlayerCollection::new(vec![]),
             staffs: StaffCollection::new(vec![]),
             tactics: None,
+            transfer_list: vec![],
         });
 
         clubs.push(Club {
             id: 3,
-            name: "3".to_string(),
+            name: "1".to_string(),
+            mood: ClubMood::default(),
             board: ClubBoard::new(),
             players: PlayerCollection::new(vec![]),
             staffs: StaffCollection::new(vec![]),
             tactics: None,
+            transfer_list: vec![],
         });
 
         let schedule = Schedule::generate(&clubs, NaiveDate::from_ymd(2020, 3, 1)).unwrap();

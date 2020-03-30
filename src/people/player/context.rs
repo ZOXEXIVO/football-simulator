@@ -1,6 +1,5 @@
 use crate::club::ClubContext;
 use crate::core::context::Context;
-use crate::league::LeagueContext;
 use chrono::NaiveDateTime;
 
 pub struct PlayerContext {

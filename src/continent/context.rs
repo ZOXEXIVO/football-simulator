@@ -15,8 +15,4 @@ impl ContinentContext {
             hour: context.hour,
         }
     }
-
-    pub fn check_contract_expiration(&self) -> bool {
-        self.hour == 0
-    }
 }

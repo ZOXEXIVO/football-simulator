@@ -3,7 +3,8 @@ use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::club::{BoardContext, ClubContext, ClubMood, TacticsSelector, TransferItem};
 use crate::people::{
-    Player, PlayerCollection, PlayerContext, PlayerSelector, StaffCollection, StaffContext,
+    ContractImproveRequestNegotiation, ContractImproveRequestNegotiationResult, Player,
+    PlayerCollection, PlayerContext, PlayerSelector, StaffCollection, StaffContext,
     TransferRequestNegotiation, TransferRequestNegotiationResult,
 };
 
@@ -52,22 +53,22 @@ impl Club {
         //self.process_context(context);
     }
 
-    fn process_context(&mut self, context: ClubContext) {
-        // for transfer_request in context.transfer_requests {
-        //     let player = self.players.get(transfer_request);
-        //
-        //     match TransferRequestNegotiation::negotiate(self, player) {
-        //         TransferRequestNegotiationResult::Complete => {}
-        //     }
-        // }
-        //
-        // for improve_contract_request in context.contract_improve_requests {
-        //     match ContractImproveRequestNegotiation::negotiate(
-        //         self,
-        //         self.players.get(improve_contract_request),
-        //     ) {
-        //         ContractImproveRequestNegotiationResult::Complete => {}
-        //     }
-        // }
+    fn process_context(&mut self, context: PlayerContext) {
+        for transfer_request in context.transfer_requests {
+            let player = self.players.get(transfer_request);
+
+            // match TransferRequestNegotiation::negotiate(self, player) {
+            //     TransferRequestNegotiationResult::Complete => {}
+            // }
+        }
+
+        for improve_contract_request in context.contract_improve_requests {
+            // match ContractImproveRequestNegotiation::negotiate(
+            //     self,
+            //     self.players.get(improve_contract_request),
+            // ) {
+            //     ContractImproveRequestNegotiationResult::Complete => {}
+            // }
+        }
     }
 }
