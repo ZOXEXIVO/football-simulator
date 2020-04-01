@@ -3,14 +3,11 @@ use std::time::Instant;
 pub struct TimeEstimation;
 
 impl TimeEstimation {
-    pub fn estimate<F>(action: F) -> u32
-    where
-        F: FnOnce() -> (),
-    {
+    pub fn estimate<T, F: FnOnce() -> T>(action: F) -> (T, u32) {
         let now = Instant::now();
 
-        action();
+        let result = action();
 
-        now.elapsed().as_millis() as u32
+        (result, now.elapsed().as_millis() as u32)
     }
 }

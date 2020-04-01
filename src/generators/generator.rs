@@ -34,7 +34,7 @@ impl Generator for SimulatorData {
             .collect();
 
         SimulatorData {
-            continents: (0..7).into_iter().map(|_| Generator::generate()).collect(),
+            continents: (0..7).map(|_| Generator::generate()).collect(),
             free_players_pool: Mutex::new(free_players),
             free_staffs_pool: Mutex::new(free_staffs),
         }
@@ -45,7 +45,7 @@ impl Generator for Continent {
     fn generate() -> Continent {
         Continent {
             name: StringUtils::random_string(10),
-            countries: (0..190).map(|_| Generator::generate()).collect(),
+            countries: (0..50).map(|_| Generator::generate()).collect(),
             tournaments: Vec::new(),
         }
     }
@@ -55,7 +55,7 @@ impl Generator for Country {
     fn generate() -> Country {
         Country {
             name: StringUtils::random_string(10),
-            leagues: (0..10).map(|_| Generator::generate()).collect(),
+            leagues: (0..4).map(|_| Generator::generate()).collect(),
             reputation: 5000,
         }
     }
@@ -63,7 +63,7 @@ impl Generator for Country {
 
 impl Generator for League {
     fn generate() -> League {
-        let clubs = (0..30).map(|_| Generator::generate()).collect();
+        let clubs = (0..20).map(|_| Generator::generate()).collect();
 
         League {
             name: StringUtils::random_string(10),

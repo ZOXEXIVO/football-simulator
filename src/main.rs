@@ -24,30 +24,27 @@ use club::*;
 use country::*;
 use simulator::FootballSimulator;
 
+use crate::generators::Generator;
+use crate::simulator::SimulatorData;
 use crate::utils::TimeEstimation;
 use chrono::prelude::{NaiveDateTime, NaiveTime};
 
 fn main() {
-    let mut simulator = FootballSimulator::new();
+    let mut data_estimation = TimeEstimation::estimate(|| SimulatorData::generate());
 
-    println!(
-        "generated with {} ms",
-        TimeEstimation::estimate(|| simulator.generate())
-    );
+    println!("data generated with {} ms", data_estimation.1);
 
     let date = NaiveDate::from_ymd(2020, 11, 15);
     let time = NaiveTime::from_hms(0, 0, 0);
 
     let mut context = SimulationContext::new(NaiveDateTime::new(date, time));
 
-    let total_items = simulator.items_count();
-
-    println!("running with {} items", total_items);
+    let mut simulator = FootballSimulator::new();
 
     loop {
-        println!(
-            "simulated with {} ms",
-            TimeEstimation::estimate(|| simulator.simulate(&mut context))
-        );
+        let simulation_result =
+            TimeEstimation::estimate(|| simulator.simulate(&mut data_estimation.0, &mut context));
+
+        println!("simulated with {} ms", simulation_result.1);
     }
 }

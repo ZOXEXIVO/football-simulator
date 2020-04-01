@@ -1,7 +1,5 @@
-use crate::core::context::SimulationContext;
-use crate::generators::Generator;
-
 use crate::continent::{Continent, ContinentContext};
+use crate::core::context::SimulationContext;
 use crate::people::{Player, Staff};
 pub use rayon::prelude::*;
 use std::sync::Mutex;
@@ -13,34 +11,15 @@ pub struct SimulatorData {
     pub free_staffs_pool: Mutex<Vec<Staff>>,
 }
 
-#[derive(Default)]
-pub struct FootballSimulator {
-    data: Option<SimulatorData>,
-}
+pub struct FootballSimulator;
 
 impl FootballSimulator {
     pub fn new() -> Self {
-        Self { data: None }
+        FootballSimulator {}
     }
 
-    pub fn generate(&mut self) {
-        self.data = Some(SimulatorData::generate());
-    }
-
-    pub fn items_count(&self) -> usize {
-        self.data
-            .as_ref()
-            .unwrap()
-            .continents
-            .iter()
-            .map(|continent| continent.items_count())
-            .sum()
-    }
-
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
-        let unwrapped_data = self.data.as_mut().unwrap();
-
-        unwrapped_data.continents.iter_mut().for_each(|continent| {
+    pub fn simulate(&mut self, data: &mut SimulatorData, context: &mut SimulationContext) {
+        data.continents.iter_mut().for_each(|continent| {
             let mut context = ContinentContext::new(context);
             continent.simulate(&mut context);
         });
