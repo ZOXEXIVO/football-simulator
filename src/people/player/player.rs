@@ -1,4 +1,7 @@
-use crate::people::{Behaviour, PlayerAttributes, PlayerContext, PlayerMailbox, PlayerSkills};
+use crate::people::{
+    Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerContext, PlayerMailbox,
+    PlayerSkills,
+};
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, IntegerUtils};
 use chrono::NaiveDate;
@@ -11,6 +14,7 @@ pub struct Player {
     pub birth_date: NaiveDate,
     pub behaviour: Behaviour,
     pub skills: PlayerSkills,
+    pub contract: Option<PlayerClubContract>,
     pub positions: Vec<PlayerPosition>,
     pub preferred_foot: PlayerFoot,
     pub attributes: PlayerAttributes,
@@ -24,6 +28,7 @@ impl Player {
         birth_date: NaiveDate,
         skills: PlayerSkills,
         attributes: PlayerAttributes,
+        contract: Option<PlayerClubContract>,
         mut positions: Vec<PlayerPosition>,
     ) -> Self {
         positions.sort_by_key(|c| c.level);
@@ -37,6 +42,7 @@ impl Player {
             positions,
             preferred_foot: PlayerFoot::Right,
             attributes,
+            contract,
             mailbox: PlayerMailbox::new(),
         }
     }
@@ -47,7 +53,10 @@ impl Player {
         }
 
         context.request_contract_improvement(self.id);
-        context.request_transfer(self.id);
+
+        if self.behaviour.state == BehaviourState::Poor {
+            context.request_transfer(self.id);
+        }
 
         self.train();
     }

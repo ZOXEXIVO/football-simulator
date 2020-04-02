@@ -93,12 +93,6 @@ impl Generator for Club {
     }
 }
 
-impl Generator for PlayerClubContract {
-    fn generate() -> PlayerClubContract {
-        PlayerClubContract::new(Generator::generate(), NaiveDate::from_ymd(2020, 3, 14))
-    }
-}
-
 impl Generator for Player {
     fn generate() -> Player {
         let year = IntegerUtils::random(1980, 2010) as u32;
@@ -115,6 +109,7 @@ impl Generator for Player {
             NaiveDate::from_ymd(year as i32, month, day),
             generate_skills(),
             generate_attributes(),
+            Some(PlayerClubContract::new(NaiveDate::from_ymd(2020, 3, 14))),
             generate_positions(),
         );
 
@@ -190,17 +185,6 @@ impl Generator for Player {
     }
 }
 
-impl Generator for StaffClubContract {
-    fn generate() -> StaffClubContract {
-        StaffClubContract::new(
-            Generator::generate(),
-            NaiveDate::from_ymd(2020, 3, 14),
-            StaffPosition::MainCoach,
-            StaffStatus::Active,
-        )
-    }
-}
-
 impl Generator for Staff {
     fn generate() -> Staff {
         let year = IntegerUtils::random(1980, 2010) as u32;
@@ -215,6 +199,11 @@ impl Generator for Staff {
                 middle_name: StringUtils::random_string(15),
             },
             NaiveDate::from_ymd(year as i32, month, day),
+            Some(StaffClubContract::new(
+                NaiveDate::from_ymd(2020, 3, 14),
+                StaffPosition::MainCoach,
+                StaffStatus::Active,
+            )),
         )
     }
 }

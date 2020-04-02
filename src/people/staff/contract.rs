@@ -18,21 +18,14 @@ pub enum StaffStatus {
 
 #[derive(Debug)]
 pub struct StaffClubContract {
-    staff: Staff,
     expired: NaiveDate,
     position: StaffPosition,
     pub status: StaffStatus,
 }
 
 impl StaffClubContract {
-    pub fn new(
-        staff: Staff,
-        expired: NaiveDate,
-        position: StaffPosition,
-        status: StaffStatus,
-    ) -> Self {
+    pub fn new(expired: NaiveDate, position: StaffPosition, status: StaffStatus) -> Self {
         StaffClubContract {
-            staff,
             expired,
             position,
             status,
@@ -47,14 +40,12 @@ impl StaffClubContract {
         if context.check_contract_expiration() && self.is_expired(context) {
             self.status = StaffStatus::ExpiredContract;
         }
-
-        self.staff.simulate(context);
     }
 }
 
 #[derive(Debug)]
 pub struct StaffCollection {
-    pub staffs: Vec<StaffClubContract>,
+    pub staffs: Vec<Staff>,
     pub roles: StaffRoles,
 
     stub: Staff,
@@ -67,7 +58,7 @@ pub struct StaffRoles {
 }
 
 impl StaffCollection {
-    pub fn new(staffs: Vec<StaffClubContract>) -> Self {
+    pub fn new(staffs: Vec<Staff>) -> Self {
         StaffCollection {
             staffs,
             roles: StaffRoles {
@@ -88,21 +79,22 @@ impl StaffCollection {
         }
     }
 
-    pub fn get_main_coach(&self) -> &Staff {
+    pub fn get_main_coach(&self) -> Option<&Staff> {
         self.get_by_position(&StaffPosition::MainCoach)
     }
 
-    pub fn get_contract_resolver(&self) -> &Staff {
+    pub fn get_contract_resolver(&self) -> Option<&Staff> {
         self.get_by_position(&StaffPosition::MainCoach)
     }
 
-    fn get_by_position(&self, position: &StaffPosition) -> &Staff {
-        let main_coach_contract = self.staffs.iter().find(|c| c.position == *position);
-
-        if main_coach_contract.is_none() {
-            return &self.stub;
-        }
-
-        &main_coach_contract.unwrap().staff
+    fn get_by_position(&self, position: &StaffPosition) -> Option<&Staff> {
+        None
+        // let main_coach_contract = self.staffs.iter().find(|staff| staff.position == *position);
+        //
+        // if main_coach_contract.is_none() {
+        //     return &self.stub;
+        // }
+        //
+        // &main_coach_contract.unwrap().staff
     }
 }

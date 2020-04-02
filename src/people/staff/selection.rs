@@ -40,9 +40,8 @@ impl PlayerSelector {
 
         let current_players: Vec<&Player> = club
             .players
-            .contracts
+            .players
             .iter()
-            .map(|p| &p.player)
             .filter(|p| *p.position() == position)
             .collect();
 

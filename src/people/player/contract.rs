@@ -3,7 +3,6 @@ pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
 #[derive(Debug)]
 pub struct PlayerClubContract {
-    pub player: Player,
     pub salary: f64,
     pub expired: NaiveDate,
     pub additional_options: AdditionalOptions,
@@ -15,9 +14,8 @@ pub struct AdditionalOptions {
 }
 
 impl PlayerClubContract {
-    pub fn new(player: Player, expired: NaiveDate) -> Self {
+    pub fn new(expired: NaiveDate) -> Self {
         PlayerClubContract {
-            player,
             salary: 100_000.0,
             expired,
             additional_options: AdditionalOptions {
@@ -36,38 +34,30 @@ impl PlayerClubContract {
 
     pub fn simulate(&mut self, context: &mut PlayerContext) {
         if context.check_contract_expiration() && self.is_expired() {}
-
-        self.player.simulate(context);
     }
 }
 
 #[derive(Debug)]
 pub struct PlayerCollection {
-    pub contracts: Vec<PlayerClubContract>,
+    pub players: Vec<Player>,
 }
 
 impl PlayerCollection {
-    pub fn new(contracts: Vec<PlayerClubContract>) -> Self {
-        PlayerCollection { contracts }
+    pub fn new(players: Vec<Player>) -> Self {
+        PlayerCollection { players }
     }
 
     pub fn len(&self) -> usize {
-        self.contracts.len()
+        self.players.len()
     }
 
     pub fn simulate(&mut self, context: &mut PlayerContext) {
-        for player_contract in &mut self.contracts {
-            player_contract.simulate(context)
+        for player in &mut self.players {
+            player.simulate(context)
         }
     }
 
-    pub fn get(&mut self, player_id: u32) -> &Player {
-        let contract = self
-            .contracts
-            .iter_mut()
-            .find(|c| c.player.id == player_id)
-            .unwrap();
-
-        &contract.player
+    pub fn players(&self) -> Vec<&Player> {
+        self.players.iter().map(|player| player).collect()
     }
 }

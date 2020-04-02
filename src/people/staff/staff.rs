@@ -1,5 +1,5 @@
 use crate::people::player::player::Player;
-use crate::people::{Behaviour, StaffContext};
+use crate::people::{Behaviour, StaffClubContract, StaffContext};
 use crate::shared::fullname::FullName;
 use crate::utils::DateUtils;
 use chrono::NaiveDate;
@@ -12,15 +12,24 @@ pub struct Staff {
     pub full_name: FullName,
     pub birth_date: NaiveDate,
     pub behaviour: Behaviour,
+
+    pub contract: Option<StaffClubContract>,
+
     favorite_players: HashSet<u32>,
 }
 
 impl Staff {
-    pub fn new(id: u32, full_name: FullName, birth_date: NaiveDate) -> Self {
+    pub fn new(
+        id: u32,
+        full_name: FullName,
+        birth_date: NaiveDate,
+        contract: Option<StaffClubContract>,
+    ) -> Self {
         Staff {
             id,
             full_name,
             birth_date,
+            contract,
             behaviour: Behaviour::default(),
             favorite_players: HashSet::new(),
         }
@@ -34,6 +43,7 @@ impl Staff {
                 last_name: "stub".to_string(),
                 middle_name: "stub".to_string(),
             },
+            contract: None,
             behaviour: Behaviour::default(),
             birth_date: NaiveDate::from_ymd(2019, 1, 1),
             favorite_players: HashSet::new(),

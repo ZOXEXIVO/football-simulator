@@ -30,7 +30,7 @@ use crate::utils::TimeEstimation;
 use chrono::prelude::{NaiveDateTime, NaiveTime};
 
 fn main() {
-    let mut data_estimation = TimeEstimation::estimate(|| SimulatorData::generate());
+    let mut data_estimation = TimeEstimation::estimate(SimulatorData::generate);
 
     println!("data generated with {} ms", data_estimation.1);
 
