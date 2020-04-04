@@ -27,10 +27,10 @@ impl League {
                 Some(Schedule::generate(&self.clubs, ctx.simulation.date.date()).unwrap());
         }
 
-        let mut club_ctx = ClubContext::new();
+        let global_ctx = ctx.with_club(ClubContext::new());
 
         for club in &mut self.clubs {
-            club.simulate(&mut ctx.with_club(&mut club_ctx));
+            club.simulate(global_ctx);
         }
 
         self.play_matches(&ctx);

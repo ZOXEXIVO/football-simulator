@@ -1,7 +1,7 @@
 use crate::continent::{Continent, ContinentContext};
 use crate::core::context::{GlobalContext, SimulationContext};
 
-use chrono::NaiveDateTime;
+use chrono::{Datelike, Duration, NaiveDateTime, Timelike};
 pub use rayon::prelude::*;
 
 #[derive()]
@@ -9,6 +9,12 @@ pub struct SimulatorData {
     pub continents: Vec<Continent>,
 
     pub date: NaiveDateTime,
+}
+
+impl SimulatorData {
+    pub fn next_date(&mut self) {
+        self.date += Duration::hours(1);
+    }
 }
 
 pub struct FootballSimulator;
@@ -19,18 +25,14 @@ impl FootballSimulator {
     }
 
     pub fn simulate(&mut self, data: &mut SimulatorData) {
-        let mut simulation_ctx = SimulationContext::new(data.date);
+        let mut global_ctx = GlobalContext::new(SimulationContext::new(data.date));
 
-        let mut ctx = GlobalContext::new(&mut simulation_ctx);
-
-        let mut continent_ctx = ContinentContext::new();
-
-        let ctx = &mut ctx.with_continent(&mut continent_ctx);
+        let continent_ctx = global_ctx.with_continent(ContinentContext::new());
 
         for continent in &mut data.continents {
-            continent.simulate(ctx);
+            continent.simulate(continent_ctx);
         }
 
-        //ctx.next_date();
+        data.next_date();
     }
 }

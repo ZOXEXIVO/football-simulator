@@ -1,14 +1,10 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{BoardContext, ClubContext, ClubMood, TacticsSelector, TransferItem};
-use crate::continent::ContinentContext;
+use crate::club::{BoardContext, ClubMood, TacticsSelector, TransferItem};
 use crate::core::context::GlobalContext;
-use crate::core::SimulationContext;
-use crate::country::CountryContext;
-use crate::league::LeagueContext;
 use crate::people::{
-    Player, PlayerCollection, PlayerContext, PlayerSelector, Staff, StaffCollection, StaffContext,
+    Player, PlayerCollection, PlayerContext, PlayerSelector, StaffCollection, StaffContext,
     TransferRequestNegotiation, TransferRequestNegotiationResult,
 };
 
@@ -46,19 +42,14 @@ impl Club {
     }
 
     pub fn simulate(&mut self, ctx: &mut GlobalContext) {
-        let mut player_ctx = PlayerContext::new();
-        
-        self.players.simulate(&mut ctx.with_player(&mut player_ctx));
+        let ctx = ctx.with_player(PlayerContext::new());
+        self.players.simulate(ctx);
 
-        //for player_id in player_ctx.player.unwrap().transfer_requests {}
+        let ctx = &mut ctx.with_staff(StaffContext::new());
+        self.staffs.simulate(ctx);
 
-        let mut staff_ctx = StaffContext::new();
-        self.staffs.simulate(&mut ctx.with_staff(&mut staff_ctx));
-
-        let mut board_ctx = BoardContext::new();
-
-        self.board.simulate(&mut ctx.with_board(&mut board_ctx));
-        //self.process_ctx(context);
+        let mut ctx = &mut ctx.with_board(BoardContext::new());
+        self.board.simulate(ctx);
     }
 
     fn process_ctx(&mut self, context: PlayerContext) {

@@ -1,8 +1,7 @@
 use crate::Country;
 
-use crate::continent::{ContinentContext, Tournament, TournamentContext};
+use crate::continent::{Tournament, TournamentContext};
 use crate::core::context::GlobalContext;
-use crate::core::SimulationContext;
 use crate::country::CountryContext;
 pub use rayon::prelude::*;
 
@@ -22,18 +21,16 @@ impl Continent {
     }
 
     pub fn simulate(&mut self, ctx: &mut GlobalContext) {
-        let mut country_ctx = CountryContext::new();
+        let global_ctx = ctx.with_country(CountryContext::new());
 
-        let  = &mut ctx.with_country(&mut country_ctx);
-        
         for country in &mut self.countries {
-            country.simulate(ctx);
+            country.simulate(global_ctx);
         }
 
         let mut tournament_ctx = TournamentContext::new();
 
         for tournament in &mut self.tournaments {
-            tournament.simulate(&mut tournament_ctx, &mut ctx)
+            tournament.simulate(&mut tournament_ctx, ctx)
         }
     }
 }

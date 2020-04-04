@@ -89,13 +89,14 @@ impl StaffCollection {
     }
 
     fn get_by_position(&self, position: &StaffPosition) -> Option<&Staff> {
-        None
-        // let main_coach_contract = self.staffs.iter().find(|staff| staff.position == *position);
-        //
-        // if main_coach_contract.is_none() {
-        //     return &self.stub;
-        // }
-        //
-        // &main_coach_contract.unwrap().staff
+        let main_coach_contract = self.staffs.iter().find(|staff| {
+            staff.contract.is_some() && staff.contract.as_ref().unwrap().position == *position
+        });
+
+        if main_coach_contract.is_none() {
+            return Some(&self.stub);
+        }
+
+        Some(&main_coach_contract.unwrap())
     }
 }

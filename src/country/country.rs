@@ -13,10 +13,10 @@ impl Country {
     }
 
     pub fn simulate(&mut self, ctx: &mut GlobalContext) {
-        let mut league_ctx = LeagueContext::new();
+        let ctx = ctx.with_league(LeagueContext::new());
 
         for league in &mut self.leagues {
-            league.simulate(&mut ctx.with_league(&mut league_ctx));
+            league.simulate(ctx);
         }
     }
 }

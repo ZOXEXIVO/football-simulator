@@ -5,7 +5,7 @@ use crate::shared::fullname::FullName;
 use crate::simulator::SimulatorData;
 use crate::utils::{IntegerUtils, StringUtils};
 
-use chrono::{NaiveDate, NaiveTime, NaiveDateTime};
+use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 
 use crate::continent::Continent;
 use crate::people::{
@@ -25,7 +25,7 @@ impl Generator for SimulatorData {
 
         SimulatorData {
             continents: (0..7).map(|_| Generator::generate()).collect(),
-            date: NaiveDateTime::new(date, time)
+            date: NaiveDateTime::new(date, time),
         }
     }
 }
@@ -34,7 +34,7 @@ impl Generator for Continent {
     fn generate() -> Continent {
         Continent {
             name: StringUtils::random_string(10),
-            countries: (0..50).map(|_| Generator::generate()).collect(),
+            countries: (0..7).map(|_| Generator::generate()).collect(),
             tournaments: Vec::new(),
         }
     }

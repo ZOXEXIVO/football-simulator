@@ -1,4 +1,4 @@
-use crate::club::{ClubContext};
+use crate::club::ClubContext;
 use crate::core::context::GlobalContext;
 use crate::core::SimulationContext;
 use crate::people::StaffClubContract;
