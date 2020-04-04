@@ -2,8 +2,9 @@ mod champion_league;
 mod context;
 mod league_europe;
 
+use crate::core::context::GlobalContext;
 pub use context::*;
 
 pub trait Tournament {
-    fn simulate(&mut self, context: &mut TournamentContext);
+    fn simulate(&mut self, tournament_ctx: &mut TournamentContext, ctx: &mut GlobalContext);
 }

@@ -1,14 +1,14 @@
 use crate::continent::{Continent, ContinentContext};
-use crate::core::context::SimulationContext;
-use crate::people::{Player, Staff};
-pub use rayon::prelude::*;
-use std::sync::Mutex;
+use crate::core::context::{GlobalContext, SimulationContext};
 
+use chrono::NaiveDateTime;
+pub use rayon::prelude::*;
+
+#[derive()]
 pub struct SimulatorData {
     pub continents: Vec<Continent>,
 
-    pub free_players_pool: Mutex<Vec<Player>>,
-    pub free_staffs_pool: Mutex<Vec<Staff>>,
+    pub date: NaiveDateTime,
 }
 
 pub struct FootballSimulator;
@@ -18,12 +18,19 @@ impl FootballSimulator {
         FootballSimulator {}
     }
 
-    pub fn simulate(&mut self, data: &mut SimulatorData, context: &mut SimulationContext) {
-        data.continents.iter_mut().for_each(|continent| {
-            let mut context = ContinentContext::new(context);
-            continent.simulate(&mut context);
-        });
+    pub fn simulate(&mut self, data: &mut SimulatorData) {
+        let mut simulation_ctx = SimulationContext::new(data.date);
 
-        context.next_date();
+        let mut ctx = GlobalContext::new(&mut simulation_ctx);
+
+        let mut continent_ctx = ContinentContext::new();
+
+        let ctx = &mut ctx.with_continent(&mut continent_ctx);
+
+        for continent in &mut data.continents {
+            continent.simulate(ctx);
+        }
+
+        //ctx.next_date();
     }
 }

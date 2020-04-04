@@ -1,3 +1,4 @@
+use crate::core::context::GlobalContext;
 use crate::people::{
     Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerContext, PlayerMailbox,
     PlayerSkills,
@@ -47,21 +48,19 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, context: &mut PlayerContext) {
-        if DateUtils::is_birthday(self.birth_date, context.date.date()) {
+    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+        if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
             self.behaviour.try_increase();
         }
 
-        context.request_contract_improvement(self.id);
+        //context.request_contract_improvement(self.id);
 
         if self.behaviour.state == BehaviourState::Poor {
-            context.request_transfer(self.id);
+           // context.request_transfer(self.id);
         }
 
         self.train();
     }
-
-    fn request_transfer(&self, context: &PlayerContext) {}
 
     pub fn position(&self) -> &PlayerPositionType {
         &self.positions.first().unwrap().position

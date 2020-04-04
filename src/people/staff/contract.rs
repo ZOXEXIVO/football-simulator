@@ -1,5 +1,6 @@
-use crate::core::context::Context;
-use crate::people::{Staff, StaffContext};
+use crate::core::context::GlobalContext;
+use crate::core::SimulationContext;
+use crate::people::Staff;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
 #[derive(Debug, PartialEq)]
@@ -32,11 +33,11 @@ impl StaffClubContract {
         }
     }
 
-    pub fn is_expired(&self, context: &mut dyn Context) -> bool {
-        self.expired >= context.date().date()
+    pub fn is_expired(&self, context: &mut SimulationContext) -> bool {
+        self.expired >= context.date.date()
     }
 
-    pub fn simulate(&mut self, context: &mut StaffContext) {
+    pub fn simulate(&mut self, context: &mut SimulationContext) {
         if context.check_contract_expiration() && self.is_expired(context) {
             self.status = StaffStatus::ExpiredContract;
         }
@@ -73,9 +74,9 @@ impl StaffCollection {
         self.staffs.len()
     }
 
-    pub fn simulate(&mut self, context: &mut StaffContext) {
+    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
         for staff_contract in &mut self.staffs {
-            staff_contract.simulate(context)
+            staff_contract.simulate(ctx);
         }
     }
 

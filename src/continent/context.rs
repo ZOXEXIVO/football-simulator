@@ -1,18 +1,14 @@
-use crate::core::SimulationContext;
-use chrono::NaiveDateTime;
+use crate::people::Player;
+use crate::transfers::TransferPool;
 
 pub struct ContinentContext {
-    pub date: NaiveDateTime,
-    pub day: u8,
-    pub hour: u8,
+    pub transfer_pool: TransferPool<Player>,
 }
 
 impl ContinentContext {
-    pub fn new(context: &SimulationContext) -> Self {
-        ContinentContext {
-            date: context.date,
-            day: context.day,
-            hour: context.hour,
+    pub fn new() -> Self {
+        ContinentContext {          
+            transfer_pool: TransferPool::new(),
         }
     }
 }

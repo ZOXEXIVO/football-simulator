@@ -1,5 +1,9 @@
 use crate::chrono::Datelike;
 use crate::club::{Club, ClubContext};
+use crate::continent::ContinentContext;
+use crate::core::context::GlobalContext;
+use crate::core::SimulationContext;
+use crate::country::CountryContext;
 use crate::league::{LeagueContext, Schedule};
 use crate::r#match::{Match, MatchResult};
 
@@ -17,29 +21,30 @@ impl League {
         self.clubs.iter().map(|club| club.items_count()).sum()
     }
 
-    pub fn simulate(&mut self, context: &mut LeagueContext) {
-        if self.schedule.is_none() || self.settings.is_time_for_new_schedule(context) {
-            self.schedule = Some(Schedule::generate(&self.clubs, context.date.date()).unwrap());
+    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+        if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
+            self.schedule =
+                Some(Schedule::generate(&self.clubs, ctx.simulation.date.date()).unwrap());
         }
+
+        let mut club_ctx = ClubContext::new();
 
         for club in &mut self.clubs {
-            let mut context = ClubContext::new(context);
-
-            club.simulate(&mut context);
+            club.simulate(&mut ctx.with_club(&mut club_ctx));
         }
 
-        self.play_matches(context);
+        self.play_matches(&ctx);
     }
 
     fn get_club(&self, club_id: u32) -> Option<&Club> {
         self.clubs.iter().find(|c| c.id == club_id)
     }
 
-    fn play_matches(&mut self, context: &LeagueContext) {
+    fn play_matches(&mut self, context: &GlobalContext) {
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
 
-            let matches_to_play = actual_schedule.get_matches(context.date.date());
+            let matches_to_play = actual_schedule.get_matches(context.simulation.date.date());
 
             matches_to_play
                 .iter()
@@ -65,7 +70,7 @@ pub struct LeagueSettings {
 }
 
 impl LeagueSettings {
-    pub fn is_time_for_new_schedule(&self, context: &LeagueContext) -> bool {
+    pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool {
         let current_day = context.date.day() as u8;
         let current_month = context.date.month() as u8;
 

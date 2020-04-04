@@ -1,3 +1,9 @@
+use crate::club::ClubContext;
+use crate::continent::ContinentContext;
+use crate::core::context::GlobalContext;
+use crate::core::SimulationContext;
+use crate::country::CountryContext;
+use crate::league::LeagueContext;
 use crate::people::player::player::Player;
 use crate::people::{Behaviour, StaffClubContract, StaffContext};
 use crate::shared::fullname::FullName;
@@ -58,8 +64,8 @@ impl Staff {
         self.favorite_players.contains(&player.id)
     }
 
-    pub fn simulate(&mut self, context: &mut StaffContext) {
-        if DateUtils::is_birthday(self.birth_date, context.date.date()) {}
+    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+        if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {}
     }
 }
 

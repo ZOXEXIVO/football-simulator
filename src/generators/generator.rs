@@ -5,7 +5,7 @@ use crate::shared::fullname::FullName;
 use crate::simulator::SimulatorData;
 use crate::utils::{IntegerUtils, StringUtils};
 
-use chrono::NaiveDate;
+use chrono::{NaiveDate, NaiveTime, NaiveDateTime};
 
 use crate::continent::Continent;
 use crate::people::{
@@ -14,29 +14,18 @@ use crate::people::{
     StaffPosition, StaffStatus, Technical,
 };
 
-use rayon::prelude::*;
-use std::sync::Mutex;
-
 pub trait Generator {
     fn generate() -> Self;
 }
 
 impl Generator for SimulatorData {
     fn generate() -> SimulatorData {
-        let free_players = (0..1000)
-            .into_par_iter()
-            .map(|_| Generator::generate())
-            .collect();
-
-        let free_staffs = (0..1000)
-            .into_par_iter()
-            .map(|_| Generator::generate())
-            .collect();
+        let date = NaiveDate::from_ymd(2020, 11, 15);
+        let time = NaiveTime::from_hms(0, 0, 0);
 
         SimulatorData {
             continents: (0..7).map(|_| Generator::generate()).collect(),
-            free_players_pool: Mutex::new(free_players),
-            free_staffs_pool: Mutex::new(free_staffs),
+            date: NaiveDateTime::new(date, time)
         }
     }
 }
