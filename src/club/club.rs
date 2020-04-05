@@ -42,14 +42,25 @@ impl Club {
     }
 
     pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+        self.simulate_players(ctx);
+
+        // let ctx = &mut ctx.with_staff(StaffContext::new());
+        // self.staffs.simulate(ctx);
+        //
+        // let mut ctx = &mut ctx.with_board(BoardContext::new());
+        // self.board.simulate(ctx);
+    }
+
+    fn simulate_players(&mut self, ctx: &mut GlobalContext) {
         let ctx = ctx.with_player(PlayerContext::new());
+
         self.players.simulate(ctx);
 
-        let ctx = &mut ctx.with_staff(StaffContext::new());
-        self.staffs.simulate(ctx);
-
-        let mut ctx = &mut ctx.with_board(BoardContext::new());
-        self.board.simulate(ctx);
+        let player_ctx = ctx.player();
+        
+        for request_player_id in &player_ctx.transfer_requests {
+            
+        }
     }
 
     fn process_ctx(&mut self, context: PlayerContext) {

@@ -53,10 +53,8 @@ impl Player {
             self.behaviour.try_increase();
         }
 
-        //context.request_contract_improvement(self.id);
-
         if self.behaviour.state == BehaviourState::Poor {
-           // context.request_transfer(self.id);
+            ctx.player().request_transfer(self.id);
         }
 
         self.train();

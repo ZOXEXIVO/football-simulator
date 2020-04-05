@@ -51,6 +51,11 @@ impl GlobalContext {
         self
     }
 
+    pub fn with_board(&mut self, board_ctx: BoardContext) -> &mut Self {
+        self.board = Some(board_ctx);
+        self
+    }
+
     pub fn with_player(&mut self, player_ctx: PlayerContext) -> &mut Self {
         self.player = Some(player_ctx);
         self
@@ -61,9 +66,32 @@ impl GlobalContext {
         self
     }
 
-    pub fn with_board(&mut self, board_ctx: BoardContext) -> &mut Self {
-        self.board = Some(board_ctx);
-        self
+    pub fn continent(&mut self) -> &mut ContinentContext {
+        self.continent.as_mut().unwrap()
+    }
+
+    pub fn country(&mut self) -> &mut CountryContext {
+        self.country.as_mut().unwrap()
+    }
+
+    pub fn league(&mut self) -> &mut LeagueContext {
+        self.league.as_mut().unwrap()
+    }
+
+    pub fn club(&mut self) -> &mut ClubContext {
+        self.club.as_mut().unwrap()
+    }
+
+    pub fn board(&mut self) -> &mut BoardContext {
+        self.board.as_mut().unwrap()
+    }
+
+    pub fn player(&mut self) -> &mut PlayerContext {
+        self.player.as_mut().unwrap()
+    }
+
+    pub fn staff(&mut self) -> &mut StaffContext {
+        self.staff.as_mut().unwrap()
     }
 }
 
