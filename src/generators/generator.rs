@@ -14,45 +14,95 @@ use crate::people::{
     StaffPosition, StaffStatus, Technical,
 };
 
-pub trait Generator {
-    fn generate() -> Self;
-}
-
-impl Generator for SimulatorData {
-    fn generate() -> SimulatorData {
+impl SimulatorData {
+    pub fn generate() -> SimulatorData {
         let date = NaiveDate::from_ymd(2020, 11, 15);
         let time = NaiveTime::from_hms(0, 0, 0);
 
         SimulatorData {
-            continents: (0..7).map(|_| Generator::generate()).collect(),
+            continents: vec![
+                Continent {
+                    name: "Africa".to_string(),
+                    countries: vec![
+                        // Country{
+                        //    
+                        // }
+                    ],
+                    tournaments: Vec::new(),
+                },
+                Continent {
+                    name: "Eurasia".to_string(),
+                    countries: vec![
+                        Country {
+                            name: "Russia".to_string(),
+                            leagues: vec![
+                                League{
+                                    name: "Russian Premier League".to_string(),
+                                    clubs: vec![],
+                                    schedule: None,
+                                    settings: LeagueSettings{
+                                        season_starting: (1, 7),
+                                        season_ending: (10, 12)
+                                    },
+                                    reputation: 7700,
+                                }
+                            ],
+                            reputation: 6000,
+                        }
+                    ],
+                    tournaments: Vec::new(),
+                },
+                Continent {
+                    name: "North America".to_string(),
+                    countries: vec![
+                    ],
+                    tournaments: Vec::new(),
+                },
+                Continent {
+                    name: "Sourth America".to_string(),
+                    countries: vec![],
+                    tournaments: Vec::new(),
+                },
+                Continent {
+                    name: "Australia".to_string(),
+                    countries: vec![
+                        Country {
+                            name: "Australia".to_string(),
+                            leagues: vec![],
+                            reputation: 4000,
+                        }
+                    ],
+                    tournaments: Vec::new(),
+                }
+            ],
             date: NaiveDateTime::new(date, time),
         }
     }
 }
 
-impl Generator for Continent {
+impl Continent {
     fn generate() -> Continent {
         Continent {
             name: StringUtils::random_string(10),
-            countries: (0..7).map(|_| Generator::generate()).collect(),
+            countries: (0..7).map(|_| Country::generate()).collect(),
             tournaments: Vec::new(),
         }
     }
 }
 
-impl Generator for Country {
+impl Country {
     fn generate() -> Country {
         Country {
             name: StringUtils::random_string(10),
-            leagues: (0..4).map(|_| Generator::generate()).collect(),
+            leagues: (0..4).map(|_| League::generate()).collect(),
             reputation: 5000,
         }
     }
 }
 
-impl Generator for League {
+impl League {
     fn generate() -> League {
-        let clubs = (0..20).map(|_| Generator::generate()).collect();
+        let clubs = (0..20).map(|_| Club::generate()).collect();
 
         League {
             name: StringUtils::random_string(10),
@@ -67,22 +117,22 @@ impl Generator for League {
     }
 }
 
-impl Generator for Club {
+impl Club {
     fn generate() -> Club {
         Club {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(5),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
-            players: PlayerCollection::new((0..10).map(|_| Generator::generate()).collect()),
-            staffs: StaffCollection::new((0..10).map(|_| Generator::generate()).collect()),
+            players: PlayerCollection::new((0..10).map(|_| Player::generate()).collect()),
+            staffs: StaffCollection::new((0..10).map(|_| Staff::generate()).collect()),
             tactics: None,
             transfer_list: Vec::new(),
         }
     }
 }
 
-impl Generator for Player {
+impl Player {
     fn generate() -> Player {
         let year = IntegerUtils::random(1980, 2010) as u32;
         let month = IntegerUtils::random(1, 12) as u32;
@@ -174,7 +224,7 @@ impl Generator for Player {
     }
 }
 
-impl Generator for Staff {
+impl Staff {
     fn generate() -> Staff {
         let year = IntegerUtils::random(1980, 2010) as u32;
         let month = IntegerUtils::random(1, 12) as u32;

@@ -23,7 +23,6 @@ use club::*;
 use country::*;
 use simulator::FootballSimulator;
 
-use crate::generators::Generator;
 use crate::simulator::SimulatorData;
 use crate::utils::TimeEstimation;
 
