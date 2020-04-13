@@ -20,11 +20,12 @@ impl SimulatorData {
         let time = NaiveTime::from_hms(0, 0, 0);
 
         SimulatorData {
+            id: SimulatorData::generate_id(),
             continents: vec![
                 Continent {
                     name: "Africa".to_string(),
                     countries: vec![],
-                    tournaments: Vec::new(),
+                    //tournaments: Vec::new(),
                 },
                 Continent {
                     name: "Eurasia".to_string(),
@@ -55,17 +56,17 @@ impl SimulatorData {
                         }],
                         reputation: 6000,
                     }],
-                    tournaments: Vec::new(),
+                    //tournaments: Vec::new(),
                 },
                 Continent {
                     name: "North America".to_string(),
                     countries: vec![],
-                    tournaments: Vec::new(),
+                    //tournaments: Vec::new(),
                 },
                 Continent {
                     name: "Sourth America".to_string(),
                     countries: vec![],
-                    tournaments: Vec::new(),
+                    //tournaments: Vec::new(),
                 },
                 Continent {
                     name: "Australia".to_string(),
@@ -74,7 +75,7 @@ impl SimulatorData {
                         leagues: vec![],
                         reputation: 4000,
                     }],
-                    tournaments: Vec::new(),
+                    //tournaments: Vec::new(),
                 },
             ],
             date: NaiveDateTime::new(date, time),
@@ -87,7 +88,7 @@ impl Continent {
         Continent {
             name: StringUtils::random_string(10),
             countries: (0..7).map(|_| Country::generate()).collect(),
-            tournaments: Vec::new(),
+            //tournaments: Vec::new(),
         }
     }
 }

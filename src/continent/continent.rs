@@ -8,7 +8,7 @@ pub struct Continent {
     pub name: String,
     pub countries: Vec<Country>,
 
-    pub tournaments: Vec<Box<dyn Tournament>>,
+    //pub tournaments: Vec<Box<dyn Tournament>>,
 }
 
 impl Continent {
@@ -19,10 +19,10 @@ impl Continent {
             country.simulate(global_ctx);
         }
 
-        let mut tournament_ctx = TournamentContext::new();
-
-        for tournament in &mut self.tournaments {
-            tournament.simulate(&mut tournament_ctx, ctx)
-        }
+        // let mut tournament_ctx = TournamentContext::new();
+        //
+        // for tournament in &mut self.tournaments {
+        //     tournament.simulate(&mut tournament_ctx, ctx)
+        // }
     }
 }
