@@ -19,7 +19,6 @@ mod generators;
 
 use club::*;
 use country::*;
-use simulator::FootballSimulator;
 
 use crate::server::Server;
 use crate::simulator::SimulatorData;
