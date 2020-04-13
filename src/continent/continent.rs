@@ -1,8 +1,7 @@
 use crate::Country;
 
 use crate::continent::{Tournament, TournamentContext};
-use crate::core::context::GlobalContext;
-use crate::country::CountryContext;
+use crate::simulator::context::GlobalContext;
 pub use rayon::prelude::*;
 
 pub struct Continent {
@@ -13,15 +12,8 @@ pub struct Continent {
 }
 
 impl Continent {
-    pub fn items_count(&self) -> usize {
-        self.countries
-            .iter()
-            .map(|country| country.items_count())
-            .sum()
-    }
-
     pub fn simulate(&mut self, ctx: &mut GlobalContext) {
-        let global_ctx = ctx.with_country(CountryContext::new());
+        let global_ctx = ctx.with_country();
 
         for country in &mut self.countries {
             country.simulate(global_ctx);

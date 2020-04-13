@@ -1,7 +1,7 @@
-use crate::continent::{Continent, ContinentContext};
-use crate::core::context::{GlobalContext, SimulationContext};
-
-use chrono::{Datelike, Duration, NaiveDateTime, Timelike};
+use crate::continent::Continent;
+use crate::simulator::context::GlobalContext;
+use crate::simulator::SimulationContext;
+use chrono::{Duration, NaiveDateTime};
 pub use rayon::prelude::*;
 
 #[derive()]
@@ -27,7 +27,7 @@ impl FootballSimulator {
     pub fn simulate(&mut self, data: &mut SimulatorData) {
         let mut global_ctx = GlobalContext::new(SimulationContext::new(data.date));
 
-        let continent_ctx = global_ctx.with_continent(ContinentContext::new());
+        let continent_ctx = global_ctx.with_continent();
 
         for continent in &mut data.continents {
             continent.simulate(continent_ctx);

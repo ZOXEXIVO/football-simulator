@@ -31,38 +31,38 @@ impl GlobalContext {
         }
     }
 
-    pub fn with_continent(&mut self, continent_ctx: ContinentContext) -> &mut Self {
-        self.continent = Some(continent_ctx);
+    pub fn with_continent(&mut self) -> &mut Self {
+        self.continent = Some(ContinentContext::new());
         self
     }
 
-    pub fn with_country(&mut self, country_ctx: CountryContext) -> &mut Self {
-        self.country = Some(country_ctx);
+    pub fn with_country(&mut self) -> &mut Self {
+        self.country = Some(CountryContext::new());
         self
     }
 
-    pub fn with_league(&mut self, league_ctx: LeagueContext) -> &mut Self {
-        self.league = Some(league_ctx);
+    pub fn with_league(&mut self) -> &mut Self {
+        self.league = Some(LeagueContext::new());
         self
     }
 
-    pub fn with_club(&mut self, club_ctx: ClubContext) -> &mut Self {
-        self.club = Some(club_ctx);
+    pub fn with_club(&mut self) -> &mut Self {
+        self.club = Some(ClubContext::new());
         self
     }
 
-    pub fn with_board(&mut self, board_ctx: BoardContext) -> &mut Self {
-        self.board = Some(board_ctx);
+    pub fn with_board(&mut self) -> &mut Self {
+        self.board = Some(BoardContext::new());
         self
     }
 
-    pub fn with_player(&mut self, player_ctx: PlayerContext) -> &mut Self {
-        self.player = Some(player_ctx);
+    pub fn with_player(&mut self) -> &mut Self {
+        self.player = Some(PlayerContext::new());
         self
     }
 
-    pub fn with_staff(&mut self, staff_ctx: StaffContext) -> &mut Self {
-        self.staff = Some(staff_ctx);
+    pub fn with_staff(&mut self) -> &mut Self {
+        self.staff = Some(StaffContext::new());
         self
     }
 

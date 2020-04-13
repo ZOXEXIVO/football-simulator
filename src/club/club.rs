@@ -2,10 +2,9 @@ use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::club::{BoardContext, ClubMood, TacticsSelector, TransferItem};
-use crate::core::context::GlobalContext;
+use crate::simulator::context::GlobalContext;
 use crate::people::{
     Player, PlayerCollection, PlayerContext, PlayerSelector, StaffCollection, StaffContext,
-    TransferRequestNegotiation, TransferRequestNegotiationResult,
 };
 
 #[derive(Debug)]
@@ -23,10 +22,6 @@ pub struct Club {
 }
 
 impl Club {
-    pub fn items_count(&self) -> usize {
-        self.players.len() + self.staffs.len()
-    }
-
     pub fn players(&self) -> Vec<&Player> {
         self.players.players()
     }
@@ -42,43 +37,26 @@ impl Club {
     }
 
     pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+        self.simulate_board(ctx);
         self.simulate_players(ctx);
+        self.simulate_staff(ctx);
+    }
 
-        // let ctx = &mut ctx.with_staff(StaffContext::new());
-        // self.staffs.simulate(ctx);
-        //
-        // let mut ctx = &mut ctx.with_board(BoardContext::new());
-        // self.board.simulate(ctx);
+    fn simulate_board(&mut self, ctx: &mut GlobalContext) {
+        let ctx = &mut ctx.with_board();
+        self.board.simulate(ctx);
+    }
+
+    fn simulate_staff(&mut self, ctx: &mut GlobalContext) {
+        let ctx = &mut ctx.with_staff();
+        self.staffs.simulate(ctx);
     }
 
     fn simulate_players(&mut self, ctx: &mut GlobalContext) {
-        let ctx = ctx.with_player(PlayerContext::new());
-
-        self.players.simulate(ctx);
+        self.players.simulate(ctx.with_player());
 
         let player_ctx = ctx.player();
-        
-        for request_player_id in &player_ctx.transfer_requests {
-            
-        }
-    }
 
-    fn process_ctx(&mut self, context: PlayerContext) {
-        //or transfer_request in context.transfer_requests {
-        //let player = self.players.get(transfer_request);
-
-        // match TransferRequestNegotiation::negotiate(self, player) {
-        //     TransferRequestNegotiationResult::Complete => {}
-        // }
-        //}
-
-        //for improve_contract_request in context.contract_improve_requests {
-        // match ContractImproveRequestNegotiation::negotiate(
-        //     self,
-        //     self.players.get(improve_contract_request),
-        // ) {
-        //     ContractImproveRequestNegotiationResult::Complete => {}
-        // }
-        //}
+        for request_player_id in &player_ctx.transfer_requests {}
     }
 }

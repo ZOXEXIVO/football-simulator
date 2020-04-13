@@ -1,12 +1,11 @@
 use crate::club::ClubContext;
 use crate::continent::ContinentContext;
-use crate::core::context::GlobalContext;
-use crate::core::SimulationContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
 use crate::people::player::player::Player;
 use crate::people::{Behaviour, StaffClubContract, StaffContext};
 use crate::shared::fullname::FullName;
+use crate::simulator::context::GlobalContext;
 use crate::utils::DateUtils;
 use chrono::NaiveDate;
 use std::collections::HashSet;

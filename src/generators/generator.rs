@@ -23,39 +23,43 @@ impl SimulatorData {
             continents: vec![
                 Continent {
                     name: "Africa".to_string(),
-                    countries: vec![
-                        // Country{
-                        //    
-                        // }
-                    ],
+                    countries: vec![],
                     tournaments: Vec::new(),
                 },
                 Continent {
                     name: "Eurasia".to_string(),
-                    countries: vec![
-                        Country {
-                            name: "Russia".to_string(),
-                            leagues: vec![
-                                League{
-                                    name: "Russian Premier League".to_string(),
-                                    clubs: vec![],
-                                    schedule: None,
-                                    settings: LeagueSettings{
-                                        season_starting: (1, 7),
-                                        season_ending: (10, 12)
-                                    },
-                                    reputation: 7700,
-                                }
-                            ],
-                            reputation: 6000,
-                        }
-                    ],
+                    countries: vec![Country {
+                        name: "Russia".to_string(),
+                        leagues: vec![League {
+                            name: "Russian Premier League".to_string(),
+                            clubs: vec![Club {
+                                id: 0,
+                                name: "Spartak Moscow".to_string(),
+                                mood: ClubMood::default(),
+                                board: ClubBoard::new(),
+                                tactics: None,
+                                players: PlayerCollection::new(
+                                    (0..50).map(|_| Player::generate()).collect(),
+                                ),
+                                staffs: StaffCollection::new(
+                                    (0..10).map(|_| Staff::generate()).collect(),
+                                ),
+                                transfer_list: vec![],
+                            }],
+                            schedule: None,
+                            settings: LeagueSettings {
+                                season_starting: (1, 7),
+                                season_ending: (10, 12),
+                            },
+                            reputation: 7700,
+                        }],
+                        reputation: 6000,
+                    }],
                     tournaments: Vec::new(),
                 },
                 Continent {
                     name: "North America".to_string(),
-                    countries: vec![
-                    ],
+                    countries: vec![],
                     tournaments: Vec::new(),
                 },
                 Continent {
@@ -65,15 +69,13 @@ impl SimulatorData {
                 },
                 Continent {
                     name: "Australia".to_string(),
-                    countries: vec![
-                        Country {
-                            name: "Australia".to_string(),
-                            leagues: vec![],
-                            reputation: 4000,
-                        }
-                    ],
+                    countries: vec![Country {
+                        name: "Australia".to_string(),
+                        leagues: vec![],
+                        reputation: 4000,
+                    }],
                     tournaments: Vec::new(),
-                }
+                },
             ],
             date: NaiveDateTime::new(date, time),
         }

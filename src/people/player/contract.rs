@@ -1,10 +1,6 @@
-use crate::club::ClubContext;
-use crate::continent::ContinentContext;
-use crate::core::context::GlobalContext;
-use crate::core::SimulationContext;
-use crate::country::CountryContext;
-use crate::league::LeagueContext;
-use crate::people::{Player, PlayerContext};
+use crate::people::Player;
+use crate::simulator::context::GlobalContext;
+use crate::simulator::SimulationContext;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
 #[derive(Debug)]

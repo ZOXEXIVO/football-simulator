@@ -1,6 +1,6 @@
-use crate::core::context::GlobalContext;
-use crate::core::SimulationContext;
 use crate::people::Staff;
+use crate::simulator::context::GlobalContext;
+use crate::simulator::SimulationContext;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
 #[derive(Debug, PartialEq)]

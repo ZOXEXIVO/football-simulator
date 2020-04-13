@@ -1,0 +1,40 @@
+kind: pipeline
+name: default
+
+steps: 
+  - name: build
+    image: docker:latest
+    depends_on: [ clone ]
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - docker build --no-cache -t football:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Football.Dockerfile" .
+
+  - name: clear
+    image: docker:dind
+    depends_on: [ build ]
+    privileged: true
+    failure: ignore
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - docker stop football || true
+      - docker rm football || true
+
+  - name: deploy
+    image: docker:dind
+    depends_on: [ clear ]
+    privileged: true
+    failure: ignore
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - docker run -d -p 172.17.0.1:18000:18000 --restart always --name football football:1.0.0.$$DRONE_BUILD_NUMBER
+
+volumes:
+  - name: docker_sock
+    host:
+      path: /var/run/docker.sock

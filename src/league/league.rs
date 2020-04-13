@@ -1,11 +1,9 @@
-use crate::chrono::Datelike;
-use crate::club::{Club, ClubContext};
-use crate::continent::ContinentContext;
-use crate::core::context::GlobalContext;
-use crate::core::SimulationContext;
-use crate::country::CountryContext;
-use crate::league::{LeagueContext, Schedule};
+use crate::club::Club;
+use crate::league::Schedule;
 use crate::r#match::{Match, MatchResult};
+use crate::simulator::context::GlobalContext;
+use crate::simulator::SimulationContext;
+use chrono::Datelike;
 
 #[derive(Debug)]
 pub struct League {
@@ -17,17 +15,13 @@ pub struct League {
 }
 
 impl League {
-    pub fn items_count(&self) -> usize {
-        self.clubs.iter().map(|club| club.items_count()).sum()
-    }
-
     pub fn simulate(&mut self, ctx: &mut GlobalContext) {
         if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
             self.schedule =
                 Some(Schedule::generate(&self.clubs, ctx.simulation.date.date()).unwrap());
         }
 
-        let global_ctx = ctx.with_club(ClubContext::new());
+        let global_ctx = ctx.with_club();
 
         for club in &mut self.clubs {
             club.simulate(global_ctx);
