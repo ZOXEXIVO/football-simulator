@@ -57,6 +57,12 @@ impl Club {
 
         let player_ctx = ctx.player();
 
-        for request_player_id in &player_ctx.transfer_requests {}
+        for request_player_id in &player_ctx.transfer_requests {
+            let player_idx = self.players.players.iter().position(|p| p.id == *request_player_id).unwrap();
+            
+            let player = self.players.players.remove(player_idx);
+            
+            ctx.continent().transfer_pool.push_transfer(player, ctx.club().id);
+        }
     }
 }

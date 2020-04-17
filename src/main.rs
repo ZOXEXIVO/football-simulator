@@ -21,8 +21,6 @@ use club::*;
 use country::*;
 
 use crate::server::Server;
-use crate::simulator::SimulatorData;
-use crate::utils::TimeEstimation;
 
 #[actix_rt::main]
 async fn main() {

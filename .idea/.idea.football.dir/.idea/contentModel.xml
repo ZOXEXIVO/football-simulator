@@ -160,8 +160,6 @@
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winapi-x86_64-pc-windows-gnu-0.4.0" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\winreg-0.6.2" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.cargo\registry\src\github.com-1ecc6299db9ec823\ws2_32-sys-0.2.1" t="IncludeRecursive" />
-    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\ZOXEXIVO\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_.19.00" t="ExcludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\build_helper" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\liballoc" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libcore" t="IncludeRecursive" />
@@ -173,6 +171,8 @@
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libterm" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libtest" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libunwind" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\AppData\local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\ZOXEXIVO\AppData\local\JetBrains\Rider2020.1\resharper-host\local\Transient\ReSharperHost\v201\SolutionCaches\_.19.00" t="ExcludeRecursive" />
     <e p="H:\rust\football" t="IncludeFlat" />
   </component>
 </project>

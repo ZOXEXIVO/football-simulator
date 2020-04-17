@@ -1,6 +1,6 @@
 use actix_web::{web, HttpResponse, Result};
 use crate::simulator::{FootballSimulator};
-use crate::server::GlobalData;
+use crate::server::GLOBAL_DATA;
 use serde::{Serialize, Deserialize};
 use crate::utils::TimeEstimation;
 
@@ -16,7 +16,7 @@ pub struct ProcessResponse {
 }
 
 pub async fn process_action(route_params: web::Path<ProcessRequest>) -> Result<HttpResponse> {
-    let mut global_data = GlobalData.write().unwrap();
+    let mut global_data = GLOBAL_DATA.write().unwrap();
 
     let state = &mut *global_data;
     

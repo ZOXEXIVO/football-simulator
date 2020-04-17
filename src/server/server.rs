@@ -7,7 +7,7 @@ use std::sync::Mutex;
 use std::sync::RwLock;
 
 lazy_static!{
-    pub static ref GlobalData: RwLock<HashMap<String, Mutex<SimulatorData>>> = RwLock::new(HashMap::new());
+    pub static ref GLOBAL_DATA: RwLock<HashMap<String, Mutex<SimulatorData>>> = RwLock::new(HashMap::new());
 }
 
 pub struct Server {

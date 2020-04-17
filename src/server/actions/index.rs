@@ -1,6 +1,6 @@
 use actix_web::{HttpResponse, Result};
 use crate::simulator::SimulatorData;
-use crate::server::GlobalData;
+use crate::server::GLOBAL_DATA;
 use std::sync::Mutex;
 use serde::{Serialize};
 use crate::utils::TimeEstimation;
@@ -12,7 +12,7 @@ pub struct IndexResponse {
 }
 
 pub async fn index_action() -> Result<HttpResponse> {
-    let mut global_data = GlobalData.write().unwrap();
+    let mut global_data = GLOBAL_DATA.write().unwrap();
 
     let estimated = TimeEstimation::estimate(SimulatorData::generate);
 

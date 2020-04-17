@@ -54,7 +54,7 @@ impl Player {
         }
 
         if self.behaviour.state == BehaviourState::Poor {
-            ctx.player().request_transfer(self.id);
+            ctx.player().request_transfer(self.id);            
         }
 
         self.train();
