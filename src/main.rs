@@ -26,18 +26,18 @@ use crate::simulator::{FootballSimulator, SimulatorData};
 
 #[actix_rt::main]
 async fn main() {
-    // let server = Server::new("0.0.0.0:18000");
+    let server = Server::new("0.0.0.0:18000");
+
+    server.start().await;
+
+    // let (mut data, generate_estimation) = TimeEstimation::estimate(SimulatorData::generate);
     //
-    // server.start().await;
-
-    let (mut data, generate_estimation) = TimeEstimation::estimate(SimulatorData::generate);
-
-    println!("data generated with {} ms", generate_estimation);
-
-    loop {
-        let (_, result_estimation) =
-            TimeEstimation::estimate(|| FootballSimulator::simulate(&mut data));
-
-        println!("simulated with {} ms", result_estimation);
-    }
+    // println!("data generated with {} ms", generate_estimation);
+    //
+    // loop {
+    //     let (_, result_estimation) =
+    //         TimeEstimation::estimate(|| FootballSimulator::simulate(&mut data));
+    //
+    //     println!("simulated with {} ms", result_estimation);
+    // }
 }

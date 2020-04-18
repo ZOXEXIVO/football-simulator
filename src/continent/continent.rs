@@ -13,7 +13,7 @@ pub struct Continent {
 
 impl Continent {
     pub fn simulate(&mut self, ctx: GlobalContext) -> ContinentResult {
-        let country_results: Vec<CountryResult> = self.countries.iter_mut().map(
+        let country_results: Vec<CountryResult> = self.countries.par_iter_mut().map(
             |country| country.simulate(ctx.with_country(country.id))
         ).collect();
 
