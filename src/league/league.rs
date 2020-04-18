@@ -21,10 +21,8 @@ impl League {
                 Some(Schedule::generate(&self.clubs, ctx.simulation.date.date()).unwrap());
         }
 
-        let global_ctx = ctx.with_club();
-
         for club in &mut self.clubs {
-            club.simulate(global_ctx);
+            club.simulate(ctx.with_club(club.id));
         }
 
         self.play_matches(&ctx);

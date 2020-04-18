@@ -46,8 +46,8 @@ impl GlobalContext {
         self
     }
 
-    pub fn with_club(&mut self) -> &mut Self {
-        self.club = Some(ClubContext::new());
+    pub fn with_club(&mut self, club_id: u32) -> &mut Self {
+        self.club = Some(ClubContext::new(club_id));
         self
     }
 
@@ -86,8 +86,12 @@ impl GlobalContext {
         self.board.as_mut().unwrap()
     }
 
-    pub fn player(&mut self) -> &mut PlayerContext {
+    pub fn player_mut(&mut self) -> &mut PlayerContext {
         self.player.as_mut().unwrap()
+    }
+
+    pub fn player(&mut self) -> &PlayerContext {
+        self.player.as_ref().unwrap()
     }
 
     pub fn staff(&mut self) -> &mut StaffContext {

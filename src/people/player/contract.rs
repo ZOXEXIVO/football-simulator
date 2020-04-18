@@ -59,7 +59,18 @@ impl PlayerCollection {
         }
     }
 
+    pub fn add(&mut self, players: Vec<Player>){
+        for player in players {
+            self.players.push(player);
+        }
+    }
+    
     pub fn players(&self) -> Vec<&Player> {
         self.players.iter().map(|player| player).collect()
+    }
+    
+    pub fn take(&mut self, player_id: u32) -> Player{
+        let player_idx = self.players.iter().position(|p| p.id == player_id).unwrap();
+        self.players.remove(player_idx)
     }
 }
