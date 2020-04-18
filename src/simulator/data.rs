@@ -3,6 +3,8 @@ use chrono::{NaiveDateTime, Duration};
 
 use rand::Rng;
 use rand::distributions::Alphanumeric;
+use crate::transfers::TransferPool;
+use crate::people::Player;
 
 pub struct SimulatorData {
     pub id: String,
@@ -10,6 +12,8 @@ pub struct SimulatorData {
     pub continents: Vec<Continent>,
 
     pub date: NaiveDateTime,
+    
+    pub transfer_pool: TransferPool<Player>
 }
 
 impl SimulatorData {

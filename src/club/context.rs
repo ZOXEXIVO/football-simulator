@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct ClubContext {
     pub id: u32
 }

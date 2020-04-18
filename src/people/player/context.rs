@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct PlayerContext {
     pub transfer_requests: Vec<u32>,
 }

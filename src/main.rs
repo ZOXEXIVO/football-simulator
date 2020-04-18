@@ -21,23 +21,23 @@ use club::*;
 use country::*;
 
 use crate::server::Server;
+use crate::utils::TimeEstimation;
+use crate::simulator::{FootballSimulator, SimulatorData};
 
 #[actix_rt::main]
 async fn main() {
-    let server = Server::new("0.0.0.0:18000");
+    // let server = Server::new("0.0.0.0:18000");
+    //
+    // server.start().await;
 
-    server.start().await;
+    let mut data_estimation = TimeEstimation::estimate(SimulatorData::generate);
 
-    // let mut data_estimation = TimeEstimation::estimate(SimulatorData::generate);
-    //
-    // println!("data generated with {} ms", data_estimation.1);
-    //
-    // let mut simulator = FootballSimulator::new();
-    //
-    // loop {
-    //     let simulation_result =
-    //         TimeEstimation::estimate(|| simulator.simulate(&mut data_estimation.0));
-    //
-    //     println!("simulated with {} ms", simulation_result.1);
-    // }
+    println!("data generated with {} ms", data_estimation.1);
+
+    loop {
+        let simulation_result =
+            TimeEstimation::estimate(|| FootballSimulator::simulate(&mut data_estimation.0));
+
+        println!("simulated with {} ms", simulation_result.1);
+    }
 }

@@ -12,13 +12,11 @@ pub struct Continent {
 }
 
 impl Continent {
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
-        let global_ctx = ctx.with_country();
-
-        for country in &mut self.countries {
-            country.simulate(global_ctx);
-        }
-
+    pub fn simulate(&mut self, ctx: GlobalContext) {
+        self.countries.par_iter_mut().for_each(
+            |country| country.simulate(ctx.with_country())
+        );
+        
         // let mut tournament_ctx = TournamentContext::new();
         //
         // for tournament in &mut self.tournaments {

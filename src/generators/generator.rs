@@ -13,6 +13,7 @@ use crate::people::{
     PlayerPosition, PlayerPositionType, PlayerSkills, Staff, StaffClubContract, StaffCollection,
     StaffPosition, StaffStatus, Technical,
 };
+use crate::transfers::TransferPool;
 
 impl SimulatorData {
     pub fn generate() -> SimulatorData {
@@ -56,6 +57,7 @@ impl SimulatorData {
                 },
             ],
             date: NaiveDateTime::new(date, time),
+            transfer_pool: TransferPool::new()
         }
     }
 }

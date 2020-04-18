@@ -63,7 +63,7 @@ impl Staff {
         self.favorite_players.contains(&player.id)
     }
 
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) {
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {}
     }
 }

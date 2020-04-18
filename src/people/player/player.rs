@@ -48,13 +48,13 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) {
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
             self.behaviour.try_increase();
         }
 
         if self.behaviour.state == BehaviourState::Poor {
-            ctx.player_mut().request_transfer(self.id);            
+            ctx.player.unwrap().request_transfer(self.id);            
         }
 
         self.train();

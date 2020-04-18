@@ -8,11 +8,9 @@ pub struct Country {
 }
 
 impl Country {
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
-        let ctx = ctx.with_league();
-
+    pub fn simulate(&mut self, ctx: GlobalContext) {
         for league in &mut self.leagues {
-            league.simulate(ctx);
+            league.simulate(ctx.with_league());
         }
     }
 }

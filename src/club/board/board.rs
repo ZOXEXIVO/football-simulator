@@ -16,37 +16,37 @@ impl ClubBoard {
         }
     }
 
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) {
         if self.director.is_none() {
-            self.run_director_election(&mut ctx.simulation);
+            self.run_director_election(&ctx.simulation);
         }
 
         if self.sport_director.is_none() {
-            self.run_sport_director_election(&mut ctx.simulation);
+            self.run_sport_director_election(&ctx.simulation);
         }
 
         if ctx.simulation.check_contract_expiration() {
-            if self.is_director_contract_expiring(&mut ctx.simulation) {}
+            if self.is_director_contract_expiring(&ctx.simulation) {}
 
-            if self.is_sport_director_contract_expiring(&mut ctx.simulation) {}
+            if self.is_sport_director_contract_expiring(&ctx.simulation) {}
         }
     }
 
-    fn is_director_contract_expiring(&self, simulation_ctx: &mut SimulationContext) -> bool {
+    fn is_director_contract_expiring(&self, simulation_ctx: &SimulationContext) -> bool {
         match &self.director {
             Some(d) => d.is_expired(simulation_ctx),
             None => false,
         }
     }
 
-    fn run_director_election(&mut self, simulation_ctx: &mut SimulationContext) {}
+    fn run_director_election(&mut self, simulation_ctx: &SimulationContext) {}
 
-    fn is_sport_director_contract_expiring(&self, simulation_ctx: &mut SimulationContext) -> bool {
+    fn is_sport_director_contract_expiring(&self, simulation_ctx: &SimulationContext) -> bool {
         match &self.director {
             Some(d) => d.is_expired(simulation_ctx),
             None => false,
         }
     }
 
-    fn run_sport_director_election(&mut self, context: &mut SimulationContext) {}
+    fn run_sport_director_election(&mut self, context: &SimulationContext) {}
 }

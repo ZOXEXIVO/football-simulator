@@ -53,9 +53,9 @@ impl PlayerCollection {
         self.players.len()
     }
 
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) {
         for player in &mut self.players {
-            player.simulate(ctx);
+            player.simulate(ctx.with_player());
         }
     }
 

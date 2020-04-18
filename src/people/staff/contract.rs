@@ -33,11 +33,11 @@ impl StaffClubContract {
         }
     }
 
-    pub fn is_expired(&self, context: &mut SimulationContext) -> bool {
+    pub fn is_expired(&self, context: &SimulationContext) -> bool {
         self.expired >= context.date.date()
     }
 
-    pub fn simulate(&mut self, context: &mut SimulationContext) {
+    pub fn simulate(&mut self, context: &SimulationContext) {
         if context.check_contract_expiration() && self.is_expired(context) {
             self.status = StaffStatus::ExpiredContract;
         }
@@ -74,9 +74,9 @@ impl StaffCollection {
         self.staffs.len()
     }
 
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) {
         for staff_contract in &mut self.staffs {
-            staff_contract.simulate(ctx);
+            staff_contract.simulate(ctx.with_staff());
         }
     }
 

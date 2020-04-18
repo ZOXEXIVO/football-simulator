@@ -15,7 +15,7 @@ pub struct League {
 }
 
 impl League {
-    pub fn simulate(&mut self, ctx: &mut GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) {
         if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
             self.schedule =
                 Some(Schedule::generate(&self.clubs, ctx.simulation.date.date()).unwrap());
@@ -41,10 +41,8 @@ impl League {
             matches_to_play
                 .iter()
                 .map(|m| {
-                    let home_club = self.get_club(m.home_club_id).unwrap();
-                    let guest_club = self.get_club(m.guest_club_id).unwrap();
-
-                    Match::make(home_club, guest_club)
+                    Match::make(self.get_club(m.home_club_id).unwrap(),
+                                self.get_club(m.guest_club_id).unwrap())
                 })
                 .collect()
         };

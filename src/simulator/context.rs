@@ -5,7 +5,9 @@ use crate::continent::ContinentContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
 use crate::people::{PlayerContext, StaffContext};
+use std::cell::{RefCell};
 
+#[derive(Clone)]
 pub struct GlobalContext {
     pub simulation: SimulationContext,
     pub continent: Option<ContinentContext>,
@@ -14,7 +16,7 @@ pub struct GlobalContext {
     pub club: Option<ClubContext>,
     pub board: Option<BoardContext>,
     pub player: Option<PlayerContext>,
-    pub staff: Option<StaffContext>,
+    pub staff: Option<StaffContext>
 }
 
 impl GlobalContext {
@@ -31,71 +33,47 @@ impl GlobalContext {
         }
     }
 
-    pub fn with_continent(&mut self) -> &mut Self {
-        self.continent = Some(ContinentContext::new());
-        self
+    pub fn with_continent(&self) -> Self {
+        let mut ctx = self.clone();
+        ctx.continent = Some(ContinentContext::new());
+        ctx
     }
 
-    pub fn with_country(&mut self) -> &mut Self {
-        self.country = Some(CountryContext::new());
-        self
+    pub fn with_country(&self) -> Self {
+        let mut ctx = self.clone();
+
+        ctx.country = Some(CountryContext::new());
+        ctx
     }
 
-    pub fn with_league(&mut self) -> &mut Self {
-        self.league = Some(LeagueContext::new());
-        self
+    pub fn with_league(&self) -> Self {
+        let mut ctx = self.clone();
+        ctx.league = Some(LeagueContext::new());
+        ctx
     }
 
-    pub fn with_club(&mut self, club_id: u32) -> &mut Self {
-        self.club = Some(ClubContext::new(club_id));
-        self
+    pub fn with_club(&self, club_id: u32) -> Self {
+        let mut ctx = self.clone();
+        ctx.club = Some(ClubContext::new(club_id));
+        ctx
     }
 
-    pub fn with_board(&mut self) -> &mut Self {
-        self.board = Some(BoardContext::new());
-        self
+    pub fn with_board(&self) -> Self {
+        let mut ctx = self.clone();
+        ctx.board = Some(BoardContext::new());
+        ctx
     }
 
-    pub fn with_player(&mut self) -> &mut Self {
-        self.player = Some(PlayerContext::new());
-        self
+    pub fn with_player(&self) -> Self {
+        let mut ctx = self.clone();
+        ctx.player = Some(PlayerContext::new());
+        ctx
     }
 
-    pub fn with_staff(&mut self) -> &mut Self {
-        self.staff = Some(StaffContext::new());
-        self
-    }
-
-    pub fn continent(&mut self) -> &mut ContinentContext {
-        self.continent.as_mut().unwrap()
-    }
-
-    pub fn country(&mut self) -> &mut CountryContext {
-        self.country.as_mut().unwrap()
-    }
-
-    pub fn league(&mut self) -> &mut LeagueContext {
-        self.league.as_mut().unwrap()
-    }
-
-    pub fn club(&mut self) -> &mut ClubContext {
-        self.club.as_mut().unwrap()
-    }
-
-    pub fn board(&mut self) -> &mut BoardContext {
-        self.board.as_mut().unwrap()
-    }
-
-    pub fn player_mut(&mut self) -> &mut PlayerContext {
-        self.player.as_mut().unwrap()
-    }
-
-    pub fn player(&mut self) -> &PlayerContext {
-        self.player.as_ref().unwrap()
-    }
-
-    pub fn staff(&mut self) -> &mut StaffContext {
-        self.staff.as_mut().unwrap()
+    pub fn with_staff(&self) -> Self {
+        let mut ctx = self.clone();
+        ctx.staff = Some(StaffContext::new());
+        ctx
     }
 }
 
