@@ -8,7 +8,7 @@ impl FootballSimulator {
         let global_ctx = GlobalContext::new(SimulationContext::new(data.date));
 
         for continent in &mut data.continents {
-            continent.simulate(global_ctx.with_continent());
+            continent.simulate(global_ctx.with_continent(continent.id));
         }
 
         data.next_date();

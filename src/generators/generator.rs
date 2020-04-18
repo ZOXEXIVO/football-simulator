@@ -24,32 +24,39 @@ impl SimulatorData {
             id: SimulatorData::generate_id(),
             continents: vec![
                 Continent {
+                    id: 0,
                     name: "Africa".to_string(),
                     countries: (0..20)
                         .map(|_| Country::generate())
                         .collect()
                 },
                 Continent {
+                    id: 1,
                     name: "Eurasia".to_string(),
                     countries: (0..50)
                         .map(|_| Country::generate())
                         .collect(),
                 },
                 Continent {
+                    id: 2,
                     name: "North America".to_string(),
                     countries: (0..2)
                         .map(|_| Country::generate())
                         .collect(),
                 },
                 Continent {
+                    id: 3,
                     name: "Sourth America".to_string(),
                     countries: (0..10)
                         .map(|_| Country::generate())
                         .collect(),
                 },
                 Continent {
+                    id: 4,
                     name: "Australia".to_string(),
-                    countries: vec![Country {
+                    countries: vec![
+                        Country {
+                            id: 7,
                         name: "Australia".to_string(),
                         leagues: vec![],
                         reputation: 4000,
@@ -65,6 +72,7 @@ impl SimulatorData {
 impl Continent {
     fn generate() -> Continent {
         Continent {
+            id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(10),
             countries: (0..7).map(|_| Country::generate()).collect(),
             //tournaments: Vec::new(),
@@ -75,6 +83,7 @@ impl Continent {
 impl Country {
     fn generate() -> Country {
         Country {
+            id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(10),
             leagues: (0..2).map(|_| League::generate()).collect(),
             reputation: 5000,
@@ -87,6 +96,7 @@ impl League {
         let clubs = (0..20).map(|_| Club::generate()).collect();
 
         League {
+            id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(10),
             clubs,
             schedule: None,

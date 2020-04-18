@@ -30,14 +30,14 @@ async fn main() {
     //
     // server.start().await;
 
-    let mut data_estimation = TimeEstimation::estimate(SimulatorData::generate);
+    let (mut data, generate_estimation) = TimeEstimation::estimate(SimulatorData::generate);
 
-    println!("data generated with {} ms", data_estimation.1);
+    println!("data generated with {} ms", generate_estimation);
 
     loop {
-        let simulation_result =
-            TimeEstimation::estimate(|| FootballSimulator::simulate(&mut data_estimation.0));
+        let (_, result_estimation) =
+            TimeEstimation::estimate(|| FootballSimulator::simulate(&mut data));
 
-        println!("simulated with {} ms", simulation_result.1);
+        println!("simulated with {} ms", result_estimation);
     }
 }

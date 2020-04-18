@@ -1,4 +1,4 @@
-use crate::people::Staff;
+use crate::people::{Staff, StaffResult};
 use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
@@ -20,7 +20,7 @@ pub enum StaffStatus {
 #[derive(Debug)]
 pub struct StaffClubContract {
     expired: NaiveDate,
-    position: StaffPosition,
+    pub position: StaffPosition,
     pub status: StaffStatus,
 }
 
@@ -41,62 +41,5 @@ impl StaffClubContract {
         if context.check_contract_expiration() && self.is_expired(context) {
             self.status = StaffStatus::ExpiredContract;
         }
-    }
-}
-
-#[derive(Debug)]
-pub struct StaffCollection {
-    pub staffs: Vec<Staff>,
-    pub roles: StaffRoles,
-
-    stub: Staff,
-}
-
-#[derive(Debug)]
-pub struct StaffRoles {
-    main_coach: Option<StaffClubContract>,
-    contract_resolver: Option<StaffClubContract>,
-}
-
-impl StaffCollection {
-    pub fn new(staffs: Vec<Staff>) -> Self {
-        StaffCollection {
-            staffs,
-            roles: StaffRoles {
-                main_coach: None,
-                contract_resolver: None,
-            },
-            stub: Staff::stub(),
-        }
-    }
-
-    pub fn len(&self) -> usize {
-        self.staffs.len()
-    }
-
-    pub fn simulate(&mut self, ctx: GlobalContext) {
-        for staff_contract in &mut self.staffs {
-            staff_contract.simulate(ctx.with_staff());
-        }
-    }
-
-    pub fn get_main_coach(&self) -> Option<&Staff> {
-        self.get_by_position(&StaffPosition::MainCoach)
-    }
-
-    pub fn get_contract_resolver(&self) -> Option<&Staff> {
-        self.get_by_position(&StaffPosition::MainCoach)
-    }
-
-    fn get_by_position(&self, position: &StaffPosition) -> Option<&Staff> {
-        let main_coach_contract = self.staffs.iter().find(|staff| {
-            staff.contract.is_some() && staff.contract.as_ref().unwrap().position == *position
-        });
-
-        if main_coach_contract.is_none() {
-            return Some(&self.stub);
-        }
-
-        Some(&main_coach_contract.unwrap())
     }
 }

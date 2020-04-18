@@ -1,7 +1,4 @@
-use crate::people::{
-    Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerContext, PlayerMailbox,
-    PlayerSkills,
-};
+use crate::people::{Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerContext, PlayerMailbox, PlayerSkills, PlayerResult};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
 use crate::utils::{DateUtils, IntegerUtils};
@@ -48,16 +45,20 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerResult {
+        let mut result = PlayerResult::new();
+        
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
             self.behaviour.try_increase();
         }
 
         if self.behaviour.state == BehaviourState::Poor {
-            ctx.player.unwrap().request_transfer(self.id);            
+            result.request_transfer(self.id);            
         }
 
         self.train();
+
+        result
     }
 
     pub fn position(&self) -> &PlayerPositionType {
@@ -110,3 +111,42 @@ impl Display for Player {
         write!(f, "{}, {}", self.full_name, self.birth_date)
     }
 }
+
+
+#[derive(Debug)]
+pub struct PlayerCollection {
+    pub players: Vec<Player>,
+}
+
+
+impl PlayerCollection {
+    pub fn new(players: Vec<Player>) -> Self {
+        PlayerCollection { players }
+    }
+
+    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerResult {
+        let mut result = PlayerResult::new();
+
+        for player in &mut self.players {
+            player.simulate(ctx.with_player(Some(player.id)));
+        }
+
+        result
+    }
+
+    pub fn add(&mut self, players: Vec<Player>){
+        for player in players {
+            self.players.push(player);
+        }
+    }
+
+    pub fn players(&self) -> Vec<&Player> {
+        self.players.iter().map(|player| player).collect()
+    }
+
+    pub fn take(&mut self, player_id: u32) -> Player{
+        let player_idx = self.players.iter().position(|p| p.id == player_id).unwrap();
+        self.players.remove(player_idx)
+    }
+}
+

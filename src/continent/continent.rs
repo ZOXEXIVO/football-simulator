@@ -1,26 +1,22 @@
 use crate::Country;
 
-use crate::continent::{Tournament, TournamentContext};
 use crate::simulator::context::GlobalContext;
 pub use rayon::prelude::*;
+use crate::country::CountryResult;
+use crate::continent::ContinentResult;
 
 pub struct Continent {
+    pub id: u32,
     pub name: String,
-    pub countries: Vec<Country>,
-
-    //pub tournaments: Vec<Box<dyn Tournament>>,
+    pub countries: Vec<Country>
 }
 
 impl Continent {
-    pub fn simulate(&mut self, ctx: GlobalContext) {
-        self.countries.par_iter_mut().for_each(
-            |country| country.simulate(ctx.with_country())
-        );
-        
-        // let mut tournament_ctx = TournamentContext::new();
-        //
-        // for tournament in &mut self.tournaments {
-        //     tournament.simulate(&mut tournament_ctx, ctx)
-        // }
+    pub fn simulate(&mut self, ctx: GlobalContext) -> ContinentResult {
+        let country_results: Vec<CountryResult> = self.countries.iter_mut().map(
+            |country| country.simulate(ctx.with_country(country.id))
+        ).collect();
+
+        ContinentResult::new(country_results)
     }
 }

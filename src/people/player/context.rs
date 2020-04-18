@@ -1,16 +1,12 @@
 #[derive(Clone)]
 pub struct PlayerContext {
-    pub transfer_requests: Vec<u32>,
+    pub id: Option<u32>
 }
 
 impl PlayerContext {
-    pub fn new() -> Self {
+    pub fn new(id: Option<u32>) -> Self {
         PlayerContext {
-            transfer_requests: Vec::new(),
+            id
         }
-    }
-    
-    pub fn request_transfer(&mut self, player_id: u32) {
-        self.transfer_requests.push(player_id);
     }
 }

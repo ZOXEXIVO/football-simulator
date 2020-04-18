@@ -5,7 +5,6 @@ use crate::continent::ContinentContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
 use crate::people::{PlayerContext, StaffContext};
-use std::cell::{RefCell};
 
 #[derive(Clone)]
 pub struct GlobalContext {
@@ -33,22 +32,22 @@ impl GlobalContext {
         }
     }
 
-    pub fn with_continent(&self) -> Self {
+    pub fn with_continent(&self, continent_id: u32) -> Self {
         let mut ctx = self.clone();
-        ctx.continent = Some(ContinentContext::new());
+        ctx.continent = Some(ContinentContext::new(continent_id));
         ctx
     }
 
-    pub fn with_country(&self) -> Self {
+    pub fn with_country(&self, country_id: u32) -> Self {
         let mut ctx = self.clone();
 
-        ctx.country = Some(CountryContext::new());
+        ctx.country = Some(CountryContext::new(country_id));
         ctx
     }
 
-    pub fn with_league(&self) -> Self {
+    pub fn with_league(&self, league_id: u32) -> Self {
         let mut ctx = self.clone();
-        ctx.league = Some(LeagueContext::new());
+        ctx.league = Some(LeagueContext::new(league_id));
         ctx
     }
 
@@ -64,9 +63,9 @@ impl GlobalContext {
         ctx
     }
 
-    pub fn with_player(&self) -> Self {
+    pub fn with_player(&self, player_id: Option<u32>) -> Self {
         let mut ctx = self.clone();
-        ctx.player = Some(PlayerContext::new());
+        ctx.player = Some(PlayerContext::new(player_id));
         ctx
     }
 

@@ -1,5 +1,5 @@
-use crate::club::Club;
-use crate::league::Schedule;
+use crate::club::{Club, ClubResult};
+use crate::league::{Schedule, LeagueResult};
 use crate::r#match::{Match, MatchResult};
 use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
@@ -7,6 +7,7 @@ use chrono::Datelike;
 
 #[derive(Debug)]
 pub struct League {
+    pub id: u32,
     pub name: String,
     pub clubs: Vec<Club>,
     pub schedule: Option<Schedule>,
@@ -15,17 +16,19 @@ pub struct League {
 }
 
 impl League {
-    pub fn simulate(&mut self, ctx: GlobalContext) {
+    pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
         if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
             self.schedule =
                 Some(Schedule::generate(&self.clubs, ctx.simulation.date.date()).unwrap());
         }
 
-        for club in &mut self.clubs {
-            club.simulate(ctx.with_club(club.id));
-        }
+        let club_result: Vec<ClubResult> = self.clubs.iter_mut()
+            .map(|club| club.simulate(ctx.with_club(club.id)))
+            .collect();
 
         self.play_matches(&ctx);
+
+        LeagueResult::new(club_result)
     }
 
     fn get_club(&self, club_id: u32) -> Option<&Club> {
@@ -42,7 +45,8 @@ impl League {
                 .iter()
                 .map(|m| {
                     Match::make(self.get_club(m.home_club_id).unwrap(),
-                                self.get_club(m.guest_club_id).unwrap())
+                                self.get_club(m.guest_club_id).unwrap(),
+                    )
                 })
                 .collect()
         };
