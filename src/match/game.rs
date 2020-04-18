@@ -1,7 +1,7 @@
 use crate::club::Club;
 use crate::r#match::engine::PlayerChanges;
 use crate::r#match::FootballEngine;
-use std::fmt::{Display, Formatter, Result};
+use std::fmt::{Result};
 
 #[derive(Clone)]
 pub struct Match<'m> {
@@ -17,7 +17,7 @@ impl<'m> Match<'m> {
         }
     }
 
-    pub fn play(self) -> MatchResult<'m> {
+    pub fn play(self) -> MatchResult {
         let mut engine = FootballEngine::new(
             self.home_club.get_match_squad(),
             self.away_club.get_match_squad(),
@@ -26,31 +26,19 @@ impl<'m> Match<'m> {
         let play_result = engine.play();
 
         MatchResult {
-            original_game: self,
             player_changes: play_result.player_changes,
+            home_club_id: self.home_club.id,
             home_goals: play_result.score.home,
+            away_club_id: self.away_club.id,
             away_goals: play_result.score.away,
         }
     }
 }
 
-pub struct MatchResult<'m> {
-    original_game: Match<'m>,
-    player_changes: Vec<PlayerChanges>,
-    home_goals: u8,
-    away_goals: u8,
-}
-
-//DISPLAY
-impl<'m> Display for MatchResult<'m> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        write!(
-            f,
-            "{} {}:{} {}",
-            self.original_game.home_club.name,
-            self.home_goals,
-            self.away_goals,
-            self.original_game.away_club.name
-        )
-    }
+pub struct MatchResult {
+    pub player_changes: Vec<PlayerChanges>,
+    pub home_club_id: u32,
+    pub home_goals: u8,
+    pub away_club_id: u32,
+    pub away_goals: u8,
 }

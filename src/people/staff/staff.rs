@@ -60,7 +60,7 @@ impl Staff {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext) -> StaffResult {
-        let mut result = StaffResult::new();
+        let result = StaffResult::new();
         
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {}
 
@@ -102,7 +102,7 @@ impl StaffCollection {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext) -> StaffResult {
-        let mut result = StaffResult::new();
+        let result = StaffResult::new();
 
         for staff_contract in &mut self.staffs {
             staff_contract.simulate(ctx.with_staff());

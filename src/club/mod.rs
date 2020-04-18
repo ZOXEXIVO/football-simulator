@@ -6,6 +6,7 @@ pub mod squad;
 mod tactics;
 mod transfers;
 mod result;
+mod history;
 
 pub use board::*;
 pub use club::*;
@@ -15,3 +16,4 @@ pub use squad::*;
 pub use tactics::*;
 pub use transfers::*;
 pub use result::*;
+pub use history::*;

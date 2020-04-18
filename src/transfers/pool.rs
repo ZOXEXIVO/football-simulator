@@ -15,7 +15,7 @@ impl<T> TransferPool<T> {
     pub fn push_transfer(&mut self, item: T, club_id: u32) {
         let mut inner_map = self.pool.lock().unwrap();
 
-        let mut entry = inner_map.entry(club_id).or_insert(Vec::new());
+        let entry = inner_map.entry(club_id).or_insert(Vec::new());
 
         entry.push(item);
     }

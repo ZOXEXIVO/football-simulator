@@ -1,13 +1,20 @@
 use crate::country::CountryResult;
+use crate::simulator::SimulatorData;
 
 pub struct ContinentResult {
-    pub clubs: Vec<CountryResult>,
+    pub countries: Vec<CountryResult>,
 }
 
 impl ContinentResult {
-    pub fn new(clubs: Vec<CountryResult>) -> Self {
+    pub fn new(countries: Vec<CountryResult>) -> Self {
         ContinentResult {
-            clubs
+            countries
+        }
+    }
+    
+    pub fn process(self, data: &mut SimulatorData){
+        for result in self.countries {
+            result.process(data);
         }
     }
 }

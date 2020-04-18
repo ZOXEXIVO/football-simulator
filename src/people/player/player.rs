@@ -1,4 +1,4 @@
-use crate::people::{Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerContext, PlayerMailbox, PlayerSkills, PlayerResult};
+use crate::people::{Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerContext, PlayerMailbox, PlayerSkills, PlayerResult, PlayerCollectionResult};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
 use crate::utils::{DateUtils, IntegerUtils};
@@ -47,13 +47,13 @@ impl Player {
 
     pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerResult {
         let mut result = PlayerResult::new();
-        
+
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
             self.behaviour.try_increase();
         }
 
         if self.behaviour.state == BehaviourState::Poor {
-            result.request_transfer(self.id);            
+            result.request_transfer(self.id);
         }
 
         self.train();
@@ -112,29 +112,33 @@ impl Display for Player {
     }
 }
 
+const DEFAULT_PLAYER_TRANFER_BUFFER_SIZE: usize = 10;
 
 #[derive(Debug)]
 pub struct PlayerCollection {
     pub players: Vec<Player>,
 }
 
-
 impl PlayerCollection {
     pub fn new(players: Vec<Player>) -> Self {
         PlayerCollection { players }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerResult {
-        let mut result = PlayerResult::new();
+    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerCollectionResult {
+        let player_results: Vec<PlayerResult> = self.players.iter_mut()
+            .map(|player| player.simulate(ctx.with_player(Some(player.id))))
+            .collect();
 
-        for player in &mut self.players {
-            player.simulate(ctx.with_player(Some(player.id)));
-        }
+        let mut outgoing_players = Vec::with_capacity(DEFAULT_PLAYER_TRANFER_BUFFER_SIZE);
+                       
+        for transfer_request_player_id in player_results.iter().flat_map(|p| &p.transfer_requests) {
+            outgoing_players.push(self.take(transfer_request_player_id))
+        }       
 
-        result
+        PlayerCollectionResult::new(player_results, outgoing_players)
     }
 
-    pub fn add(&mut self, players: Vec<Player>){
+    pub fn add(&mut self, players: Vec<Player>) {
         for player in players {
             self.players.push(player);
         }
@@ -144,8 +148,8 @@ impl PlayerCollection {
         self.players.iter().map(|player| player).collect()
     }
 
-    pub fn take(&mut self, player_id: u32) -> Player{
-        let player_idx = self.players.iter().position(|p| p.id == player_id).unwrap();
+    pub fn take(&mut self, player_id: &u32) -> Player {
+        let player_idx = self.players.iter().position(|p| p.id == *player_id).unwrap();
         self.players.remove(player_idx)
     }
 }

@@ -1,3 +1,5 @@
+use crate::simulator::SimulatorData;
+
 pub struct StaffResult {
     pub transfer_requests: Vec<u32>
 }
@@ -11,5 +13,9 @@ impl StaffResult{
     
     pub fn request_transfer(&mut self, player_id: u32) {
         self.transfer_requests.push(player_id);
+    }
+
+    pub fn process(&self, data: &mut SimulatorData){
+
     }
 }

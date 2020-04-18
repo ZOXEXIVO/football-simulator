@@ -1,3 +1,5 @@
+use crate::simulator::SimulatorData;
+
 pub struct BoardResult{
    
 }
@@ -7,5 +9,9 @@ impl BoardResult {
         BoardResult {
           
         }
+    }
+
+    pub fn process(&self, data: &mut SimulatorData){
+        
     }
 }

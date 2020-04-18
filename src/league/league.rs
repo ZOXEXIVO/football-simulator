@@ -1,4 +1,4 @@
-use crate::club::{Club, ClubResult};
+use crate::club::{Club, ClubResult, MatchHistory};
 use crate::league::{Schedule, LeagueResult};
 use crate::r#match::{Match, MatchResult};
 use crate::simulator::context::GlobalContext;
@@ -31,29 +31,50 @@ impl League {
         LeagueResult::new(club_result)
     }
 
-    fn get_club(&self, club_id: u32) -> Option<&Club> {
-        self.clubs.iter().find(|c| c.id == club_id)
+    fn get_club(&self, club_id: &u32) -> &Club {
+        self.clubs.iter().find(|c| c.id == *club_id).unwrap()
     }
 
-    fn play_matches(&mut self, context: &GlobalContext) {
+    fn get_club_mut(&mut self, club_id: &u32) -> &mut Club {
+        self.clubs.iter_mut().find(|c| c.id == *club_id).unwrap()
+    }
+
+    fn play_matches(&mut self, context: &GlobalContext) -> Vec<MatchResult> {
+        let current_date = context.simulation.date.date();
+
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
 
-            let matches_to_play = actual_schedule.get_matches(context.simulation.date.date());
-
-            matches_to_play
+            actual_schedule.get_matches(current_date)
                 .iter()
                 .map(|m| {
-                    Match::make(self.get_club(m.home_club_id).unwrap(),
-                                self.get_club(m.guest_club_id).unwrap(),
+                    Match::make(self.get_club(&m.home_club_id),
+                                self.get_club(&m.guest_club_id),
                     )
-                })
-                .collect()
+                }).collect()
         };
 
         let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
 
-        for match_result in match_results {}
+        for match_result in &match_results {
+            {
+                let home_club = self.get_club_mut(&match_result.home_club_id);
+
+                home_club.add_match_to_history(MatchHistory::new(
+                    current_date, match_result.away_club_id, (match_result.home_goals, match_result.away_goals))
+                );
+            }
+
+            {
+                let away_club = self.get_club_mut(&match_result.away_club_id);
+
+                away_club.add_match_to_history(MatchHistory::new(
+                    current_date, match_result.home_club_id, (match_result.away_goals, match_result.home_goals))
+                );
+            }
+        }
+
+        match_results
     }
 }
 

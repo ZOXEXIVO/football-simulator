@@ -1,7 +1,7 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult};
+use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory};
 use crate::simulator::context::GlobalContext;
 use crate::people::{
     Player, PlayerCollection, PlayerSelector, StaffCollection, StaffContext,
@@ -19,6 +19,8 @@ pub struct Club {
     pub staffs: StaffCollection,
 
     pub transfer_list: Vec<TransferItem>,
+    
+    pub match_history: Vec<MatchHistory>
 }
 
 impl Club {
@@ -44,5 +46,9 @@ impl Club {
         );
         
         result
+    }
+    
+    pub fn add_match_to_history(&mut self, played_match: MatchHistory){
+        self.match_history.push(played_match);
     }
 }

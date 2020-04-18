@@ -120,6 +120,7 @@ impl Club {
             staffs: StaffCollection::new((0..10).map(|_| Staff::generate()).collect()),
             tactics: None,
             transfer_list: Vec::new(),
+            match_history: Vec::new()
         }
     }
 }

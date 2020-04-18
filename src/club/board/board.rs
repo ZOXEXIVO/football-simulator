@@ -18,7 +18,7 @@ impl ClubBoard {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext) -> BoardResult {
-        let mut result = BoardResult::new();
+        let result = BoardResult::new();
         
         if self.director.is_none() {
             self.run_director_election(&ctx.simulation);
