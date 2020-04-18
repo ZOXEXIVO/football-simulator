@@ -78,6 +78,7 @@ mod tests {
             staffs: StaffCollection::new(vec![]),
             tactics: None,
             transfer_list: vec![],
+            match_history: vec![]
         });
 
         clubs.push(Club {
@@ -89,6 +90,7 @@ mod tests {
             staffs: StaffCollection::new(vec![]),
             tactics: None,
             transfer_list: vec![],
+            match_history: vec![]
         });
 
         clubs.push(Club {
@@ -100,6 +102,7 @@ mod tests {
             staffs: StaffCollection::new(vec![]),
             tactics: None,
             transfer_list: vec![],
+            match_history: vec![]
         });
 
         let schedule = Schedule::generate(&clubs, NaiveDate::from_ymd(2020, 3, 1)).unwrap();
