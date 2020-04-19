@@ -7,6 +7,7 @@ mod tactics;
 mod transfers;
 mod result;
 mod history;
+mod training;
 
 pub use board::*;
 pub use club::*;
@@ -17,3 +18,4 @@ pub use tactics::*;
 pub use transfers::*;
 pub use result::*;
 pub use history::*;
+pub use training::*;

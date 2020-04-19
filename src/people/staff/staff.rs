@@ -111,23 +111,28 @@ impl StaffCollection {
         result
     }
 
-    pub fn get_main_coach(&self) -> Option<&Staff> {
-        self.get_by_position(&StaffPosition::MainCoach)
+    pub fn main_coach(&self) -> &Staff {
+        let main_coach = self.get_by_position(&StaffPosition::MainCoach);
+        *main_coach.first().unwrap()
     }
 
-    pub fn get_contract_resolver(&self) -> Option<&Staff> {
-        self.get_by_position(&StaffPosition::MainCoach)
+    pub fn coaches(&self) -> Vec<&Staff> {
+        self.get_by_position(&StaffPosition::Coach)
     }
 
-    fn get_by_position(&self, position: &StaffPosition) -> Option<&Staff> {
-        let main_coach_contract = self.staffs.iter().find(|staff| {
+    pub fn contract_resolver(&self) -> &Staff {
+        *self.get_by_position(&StaffPosition::MainCoach).first().unwrap()
+    }
+
+    fn get_by_position(&self, position: &StaffPosition) -> Vec<&Staff> {
+        let staffs: Vec<&Staff> = self.staffs.iter().filter(|staff| {
             staff.contract.is_some() && staff.contract.as_ref().unwrap().position == *position
-        });
+        }).collect();
 
-        if main_coach_contract.is_none() {
-            return Some(&self.stub);
+        if staffs.is_empty() {
+            return vec![&self.stub];
         }
 
-        Some(&main_coach_contract.unwrap())
+        staffs
     }
 }

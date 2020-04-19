@@ -35,8 +35,8 @@ pub enum TacticsPositioning {
 pub struct TacticsSelector;
 
 impl TacticsSelector {
-    pub fn select(club: &Club, staff: &Staff) -> Tactics {
-        match staff.behaviour.state {
+    pub fn select(club: &Club, coach: &Staff) -> Tactics {
+        match coach.behaviour.state {
             BehaviourState::Poor => Tactics::new(TacticsPositioning::T451),
             BehaviourState::Normal => Tactics::new(Self::club_players(club)),
             BehaviourState::Good => Tactics::new(Self::club_players(club)),

@@ -1,4 +1,4 @@
-use crate::club::{Club, ClubBoard, ClubMood};
+use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings};
 use crate::shared::fullname::FullName;
@@ -111,6 +111,11 @@ impl League {
 
 impl Club {
     fn generate() -> Club {
+        let training_schedule = TrainingSchedule::new(
+            NaiveTime::from_hms(10, 0, 0),
+            NaiveTime::from_hms(17, 0, 0)
+        );
+        
         Club {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(5),
@@ -119,8 +124,9 @@ impl Club {
             players: PlayerCollection::new((0..10).map(|_| Player::generate()).collect()),
             staffs: StaffCollection::new((0..10).map(|_| Staff::generate()).collect()),
             tactics: None,
+            training_schedule,
             transfer_list: Vec::new(),
-            match_history: Vec::new()
+            match_history: Vec::new(),
         }
     }
 }

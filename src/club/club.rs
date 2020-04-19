@@ -1,7 +1,7 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory};
+use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule};
 use crate::simulator::context::GlobalContext;
 use crate::people::{
     Player, PlayerCollection, PlayerSelector, StaffCollection, StaffContext,
@@ -18,6 +18,8 @@ pub struct Club {
     pub players: PlayerCollection,
     pub staffs: StaffCollection,
 
+    pub training_schedule: TrainingSchedule,
+    
     pub transfer_list: Vec<TransferItem>,
     
     pub match_history: Vec<MatchHistory>
@@ -29,12 +31,12 @@ impl Club {
     }
 
     pub fn get_match_squad(&self) -> Squad {
-        let main_coach = self.staffs.get_main_coach();
+        let main_coach = self.staffs.main_coach();
 
         Squad {
             club_id: self.id,
-            tactics: TacticsSelector::select(self, main_coach.unwrap()),
-            players: PlayerSelector::select(self, main_coach.unwrap()),
+            tactics: TacticsSelector::select(self, main_coach),
+            players: PlayerSelector::select(self, main_coach),
         }
     }
 
@@ -45,10 +47,17 @@ impl Club {
             self.staffs.simulate(ctx.with_staff())
         );
         
+        self.train_players();
+        
         result
     }
     
     pub fn add_match_to_history(&mut self, played_match: MatchHistory){
         self.match_history.push(played_match);
+    }
+    
+    pub fn train_players(&mut self){
+        let coach = self.staffs.coaches();
+        
     }
 }

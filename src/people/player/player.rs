@@ -1,4 +1,4 @@
-use crate::people::{Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerMailbox, PlayerSkills, PlayerResult, PlayerCollectionResult};
+use crate::people::{Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerMailbox, PlayerSkills, PlayerResult, PlayerCollectionResult, PlayerTraining, Staff};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
 use crate::utils::{DateUtils, IntegerUtils};
@@ -17,6 +17,7 @@ pub struct Player {
     pub preferred_foot: PlayerFoot,
     pub attributes: PlayerAttributes,
     pub mailbox: PlayerMailbox,
+    pub training: PlayerTraining
 }
 
 impl Player {
@@ -41,6 +42,7 @@ impl Player {
             preferred_foot: PlayerFoot::Right,
             attributes,
             contract,
+            training: PlayerTraining::new(),
             mailbox: PlayerMailbox::new(),
         }
     }
@@ -56,11 +58,13 @@ impl Player {
             result.request_transfer(self.id);
         }
 
-        self.train();
-
         result
     }
 
+    pub fn train(&mut self, coach: &Staff){ 
+        self.training.train(coach);
+    }
+    
     pub fn position(&self) -> &PlayerPositionType {
         &self.positions.first().unwrap().position
     }
@@ -75,12 +79,6 @@ impl Player {
 
     pub fn get_skill(&self) -> u32 {
         self.skills.get_for_position(self.position())
-    }
-
-    pub fn train(&mut self) {
-        let change_val = IntegerUtils::random(-3, 3) as i8;
-
-        self.skills.train(change_val);
     }
 }
 
@@ -112,7 +110,7 @@ impl Display for Player {
     }
 }
 
-const DEFAULT_PLAYER_TRANFER_BUFFER_SIZE: usize = 10;
+const DEFAULT_PLAYER_TRANSFER_BUFFER_SIZE: usize = 10;
 
 #[derive(Debug)]
 pub struct PlayerCollection {
@@ -129,7 +127,7 @@ impl PlayerCollection {
             .map(|player| player.simulate(ctx.with_player(Some(player.id))))
             .collect();
 
-        let mut outgoing_players = Vec::with_capacity(DEFAULT_PLAYER_TRANFER_BUFFER_SIZE);
+        let mut outgoing_players = Vec::with_capacity(DEFAULT_PLAYER_TRANSFER_BUFFER_SIZE);
                        
         for transfer_request_player_id in player_results.iter().flat_map(|p| &p.transfer_requests) {
             outgoing_players.push(self.take(transfer_request_player_id))

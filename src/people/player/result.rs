@@ -15,7 +15,7 @@ impl PlayerCollectionResult{
     }
 
     pub fn process(&self, data: &mut SimulatorData){
-
+        
     }
 }
 
