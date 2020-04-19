@@ -69,17 +69,6 @@ impl SimulatorData {
     }
 }
 
-impl Continent {
-    fn generate() -> Continent {
-        Continent {
-            id: IntegerUtils::random(1, 10_000_000) as u32,
-            name: StringUtils::random_string(10),
-            countries: (0..7).map(|_| Country::generate()).collect(),
-            //tournaments: Vec::new(),
-        }
-    }
-}
-
 impl Country {
     fn generate() -> Country {
         Country {

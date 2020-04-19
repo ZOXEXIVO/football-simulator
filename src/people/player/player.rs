@@ -1,7 +1,7 @@
 use crate::people::{Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerMailbox, PlayerSkills, PlayerResult, PlayerCollectionResult, PlayerTraining, Staff};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
-use crate::utils::{DateUtils, IntegerUtils};
+use crate::utils::{DateUtils};
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
 
@@ -61,8 +61,21 @@ impl Player {
         result
     }
 
-    pub fn train(&mut self, coach: &Staff){ 
-        self.training.train(coach);
+    pub fn train(&mut self, coach: &Staff){
+        let training = &self.training;
+        
+        match coach.behaviour.state {
+            BehaviourState::Good => {
+                self.skills.mental.train(1);
+                self.skills.technical.train(1)
+            },
+            BehaviourState::Normal => {
+                self.skills.train(1)
+            },
+            BehaviourState::Poor => {
+                self.skills.physical.train(2)
+            }
+        }
     }
     
     pub fn position(&self) -> &PlayerPositionType {
@@ -133,7 +146,7 @@ impl PlayerCollection {
             outgoing_players.push(self.take(transfer_request_player_id))
         }       
 
-        PlayerCollectionResult::new(player_results, outgoing_players)
+        PlayerCollectionResult::new(player_results, outgoing_players)        
     }
 
     pub fn add(&mut self, players: Vec<Player>) {

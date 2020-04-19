@@ -1,19 +1,7 @@
-use crate::people::{Player, Staff};
-use chrono::NaiveTime;
+use chrono::{NaiveTime, NaiveDateTime};
 
 #[derive(Debug)]
-pub struct Training{
-    
-}
-
-impl Training{
-    pub fn train(schedule: TrainingSchedule, players: Vec<Player>, coaches: Vec<Staff>){
-        
-    }
-}
-
-#[derive(Debug)]
-pub struct TrainingSchedule{
+pub struct TrainingSchedule {
     pub morning_time: NaiveTime,
     pub evening_time: NaiveTime,
 }
@@ -24,5 +12,9 @@ impl TrainingSchedule{
             morning_time,
             evening_time
         }
+    }
+
+    pub fn is_time(&self, date: NaiveDateTime) -> bool {
+        self.morning_time == date.time() || self.evening_time == date.time()
     }
 }
