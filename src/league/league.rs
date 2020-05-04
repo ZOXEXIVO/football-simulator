@@ -41,7 +41,7 @@ impl League {
 
     fn play_matches(&mut self, context: &GlobalContext) -> Vec<MatchResult> {
         let current_date = context.simulation.date.date();
-
+        
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
 

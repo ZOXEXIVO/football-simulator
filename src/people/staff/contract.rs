@@ -1,5 +1,4 @@
 use crate::people::{Staff, StaffResult};
-use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 

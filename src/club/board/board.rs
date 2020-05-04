@@ -1,10 +1,11 @@
 use crate::people::StaffClubContract;
 use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
-use crate::club::BoardResult;
+use crate::club::{BoardResult, BoardMood};
 
 #[derive(Debug)]
 pub struct ClubBoard {
+    pub mood: BoardMood,
     pub director: Option<StaffClubContract>,
     pub sport_director: Option<StaffClubContract>,
 }
@@ -12,6 +13,7 @@ pub struct ClubBoard {
 impl ClubBoard {
     pub fn new() -> Self {
         ClubBoard {
+            mood: BoardMood::default(),
             director: None,
             sport_director: None,
         }
