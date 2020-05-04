@@ -41,7 +41,7 @@ impl League {
 
     fn play_matches(&mut self, context: &GlobalContext) -> Vec<MatchResult> {
         let current_date = context.simulation.date.date();
-        
+
         let matches: Vec<Match> = {
             let actual_schedule = self.schedule.as_ref().unwrap();
 
@@ -57,24 +57,28 @@ impl League {
         let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
 
         for match_result in &match_results {
-            {
-                let home_club = self.get_club_mut(&match_result.home_club_id);
+            self.add_match_to_club_history(
+                &match_result.home_club_id,
+                MatchHistory::new(
+                    current_date, match_result.away_club_id, 
+                    (match_result.home_goals, match_result.away_goals)),
+            );
 
-                home_club.add_match_to_history(MatchHistory::new(
-                    current_date, match_result.away_club_id, (match_result.home_goals, match_result.away_goals))
-                );
-            }
-
-            {
-                let away_club = self.get_club_mut(&match_result.away_club_id);
-
-                away_club.add_match_to_history(MatchHistory::new(
-                    current_date, match_result.home_club_id, (match_result.away_goals, match_result.home_goals))
-                );
-            }
+            self.add_match_to_club_history(
+                &match_result.away_club_id,
+                MatchHistory::new(
+                    current_date, match_result.home_club_id, 
+                    (match_result.away_goals, match_result.home_goals)),
+            );
         }
 
         match_results
+    }
+
+    fn add_match_to_club_history(&mut self, club_id: &u32, history: MatchHistory) {
+        let club = self.get_club_mut(&club_id);
+
+        club.add_match_to_history(history);
     }
 }
 
