@@ -1,7 +1,6 @@
 use crate::club::Club;
 use crate::r#match::engine::PlayerChanges;
 use crate::r#match::FootballEngine;
-use std::fmt::{Result};
 
 #[derive(Clone)]
 pub struct Match<'m> {

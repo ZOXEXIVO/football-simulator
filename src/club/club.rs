@@ -53,8 +53,4 @@ impl Club {
 
         result
     }
-
-    pub fn add_match_to_history(&mut self, played_match: MatchHistory) {
-        self.match_history.push(played_match);
-    }
 }

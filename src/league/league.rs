@@ -57,15 +57,13 @@ impl League {
         let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
 
         for match_result in &match_results {
-            self.add_match_to_club_history(
-                &match_result.home_club_id,
+            self.add_match_to_club_history(&match_result.home_club_id,
                 MatchHistory::new(
                     current_date, match_result.away_club_id, 
                     (match_result.home_goals, match_result.away_goals)),
             );
 
-            self.add_match_to_club_history(
-                &match_result.away_club_id,
+            self.add_match_to_club_history(&match_result.away_club_id,
                 MatchHistory::new(
                     current_date, match_result.home_club_id, 
                     (match_result.away_goals, match_result.home_goals)),
@@ -78,7 +76,7 @@ impl League {
     fn add_match_to_club_history(&mut self, club_id: &u32, history: MatchHistory) {
         let club = self.get_club_mut(&club_id);
 
-        club.add_match_to_history(history);
+        club.match_history.push(history);
     }
 }
 
