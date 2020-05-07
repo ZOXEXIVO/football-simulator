@@ -86,7 +86,7 @@ impl League {
 
         League {
             id: IntegerUtils::random(1, 10_000_000) as u32,
-            name: StringUtils::random_string(10),
+            name: StringUtils::random_string(30),
             clubs,
             schedule: None,
             settings: LeagueSettings {
@@ -107,7 +107,7 @@ impl Club {
         
         Club {
             id: IntegerUtils::random(1, 10_000_000) as u32,
-            name: StringUtils::random_string(5),
+            name: StringUtils::random_string(15),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
             players: PlayerCollection::new((0..10).map(|_| Player::generate()).collect()),

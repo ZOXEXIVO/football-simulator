@@ -1,4 +1,4 @@
-use crate::server::{index_action, process_action};
+use crate::server::{game_process_action, game_index_action, club_list_action, players_list_action};
 use actix_web::{web, App, HttpServer};
 use std::collections::HashMap;
 use lazy_static::lazy_static;
@@ -22,8 +22,10 @@ impl Server {
     pub async fn start(&self) {
         HttpServer::new(move || {
             App::new()
-                .service(web::resource("/{game_id}").route(web::get().to(process_action)))
-                .service(web::resource("/").route(web::get().to(index_action)))
+                .service(web::resource("/{game_id}").route(web::get().to(game_process_action)))
+                .service(web::resource("/{game_id}/clubs").route(web::get().to(club_list_action)))
+                .service(web::resource("/{game_id}/players").route(web::get().to(players_list_action)))            
+                .service(web::resource("/").route(web::get().to(game_index_action)))
         })
         .bind(self.bind_address)
         .unwrap()

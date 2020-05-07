@@ -11,7 +11,7 @@ pub struct IndexResponse {
     elapsed: u32
 }
 
-pub async fn index_action() -> Result<HttpResponse> {
+pub async fn game_index_action() -> Result<HttpResponse> {
     let mut global_data = GLOBAL_DATA.write().unwrap();
 
     let estimated = TimeEstimation::estimate(SimulatorData::generate);

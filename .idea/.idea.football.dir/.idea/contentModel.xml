@@ -167,7 +167,6 @@
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libpanic_unwind" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libproc_macro" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libstd" t="IncludeRecursive" />
-    <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libsyntax" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libterm" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libtest" t="IncludeRecursive" />
     <e p="C:\Users\ZOXEXIVO\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\src\rust\src\libunwind" t="IncludeRecursive" />

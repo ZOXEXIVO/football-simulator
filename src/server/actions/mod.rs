@@ -1,5 +1,7 @@
-pub mod index;
-pub mod process;
+pub mod game;
+pub mod clubs;
+pub mod players;
 
-pub use index::*;
-pub use process::*;
+pub use game::*;
+pub use clubs::*;
+pub use players::*;

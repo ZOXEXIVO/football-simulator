@@ -15,7 +15,7 @@ pub struct ProcessResponse {
     elapsed: u32
 }
 
-pub async fn process_action(route_params: web::Path<ProcessRequest>) -> Result<HttpResponse> {
+pub async fn game_process_action(route_params: web::Path<ProcessRequest>) -> Result<HttpResponse> {
     let mut global_data = GLOBAL_DATA.write().unwrap();
 
     let state = &mut *global_data;
