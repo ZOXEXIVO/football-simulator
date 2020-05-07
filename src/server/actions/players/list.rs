@@ -13,13 +13,13 @@ pub struct PlayerListResponse<'p> {
 }
 
 pub async fn players_list_action(route_params: web::Path<PlayerListRequest>) -> Result<HttpResponse> {
-    let data = GLOBAL_DATA.read().unwrap();
-
-    if !data.contains_key(&route_params.game_id){
+    if !GLOBAL_DATA.contains_key(&route_params.game_id){
         return Ok(HttpResponse::NotFound().finish());
     }
 
-    let simulator_data = data.get(&route_params.game_id).unwrap().lock().unwrap();
+    let data = GLOBAL_DATA.get(&route_params.game_id).unwrap();
+
+    let simulator_data = data.lock().unwrap();
 
     let players = simulator_data.continents.iter().flat_map(|c| &c.countries)
         .flat_map(|cn| &cn.leagues)

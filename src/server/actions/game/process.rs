@@ -16,15 +16,13 @@ pub struct ProcessResponse {
 }
 
 pub async fn game_process_action(route_params: web::Path<ProcessRequest>) -> Result<HttpResponse> {
-    let mut global_data = GLOBAL_DATA.write().unwrap();
-
-    let state = &mut *global_data;
-    
-    if !state.contains_key(&route_params.game_id){
+    if !GLOBAL_DATA.contains_key(&route_params.game_id){
         return Ok(HttpResponse::NotFound().finish());
     }
+    
+    let data= GLOBAL_DATA.get_mut(&route_params.game_id).unwrap();
 
-    let mut simulator_data = state.get_mut(&route_params.game_id).unwrap().lock().unwrap(); 
+    let mut simulator_data = data.lock().unwrap(); 
 
     let estimated = TimeEstimation::estimate(||
         FootballSimulator::simulate(&mut simulator_data)

@@ -12,15 +12,13 @@ pub struct IndexResponse {
 }
 
 pub async fn game_index_action() -> Result<HttpResponse> {
-    let mut global_data = GLOBAL_DATA.write().unwrap();
-
     let estimated = TimeEstimation::estimate(SimulatorData::generate);
 
     let simulator_data = estimated.0;
     
     let game_id = simulator_data.id();
-    
-    (*global_data).insert(simulator_data.id(), Mutex::new(simulator_data));
+
+    GLOBAL_DATA.insert(simulator_data.id(), Mutex::new(simulator_data));
 
     let json_result = serde_json::to_string(&IndexResponse{
         game_id,

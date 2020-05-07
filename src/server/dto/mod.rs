@@ -1,6 +1,21 @@
 use serde::{Serialize};
 
 #[derive(Serialize)]
+pub struct ContinentDto<'c> {
+    pub name: &'c str
+}
+
+#[derive(Serialize)]
+pub struct CountryDto<'c> {
+    pub name: &'c str
+}
+
+#[derive(Serialize)]
+pub struct LeagueDto<'c> {
+    pub name: &'c str
+}
+
+#[derive(Serialize)]
 pub struct ClubDto<'c> {
     pub name: &'c str
 }
