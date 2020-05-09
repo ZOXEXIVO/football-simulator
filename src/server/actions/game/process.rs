@@ -28,10 +28,10 @@ pub async fn game_process_action(route_params: web::Path<ProcessRequest>) -> Res
         FootballSimulator::simulate(&mut simulator_data)
     ); 
 
-    let json_result = serde_json::to_string(&ProcessResponse{
+    let result = ProcessResponse{
         game_id: simulator_data.id(),
         elapsed: estimated.1
-    }).unwrap();
+    };
     
-    Ok(HttpResponse::Ok().body(json_result))
+    Ok(HttpResponse::Ok().json(result))
 }

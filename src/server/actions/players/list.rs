@@ -26,13 +26,13 @@ pub async fn players_list_action(route_params: web::Path<PlayerListRequest>) -> 
         .flat_map(|l| &l.clubs)
         .flat_map(|cl| &cl.players.players);
     
-    let json_result = serde_json::to_string(&PlayerListResponse{
+    let result = PlayerListResponse{
         players: players.map(|p| PlayerDto {
             first_name: &p.full_name.first_name,
             last_name: &p.full_name.last_name,
             middle_name: &p.full_name.middle_name
         }).collect()
-    }).unwrap();
+    };
     
-    Ok(HttpResponse::Ok().body(json_result))
+    Ok(HttpResponse::Ok().json(result))
 }

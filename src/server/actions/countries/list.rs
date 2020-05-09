@@ -24,11 +24,11 @@ pub async fn country_list_action(route_params: web::Path<CountryListRequest>) ->
     let countries = simulator_data.continents.iter()
         .flat_map(|c| &c.countries);
     
-    let json_result = serde_json::to_string(&CountryListResponse{
+    let result = CountryListResponse{
         countries: countries.map(|c| CountryDto {
             name: &c.name
         }).collect()
-    }).unwrap();
+    };
     
-    Ok(HttpResponse::Ok().body(json_result))
+    Ok(HttpResponse::Ok().json(result))
 }

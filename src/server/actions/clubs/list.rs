@@ -25,11 +25,11 @@ pub async fn club_list_action(route_params: web::Path<ClubListRequest>) -> Resul
         .flat_map(|cn| &cn.leagues)
         .flat_map(|l| &l.clubs);
     
-    let json_result = serde_json::to_string(&ClubListResponse{
+    let result = ClubListResponse {
         clubs: clubs.map(|c| ClubDto {
             name: &c.name
         }).collect()
-    }).unwrap();
+    };
     
-    Ok(HttpResponse::Ok().body(json_result))
+    Ok(HttpResponse::Ok().json(result))
 }

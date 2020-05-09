@@ -21,11 +21,11 @@ pub async fn continent_list_action(route_params: web::Path<ContinentListRequest>
 
     let simulator_data = data.lock().unwrap();
 
-    let json_result = serde_json::to_string(&ContinentListResponse{
+    let result = ContinentListResponse {
         continents: simulator_data.continents.iter().map(|c| ContinentDto {
             name: &c.name
         }).collect()
-    }).unwrap();
+    };
     
-    Ok(HttpResponse::Ok().body(json_result))
+    Ok(HttpResponse::Ok().json(result))
 }

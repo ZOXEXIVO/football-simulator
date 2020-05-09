@@ -20,10 +20,10 @@ pub async fn game_index_action() -> Result<HttpResponse> {
 
     GLOBAL_DATA.insert(simulator_data.id(), Mutex::new(simulator_data));
 
-    let json_result = serde_json::to_string(&IndexResponse{
+    let result = IndexResponse{
         game_id,
         elapsed: estimated.1
-    }).unwrap();
+    };
 
-    Ok(HttpResponse::Ok().body(json_result))
+    Ok(HttpResponse::Ok().json(result))
 }

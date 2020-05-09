@@ -24,11 +24,11 @@ pub async fn league_list_action(route_params: web::Path<LeagueListRequest>) -> R
     let leagues = simulator_data.continents.iter().flat_map(|c| &c.countries)
         .flat_map(|cn| &cn.leagues);
     
-    let json_result = serde_json::to_string(&LeagueListResponse{
+    let result = LeagueListResponse{
         leagues: leagues.map(|c| LeagueDto {
             name: &c.name
         }).collect()
-    }).unwrap();
+    };
     
-    Ok(HttpResponse::Ok().body(json_result))
+    Ok(HttpResponse::Ok().json(result))
 }
