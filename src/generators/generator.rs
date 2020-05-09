@@ -1,4 +1,4 @@
-use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule};
+use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings};
 use crate::shared::fullname::FullName;
@@ -108,6 +108,7 @@ impl Club {
         Club {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(15),
+            finance: ClubFinances::new(IntegerUtils::random(-10000, 10000000) as i32),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
             players: PlayerCollection::new((0..10).map(|_| Player::generate()).collect()),

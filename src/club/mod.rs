@@ -8,6 +8,7 @@ mod transfers;
 mod result;
 mod history;
 mod training;
+mod finance;
 
 pub use board::*;
 pub use club::*;
@@ -19,3 +20,4 @@ pub use transfers::*;
 pub use result::*;
 pub use history::*;
 pub use training::*;
+pub use finance::*;

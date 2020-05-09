@@ -27,7 +27,7 @@ impl League {
             .collect();
 
         self.play_matches(&ctx);
-
+        
         LeagueResult::new(club_result)
     }
 
