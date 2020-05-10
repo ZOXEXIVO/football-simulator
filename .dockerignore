@@ -3,3 +3,7 @@ Dockerfile
 .dockerignore
 .git
 .gitignore
+dist
+node_modules
+bin
+obj

@@ -2,7 +2,7 @@ kind: pipeline
 name: default
 
 steps: 
-  - name: build
+  - name: build-api
     image: docker:latest
     depends_on: [ clone ]
     volumes:
@@ -10,6 +10,15 @@ steps:
         path: /var/run/docker.sock
     commands:
       - docker build --no-cache -t football:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Football.Dockerfile" .
+
+  - name: build-client
+    image: docker:latest
+    depends_on: [ clone ]
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - docker build --no-cache -t football-client:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Client.Dockerfile" .
 
   - name: clear
     image: docker:dind
@@ -22,6 +31,8 @@ steps:
     commands:
       - docker stop football || true
       - docker rm football || true
+      - docker stop football-client || true
+      - docker rm football-client || true
 
   - name: deploy
     image: docker:dind
@@ -33,6 +44,7 @@ steps:
         path: /var/run/docker.sock
     commands:
       - docker run -d -p 172.17.0.1:18000:18000 --restart always --name football football:1.0.0.$$DRONE_BUILD_NUMBER
+      - docker run -d -p 172.17.0.1:15000:80 --restart always --name football-client football-client:1.0.0.$$DRONE_BUILD_NUMBER
 
 volumes:
   - name: docker_sock

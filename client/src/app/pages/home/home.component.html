@@ -1,0 +1,26 @@
+﻿<div class="col-md-3 left_col">
+  <div class="left_col scroll-view">
+      <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+          <div class="menu_section">
+              <ul class="nav">
+                  <li>
+                      <a [routerLink]="['/search']">
+                          <i class="fa fa-search"></i> Поиск игры
+                      </a>
+                  </li>
+              </ul>
+          </div>
+          <div class="menu_section">
+              <ul class="nav">
+                  <li>
+                      <a [routerLink]="['/help']">
+                          <i class="fas fa-inbox"></i> Помощь
+                      </a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
