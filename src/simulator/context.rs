@@ -1,6 +1,6 @@
 pub use chrono::prelude::*;
 
-use crate::club::{BoardContext, ClubContext};
+use crate::club::{BoardContext, ClubContext, ClubFinanceContext};
 use crate::continent::ContinentContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
@@ -13,6 +13,7 @@ pub struct GlobalContext {
     pub country: Option<CountryContext>,
     pub league: Option<LeagueContext>,
     pub club: Option<ClubContext>,
+    pub finance: Option<ClubFinanceContext>,
     pub board: Option<BoardContext>,
     pub player: Option<PlayerContext>,
     pub staff: Option<StaffContext>
@@ -26,6 +27,7 @@ impl GlobalContext {
             country: None,
             league: None,
             club: None,
+            finance: None,
             board: None,
             player: None,
             staff: None,
@@ -74,6 +76,12 @@ impl GlobalContext {
         ctx.staff = Some(StaffContext::new());
         ctx
     }
+
+    pub fn with_finance(&self) -> Self {
+        let mut ctx = self.clone();
+        ctx.finance = Some(ClubFinanceContext::new());
+        ctx
+    }
 }
 
 #[derive(Clone)]
@@ -90,6 +98,18 @@ impl SimulationContext {
             day: 0,
             hour: 0,
         }
+    }
+
+    pub fn is_week_beginning(&self) -> bool {
+        self.date.weekday() == Weekday::Mon
+    }    
+    
+    pub fn is_month_beginning(&self) -> bool {
+        self.day == 1u8
+    }
+
+    pub fn is_year_beginning(&self) -> bool {
+        self.day == 1u8 && self.date.month() == 1
     }
 
     pub fn check_contract_expiration(&self) -> bool {

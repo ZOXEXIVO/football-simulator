@@ -1,4 +1,4 @@
-use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances};
+use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings};
 use crate::shared::fullname::FullName;
@@ -28,7 +28,7 @@ impl SimulatorData {
                     name: "Africa".to_string(),
                     countries: (0..20)
                         .map(|_| Country::generate())
-                        .collect()
+                        .collect(),
                 },
                 Continent {
                     id: 1,
@@ -57,14 +57,14 @@ impl SimulatorData {
                     countries: vec![
                         Country {
                             id: 7,
-                        name: "Australia".to_string(),
-                        leagues: vec![],
-                        reputation: 4000,
-                    }],
+                            name: "Australia".to_string(),
+                            leagues: vec![],
+                            reputation: 4000,
+                        }],
                 },
             ],
             date: NaiveDateTime::new(date, time),
-            transfer_pool: TransferPool::new()
+            transfer_pool: TransferPool::new(),
         }
     }
 }
@@ -102,13 +102,25 @@ impl Club {
     fn generate() -> Club {
         let training_schedule = TrainingSchedule::new(
             NaiveTime::from_hms(10, 0, 0),
-            NaiveTime::from_hms(17, 0, 0)
+            NaiveTime::from_hms(17, 0, 0),
         );
-        
+
+        let sponsortship_contracts = vec![
+            ClubSponsorshipContract::new(String::from("Sponsor 1"),
+                                         IntegerUtils::random(1, 10_000_000) as u32,
+                                         NaiveDate::from_ymd(2023, 1, 1)),
+            ClubSponsorshipContract::new(String::from("Sponsor 2"),
+                                         IntegerUtils::random(1, 10_000_000) as u32,
+                                         NaiveDate::from_ymd(2025, 1, 1)),
+            ClubSponsorshipContract::new(String::from("Sponsor 3"),
+                                         IntegerUtils::random(1, 10_000_000) as u32,
+                                         NaiveDate::from_ymd(2020, 1, 1))
+        ];
+
         Club {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(15),
-            finance: ClubFinances::new(IntegerUtils::random(-10000, 10000000) as i32),
+            finance: ClubFinances::new(IntegerUtils::random(-10000, 10000000) as i32, sponsortship_contracts),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
             players: PlayerCollection::new((0..10).map(|_| Player::generate()).collect()),

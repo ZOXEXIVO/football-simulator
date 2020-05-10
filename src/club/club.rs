@@ -48,8 +48,14 @@ impl Club {
             self.board.simulate(ctx.with_board()),
             self.players.simulate(ctx.with_player(None)),
             self.staffs.simulate(ctx.with_staff()),
+            self.finance.simulate(ctx.with_finance())
         );
 
+        if ctx.simulation.is_week_beginning() {
+            let weekly_salary = self.players.get_week_salary();
+            self.finance.push_salary(weekly_salary);
+        }
+        
         if self.training_schedule.is_time(ctx.simulation.date) {
             Training::train_players(&mut self.players.players, self.staffs.coaches());
         }

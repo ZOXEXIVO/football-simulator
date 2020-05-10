@@ -15,9 +15,9 @@ impl ClubFinancialBalanceHistory {
     }
     
     pub fn get(&self, date: NaiveDate) -> Option<&ClubFinancialBalance>{
-        for item in self.history.iter() {
-            if item.0 == date {
-                return Some(&item.1);
+        for (history_date, item) in self.history.iter() {
+            if *history_date == date {
+                return Some(item);
             }
         }
             

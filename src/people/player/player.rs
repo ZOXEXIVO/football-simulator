@@ -154,6 +154,21 @@ impl PlayerCollection {
             self.players.push(player);
         }
     }
+    
+    pub fn get_week_salary(&self) -> u32 {
+        let mut result: u32 = 0;
+        
+        for player in &self.players {
+            match &player.contract {
+                Some(contract) => {
+                    result += contract.salary as u32
+                },
+                None => {}
+            }           
+        }       
+        
+        result
+    }
 
     pub fn players(&self) -> Vec<&Player> {
         self.players.iter().map(|player| player).collect()

@@ -1,19 +1,22 @@
 use crate::people::{StaffResult, PlayerCollectionResult};
-use crate::club::BoardResult;
+use crate::club::{BoardResult, ClubFinanceResult};
 use crate::simulator::SimulatorData;
 
 pub struct ClubResult {
     pub board: BoardResult,
     pub player: PlayerCollectionResult,
-    pub staff: StaffResult
+    pub staff: StaffResult,
+    pub finance: ClubFinanceResult
 }
 
 impl ClubResult {
-    pub fn new(board: BoardResult, player: PlayerCollectionResult, staff: StaffResult) -> Self {
+    pub fn new(board: BoardResult, player: PlayerCollectionResult, 
+               staff: StaffResult, finance: ClubFinanceResult) -> Self {
         ClubResult {
             board,
             player,
-            staff
+            staff,
+            finance
         }
     }
 

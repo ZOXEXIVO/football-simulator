@@ -1,6 +1,12 @@
 use actix_web::{web, HttpResponse, Result};
-use crate::server::{GLOBAL_DATA, ClubDto};
+use crate::server::{GLOBAL_DATA};
 use serde::{Serialize, Deserialize};
+
+#[derive(Serialize)]
+pub struct ClubListDto<'c> {
+    pub id: u32,
+    pub name: &'c str
+}
 
 #[derive(Deserialize)]
 pub struct ClubListRequest {
@@ -9,7 +15,7 @@ pub struct ClubListRequest {
 
 #[derive(Serialize)]
 pub struct ClubListResponse<'c> {
-    pub clubs: Vec<ClubDto<'c>>
+    pub clubs: Vec<ClubListDto<'c>>
 }
 
 pub async fn club_list_action(route_params: web::Path<ClubListRequest>) -> Result<HttpResponse> {
@@ -26,7 +32,8 @@ pub async fn club_list_action(route_params: web::Path<ClubListRequest>) -> Resul
         .flat_map(|l| &l.clubs);
     
     let result = ClubListResponse {
-        clubs: clubs.map(|c| ClubDto {
+        clubs: clubs.map(|c| ClubListDto {
+            id: c.id,
             name: &c.name
         }).collect()
     };
