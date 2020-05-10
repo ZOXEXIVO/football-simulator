@@ -1,12 +1,14 @@
-use crate::server::{game_process_action, game_index_action, club_list_action, players_list_action, continent_list_action, league_list_action, country_list_action, club_get_action};
+use crate::server::{game_process_action, club_list_action, players_list_action, continent_list_action, 
+                    league_list_action, country_list_action, club_get_action, game_list_action, game_create_action};
 use actix_web::{web, App, HttpServer};
-use std::collections::HashMap;
 use lazy_static::lazy_static;
 use crate::simulator::SimulatorData;
 use std::sync::Mutex;
 use chashmap::*;
+use chrono::NaiveDateTime;
 
 lazy_static!{
+    pub static ref GAMES: Mutex<Vec<(String, String)>> = Mutex::new(Vec::new());
     pub static ref GLOBAL_DATA: CHashMap<String, Mutex<SimulatorData>> = CHashMap::new();
 }
 
@@ -28,8 +30,9 @@ impl Server {
                 .service(web::resource("/{game_id}/leagues").route(web::get().to(league_list_action)))
                 .service(web::resource("/{game_id}/clubs").route(web::get().to(club_list_action)))
                 .service(web::resource("/{game_id}/clubs/{club_id}").route(web::get().to(club_get_action)))
-                .service(web::resource("/{game_id}/players").route(web::get().to(players_list_action)))            
-                .service(web::resource("/").route(web::get().to(game_index_action)))
+                .service(web::resource("/{game_id}/players").route(web::get().to(players_list_action)))
+                .service(web::resource("/games").route(web::get().to(game_list_action)))
+                .service(web::resource("/games/create").route(web::get().to(game_create_action)))             
         })
         .bind(self.bind_address)
         .unwrap()
