@@ -22,7 +22,7 @@ steps:
 
   - name: clear
     image: docker:dind
-    depends_on: [ build ]
+    depends_on: [ build_api, build_client ]
     privileged: true
     failure: ignore
     volumes:
