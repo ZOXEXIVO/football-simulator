@@ -12,5 +12,5 @@ export const homeRoutes: Routes = [
       { path: 'help', component: HelpComponent }
     ]
   },
-  { path: '**', redirectTo: '/search' }
+  // { path: '**', redirectTo: '/search' }
 ];

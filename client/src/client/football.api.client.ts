@@ -6,16 +6,13 @@ import { Observable, Subject } from "rxjs";
     providedIn: 'root',
   })
 export class FootballApi {
-    private host = "http://localhost:18000";
-
-    constructor(private http: HttpClient) {  
-        
+    constructor(private http: HttpClient) {         
     }
 
     games(): Observable<GameListResultDto>  {
       const result = new Subject<GameListResultDto>();
 
-      this.http.get(this.host + '/games').subscribe((data: GameListResultDto) => {
+      this.http.get('/api/games').subscribe((data: GameListResultDto) => {
             result.next(data);
       });
 
@@ -25,7 +22,7 @@ export class FootballApi {
     createGame() {
         const result = new Subject<GameCreateResultDto>();
 
-      this.http.post(this.host + '/games/create', {}).subscribe((data: GameCreateResultDto) => {
+      this.http.post('/api/games/create', {}).subscribe((data: GameCreateResultDto) => {
             result.next(data);
       });
 
