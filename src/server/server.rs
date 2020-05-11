@@ -24,15 +24,15 @@ impl Server {
     pub async fn start(&self) {
         HttpServer::new(move || {
             App::new()
+                .service(web::resource("/games").route(web::get().to(game_list_action)))
+                .service(web::resource("/games/create").route(web::post().to(game_create_action)))
                 .service(web::resource("/{game_id}").route(web::get().to(game_process_action)))
                 .service(web::resource("/{game_id}/continents").route(web::get().to(continent_list_action)))
                 .service(web::resource("/{game_id}/countries").route(web::get().to(country_list_action)))
                 .service(web::resource("/{game_id}/leagues").route(web::get().to(league_list_action)))
                 .service(web::resource("/{game_id}/clubs").route(web::get().to(club_list_action)))
                 .service(web::resource("/{game_id}/clubs/{club_id}").route(web::get().to(club_get_action)))
-                .service(web::resource("/{game_id}/players").route(web::get().to(players_list_action)))
-                .service(web::resource("/games").route(web::get().to(game_list_action)))
-                .service(web::resource("/games/create").route(web::get().to(game_create_action)))             
+                .service(web::resource("/{game_id}/players").route(web::get().to(players_list_action)))             
         })
         .bind(self.bind_address)
         .unwrap()

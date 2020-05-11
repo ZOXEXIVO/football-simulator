@@ -14,7 +14,7 @@
       <div class="col-md-6">
         <ul class="nav navbar-right">
           <li class="item-msg">
-               <a href="/game/create">
+               <a ng-click="creataGame()">
                   <div>Создать игру <i class="fas fa-exclamation-circle"></i></div>
                </a>
           </li>
@@ -37,7 +37,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr *ngFor="item in searchResults">
                     <td></td>
                     <td></td>
                     <td>

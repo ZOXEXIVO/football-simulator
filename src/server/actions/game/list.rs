@@ -14,7 +14,7 @@ pub struct GameListResponse {
 #[derive(Serialize)]
 pub struct GameDto {
     pub id: String,
-    pub date_time: String,
+    pub date: String,
 }
 
 pub async fn game_list_action() -> Result<HttpResponse> {
@@ -27,7 +27,7 @@ pub async fn game_list_action() -> Result<HttpResponse> {
     for (id, date) in games_list.iter() {
         result.games.push(GameDto{
             id: id.clone(),
-            date_time: date.clone()
+            date: date.clone()
         })
     }
 
