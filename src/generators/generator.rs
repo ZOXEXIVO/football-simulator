@@ -74,7 +74,7 @@ impl Country {
         Country {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(10),
-            leagues: (0..2).map(|_| League::generate()).collect(),
+            leagues: (0..6).map(|_| League::generate()).collect(),
             reputation: 5000,
         }
     }
@@ -82,7 +82,7 @@ impl Country {
 
 impl League {
     fn generate() -> League {
-        let clubs = (0..20).map(|_| Club::generate()).collect();
+        let clubs = (0..30).map(|_| Club::generate()).collect();
 
         League {
             id: IntegerUtils::random(1, 10_000_000) as u32,
@@ -123,7 +123,7 @@ impl Club {
             finance: ClubFinances::new(IntegerUtils::random(-10000, 10000000) as i32, sponsortship_contracts),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
-            players: PlayerCollection::new((0..10).map(|_| Player::generate()).collect()),
+            players: PlayerCollection::new((0..50).map(|_| Player::generate()).collect()),
             staffs: StaffCollection::new((0..10).map(|_| Staff::generate()).collect()),
             tactics: None,
             training_schedule,
