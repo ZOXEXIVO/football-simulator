@@ -6,6 +6,9 @@ use crate::simulator::SimulatorData;
 use std::sync::Mutex;
 use chashmap::*;
 use chrono::NaiveDateTime;
+use actix_cors::Cors;
+use actix_web::middleware::Logger;
+use actix_web::http::header::{ACCEPT, CONTENT_TYPE};
 
 lazy_static!{
     pub static ref GAMES: Mutex<Vec<(String, String)>> = Mutex::new(Vec::new());
@@ -22,8 +25,16 @@ impl Server {
     }
 
     pub async fn start(&self) {
+        std::env::set_var("RUST_LOG", "actix_web=info");
+        env_logger::init();
+        
         HttpServer::new(move || {
             App::new()
+                .wrap(
+                    Cors::new()
+                        .max_age(3600)
+                        .finish(),
+                ).wrap(Logger::default())                
                 .service(web::resource("/games").route(web::get().to(game_list_action)))
                 .service(web::resource("/games/create").route(web::post().to(game_create_action)))
                 .service(web::resource("/{game_id}").route(web::get().to(game_process_action)))

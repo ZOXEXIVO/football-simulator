@@ -2,10 +2,6 @@ use actix_web::{HttpResponse, Result};
 use crate::server::{GAMES};
 use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize)]
-pub struct GameListRequest {
-}
-
 #[derive(Serialize)]
 pub struct GameListResponse {
     pub games: Vec<GameDto>

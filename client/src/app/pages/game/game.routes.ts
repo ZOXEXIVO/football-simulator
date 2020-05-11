@@ -9,7 +9,7 @@ export const gameRoutes: Routes = [
     path: 'game/{gameId}',
     component: GameComponent,
     children: [
-      { path: 'main', component: MainComponent },
+      { path: '', component: MainComponent },
       { path: 'inbox', component: InboxComponent },
     ]
   },

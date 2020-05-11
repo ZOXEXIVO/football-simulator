@@ -10,13 +10,13 @@ export class SearchComponent implements OnInit {
   constructor(private api: FootballApi) {
   }
   
-  creataGame() {
+  createGame() {
     this.api.createGame().subscribe(data => {
       alert(data.game_id);
    })
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
      this.api.games().subscribe(data => {
         this.searchResults = data.games;
      })
