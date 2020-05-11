@@ -12,7 +12,7 @@ export class FootballApi {
     games(): Observable<GameListResultDto>  {
       const result = new Subject<GameListResultDto>();
 
-      this.http.get('/api/games').subscribe((data: GameListResultDto) => {
+      this.http.get('/api/game').subscribe((data: GameListResultDto) => {
             result.next(data);
       });
 
@@ -22,17 +22,32 @@ export class FootballApi {
     createGame() {
         const result = new Subject<GameCreateResultDto>();
 
-      this.http.post('/api/games/create', {}).subscribe((data: GameCreateResultDto) => {
+      this.http.post('/api/game/create', {}).subscribe((data: GameCreateResultDto) => {
             result.next(data);
       });
 
       return result;
     }    
+
+    processGame(gameId) {
+      const result = new Subject<GameProcessResultDto>();
+
+      this.http.post('/api/game/' + gameId + '/process', {}).subscribe((data: GameProcessResultDto) => {
+            result.next(data);
+      });
+
+      return result;
+  }   
 }
 
 export class GameCreateResultDto{
     game_id: String;
     elapsed: Number;
+}
+
+export class GameProcessResultDto{
+  game_id: String;
+  elapsed: Number;
 }
 
 export class GameListResultDto{

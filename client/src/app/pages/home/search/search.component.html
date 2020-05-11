@@ -12,10 +12,11 @@
     </div>
     <div class="col-md-6">
       <ul class="nav navbar-right">
-        <li class="item-msg">
-          <a (click)="createGame()">
-            Создать игру <i class="fas fa-exclamation-circle"></i>
-          </a>
+        <li class="item-msg" style="cursor: pointer;" >
+          <div style="text-transform: uppercase;" (click)="createGame()" *ngIf="!isGameCreating">Создать игру</div>
+          <div style="margin-top:5px;width:100px;padding-top: 20px;">
+            <spinner *ngIf="isGameCreating"></spinner>          
+          </div>          
         </li>
       </ul>
     </div>

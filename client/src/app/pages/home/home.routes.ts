@@ -5,12 +5,14 @@ import { HelpComponent } from './help/help.component';
 
 export const homeRoutes: Routes = [
   {
+    path: '', redirectTo: '/search', pathMatch: 'full'
+  },
+  {
     path: '',
     component: HomeComponent,
     children: [
       { path: 'search', component: SearchComponent },
       { path: 'help', component: HelpComponent }
     ]
-  },
-  // { path: '**', redirectTo: '/search' }
+  }
 ];

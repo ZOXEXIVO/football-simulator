@@ -21,8 +21,11 @@
     </div>
     <div class="col-md-6">
       <ul class="nav navbar-right">
-        <li class="item-msg">
-          <div>Must Respond <i class="fas fa-exclamation-circle"></i></div>
+        <li class="item-msg" style="cursor: pointer;" >
+          <div style="text-transform: uppercase;" (click)="processGame()" *ngIf="!isProcessing">Продолжить </div>
+          <div style="margin-top:5px;width:100px;padding-top: 20px;">
+            <spinner *ngIf="isProcessing"></spinner>          
+          </div>          
         </li>
         <li class="item-date">
           <div class="date-title">5 Oct 2018</div>
