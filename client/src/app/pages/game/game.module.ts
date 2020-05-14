@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { InboxModule } from './inbox/inbox.module';
 import { LeftMenuComponent } from './menus/left.menu.component';
 import { MainModule } from './main/main.module';
+import { CountryModule } from './country/country.module';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { MainModule } from './main/main.module';
   ],
   imports: [
     SharedModule,
+    CountryModule,
     BrowserModule,
     RouterModule,
     InboxModule,

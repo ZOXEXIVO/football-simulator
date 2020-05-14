@@ -5,9 +5,6 @@ import { HelpComponent } from './help/help.component';
 
 export const homeRoutes: Routes = [
   {
-    path: '', redirectTo: '/search', pathMatch: 'full'
-  },
-  {
     path: '',
     component: HomeComponent,
     children: [

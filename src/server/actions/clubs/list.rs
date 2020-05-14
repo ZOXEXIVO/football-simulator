@@ -23,9 +23,7 @@ pub async fn club_list_action(route_params: web::Path<ClubListRequest>) -> Resul
         return Ok(HttpResponse::NotFound().finish());
     }
 
-    let data = GLOBAL_DATA.get(&route_params.game_id).unwrap();
-    
-    let simulator_data = data.lock().unwrap();
+    let simulator_data = GLOBAL_DATA.get(&route_params.game_id).unwrap();
 
     let clubs = simulator_data.continents.iter().flat_map(|c| &c.countries)
         .flat_map(|cn| &cn.leagues)

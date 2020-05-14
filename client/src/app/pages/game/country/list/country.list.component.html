@@ -1,0 +1,16 @@
+﻿<div *ngIf="countries" class="content">
+    <div *ngFor="let country of countries.continents" class="country-box">
+        <h2>{{country.name}} ({{country.countries.length}})</h2>
+        <hr /> 
+        <div>
+            <ul class="countries-list">
+                <li *ngFor="let item of country.countries">
+                    <a href="">
+                        {{ item.name }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>

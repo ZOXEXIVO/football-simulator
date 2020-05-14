@@ -5,7 +5,10 @@ import { gameRoutes } from './pages/game/game.routes';
 
 export const routes: Routes = [
     ...homeRoutes,
-    ...gameRoutes
+    ...gameRoutes,
+    {
+      path: '', redirectTo: '/search', pathMatch: 'full'
+    },
   ];
 
   export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

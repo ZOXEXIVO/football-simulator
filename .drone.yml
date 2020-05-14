@@ -9,7 +9,7 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker build -t football:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Football.Dockerfile" .
+      - docker build -t football:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Api.Dockerfile" .
 
   - name: build_client
     image: docker:latest

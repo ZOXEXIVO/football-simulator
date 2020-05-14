@@ -19,7 +19,7 @@ pub async fn game_create_action() -> Result<HttpResponse> {
     
     let game_id = simulator_data.id();
 
-    GLOBAL_DATA.insert(simulator_data.id(), Mutex::new(simulator_data));
+    GLOBAL_DATA.insert(simulator_data.id(), simulator_data);
 
     let result = IndexResponse{
         game_id: game_id.clone(),

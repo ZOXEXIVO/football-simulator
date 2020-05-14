@@ -1,0 +1,28 @@
+.content {
+    padding: 20px 40px;    
+}
+
+h2 {
+    font-size: 22px;
+}
+
+.country-box {
+    padding: 10px;
+}
+
+ul.countries-list
+{
+    margin-bottom: 50px;
+    clear:both;
+}
+
+ul.countries-list li {
+    float: left;
+    list-style: none;;
+    margin-right: 20px;
+}
+
+
+ul.countries-list li a {
+    font-size: 18px;
+}

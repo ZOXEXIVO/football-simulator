@@ -17,7 +17,7 @@ export class SearchComponent implements OnInit {
     this.isGameCreating = true;
 
     this.api.createGame().subscribe(data => {
-      this.router.navigate(['game', data.game_id, 'main']);
+      this.router.navigate(['game', data.game_id, 'countries']);
       this.isGameCreating = false;
    })
   }
