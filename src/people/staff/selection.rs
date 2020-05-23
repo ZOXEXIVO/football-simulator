@@ -45,7 +45,7 @@ impl PlayerSelector {
             .players
             .players
             .iter()
-            .filter(|p| *p.position() == *position)
+            .filter(|p| p.position() == *position)
             .collect();
 
         for player in current_players {

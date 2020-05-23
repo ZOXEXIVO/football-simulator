@@ -149,7 +149,8 @@ impl Player {
             NaiveDate::from_ymd(year as i32, month, day),
             generate_skills(),
             generate_attributes(),
-            Some(PlayerClubContract::new(NaiveDate::from_ymd(2020, 3, 14))),
+            Some(PlayerClubContract::new(
+                IntegerUtils::random(1980, 2010) as f64,NaiveDate::from_ymd(2020, 3, 14))),
             generate_positions(),
         );
 

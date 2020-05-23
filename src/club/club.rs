@@ -4,7 +4,7 @@ use crate::club::tactics::Tactics;
 use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances};
 use crate::simulator::context::GlobalContext;
 use crate::people::{
-    Player, PlayerCollection, PlayerSelector, StaffCollection, StaffContext,
+    Player, PlayerCollection, PlayerSelector, StaffCollection,
 };
 
 #[derive(Debug)]

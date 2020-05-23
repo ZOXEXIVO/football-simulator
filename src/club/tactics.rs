@@ -1,5 +1,5 @@
 use crate::club::Club;
-use crate::people::{BehaviourState, Player, PlayerPositionType, Staff};
+use crate::people::{BehaviourState, PlayerPositionType, Staff};
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -99,8 +99,8 @@ impl TacticsSelector {
         TacticsPositioning::T442
     }
 
-    fn players_by_position(club: &Club) -> HashMap<&PlayerPositionType, i16> {
-        let mut player_positions = HashMap::<&PlayerPositionType, i16>::new();
+    fn players_by_position(club: &Club) -> HashMap<PlayerPositionType, i16> {
+        let mut player_positions = HashMap::<PlayerPositionType, i16>::new();
 
         let club_players = club.players();
 

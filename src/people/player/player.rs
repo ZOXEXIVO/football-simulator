@@ -78,8 +78,9 @@ impl Player {
         }
     }
     
-    pub fn position(&self) -> &PlayerPositionType {
-        &self.positions.first().unwrap().position
+    #[inline]
+    pub fn position(&self) -> PlayerPositionType {
+        self.positions.first().unwrap().position
     }
 
     pub fn is_ready_for_match(&self) -> bool {

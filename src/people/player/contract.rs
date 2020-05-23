@@ -1,5 +1,4 @@
-use crate::people::{Player, PlayerResult};
-use crate::simulator::context::GlobalContext;
+use crate::people::{PlayerResult};
 use crate::simulator::SimulationContext;
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
@@ -16,9 +15,9 @@ pub struct AdditionalOptions {
 }
 
 impl PlayerClubContract {
-    pub fn new(expired: NaiveDate) -> Self {
+    pub fn new(salary: f64, expired: NaiveDate) -> Self {
         PlayerClubContract {
-            salary: 100_000.0,
+            salary,
             expired,
             additional_options: AdditionalOptions {
                 yearly_increase_wage: 15,
