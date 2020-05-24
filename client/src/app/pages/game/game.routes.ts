@@ -12,7 +12,7 @@ export const gameRoutes: Routes = [
     children: [
       { path: 'main', component: MainComponent },
       { path: 'countries', component: CountryListComponent },
-      { path: 'country/:countryId', component: CountryDetailsComponent },
+      { path: 'countries/:countryId', component: CountryDetailsComponent },
       { path: 'league', component: InboxComponent },
       { path: 'inbox', component: InboxComponent },
     ]

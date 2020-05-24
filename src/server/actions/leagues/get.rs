@@ -4,12 +4,13 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
-    game_id: String
+    game_id: String,
+    league_id: String
 }
 
 #[derive(Serialize)]
 pub struct LeagueGetResponse {
-    //pub name: &'l str
+   
 }
 
 pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Result<HttpResponse> {

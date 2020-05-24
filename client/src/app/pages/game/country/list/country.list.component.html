@@ -5,7 +5,7 @@
         <div>
             <ul class="countries-list">
                 <li *ngFor="let item of country.countries">
-                    <a href="">
+                    <a [routerLink]="[item.id]">
                         {{ item.name }}
                     </a>
                 </li>

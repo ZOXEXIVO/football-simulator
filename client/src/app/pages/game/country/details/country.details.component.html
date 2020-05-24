@@ -1,1 +1,14 @@
-﻿
+﻿<div *ngIf="country" class="content">
+    <h2>{{country.name}}</h2>
+    <hr /> 
+    <div>
+        <ul class="countries-list">
+            <li *ngFor="let item of country.leagues">
+                <a [routerLink]="[item.id]">
+                    {{ item.name }}
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div style="clear:both"></div>
+</div>

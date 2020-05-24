@@ -29,6 +29,17 @@ export class FootballApi {
     return result;
   }
 
+  country(gameId, countryId): Observable<CountryGetResponse> {
+    const result = new Subject<CountryGetResponse>();
+
+    this.http.get('/api/game/' + gameId + '/countries/' + countryId).subscribe((data: CountryGetResponse) => {
+      result.next(data);
+    });
+
+    return result;
+  }
+
+
   createGame() {
     const result = new Subject<GameCreateResultDto>();
 
@@ -80,12 +91,31 @@ export class ContinentDto {
   countries: CountryDto[];
 }
 
+
+// Countries
+
 export class CountryDto {
+  id: String;
   name: String;
   leagues: LeagueDto[];
 }
 
 export class LeagueDto {
+  id: String;
+  name: String;
+}
+
+export class CountryGetResponse {
+  country: CountryGetCountryDto
+}
+
+export class CountryGetCountryDto {
+  id: String;
+  name: String;
+  leagues: CountryGetLeagueDto[];
+}
+
+export class CountryGetLeagueDto {
   id: String;
   name: String;
 }
