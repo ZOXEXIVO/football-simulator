@@ -113,7 +113,7 @@ mod tests {
     #[test]
     fn table_draft() {
         let first_club_id = 1;
-        let second_club_id = 1;
+        let second_club_id = 2;
         
         let clubs = vec![
             first_club_id,
@@ -160,7 +160,7 @@ mod tests {
     #[test]
     fn table_winner() {
         let first_club_id = 1;
-        let second_club_id = 1;
+        let second_club_id = 2;
 
         let clubs = vec![
             first_club_id,
@@ -216,7 +216,7 @@ mod tests {
     #[test]
     fn table_looser() {
         let first_club_id = 1;
-        let second_club_id = 1;
+        let second_club_id = 2;
 
         let clubs = vec![
             first_club_id,
