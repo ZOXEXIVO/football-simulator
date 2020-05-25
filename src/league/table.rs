@@ -7,13 +7,12 @@ pub struct LeagueTable {
 }
 
 impl LeagueTable {
-    pub fn new(clubs: Vec<(u32, String)>) -> Self {
+    pub fn new(clubs: Vec<u32>) -> Self {
         let mut rows = Vec::with_capacity(clubs.len());
         
-        for (id, name) in clubs {
+        for club_id in clubs {
             let table_row = LeagueTableRow {
-                club_id: id,
-                club_name: name.clone(),
+                club_id,
                 played: 0,
                 win: 0,
                 draft: 0,
@@ -96,7 +95,6 @@ impl LeagueTable {
 #[derive(Debug)]
 pub struct LeagueTableRow {
     pub club_id: u32,
-    pub club_name: String,
     pub played: u8,
     pub win: u8,
     pub draft: u8,
@@ -114,9 +112,12 @@ mod tests {
 
     #[test]
     fn table_draft() {
+        let first_club_id = 1;
+        let second_club_id = 1;
+        
         let clubs = vec![
-            (1, String::from("Club1")),
-            (2, String::from("Club2"))
+            first_club_id,
+            second_club_id
         ];
         
         let mut table = LeagueTable::new(clubs);
@@ -158,9 +159,12 @@ mod tests {
 
     #[test]
     fn table_winner() {
+        let first_club_id = 1;
+        let second_club_id = 1;
+
         let clubs = vec![
-            (1, String::from("Club1")),
-            (2, String::from("Club2"))
+            first_club_id,
+            second_club_id
         ];
 
         let mut table = LeagueTable::new(clubs);
@@ -211,9 +215,12 @@ mod tests {
 
     #[test]
     fn table_looser() {
+        let first_club_id = 1;
+        let second_club_id = 1;
+
         let clubs = vec![
-            (1, String::from("Club1")),
-            (2, String::from("Club2"))
+            first_club_id,
+            second_club_id
         ];
 
         let mut table = LeagueTable::new(clubs);

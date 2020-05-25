@@ -906,7 +906,7 @@ impl League {
         let clubs_count = 10;
         
         let clubs: Vec<Club> = (0..clubs_count).map(|_| Club::generate()).collect();
-        let club_headers: Vec<(u32, String)> = clubs.iter().map(|c| (c.id, c.name.clone())).collect();
+        let club_headers = clubs.iter().map(|c| c.id).collect();
         
         League {
             id: IntegerUtils::random(1, 10_000_000) as u32,

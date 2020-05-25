@@ -39,6 +39,15 @@ export class FootballApi {
     return result;
   }
 
+  league(gameId, leagueId): Observable<LeagueGetResponse> {
+    const result = new Subject<LeagueGetResponse>();
+
+    this.http.get('/api/game/' + gameId + '/league/' + leagueId).subscribe((data: LeagueGetResponse) => {
+      result.next(data);
+    });
+
+    return result;
+  }
 
   createGame() {
     const result = new Subject<GameCreateResultDto>();
@@ -118,4 +127,32 @@ export class CountryGetCountryDto {
 export class CountryGetLeagueDto {
   id: String;
   name: String;
+}
+
+// league
+
+export class LeagueGetResponse {
+  league: LeagueGetLeagueDto
+}
+
+export class LeagueGetLeagueDto {
+  id: Number;
+  name: String;
+  table: LeagueGetLeagueTableDto;
+}
+
+export class LeagueGetLeagueTableDto {
+  rows: LeagueGetLeagueTableRowDto[];
+}
+
+export class LeagueGetLeagueTableRowDto {
+  club_id: Number;
+  club_name: String;
+  played: Number;
+  win: Number;
+  draft: Number;
+  lost: Number;
+  goal_scored: Number;
+  goal_concerned: Number;
+  points: Number;
 }

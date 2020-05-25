@@ -9,20 +9,33 @@ pub struct LeagueGetRequest {
 }
 
 #[derive(Serialize)]
-pub struct LeagueGetResponse {
-   //league: LeagueDto<'l>
+pub struct LeagueGetResponse<'l> {
+   league: LeagueDto<'l>
 }
 
 #[derive(Serialize)]
 pub struct LeagueDto<'l> {
     pub id: u32,
-    pub name: &'l str
+    pub name: &'l str,
+    pub table: LeagueTableDto<'l>
 }
 
 #[derive(Serialize)]
 pub struct LeagueTableDto<'l> {
-    pub id: u32,
-    pub name: &'l str
+    pub rows: Vec<LeagueTableRow<'l>>
+}
+
+#[derive(Serialize)]
+pub struct LeagueTableRow<'l> {
+    pub club_id: u32,
+    pub club_name: &'l str,
+    pub played: u8,
+    pub win: u8,
+    pub draft: u8,
+    pub lost: u8,
+    pub goal_scored: u8,
+    pub goal_concerned: u8,
+    pub points: u8,
 }
 
 pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Result<HttpResponse> {
@@ -36,8 +49,26 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
         .flat_map(|cn| &cn.leagues)
         .find(|l| l.id == route_params.league_id).unwrap();
     
+    let league_table = league.table.get();
+    
     let result = LeagueGetResponse{
-        
+        league: LeagueDto {
+            id: league.id,
+            name: &league.name,
+            table: LeagueTableDto{
+                rows: league_table.iter().map(|t| LeagueTableRow {
+                    club_id: t.club_id,
+                    club_name: &league.clubs.iter().find(|c| c.id == t.club_id).unwrap().name,
+                    played: t.played,
+                    win: t.win,
+                    draft: t.draft,
+                    lost: t.lost,
+                    goal_scored: t.goal_scored,
+                    goal_concerned: t.goal_concerned,
+                    points: t.points
+                }).collect()
+            }
+        }
     };
     
     Ok(HttpResponse::Ok().json(result))
