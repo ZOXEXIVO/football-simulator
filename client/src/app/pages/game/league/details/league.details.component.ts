@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { CountryGetCountryDto, FootballApi } from 'src/client/football.api.client';
 
 @Component({
   templateUrl: './league.details.component.html'

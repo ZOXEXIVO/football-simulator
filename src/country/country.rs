@@ -15,6 +15,7 @@ impl Country {
             .map(|league| league.simulate(ctx.with_league(league.id)))
             .collect();
         
+        
         CountryResult::new(league_results)
     }
 }

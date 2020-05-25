@@ -1,5 +1,5 @@
 use crate::club::{Club, ClubResult, MatchHistory};
-use crate::league::{Schedule, LeagueResult};
+use crate::league::{Schedule, LeagueResult, LeagueTable};
 use crate::r#match::{Match, MatchResult};
 use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
@@ -12,6 +12,7 @@ pub struct League {
     pub clubs: Vec<Club>,
     pub schedule: Option<Schedule>,
     pub settings: LeagueSettings,
+    pub table: LeagueTable,
     pub reputation: u16,
 }
 
@@ -26,7 +27,9 @@ impl League {
             .map(|club| club.simulate(ctx.with_club(club.id)))
             .collect();
 
-        self.play_matches(&ctx);
+        let match_results = self.play_matches(&ctx);
+        
+        self.table.update(match_results);
         
         LeagueResult::new(club_result)
     }
