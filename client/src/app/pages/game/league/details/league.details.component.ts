@@ -22,7 +22,7 @@ export class LeagueDetailsComponent implements OnInit {
       this.isLoading = true;
       this.api.league(params["gameId"], this.route.snapshot.params.leagueId)
       .subscribe(data => {
-        this.headerService.setHeader(data.league.name);
+        this.headerService.setHeader(data.league.name, 'League table');
 
 
         this.league = data.league;

@@ -172,7 +172,7 @@ a{
   border-radius: 0px;
 }
 .header_top .btn-drop .dropdown-menu a:hover{
-  background: #203C7D;
+  background: #2E383E;
   color:#fff;
 }
 .header_top .btn-drop .dropdown-menu a{
@@ -241,14 +241,15 @@ a{
 }
 .header_bottom .navbar-right li a:hover,
 .header_bottom .navbar-right li a:focus{
-  background: #203C7D;
+  background: #2E383E;
+  color: #fff;
 }
 .header_bottom .navbar-right .item-quest a{
-  color: #6984c9;
+  color: #2E383E;
   font-size: 26px;
-  margin-left: 50px;
 }
 .header_bottom .navbar-right .item-user a{
+  color: #2E383E;
   font-size: 24px;
 }
 .main_content{

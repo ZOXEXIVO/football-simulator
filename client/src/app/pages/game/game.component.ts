@@ -10,6 +10,7 @@ export class GameComponent implements OnInit {
   isProcessing: Boolean = false;
 
   headerTitle: String = "";
+  headerSubTitle: String = "";
 
   constructor(private api: FootballApi, 
     private route: ActivatedRoute, 
@@ -28,8 +29,11 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.headerService.get().subscribe(title => {
-      setTimeout(() => this.headerTitle = title);
+    this.headerService.get().subscribe(header => {
+      setTimeout(() => {
+        this.headerTitle = header.title;
+        this.headerSubTitle = header.subTitle;
+      });
     });
   }
 }

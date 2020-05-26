@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { FootballApi, CountryGetCountryDto } from 'src/client/football.api.client';
 import { ActivatedRoute } from '@angular/router';
+import { HeaderService } from '../../services/header.service';
 
 @Component({
   templateUrl: './country.details.component.html',
@@ -11,7 +12,9 @@ export class CountryDetailsComponent implements OnInit {
 
   country: CountryGetCountryDto;
 
-  constructor(private api: FootballApi, private route: ActivatedRoute) {
+  constructor(private api: FootballApi, 
+    private route: ActivatedRoute, 
+    private headerService: HeaderService) {
   }
 
   ngOnInit() {
@@ -20,6 +23,9 @@ export class CountryDetailsComponent implements OnInit {
       this.api.country(params["gameId"], this.route.snapshot.params.countryId)
       .subscribe(data => {
         this.country = data.country;
+
+        this.headerService.setHeader(data.country.name, 'Select leagues');
+
         this.isLoading = false;
       })
     });

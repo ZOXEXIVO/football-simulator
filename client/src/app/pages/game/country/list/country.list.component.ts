@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FootballApi, CountryListResponse } from 'src/client/football.api.client';
 import { ActivatedRoute} from '@angular/router';
+import { HeaderService } from '../../services/header.service';
 
 @Component({
   templateUrl: './country.list.component.html',
@@ -11,10 +12,12 @@ export class CountryListComponent implements OnInit {
 
   countries: CountryListResponse;
 
-  constructor(private api: FootballApi, private route: ActivatedRoute) {
+  constructor(private api: FootballApi, private route: ActivatedRoute, private headerService: HeaderService) {
   }
 
   ngOnInit() {
+    this.headerService.setHeader('Countries', 'Select country');
+
     this.route.parent.params.subscribe(params => {
       this.isLoading = true;
       this.api.countries(params["gameId"])
