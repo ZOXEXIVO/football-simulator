@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FootballApi, LeagueGetLeagueDto } from 'src/client/football.api.client';
+import { HeaderService } from '../../services/header.service';
 
 @Component({
   templateUrl: './league.details.component.html'
@@ -10,14 +11,20 @@ export class LeagueDetailsComponent implements OnInit {
 
   league: LeagueGetLeagueDto;
 
-  constructor(private api: FootballApi, private route: ActivatedRoute) {
+  constructor(private api: FootballApi,
+    private headerService: HeaderService, 
+    private route: ActivatedRoute) {
   }
 
   ngOnInit() {
     this.route.parent.params.subscribe(params => {
+      
       this.isLoading = true;
       this.api.league(params["gameId"], this.route.snapshot.params.leagueId)
       .subscribe(data => {
+        this.headerService.setHeader(data.league.name);
+
+
         this.league = data.league;
         this.isLoading = false;
       })

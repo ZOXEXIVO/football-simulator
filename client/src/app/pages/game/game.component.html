@@ -15,14 +15,14 @@
         <li><a href="/#"><i class="fas"></i></a></li>
       </ul>
       <div class="header-title-block">
-        <div class="page-title">Schedule</div>
+        <div class="page-title">{{ headerTitle }}</div>
         <div>Premier Division - Next Match: Leicester (A)(Tomorrow 17:30)</div>
       </div>
     </div>
     <div class="col-md-6">
       <ul class="nav navbar-right">
         <li class="item-msg" style="cursor: pointer;" >
-          <div style="text-transform: uppercase;" (click)="processGame()" *ngIf="!isProcessing">Продолжить </div>
+          <div style="text-transform: uppercase;text-align: center;" (click)="processGame()" *ngIf="!isProcessing">Continue</div>
           <div style="margin-top:5px;width:100px;padding-top: 20px;">
             <spinner *ngIf="isProcessing"></spinner>          
           </div>          

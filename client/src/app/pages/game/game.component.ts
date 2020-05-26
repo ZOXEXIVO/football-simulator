@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FootballApi } from 'src/client/football.api.client';
 import { ActivatedRoute } from '@angular/router';
+import { HeaderService } from './services/header.service';
 
 @Component({
   templateUrl: './game.component.html'
@@ -8,7 +9,11 @@ import { ActivatedRoute } from '@angular/router';
 export class GameComponent implements OnInit {
   isProcessing: Boolean = false;
 
-  constructor(private api: FootballApi, private route: ActivatedRoute) {
+  headerTitle: String = "";
+
+  constructor(private api: FootballApi, 
+    private route: ActivatedRoute, 
+    public headerService: HeaderService) {
   }
 
   processGame() {
@@ -23,6 +28,8 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.headerService.get().subscribe(title => {
+      setTimeout(() => this.headerTitle = title);
+    });
   }
 }

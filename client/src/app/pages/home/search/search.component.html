@@ -6,14 +6,14 @@
         <li><a href="/#"><i class="fas"></i></a></li>
       </ul>
       <div class="header-title-block">
-        <div class="page-title">Поиск игры</div>
-        <div>Выберите игру из списка или создайте новую</div>
+        <div class="page-title">Search game to play</div>
+        <div>Select a game from the list or create a new one</div>
       </div>
     </div>
     <div class="col-md-6">
       <ul class="nav navbar-right">
         <li class="item-msg" style="cursor: pointer;" >
-          <div style="text-transform: uppercase;" (click)="createGame()" *ngIf="!isGameCreating">Создать игру</div>
+          <div style="text-transform: uppercase;" (click)="createGame()" *ngIf="!isGameCreating">Create game</div>
           <div style="margin-top:5px;width:100px;padding-top: 20px;">
             <spinner *ngIf="isGameCreating"></spinner>          
           </div>          
@@ -31,8 +31,8 @@
         <thead>
           <tr>
             <th style="width: 20px"></th>
-            <th>Дата</th>
-            <th>Статус</th>
+            <th>Date</th>
+            <th>Status</th>
             <th></th>
           </tr>
         </thead>
@@ -45,7 +45,7 @@
             </td>
             <td>
               <a [routerLink]="['/game', searchResult.id, 'countries']" class="active">
-                Посмотреть
+                Details
               </a>
             </td>
           </tr>

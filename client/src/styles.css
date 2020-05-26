@@ -1,5 +1,5 @@
 body{
-  background: #0e4b44;
+  background: #2D3138;
   color:#fff;
 }
 a{
@@ -14,14 +14,14 @@ a{
 .main_container .header_row {
   display: block;
   margin-left: 230px;
-  height: 78px;
-  background: #2f56b5;
+  height: 79px;
+  background: #FAFAFA;
   border-left: 2px solid #0f204c;
 }
 
 .main_container .header_top{
-  height: 80px;
-  border-bottom: 2px solid #3a5db7;
+  height: 81px;
+  border-bottom: 2px solid #F1F1F1;
 }
 .main_container .header_bottom{
   padding-right: 15px;
@@ -36,14 +36,19 @@ a{
 .header_top .nav-arrow a.active,
 .header_top .nav-arrow a:hover{
   background: none;
-  color:#f6f6f6;
+  color:#CECECE;
 }
 .header_top .nav-arrow a{
-  color: #5676c3;
+  color: #CECECE;
   height: 80px;
   line-height: 60px;
   font-size: 38px;
 }
+
+.header_top .nav-arrow a:hover{
+  color: #1F2122;
+}
+
 .header_top .nav-arrow{
   margin-right: 15px;
 }
@@ -66,7 +71,7 @@ a{
 .header_bottom .navbar-left li a{
   height: 55px;
   line-height: 35px;
-  color: #fff;
+  color: #27292A;
   font-size: 17px;
 }
 .header_bottom .navbar-left li a:hover{
@@ -75,14 +80,14 @@ a{
 }
 
 #sidebar-menu .menu_section{
-  border-bottom: 2px solid #3555a0;
+  border-bottom: 2px solid #2E383E;
 }
 #sidebar-menu .menu_section:last-child{
   border-bottom: none;
 }
 
 .left_col{
-  background: #284B9C;
+  background: #283238;
   color:#fff;
   padding-left: 0px;
   padding-right: 0px;
@@ -112,12 +117,12 @@ a{
 .header_top .nav a.active,
 .header_top .nav a:focus,
 .header_top .nav a:hover{
-  background: #2e51ab;
+  background: #2E383E;
 }
-.left_col .nav a.active,
+.left_col .nav a.active,  
 .left_col .nav a:focus,
 .left_col .nav a:hover{
-  background: #203C7D;
+  background: #2D3138;
 }
 
 .header_top .nav.nav-gerb a.active,
@@ -190,23 +195,41 @@ a{
   float: left;
 }
 
+.header-title-block {
+  color: #3E4041;
+}
+
+.header_top .navbar-right {
+  background: #293239;
+}
+
+.header_top .navbar-right li {
+  border-left: 1px solid #616161;
+  border-bottom: 1px solid #616161;
+}
+
 .header_top .item-date .date-title{
   font-size: 17px;
   font-weight: bold;
 }
 .header_top .item-date{
-  height: 80px;
+  height: 81px;
   padding: 20px;
   text-align: center;
 }
 .header_top .item-msg{
   color: #d89a9b;
-  height: 80px;
-  background: #293239;
+  height: 81px;
+
   padding: 20px;
   line-height: 40px;
   font-weight: bold;
 }
+
+.header_top .item-msg:hover {
+  background: #2E383E;
+}
+
 .header_bottom .navbar-right{
   margin-right: 15px;
 }
@@ -257,7 +280,7 @@ table.main-table tr td{
   vertical-align: center;
 }
 table.main-table.table-striped>tbody>tr:nth-of-type(odd) {
-  background: url(./assets/images/bg-item.png);
+  background-color: #4a4a4a80;
 }
 .content-header .navbar-left{
   padding-left: 20px;

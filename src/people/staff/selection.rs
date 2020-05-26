@@ -52,8 +52,9 @@ impl PlayerSelector {
             if staff.is_favorite(&player) {
                 result.push(SquadPlayer::new(&player, *position))
             }
-
-            //player.skills.physical.match_readiness
+            else{
+                result.push(SquadPlayer::new(&player, *position))
+            }
         }
 
         result
