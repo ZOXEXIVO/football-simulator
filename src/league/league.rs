@@ -3,7 +3,7 @@ use crate::league::{Schedule, LeagueResult, LeagueTable};
 use crate::r#match::{Match, MatchResult};
 use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
-use chrono::Datelike;
+use chrono::{Datelike, NaiveDate};
 
 #[derive(Debug)]
 pub struct League {
@@ -105,16 +105,13 @@ impl League {
 
 #[derive(Debug)]
 pub struct LeagueSettings {
-    pub season_starting: (u8, u8),
-    pub season_ending: (u8, u8),
+    pub season_starting: NaiveDate,
+    pub season_ending: NaiveDate,
 }
 
 impl LeagueSettings {
     pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool {
-        let current_day = context.date.day() as u8;
-        let current_month = context.date.month() as u8;
-
-        current_day == self.season_starting.0 && current_month == self.season_starting.1
+        context.date.date() == self.season_starting
     }
 }
 
