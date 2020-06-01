@@ -1,7 +1,7 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances};
+use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances, ClubSponsorshipContract};
 use crate::simulator::context::GlobalContext;
 use crate::people::{
     Player, PlayerCollection, PlayerSelector, StaffCollection,
@@ -29,6 +29,22 @@ pub struct Club {
 }
 
 impl Club {
+    pub fn new(id: u32, name: String, finance: ClubFinances, training_schedule: TrainingSchedule, players: PlayerCollection, staffs: StaffCollection) -> Self {
+        Club {
+            id,
+            name,
+            finance,
+            mood: ClubMood::default(),
+            board: ClubBoard::new(),
+            players,
+            staffs,
+            tactics: None,
+            training_schedule,
+            transfer_list: Vec::new(),
+            match_history: Vec::new(),
+        }
+    }
+    
     pub fn players(&self) -> Vec<&Player> {
         self.players.players()
     }

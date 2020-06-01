@@ -17,12 +17,32 @@ pub struct League {
 }
 
 impl League {
+    pub fn new(id: u32, name: String, reputation: u16, settings: LeagueSettings, clubs: Vec<Club>) -> Self {
+        let club_headers = clubs.iter().map(|c| c.id).collect();
+        
+        League {
+            id,
+            name,
+            clubs,
+            schedule: None,
+            settings,
+            table: LeagueTable::new(club_headers),
+            reputation,
+        }
+    }
+    
     pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
+        let current_date = ctx.simulation.date.date();
+        
         if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
             self.schedule =
-                Some(Schedule::generate(&self.clubs, ctx.simulation.date.date()).unwrap());
+                Some(Schedule::generate(&self.clubs, current_date).unwrap());
         }
 
+        if self.schedule.is_some() && ctx.simulation.is_week_beginning() {
+            self.schedule.as_mut().unwrap().start_new_tour(current_date);
+        }
+        
         let club_result: Vec<ClubResult> = self.clubs.iter_mut()
             .map(|club| club.simulate(ctx.with_club(club.id)))
             .collect();

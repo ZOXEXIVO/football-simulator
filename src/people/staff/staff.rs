@@ -1,11 +1,12 @@
 use crate::people::player::player::Player;
-use crate::people::{Behaviour, StaffClubContract, StaffResult, StaffPosition};
+use crate::people::{StaffClubContract, StaffResult, StaffPosition};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
 use crate::utils::DateUtils;
 use chrono::NaiveDate;
 use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Result};
+use crate::people::behaviour::Behaviour;
 
 #[derive(Debug)]
 pub struct Staff {

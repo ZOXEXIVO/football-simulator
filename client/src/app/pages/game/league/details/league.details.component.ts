@@ -4,7 +4,8 @@ import { FootballApi, LeagueGetLeagueDto } from 'src/client/football.api.client'
 import { HeaderService } from '../../services/header.service';
 
 @Component({
-  templateUrl: './league.details.component.html'
+  templateUrl: './league.details.component.html',
+  styleUrls: ['./league.details.conponent.css']
 })
 export class LeagueDetailsComponent implements OnInit {
   isLoading: Boolean = false;

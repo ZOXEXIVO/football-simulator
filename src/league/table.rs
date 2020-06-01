@@ -29,7 +29,7 @@ impl LeagueTable {
             rows
         }
     }
-
+   
     #[inline]
     fn get_club(&mut self, club_id: u32) -> &mut LeagueTableRow {
         self.rows.iter_mut()

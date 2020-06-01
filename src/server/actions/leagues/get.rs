@@ -1,6 +1,7 @@
 use actix_web::{web, HttpResponse, Result};
 use crate::server::{GLOBAL_DATA};
 use serde::{Serialize, Deserialize};
+use crate::league::ScheduleItem;
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
@@ -17,7 +18,25 @@ pub struct LeagueGetResponse<'l> {
 pub struct LeagueDto<'l> {
     pub id: u32,
     pub name: &'l str,
-    pub table: LeagueTableDto<'l>
+    pub table: LeagueTableDto<'l>,
+    pub week_schedule: Option<LeagueSchedule<'l>>
+}
+
+#[derive(Serialize)]
+pub struct LeagueSchedule<'s> {
+    pub items: Vec<LeagueScheduleItem<'s>>
+}
+
+#[derive(Serialize)]
+pub struct LeagueScheduleItem<'si> {
+    pub home_goals: Option<u8>,
+    pub away_goals: Option<u8>,
+    
+    pub home_club_id: u32,
+    pub home_club_name: &'si str,
+    
+    pub guest_club_id: u32,
+    pub guest_club_name: &'si str,
 }
 
 #[derive(Serialize)]
@@ -51,11 +70,36 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
     
     let league_table = league.table.get();
     
+    let leagues_schedule: Option<LeagueSchedule> = match &league.schedule {
+        Some(schedule) => {
+            // if schedule.current_tour.is_none() {
+            //     None
+            // }
+
+            None
+            // else {
+            //     Some(LeagueSchedule {
+            //         items: schedule.current_tour.unwrap().games.map(|g| LeagueScheduleItem {
+            //             pub home_goals: Option<u8>,
+            //         pub away_goals: Option<u8>,
+            //
+            //         pub home_club_id: u32,
+            //         pub home_club_name: &'si str,
+            //
+            //         pub guest_club_id: u32,
+            //         pub guest_club_name: &'si str,
+            //         })
+            //     })
+            // }           
+        },
+        None => None
+    };
+    
     let result = LeagueGetResponse{
         league: LeagueDto {
             id: league.id,
             name: &league.name,
-            table: LeagueTableDto{
+            table: LeagueTableDto {
                 rows: league_table.iter().map(|t| LeagueTableRow {
                     club_id: t.club_id,
                     club_name: &league.clubs.iter().find(|c| c.id == t.club_id).unwrap().name,
@@ -67,7 +111,8 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
                     goal_concerned: t.goal_concerned,
                     points: t.points
                 }).collect()
-            }
+            },
+            week_schedule: leagues_schedule
         }
     };
     

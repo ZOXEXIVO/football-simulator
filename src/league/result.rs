@@ -2,7 +2,7 @@ use crate::club::{ClubResult};
 use crate::simulator::SimulatorData;
 
 pub struct LeagueResult{
-    pub clubs: Vec<ClubResult>,
+    pub clubs: Vec<ClubResult>
 }
 
 impl LeagueResult {

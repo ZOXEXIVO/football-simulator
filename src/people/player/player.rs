@@ -1,9 +1,10 @@
-use crate::people::{Behaviour, BehaviourState, PlayerAttributes, PlayerClubContract, PlayerMailbox, PlayerSkills, PlayerResult, PlayerCollectionResult, PlayerTraining, Staff};
+use crate::people::{PlayerAttributes, PlayerClubContract, PlayerMailbox, PlayerSkills, PlayerResult, PlayerCollectionResult, PlayerTraining, Staff};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
 use crate::utils::{DateUtils};
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
+use crate::people::behaviour::{Behaviour, BehaviourState};
 
 #[derive(Debug)]
 pub struct Player {

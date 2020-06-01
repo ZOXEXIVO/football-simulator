@@ -15,66 +15,74 @@
 </div>
 <br />
 <div *ngIf="league">
-  <div>
-      <table>
-        <tr>
-            <th style="width: 50px">
-              №
-            </th>
-            <th style="width: 200px">
-              Name
-            </th>
-            <th style="width: 50px">
-              PLD
-            </th>
-            <th style="width: 50px">
-              WON
-            </th>
-            <th style="width: 50px">
-              DRN
-            </th>
-            <th style="width: 50px">
-              LST
-            </th>
-            <th style="width: 50px">
-              GS
-            </th>
-            <th style="width: 50px">
-              GC
-            </th>
-            <th style="width: 50px">
-              PTS
-            </th>
-        </tr>
-        <tr *ngFor="let table of league.table.rows;let i = index">
-            <td>
-                {{ i + 1 }}
-            </td>
-            <td>
-              {{ table.club_name }}
-            </td>
-            <td>
-              {{ table.played }}
-            </td>
-            <td>
-              {{ table.win }}
-            </td>
-            <td>
-              {{ table.draft }}
-            </td>
-            <td>
-              {{ table.lost }}
-            </td>
-            <td>
-              {{ table.goal_scored }}
-            </td>
-            <td>
-              {{ table.goal_concerned }}
-            </td>
-            <td>
-              {{ table.points }}
-            </td>
-        </tr>
-      </table>
+  <div class="row">
+    <div class="col-xs-4 delim">
+      
+      <div>
+        <table>
+          <tr>
+              <th style="width: 50px">
+                Pos
+              </th>
+              <th style="width: 200px">
+                Team
+              </th>
+              <th style="width: 50px">
+                P
+              </th>
+              <th style="width: 50px">
+                W
+              </th>
+              <th style="width: 50px">
+                D
+              </th>
+              <th style="width: 50px">
+                L
+              </th>
+              <th style="width: 50px">
+                GD
+              </th>    
+              <th style="width: 50px">
+                PTS
+              </th>
+          </tr>
+          <tr *ngFor="let table of league.table.rows;let i = index">
+              <td>
+                  {{ i + 1 }}
+              </td>
+              <td>
+                {{ table.club_name }}
+              </td>
+              <td>
+                {{ table.played }}
+              </td>
+              <td>
+                {{ table.win }}
+              </td>
+              <td>
+                {{ table.draft }}
+              </td>
+              <td>
+                {{ table.lost }}
+              </td>
+              <td>
+                {{ (table.goal_scored - table.goal_concerned) }}
+              </td>
+              <td>
+                {{ table.points }}
+              </td>
+          </tr>
+        </table>
+    </div>
+    </div>
+    <div class="col-xs-4 delim">
+wq
+    </div>
+    <div class="col-xs-4 delim">
+qw
+    </div>
   </div>
+
+
+
 </div>

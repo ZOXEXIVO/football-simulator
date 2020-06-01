@@ -6,9 +6,36 @@ use chrono::NaiveDate;
 #[derive(Debug)]
 pub struct Schedule {
     pub items: Vec<ScheduleItem>,
+    pub current_tour: Option<Tour>
+}
+
+#[derive(Debug, Clone)]
+pub struct ScheduleItem {
+    pub date: NaiveDate,
+    pub home_club_id: u32,
+    pub guest_club_id: u32,
+}
+
+#[derive(Debug)]
+pub struct Tour {
+    pub games: Vec<ScheduleItem>
 }
 
 impl Schedule {
+    pub fn start_new_tour(&mut self, date: NaiveDate){
+        let mut current_week_games = Vec::with_capacity(30);
+        
+        for day in 0..7 {
+            let filter_date = date + Duration::days(day);
+
+            for day_game in self.items.iter().filter(|s| s.date == filter_date) {
+                current_week_games.push(day_game.clone())
+            }           
+        }       
+        
+        self.current_tour = Some(Tour::new(current_week_games));
+    }
+    
     pub fn generate(clubs: &[Club], date: NaiveDate) -> Result<Schedule, ()> {
         let club_len = clubs.len();
 
@@ -39,11 +66,10 @@ impl Schedule {
             starting_date = starting_date.checked_add_signed(Duration::days(7)).unwrap();
         }
 
-        let result = Schedule {
+        Ok(Schedule {
             items: schedule_items,
-        };
-
-        Ok(result)
+            current_tour: None
+        })
     }
 
     pub fn get_matches(&self, date: NaiveDate) -> Vec<&ScheduleItem> {
@@ -51,12 +77,14 @@ impl Schedule {
     }
 }
 
-#[derive(Debug)]
-pub struct ScheduleItem {
-    pub date: NaiveDate,
-    pub home_club_id: u32,
-    pub guest_club_id: u32,
+impl Tour {
+    pub fn new(games: Vec<ScheduleItem>) -> Self {
+        Tour {
+            games
+        }
+    }
 }
+
 
 #[cfg(test)]
 mod tests {
