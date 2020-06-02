@@ -66,7 +66,7 @@ impl LeagueTable {
         club.points += 1;
     }
 
-    pub fn update(&mut self, match_result: Vec<MatchResult>) {
+    pub fn update(&mut self, match_result: &Vec<MatchResult>) {
         for result in match_result {
             match Ord::cmp(&result.home_goals, &result.away_goals) {
                 Ordering::Equal => {

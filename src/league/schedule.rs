@@ -5,7 +5,7 @@ use chrono::NaiveDate;
 use crate::league::LeagueSettings;
 
 #[derive(Debug)]
-pub struct Schedule {
+pub struct ScheduleManager {
     pub items: Vec<ScheduleItem>,
     pub current_tour: Option<Tour>
 }
@@ -22,14 +22,25 @@ pub struct Tour {
     pub games: Vec<ScheduleItem>
 }
 
-impl Schedule {
+impl ScheduleManager {
+    pub fn new() -> Self {
+        ScheduleManager {
+            items: Vec::new(),
+            current_tour: None
+        }
+    }
+    
+    pub fn is_schedule_exists(&self) -> bool {
+        !self.items.is_empty()
+    }
+    
     pub fn start_new_tour(&mut self, date: NaiveDate){
         let mut current_week_games = Vec::with_capacity(30);
         
         for day in 0..7 {
             let filter_date = date + Duration::days(day);
 
-            for day_game in self.items.iter().filter(|s| s.date == filter_date) {
+            for day_game in self.items.iter().filter(|s| s.date.date() == filter_date) {
                 current_week_games.push(day_game.clone())
             }           
         }       
@@ -58,17 +69,18 @@ impl Schedule {
         let mut res = Vec::with_capacity(count as usize);
         
         
+        
         res
     }
     
-    pub fn generate(current_date: NaiveDate, clubs: &[Club], league_settings: &LeagueSettings) -> Result<Schedule, ()> {
+    pub fn generate(&mut self, current_date: NaiveDate, clubs: &[Club], league_settings: &LeagueSettings) {
         let club_len = clubs.len();
 
         let club_len_half: u8 = (club_len / 2) as u8;
   
         let mut schedule_items = Vec::with_capacity(club_len * 2);
 
-        let mut current_date = Schedule::get_nearest_saturday(current_date, league_settings);
+        let mut current_date = ScheduleManager::get_nearest_saturday(current_date, league_settings);
         
         let mut rng = &mut rand::thread_rng();
         //
@@ -91,13 +103,11 @@ impl Schedule {
         //     current_date += Duration::days(1);
         // }
         
-        Ok(Schedule {
-            items: schedule_items,
-            current_tour: None
-        })
+        self.items = schedule_items;
+        self.current_tour = None;
     }
 
-    pub fn get_matches(&self, date: NaiveDate) -> Vec<&ScheduleItem> {
+    pub fn get_matches(&self, date: NaiveDateTime) -> Vec<&ScheduleItem> {
         self.items.iter().filter(|x| x.date == date).collect()
     }
 }

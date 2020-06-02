@@ -1,6 +1,6 @@
 use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract};
 use crate::country::Country;
-use crate::league::{League, LeagueSettings, LeagueTable};
+use crate::league::{League, LeagueSettings, LeagueTable, ScheduleManager};
 use crate::shared::fullname::FullName;
 use crate::simulator::SimulatorData;
 use crate::utils::{IntegerUtils, StringUtils};
@@ -220,17 +220,17 @@ impl League {
 
         let clubs: Vec<Club> = (0..clubs_count).map(|_| Club::generate()).collect();
         let club_headers = clubs.iter().map(|c| c.id).collect();
-
+        
         League {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(30),
             clubs,
-            schedule: None,
+            schedule_manager: ScheduleManager::new(),
             settings: LeagueSettings {
                 season_starting: (1, 12),
                 season_ending: (1, 12),
             },
-            table: LeagueTable::new(club_headers),
+            league_table: LeagueTable::new(club_headers),
             reputation: 5000,
         }
     }

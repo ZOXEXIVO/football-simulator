@@ -19,7 +19,7 @@ pub struct LeagueDto<'l> {
     pub id: u32,
     pub name: &'l str,
     pub table: LeagueTableDto<'l>,
-    pub week_schedule: Option<LeagueSchedule<'l>>
+    pub week_schedule: LeagueSchedule<'l>
 }
 
 #[derive(Serialize)]
@@ -68,32 +68,7 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
         .flat_map(|cn| &cn.leagues)
         .find(|l| l.id == route_params.league_id).unwrap();
     
-    let league_table = league.table.get();
-    
-    let leagues_schedule: Option<LeagueSchedule> = match &league.schedule {
-        Some(schedule) => {
-            // if schedule.current_tour.is_none() {
-            //     None
-            // }
-
-            None
-            // else {
-            //     Some(LeagueSchedule {
-            //         items: schedule.current_tour.unwrap().games.map(|g| LeagueScheduleItem {
-            //             pub home_goals: Option<u8>,
-            //         pub away_goals: Option<u8>,
-            //
-            //         pub home_club_id: u32,
-            //         pub home_club_name: &'si str,
-            //
-            //         pub guest_club_id: u32,
-            //         pub guest_club_name: &'si str,
-            //         })
-            //     })
-            // }           
-        },
-        None => None
-    };
+    let league_table = league.league_table.get();
     
     let result = LeagueGetResponse{
         league: LeagueDto {
@@ -112,7 +87,9 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
                     points: t.points
                 }).collect()
             },
-            week_schedule: leagues_schedule
+            week_schedule: LeagueSchedule {
+                items: Vec::new()
+            }
         }
     };
     
