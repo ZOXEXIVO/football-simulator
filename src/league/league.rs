@@ -3,7 +3,7 @@ use crate::league::{Schedule, LeagueResult, LeagueTable};
 use crate::r#match::{Match, MatchResult};
 use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
-use chrono::{Datelike, NaiveDate};
+use chrono::Datelike;
 
 #[derive(Debug)]
 pub struct League {
@@ -35,8 +35,10 @@ impl League {
         let current_date = ctx.simulation.date.date();
         
         if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule =
-                Some(Schedule::generate(&self.clubs, current_date).unwrap());
+            let new_schedule = Schedule::generate(
+                ctx.simulation.date.date(), &self.clubs, &self.settings).unwrap();
+            
+            self.schedule = Some(new_schedule);
         }
 
         if self.schedule.is_some() && ctx.simulation.is_week_beginning() {
@@ -105,13 +107,17 @@ impl League {
 
 #[derive(Debug)]
 pub struct LeagueSettings {
-    pub season_starting: NaiveDate,
-    pub season_ending: NaiveDate,
+    pub season_starting: (u8, u8),
+    pub season_ending: (u8, u8),
 }
 
 impl LeagueSettings {
     pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool {
-        context.date.date() == self.season_starting
+        let (start_day, start_month) = self.season_starting;
+        
+        let date = context.date.date();
+
+        (date.day() as u8) == start_day && (date.month() as u8) == start_month
     }
 }
 

@@ -227,7 +227,7 @@ impl League {
             clubs,
             schedule: None,
             settings: LeagueSettings {
-                season_starting: (1, 1),
+                season_starting: (1, 12),
                 season_ending: (1, 12),
             },
             table: LeagueTable::new(club_headers),

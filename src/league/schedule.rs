@@ -3,9 +3,6 @@ use chrono::prelude::*;
 use chrono::Duration;
 use chrono::NaiveDate;
 use crate::league::LeagueSettings;
-use chrono::Weekday::Sat;
-use rand::thread_rng;
-use rand::prelude::SliceRandom;
 
 #[derive(Debug)]
 pub struct Schedule {
@@ -40,8 +37,11 @@ impl Schedule {
         self.current_tour = Some(Tour::new(current_week_games));
     }
     
-    fn get_nearest_saturday(date: NaiveDate) -> NaiveDate {
-        let mut current_date = date;
+    fn get_nearest_saturday(current_date: NaiveDate, league_settings: &LeagueSettings) -> NaiveDate {
+        let (start_day, start_month) = league_settings.season_starting;
+        
+        let mut current_date = NaiveDate::from_ymd(
+            current_date.year(), start_month as u32, start_day as u32);
         
         loop {
             if current_date.weekday() == Weekday::Sat {
@@ -58,38 +58,38 @@ impl Schedule {
         let mut res = Vec::with_capacity(count as usize);
         
         
+        res
     }
     
-    pub fn generate(clubs: &[Club], league_settings: LeagueSettings) -> Result<Schedule, ()> {
+    pub fn generate(current_date: NaiveDate, clubs: &[Club], league_settings: &LeagueSettings) -> Result<Schedule, ()> {
         let club_len = clubs.len();
 
         let club_len_half: u8 = (club_len / 2) as u8;
   
         let mut schedule_items = Vec::with_capacity(club_len * 2);
 
-        let mut current_date = Schedule::get_nearest_saturday(
-            league_settings.season_starting);
+        let mut current_date = Schedule::get_nearest_saturday(current_date, league_settings);
         
         let mut rng = &mut rand::thread_rng();
-        
-        loop {
-            if current_date == league_settings.season_ending {
-                break;
-            }
-            
-            let saturday = starting_date;
-            let sunday = starting_date + Duration::days(1);
-       
-            for item in Self::generate_for_day(clubs, club_len_half, saturday) {
-                schedule_items.push(item);
-            }
-
-            for item in Self::generate_for_day(clubs, club_len_half, sunday) {
-                schedule_items.push(item);
-            }
-
-            current_date += Duration::days(1);
-        }
+        //
+        // loop {
+        //     if current_date == league_settings.season_ending {
+        //         break;
+        //     }
+        //    
+        //     let saturday = starting_date;
+        //     let sunday = starting_date + Duration::days(1);
+        //
+        //     for item in Self::generate_for_day(clubs, club_len_half, saturday) {
+        //         schedule_items.push(item);
+        //     }
+        //
+        //     for item in Self::generate_for_day(clubs, club_len_half, sunday) {
+        //         schedule_items.push(item);
+        //     }
+        //
+        //     current_date += Duration::days(1);
+        // }
         
         Ok(Schedule {
             items: schedule_items,
