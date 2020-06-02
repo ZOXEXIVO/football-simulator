@@ -199,7 +199,7 @@ impl SimulatorData {
                 },
                 Continent {
                     id: 3,
-                    name: "Sourth America".to_string(),
+                    name: "South America".to_string(),
                     countries: vec![],
                 },
                 Continent {
@@ -225,7 +225,7 @@ impl League {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(30),
             clubs,
-            schedule_manager: ScheduleManager::new(),
+            schedule: ScheduleManager::new(),
             settings: LeagueSettings {
                 season_starting: (1, 12),
                 season_ending: (1, 12),

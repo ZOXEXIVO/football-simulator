@@ -10,7 +10,7 @@ pub struct League {
     pub id: u32,
     pub name: String,
     pub clubs: Vec<Club>,
-    pub schedule_manager: ScheduleManager,
+    pub schedule: ScheduleManager,
     pub settings: LeagueSettings,
     pub league_table: LeagueTable,
     pub reputation: u16,
@@ -24,7 +24,7 @@ impl League {
             id,
             name,
             clubs,
-            schedule_manager: ScheduleManager::new(),
+            schedule: ScheduleManager::new(),
             settings,
             league_table: LeagueTable::new(club_headers),
             reputation,
@@ -35,12 +35,12 @@ impl League {
         let current_date = ctx.simulation.date.date();
         
         if self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule_manager.generate(ctx.simulation.date.date(), 
-                                           &self.clubs, &self.settings);
+            self.schedule.generate(ctx.simulation.date.date(),
+                                   &self.clubs, &self.settings);
         }
 
-        if self.schedule_manager.is_schedule_exists() && ctx.simulation.is_week_beginning() {
-            self.schedule_manager.start_new_tour(current_date);
+        if self.schedule.is_schedule_exists() && ctx.simulation.is_week_beginning() {
+            self.schedule.start_new_tour(current_date);
         }
         
         let club_result: Vec<ClubResult> = self.clubs.iter_mut()
@@ -66,7 +66,7 @@ impl League {
         let current_date = context.simulation.date;
 
         let matches: Vec<Match> = {
-            self.schedule_manager.get_matches(current_date)
+            self.schedule.get_matches(current_date)
                 .iter()
                 .map(|m| {
                     Match::make(self.get_club(&m.home_club_id),
