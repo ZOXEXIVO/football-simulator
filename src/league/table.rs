@@ -132,7 +132,7 @@ mod tests {
             },
         ];
         
-        table.update(match_results);
+        table.update(&match_results);
         
         let returned_table = table.get();
        
@@ -182,7 +182,7 @@ mod tests {
             },
         ];
 
-        table.update(match_results);
+        table.update(&match_results);
 
         let returned_table = table.get();
 
@@ -238,7 +238,7 @@ mod tests {
             },
         ];
 
-        table.update(match_results);
+        table.update(&match_results);
 
         let returned_table = table.get();
 
