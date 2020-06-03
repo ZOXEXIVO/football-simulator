@@ -3,6 +3,7 @@ use chrono::prelude::*;
 use chrono::Duration;
 use chrono::NaiveDate;
 use crate::league::LeagueSettings;
+use rand::seq::IteratorRandom;
 
 #[derive(Debug)]
 pub struct ScheduleManager {
@@ -22,6 +23,8 @@ pub struct Tour {
     pub games: Vec<ScheduleItem>
 }
 
+const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
+
 impl ScheduleManager {
     pub fn new() -> Self {
         ScheduleManager {
@@ -37,14 +40,13 @@ impl ScheduleManager {
     pub fn start_new_tour(&mut self, date: NaiveDate){
         let mut current_week_games = Vec::with_capacity(30);
         
-        for day in 0..7 {
-            let filter_date = date + Duration::days(day);
+        let start_date = date;
+        let end_date = date + Duration::days(7);
 
-            for day_game in self.items.iter().filter(|s| s.date.date() == filter_date) {
-                current_week_games.push(day_game.clone())
-            }           
-        }       
-        
+        for day_game in self.items.iter().filter(|s| s.date.date() >= start_date && s.date.date() <= end_date) {
+            current_week_games.push(day_game.clone())
+        }
+
         self.current_tour = Some(Tour::new(current_week_games));
     }
     
@@ -65,11 +67,26 @@ impl ScheduleManager {
         current_date
     }
     
-    fn generate_for_day(club_ids: &[Club], count: u8, date: NaiveDate) -> Vec<ScheduleItem> {
-        let mut res = Vec::with_capacity(count as usize);
+    fn generate_for_day(clubs: &[&Club], date: NaiveDate) -> Vec<ScheduleItem> {
+        let schedule_time = NaiveDateTime::new(date, NaiveTime::from_hms(18, 0, 0));
+  
+        let clubs_len_half = clubs.len() / 2;
         
-        
-        
+        let home_clubs: Vec<_> = clubs.iter().take(clubs_len_half).collect();
+        let away_clubs: Vec<_> = clubs.iter().skip(clubs_len_half).take(clubs_len_half).collect();
+
+        let mut res = Vec::with_capacity(clubs_len_half as usize);
+
+        for club_idx in 0..clubs_len_half {
+            for club in clubs {
+                res.push(ScheduleItem {
+                    date: schedule_time,
+                    home_club_id: home_clubs[club_idx].id,
+                    guest_club_id: away_clubs[club_idx].id
+                })
+            }
+        }
+  
         res
     }
     
@@ -81,27 +98,40 @@ impl ScheduleManager {
         let mut schedule_items = Vec::with_capacity(club_len * 2);
 
         let mut current_date = ScheduleManager::get_nearest_saturday(current_date, league_settings);
+
+        let end_date = {
+            let (end_day, end_month) = league_settings.season_starting;
+
+            NaiveDate::from_ymd(
+                current_date.year(), end_month as u32, end_day as u32)
+        };
         
         let mut rng = &mut rand::thread_rng();
-        //
-        // loop {
-        //     if current_date == league_settings.season_ending {
-        //         break;
-        //     }
-        //    
-        //     let saturday = starting_date;
-        //     let sunday = starting_date + Duration::days(1);
-        //
-        //     for item in Self::generate_for_day(clubs, club_len_half, saturday) {
-        //         schedule_items.push(item);
-        //     }
-        //
-        //     for item in Self::generate_for_day(clubs, club_len_half, sunday) {
-        //         schedule_items.push(item);
-        //     }
-        //
-        //     current_date += Duration::days(1);
-        // }
+
+        loop {
+            if current_date == end_date {
+                break;
+            }
+
+            let random_clubs: Vec<&Club> = clubs.iter()
+                .choose_multiple(&mut rng, club_len as usize);
+            
+            let saturday = current_date;
+            let saturday_clubs = &random_clubs[0..(club_len_half as usize)];
+            
+            let sunday = current_date + Duration::days(1);
+            let sunday_clubs = &random_clubs[(club_len_half as usize)..(club_len_half as usize)];
+            
+            for item in Self::generate_for_day(saturday_clubs, saturday) {
+                schedule_items.push(item);
+            }
+
+            for item in Self::generate_for_day(sunday_clubs, sunday) {
+                schedule_items.push(item);
+            }
+
+            current_date += Duration::days(1);
+        }
         
         self.items = schedule_items;
         self.current_tour = None;
