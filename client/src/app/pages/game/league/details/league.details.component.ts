@@ -5,7 +5,7 @@ import { HeaderService } from '../../services/header.service';
 
 @Component({
   templateUrl: './league.details.component.html',
-  styleUrls: ['./league.details.conponent.css']
+  styleUrls: ['./league.details.conponent.less']
 })
 export class LeagueDetailsComponent implements OnInit {
   isLoading: Boolean = false;

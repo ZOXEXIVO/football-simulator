@@ -105,6 +105,7 @@ export class ContinentDto {
 
 export class CountryDto {
   id: String;
+  code: String;
   name: String;
   leagues: LeagueDto[];
 }

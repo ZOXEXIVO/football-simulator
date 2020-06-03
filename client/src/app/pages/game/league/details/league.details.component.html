@@ -16,70 +16,346 @@
 <br />
 <div *ngIf="league">
   <div class="row">
-    <div class="col-xs-4 delim">
-      
+    <div class="col-xs-3 delim">
+      <p class="header">Stages ></p>
       <div>
-        <table>
+        <table class="league-table">
           <tr>
-              <th style="width: 50px">
-                Pos
-              </th>
-              <th style="width: 200px">
-                Team
-              </th>
-              <th style="width: 50px">
-                P
-              </th>
-              <th style="width: 50px">
-                W
-              </th>
-              <th style="width: 50px">
-                D
-              </th>
-              <th style="width: 50px">
-                L
-              </th>
-              <th style="width: 50px">
-                GD
-              </th>    
-              <th style="width: 50px">
-                PTS
-              </th>
+            <th style="width: 50px">
+              Pos
+            </th>
+            <th style="width: 60%">
+              Team
+            </th>
+            <th style="width: 50px;text-align: center;">
+              P
+            </th>
+            <th style="width: 50px;text-align: center;">
+              W
+            </th>
+            <th style="width: 50px;text-align: center;">
+              D
+            </th>
+            <th style="width: 50px;text-align: center;">
+              L
+            </th>
+            <th style="width: 50px;text-align: center;">
+              GD
+            </th>
+            <th style="width: 50px;text-align: center;">
+              PTS
+            </th>
           </tr>
           <tr *ngFor="let table of league.table.rows;let i = index">
-              <td>
-                  {{ i + 1 }}
-              </td>
-              <td>
-                {{ table.club_name }}
-              </td>
-              <td>
-                {{ table.played }}
-              </td>
-              <td>
-                {{ table.win }}
-              </td>
-              <td>
-                {{ table.draft }}
-              </td>
-              <td>
-                {{ table.lost }}
-              </td>
-              <td>
-                {{ (table.goal_scored - table.goal_concerned) }}
-              </td>
-              <td>
-                {{ table.points }}
-              </td>
+            <td>
+              {{ i + 1 }}st
+            </td>
+            <td>
+              <img src="/assets/images/logos/inter.png" class="club-logo" /> {{ table.club_name }}
+            </td>
+            <td style="text-align: center;">
+              {{ table.played }}
+            </td>
+            <td style="text-align: center;">
+              {{ table.win }}
+            </td>
+            <td style="text-align: center;">
+              {{ table.draft }}
+            </td>
+            <td style="text-align: center;">
+              {{ table.lost }}
+            </td>
+            <td style="text-align: center;">
+              {{ (table.goal_scored - table.goal_concerned) }}
+            </td>
+            <td style="text-align: center;">
+              {{ table.points }}
+            </td>
           </tr>
         </table>
+      </div>
     </div>
-    </div>
-    <div class="col-xs-4 delim">
-wq
-    </div>
-    <div class="col-xs-4 delim">
-qw
+    <div class="col-xs-7 delim">
+      <div class="row"  style="border-bottom: 2px solid #323A41;">
+        <div class="col-xs-6">
+          <p class="header">Fixtures/results ></p>
+
+          <p>Saturday 17th December 2020</p>
+
+          <table class="week-results">
+            <tr>
+              <td>Spartak-Moscow</td>
+              <td class="score">0 - 1</td>
+              <td>Zenith</td>
+            </tr>
+            <tr>
+              <td>Dinamo</td>
+              <td class="score">0 - 0</td>
+              <td>Rostov</td>
+            </tr>
+            <tr>
+              <td>Krasnodar</td>
+              <td class="score">2 - 0</td>
+              <td>Arsenal Tula</td>
+            </tr>
+            <tr>
+              <td>Lokomotiv Moscow</td>
+              <td class="score">3 - 1</td>
+              <td>Tom</td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-xs-6">
+          <p class="header">Competition Reputation></p>
+
+          <table style="width: 100%">
+            <tr>
+              <td style="width: 20px">1</td>
+              <td>
+                <p>Spanish Premier Division</p>
+                <p><img src="/assets/images/countries/es.png" class="country-logo" />&nbsp;&nbsp;Spain</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 20px">2</td>
+              <td>
+                <p>German First Division</p>
+                <p><img src="/assets/images/countries/de.png" class="country-logo" />&nbsp;&nbsp;Germany</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 20px">2</td>
+              <td>
+                <p>English Premiere Division</p>
+                <p><img src="/assets/images/countries/gb.png" class="country-logo" />&nbsp;&nbsp;England</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="header">Player stats ></p>
+
+          <table class="statistics-table">
+            <tr>
+              <td>
+                <p class="header rating">Goals</p>
+                <table style="width: 100%">
+                  <tr>
+                    <td style="width: 20px">
+                      1st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Ezequiel Ponce
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 25px">
+                      14
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 15px">
+                      2st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Jordan Larsson
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 25px">
+                      10
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <p class="header rating">Average rating</p>
+                <table style="width: 100%">
+                  <tr>
+                    <td style="width: 20px">
+                      1st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Guus Til
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      7.33
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 15px">
+                      2st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      André Schürrle
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      7.01
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <p class="header rating">Assists</p>
+                <table style="width: 100%">
+                  <tr>
+                    <td style="width: 20px">
+                      1st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Alex Kral
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      14
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 15px">
+                      2st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Nail Umyarov
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      10
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p class="header rating">Player of the match</p>
+                <table style="width: 100%">
+                  <tr>
+                    <td style="width: 20px">
+                      1st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Alex Kral
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      7
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 15px">
+                      2st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Georgiy Dzhikiya
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      5
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <p class="header rating">Clean sheets</p>
+                <table style="width: 100%">
+                  <tr>
+                    <td style="width: 20px">
+                      1st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Aleksandr Maksimenko
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      5
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 15px">
+                      2st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Aleksandr Selikhov
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      3
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <p class="header rating">Ywllow cards</p>
+                <table style="width: 100%">
+                  <tr>
+                    <td style="width: 20px">
+                      1st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Reziuan Mirzov
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      8
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 15px">
+                      2st
+                    </td>
+                    <td style="width: 30px">
+                      <img src="/assets/images/logos/inter.png" class="club-logo" />
+                    </td>
+                    <td>
+                      Alex Kral
+                      <p class="club-name">Spartak moscow</p>
+                    </td>
+                    <td style="width: 15px">
+                      4
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </div>
     </div>
   </div>
 

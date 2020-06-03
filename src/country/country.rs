@@ -4,6 +4,7 @@ use crate::country::CountryResult;
 
 pub struct Country {
     pub id: u32,
+    pub code: String,
     pub name: String,
     pub leagues: Vec<League>,
     pub reputation: u16

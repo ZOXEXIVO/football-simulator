@@ -1,12 +1,12 @@
 ﻿<div *ngIf="countries" class="content">
-    <div *ngFor="let country of countries.continents" class="country-box">
-        <h2>{{country.name}} ({{country.countries.length}})</h2>
+    <div *ngFor="let continent of countries.continents" class="country-box">
+        <h2>{{continent.name}} ({{continent.countries.length}})</h2>
         <hr /> 
         <div>
             <ul class="countries-list">
-                <li *ngFor="let item of country.countries">
-                    <a [routerLink]="[item.id]">
-                        {{ item.name }}
+                <li *ngFor="let country of continent.countries">
+                    <a [routerLink]="[country.id]">
+                        <img src="/assets/images/countries/{{country.code}}.png" class="country-logo" />&nbsp;&nbsp; {{ country.name }}
                     </a>
                 </li>
             </ul>

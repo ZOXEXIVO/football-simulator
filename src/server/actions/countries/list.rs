@@ -16,6 +16,7 @@ pub struct LeagueDto<'l> {
 #[derive(Serialize)]
 pub struct CountryDto<'c> {
     pub id: u32,
+    pub code: &'c str,
     pub name: &'c str,
     pub leagues: Vec<LeagueDto<'c>>
 }
@@ -48,6 +49,7 @@ pub async fn country_list_action(route_params: web::Path<CountryListRequest>) ->
             countries: continent.countries.iter().map(|country|
                 CountryDto {
                     id: country.id,
+                    code: &country.code,
                     name: &country.name,
                     leagues: country.leagues.iter().map(|l| LeagueDto{
                         id: l.id,

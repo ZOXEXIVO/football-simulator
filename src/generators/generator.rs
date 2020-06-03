@@ -181,6 +181,7 @@ impl SimulatorData {
                     countries: vec![
                         Country {
                             id: 87,
+                            code: String::from("ru"),
                             name: String::from("Russia"),
                             leagues: vec![
                                 League::new(1, String::from("Premier league"), 5000, LeagueSettings {

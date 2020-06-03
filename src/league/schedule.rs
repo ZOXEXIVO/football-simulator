@@ -78,13 +78,11 @@ impl ScheduleManager {
         let mut res = Vec::with_capacity(clubs_len_half as usize);
 
         for club_idx in 0..clubs_len_half {
-            for club in clubs {
-                res.push(ScheduleItem {
-                    date: schedule_time,
-                    home_club_id: home_clubs[club_idx].id,
-                    guest_club_id: away_clubs[club_idx].id
-                })
-            }
+            res.push(ScheduleItem {
+                date: schedule_time,
+                home_club_id: home_clubs[club_idx].id,
+                guest_club_id: away_clubs[club_idx].id
+            })
         }
   
         res
