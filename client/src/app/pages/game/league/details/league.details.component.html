@@ -51,7 +51,9 @@
               {{ i + 1 }}st
             </td>
             <td>
-              <img src="/assets/images/logos/inter.png" class="club-logo" /> {{ table.club_name }}
+              <a  [routerLink]="['../../clubs', table.club_id, 'squad']">
+                <img src="/assets/images/logos/inter.png" class="club-logo" /> {{ table.club_name }}
+              </a>              
             </td>
             <td style="text-align: center;">
               {{ table.played }}

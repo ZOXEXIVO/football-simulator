@@ -18,7 +18,7 @@ export class LeagueDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.parent.params.subscribe(params => {
+    this.route.parent.parent.params.subscribe(params => {
       
       this.isLoading = true;
       this.api.league(params["gameId"], this.route.snapshot.params.leagueId)

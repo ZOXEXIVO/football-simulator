@@ -2,8 +2,8 @@
     <div>
         <ul class="countries-list">
             <li *ngFor="let item of country.leagues">
-                <a [routerLink]="['league', item.id]">
-                    {{ item.name }}
+                <a [routerLink]="['../../leagues', item.id]">
+                   {{ item.name }}
                 </a>
             </li>
         </ul>

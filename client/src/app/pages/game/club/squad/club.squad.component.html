@@ -1,0 +1,54 @@
+﻿<div *ngIf="players" class="content">
+    <table class="squad-table">
+        <tr>
+          <th style="width: 50px">
+            Inf
+          </th>
+          <th>
+            Name
+          </th>
+          <th>
+            Position
+          </th>
+          <th>
+            Nat
+          </th>
+          <th>
+            Ability
+          </th>
+          <th>
+            Potential
+          </th>
+          <th>
+            Morale
+          </th>
+          <th>
+            Contiditions
+          </th>
+          <th>
+            Played
+          </th>
+          <th>
+            Goals
+          </th>
+          <th>
+            Assists
+          </th>
+          <th>
+            Value
+          </th>
+        </tr>
+        <tr *ngFor="let player of players">
+            <td>
+                
+              </td>
+          <td>
+            {{ player.last_name }}
+          </td>
+          <td>
+            {{ player.first_name }}            
+          </td>         
+        </tr>
+      </table>
+    <div style="clear:both"></div>
+</div>

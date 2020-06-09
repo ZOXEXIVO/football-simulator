@@ -1,14 +1,14 @@
 ﻿import { ModuleWithProviders }  from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { homeRoutes } from './pages/home/home.routes';
-import { gameRoutes } from './pages/game/game.routes';
+import { HOME_ROUTES } from './pages/home/home.routes';
+import { GAME_ROUTES } from './pages/game/game.routes';
 
-export const routes: Routes = [
-    ...homeRoutes,
-    ...gameRoutes,
+export const APP_ROUTES: Routes = [
+    ...HOME_ROUTES,
+    ...GAME_ROUTES,
     {
       path: '', redirectTo: '/search', pathMatch: 'full'
     },
   ];
 
-  export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
+  export const routing: ModuleWithProviders = RouterModule.forRoot(APP_ROUTES);

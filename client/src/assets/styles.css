@@ -54,7 +54,7 @@ a{
 }
 
 .header_top .nav-gerb{
-  background: url(./assets/images/fapl.png) no-repeat center left;
+  background: url(./images/fapl.png) no-repeat center left;
   padding-left: 30px;
   margin-right: 15px;
   float: left;
@@ -328,7 +328,7 @@ table.main-table.table-striped>tbody>tr:nth-of-type(odd) {
   font-size: 15px;
   line-height: 22px;
   font-weight: bold;
-  background: url(./assets/images/bg-item-con.png);
+  background: url(./images/bg-item-con.png);
 }
 
 .btn-group.btn-match.open>a,
@@ -399,4 +399,8 @@ table.main-table.table-striped>tbody>tr:nth-of-type(odd) {
 .btn-group.btn-match .dropdown-menu>li>a:hover,
 .group-filter .dropdown-menu>li>a:hover{
   background: #266753;
+}
+
+a {
+  text-decoration: none !important;
 }

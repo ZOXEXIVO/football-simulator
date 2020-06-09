@@ -3,7 +3,7 @@ import { SearchComponent } from './search/search.component';
 import { HomeComponent } from './home.component';
 import { HelpComponent } from './help/help.component';
 
-export const homeRoutes: Routes = [
+export const HOME_ROUTES: Routes = [
   {
     path: '',
     component: HomeComponent,

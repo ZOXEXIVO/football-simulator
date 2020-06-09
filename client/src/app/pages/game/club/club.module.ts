@@ -2,16 +2,18 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { SharedModule } from 'src/app/shared/shared.module';
-import { LeagueDetailsComponent } from './details/league.details.component';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
-import { LeagueComponent } from './league.component';
+import { ClubSquadComponent } from './squad/club.squad.component';
+import { CommonModule } from '@angular/common';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { ClubComponent } from './club.component';
+
 
 @NgModule({
   declarations: [
-    LeagueComponent,
-    LeagueDetailsComponent
+    ClubComponent,
+    ClubSquadComponent
   ],
   imports: [
     CommonModule,
@@ -23,4 +25,4 @@ import { ComponentsModule } from 'src/app/components/components.module';
   providers: [
   ],
 })
-export class LeagueModule { } 
+export class ClubModule { } 

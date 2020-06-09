@@ -1,11 +1,14 @@
 import { Injectable } from "@angular/core";
-import { Observable, Subject } from "rxjs";
+import { Observable, BehaviorSubject } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class HeaderService {
-    public titleSubject: Subject<HeaderModel> = new Subject<HeaderModel>();
+    public titleSubject: BehaviorSubject<HeaderModel> = new BehaviorSubject<HeaderModel>({
+        title: "",
+        subTitle: ""
+    });
 
     setHeader(title: String, subTitle: String){
         this.titleSubject.next(new HeaderModel(title, subTitle));

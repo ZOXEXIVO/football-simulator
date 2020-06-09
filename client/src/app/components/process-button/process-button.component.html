@@ -1,0 +1,6 @@
+﻿<li class="item-msg" style="cursor: pointer;" (click)="processGame()">
+  <div style="text-transform: uppercase;text-align: center;" *ngIf="!isProcessing">Continue</div>
+  <div style="margin-top:5px;width:100px;padding-top: 20px;">
+      <spinner *ngIf="isProcessing"></spinner>
+  </div>
+</li>

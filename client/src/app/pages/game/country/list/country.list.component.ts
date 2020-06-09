@@ -13,12 +13,13 @@ export class CountryListComponent implements OnInit {
   countries: CountryListResponse;
 
   constructor(private api: FootballApi, private route: ActivatedRoute, private headerService: HeaderService) {
+   
   }
 
   ngOnInit() {
     this.headerService.setHeader('Countries', 'Select country');
 
-    this.route.parent.params.subscribe(params => {
+    this.route.parent.parent.params.subscribe(params => {
       this.isLoading = true;
       this.api.countries(params["gameId"])
       .subscribe(data => {

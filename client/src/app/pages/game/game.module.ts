@@ -4,24 +4,24 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { GameComponent } from './game.component';
 import { RouterModule } from '@angular/router';
-import { InboxModule } from './inbox/inbox.module';
-import { LeftMenuComponent } from './menus/left.menu.component';
 import { MainModule } from './main/main.module';
 import { CountryModule } from './country/country.module';
 import { LeagueModule } from './league/league.module';
+import { ClubModule } from './club/club.module';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   declarations: [
-    GameComponent,
-    LeftMenuComponent
+    GameComponent
   ],
   imports: [
     SharedModule,
     CountryModule,
+    ClubModule,
     LeagueModule,
+    ComponentsModule,
     BrowserModule,
     RouterModule,
-    InboxModule,
     MainModule
   ],
   providers: [

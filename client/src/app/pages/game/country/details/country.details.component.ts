@@ -18,10 +18,10 @@ export class CountryDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.parent.params.subscribe(params => {
+    this.route.parent.parent.params.subscribe(params => {
       this.isLoading = true;
-      this.api.country(params["gameId"], this.route.snapshot.params.countryId)
-      .subscribe(data => {
+
+      this.api.country(params["gameId"], this.route.snapshot.params.countryId).subscribe(data => {
         this.country = data.country;
 
         this.headerService.setHeader(data.country.name, 'Select leagues');
