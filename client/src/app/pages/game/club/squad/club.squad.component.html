@@ -1,54 +1,73 @@
 ﻿<div *ngIf="players" class="content">
-    <table class="squad-table">
-        <tr>
-          <th style="width: 50px">
-            Inf
-          </th>
-          <th>
-            Name
-          </th>
-          <th>
-            Position
-          </th>
-          <th>
-            Nat
-          </th>
-          <th>
-            Ability
-          </th>
-          <th>
-            Potential
-          </th>
-          <th>
-            Morale
-          </th>
-          <th>
-            Contiditions
-          </th>
-          <th>
-            Played
-          </th>
-          <th>
-            Goals
-          </th>
-          <th>
-            Assists
-          </th>
-          <th>
-            Value
-          </th>
-        </tr>
-        <tr *ngFor="let player of players">
-            <td>
-                
+  <table class="squad-table">
+    <tr>
+      <th style="width: 50px">
+        Inf
+      </th>
+      <th>
+        Name
+      </th>
+      <th>
+        Position
+      </th>
+      <th>
+        Nat
+      </th>
+      <th>
+        Ability
+      </th>
+      <th>
+        Potential
+      </th>
+      <th>
+        Morale
+      </th>
+      <th>
+        Contiditions
+      </th>
+      <th>
+        Played
+      </th>
+      <th>
+        Value
+      </th>
+    </tr>
+    <tr *ngFor="let player of players">
+      <td  style="width: 50px">
+          <div class="status-badge injured">           
+          </div>
+      </td>
+      <td>
+        <a  [routerLink]="['../../../players/', player.id, 'general']">
+          {{ player.last_name }} {{ player.first_name }}
+        </a>   
               </td>
-          <td>
-            {{ player.last_name }}
-          </td>
-          <td>
-            {{ player.first_name }}            
-          </td>         
-        </tr>
-      </table>
-    <div style="clear:both"></div>
+      <td  style="width: 80px">
+        GK
+      </td>
+      <td  style="width: 50px">
+        <img src="/assets/images/countries/ru.png" class="country-logo" />
+      </td>
+      <td  style="width: 150px">
+       <rating rating="3"></rating>
+      </td>
+      <td  style="width: 150px">
+        <rating rating="5"></rating>
+       </td>
+       <td style="width: 150px">
+        Good
+       </td>
+       <td  style="width: 100px">
+        97%
+       </td>
+
+       <td style="width: 70px">
+        25
+       </td>
+       <td style="width: 170px">
+       100 000
+       </td>
+    </tr>
+  </table>
+  <div style="clear:both"></div>
 </div>

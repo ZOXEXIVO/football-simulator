@@ -16,6 +16,7 @@ pub struct PlayerListResponse<'p> {
 
 #[derive(Serialize)]
 pub struct PlayerDto<'p> {
+    pub id: u32,
     // pub status: u32,
     // pub position: u8,
     pub first_name: &'p str,
@@ -46,6 +47,7 @@ pub async fn players_list_action(route_params: web::Path<PlayerListRequest>) -> 
 
     let result = PlayerListResponse{
         players: players.map(|p| PlayerDto {
+            id: p.id,
             first_name: &p.full_name.first_name,
             last_name: &p.full_name.last_name,
             middle_name: &p.full_name.middle_name

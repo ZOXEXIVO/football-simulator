@@ -5,7 +5,7 @@ import { HeaderService } from '../../services/header.service';
 
 @Component({
   templateUrl: './country.list.component.html',
-  styleUrls: ['./country.list.component.css']
+  styleUrls: ['./country.list.component.less']
 })
 export class CountryListComponent implements OnInit {
   isLoading: Boolean = false;

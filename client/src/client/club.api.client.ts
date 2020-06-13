@@ -25,6 +25,7 @@ export class PlayerGetResponse {
 }
 
 export class PlayerDto {
+  id: Number;
   first_name: String;
   last_name: String;
   middle_name: String;

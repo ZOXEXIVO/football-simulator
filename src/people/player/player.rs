@@ -32,7 +32,7 @@ impl Player {
         mut positions: Vec<PlayerPosition>,
     ) -> Self {
         positions.sort_by_key(|c| c.level);
-
+ 
         Player {
             id,
             full_name,

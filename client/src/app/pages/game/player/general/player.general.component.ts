@@ -4,10 +4,10 @@ import { HeaderService } from '../../services/header.service';
 import { ClubApi, PlayerDto } from 'src/client/club.api.client';
 
 @Component({
-  templateUrl: './club.squad.component.html',
-  styleUrls: ['./club.squad.component.less']
+  templateUrl: './player.general.component.html',
+  styleUrls: ['./player.general.component.less']
 })
-export class ClubSquadComponent implements OnInit {
+export class PlayerGeneralComponent implements OnInit {
   isLoading: Boolean = false;
 
   players: PlayerDto[];
