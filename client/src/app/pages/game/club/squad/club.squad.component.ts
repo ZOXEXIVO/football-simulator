@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HeaderService } from '../../services/header.service';
-import { ClubApi, PlayerDto } from 'src/client/club.api.client';
+import { ClubApi, PlayerListDto } from 'src/client/club.api.client';
 
 @Component({
   templateUrl: './club.squad.component.html',
@@ -10,7 +10,7 @@ import { ClubApi, PlayerDto } from 'src/client/club.api.client';
 export class ClubSquadComponent implements OnInit {
   isLoading: Boolean = false;
 
-  players: PlayerDto[];
+  players: PlayerListDto[];
 
   constructor(private clubApi: ClubApi,
     private route: ActivatedRoute,

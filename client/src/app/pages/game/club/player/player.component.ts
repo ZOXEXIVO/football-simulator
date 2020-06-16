@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FootballApi } from 'src/client/football.api.client';
 import { ActivatedRoute } from '@angular/router';
-import { HeaderService } from '../services/header.service';
+import { HeaderService } from '../../services/header.service';
 
 @Component({
   templateUrl: './player.component.html'

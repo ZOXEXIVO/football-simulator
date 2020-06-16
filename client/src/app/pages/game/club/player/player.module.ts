@@ -8,12 +8,14 @@ import { CommonModule } from '@angular/common';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { PlayerComponent } from './player.component';
 import { PlayerGeneralComponent } from './general/player.general.component';
+import { PlayerGeneralSkillComponent } from './general/skills/player.general.skills.component';
 
 
 @NgModule({
   declarations: [
     PlayerComponent,
-    PlayerGeneralComponent
+    PlayerGeneralComponent,
+    PlayerGeneralSkillComponent
   ],
   imports: [
     CommonModule,

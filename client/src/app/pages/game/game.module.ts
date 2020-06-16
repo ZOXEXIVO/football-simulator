@@ -9,7 +9,6 @@ import { CountryModule } from './country/country.module';
 import { LeagueModule } from './league/league.module';
 import { ClubModule } from './club/club.module';
 import { ComponentsModule } from 'src/app/components/components.module';
-import { PlayerModule } from './player/player.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +18,6 @@ import { PlayerModule } from './player/player.module';
     SharedModule,
     CountryModule,
     ClubModule,
-    PlayerModule,
     LeagueModule,
     ComponentsModule,
     BrowserModule,

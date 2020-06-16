@@ -8,6 +8,7 @@ import { ClubSquadComponent } from './squad/club.squad.component';
 import { CommonModule } from '@angular/common';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ClubComponent } from './club.component';
+import { PlayerModule } from './player/player.module';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { ClubComponent } from './club.component';
     SharedModule,
     RouterModule,
     BrowserModule,
-    ComponentsModule
+    ComponentsModule,
+    PlayerModule
   ],
   providers: [
   ],

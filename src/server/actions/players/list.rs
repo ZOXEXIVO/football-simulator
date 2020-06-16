@@ -11,11 +11,11 @@ pub struct PlayerListRequest {
 
 #[derive(Serialize)]
 pub struct PlayerListResponse<'p> {
-    pub players: Vec<PlayerDto<'p>>
+    pub players: Vec<PlayerListDto<'p>>
 }
 
 #[derive(Serialize)]
-pub struct PlayerDto<'p> {
+pub struct PlayerListDto<'p> {
     pub id: u32,
     // pub status: u32,
     // pub position: u8,
@@ -46,7 +46,7 @@ pub async fn players_list_action(route_params: web::Path<PlayerListRequest>) -> 
         .flat_map(|cl| &cl.players.players);
 
     let result = PlayerListResponse{
-        players: players.map(|p| PlayerDto {
+        players: players.map(|p| PlayerListDto {
             id: p.id,
             first_name: &p.full_name.first_name,
             last_name: &p.full_name.last_name,

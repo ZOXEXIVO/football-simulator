@@ -9,10 +9,10 @@ export class ClubApi {
   constructor(private http: HttpClient) {
   }
 
-  getPlayers(gameId, clubId): Observable<PlayerGetResponse> {
-    const result = new Subject<PlayerGetResponse>();
+  getPlayers(gameId, clubId): Observable<PlayersGetResponse> {
+    const result = new Subject<PlayersGetResponse>();
 
-    this.http.get('/api/game/' + gameId + '/club/' + clubId + '/players').subscribe((data: PlayerGetResponse) => {
+    this.http.get('/api/game/' + gameId + '/club/' + clubId + '/players').subscribe((data: PlayersGetResponse) => {
       result.next(data);
     });
 
@@ -20,11 +20,11 @@ export class ClubApi {
   }
 }
 
-export class PlayerGetResponse {
-  players: PlayerDto[];
+export class PlayersGetResponse {
+  players: PlayerListDto[];
 }
 
-export class PlayerDto {
+export class PlayerListDto {
   id: Number;
   first_name: String;
   last_name: String;
