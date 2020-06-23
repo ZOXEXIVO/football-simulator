@@ -95,8 +95,8 @@ impl SimulationContext {
     pub fn new(date: NaiveDateTime) -> Self {
         SimulationContext {
             date,
-            day: 0,
-            hour: 0,
+            day: date.day() as u8,
+            hour: date.hour() as u8,
         }
     }
 

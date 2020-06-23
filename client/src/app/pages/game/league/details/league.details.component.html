@@ -106,6 +106,12 @@
               <td class="score">3 - 1</td>
               <td>Tom</td>
             </tr>
+
+            <tr *ngFor="let item of league.week_schedule.items;let i = index">
+              <td># {{ item.home_club_name }}</td>
+              <td class="score">{{ item.home_goals }} - {{ item.away_goals }} </td>
+              <td># {{ item.away_club_name }}</td>
+            </tr>            
           </table>
         </div>
         <div class="col-xs-6">

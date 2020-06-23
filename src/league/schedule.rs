@@ -15,7 +15,7 @@ pub struct ScheduleManager {
 pub struct ScheduleItem {
     pub date: NaiveDateTime,
     pub home_club_id: u32,
-    pub guest_club_id: u32,
+    pub away_club_id: u32,
 }
 
 #[derive(Debug)]
@@ -33,7 +33,7 @@ impl ScheduleManager {
         }
     }
     
-    pub fn is_schedule_exists(&self) -> bool {
+    pub fn exists(&self) -> bool {
         !self.items.is_empty()
     }
     
@@ -81,7 +81,7 @@ impl ScheduleManager {
             res.push(ScheduleItem {
                 date: schedule_time,
                 home_club_id: home_clubs[club_idx].id,
-                guest_club_id: away_clubs[club_idx].id
+                away_club_id: away_clubs[club_idx].id
             })
         }
   
@@ -97,17 +97,24 @@ impl ScheduleManager {
 
         let mut current_date = ScheduleManager::get_nearest_saturday(current_date, league_settings);
 
+        println!("nearest saturday: {}", current_date);
+        
         let end_date = {
-            let (end_day, end_month) = league_settings.season_starting;
+            let (end_day, end_month) = league_settings.season_ending;
 
             NaiveDate::from_ymd(
                 current_date.year(), end_month as u32, end_day as u32)
         };
-        
+
+        println!("end date: {}", end_date);
+
         let mut rng = &mut rand::thread_rng();
 
         loop {
-            if current_date == end_date {
+            println!("current_date: {}, end_date: {}", current_date, end_date);
+
+            if current_date >= end_date {
+                println!("current_date: == end_date. break");
                 break;
             }
 
@@ -128,8 +135,10 @@ impl ScheduleManager {
                 schedule_items.push(item);
             }
 
-            current_date += Duration::days(1);
+            current_date += Duration::days(7);
         }
+
+        println!("generated: {} items", schedule_items.len());
         
         self.items = schedule_items;
         self.current_tour = None;

@@ -24,6 +24,9 @@ use crate::server::Server;
 use crate::utils::TimeEstimation;
 use crate::simulator::{FootballSimulator, SimulatorData};
 
+// #[global_allocator]
+// static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
 #[actix_rt::main]
 async fn main() {
     let server = Server::new("0.0.0.0:18000");

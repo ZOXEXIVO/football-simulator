@@ -35,8 +35,8 @@ pub struct LeagueScheduleItem<'si> {
     pub home_club_id: u32,
     pub home_club_name: &'si str,
     
-    pub guest_club_id: u32,
-    pub guest_club_name: &'si str,
+    pub away_club_id: u32,
+    pub away_club_name: &'si str,
 }
 
 #[derive(Serialize)]
@@ -70,7 +70,7 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
     
     let league_table = league.league_table.get();
     
-    let result = LeagueGetResponse{
+    let mut result = LeagueGetResponse{
         league: LeagueDto {
             id: league.id,
             name: &league.name,
@@ -92,6 +92,21 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
             }
         }
     };
+    
+    if let Some(tour) = &league.schedule.current_tour {
+        for item in &tour.games {
+            result.league.week_schedule.items.push(LeagueScheduleItem{
+                away_goals: None,
+                home_goals: None,
+                
+                home_club_id: item.home_club_id,
+                home_club_name: &league.clubs.iter().find(|c| c.id == item.home_club_id).unwrap().name,
+                
+                away_club_id: item.home_club_id,
+                away_club_name: &league.clubs.iter().find(|c| c.id == item.away_club_id).unwrap().name,
+            })
+        }
+    }   
     
     Ok(HttpResponse::Ok().json(result))
 }

@@ -34,12 +34,12 @@ impl League {
     pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
         let current_date = ctx.simulation.date.date();
         
-        if self.settings.is_time_for_new_schedule(&ctx.simulation) {
+        if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
             self.schedule.generate(ctx.simulation.date.date(),
                                    &self.clubs, &self.settings);
         }
 
-        if self.schedule.is_schedule_exists() && ctx.simulation.is_week_beginning() {
+        if self.schedule.exists() && ctx.simulation.is_week_beginning() {
             self.schedule.start_new_tour(current_date);
         }
         
@@ -70,7 +70,7 @@ impl League {
                 .iter()
                 .map(|m| {
                     Match::make(self.get_club(&m.home_club_id),
-                                self.get_club(&m.guest_club_id),
+                                self.get_club(&m.away_club_id),
                     )
                 }).collect()
         };

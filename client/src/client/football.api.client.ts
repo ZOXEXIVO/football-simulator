@@ -140,6 +140,7 @@ export class LeagueGetLeagueDto {
   id: Number;
   name: String;
   table: LeagueGetLeagueTableDto;
+  week_schedule: LeagueScheduleDto
 }
 
 export class LeagueGetLeagueTableDto {
@@ -156,4 +157,19 @@ export class LeagueGetLeagueTableRowDto {
   goal_scored: Number;
   goal_concerned: Number;
   points: Number;
+}
+
+export class LeagueScheduleDto {
+  items: LeagueScheduleItemDto[];
+}
+
+export class LeagueScheduleItemDto {
+  home_goals: Number;
+  away_goals: Number;
+    
+  home_club_id: Number;
+  home_club_name: String;
+    
+  away_club_id: Number;
+  away_club_name: String;
 }
