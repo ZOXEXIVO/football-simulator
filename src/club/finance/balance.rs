@@ -1,6 +1,6 @@
 use crate::club::{ClubFinancialBalanceHistory, ClubFinanceResult, ClubSponsorship, ClubSponsorshipContract};
-use crate::people::NaiveDate;
 use crate::simulator::context::GlobalContext;
+use chrono::NaiveDate;
 
 #[derive(Debug)]
 pub struct ClubFinances {

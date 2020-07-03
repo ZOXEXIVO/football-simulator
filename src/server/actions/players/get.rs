@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse, Result};
 use crate::server::{GLOBAL_DATA};
 use serde::{Serialize, Deserialize};
-use crate::people::Player;
+use crate::club::Player;
 
 #[derive(Deserialize)]
 pub struct PlayerGetRequest {

@@ -1,4 +1,4 @@
-use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract};
+use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract, PlayerCollection};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings, LeagueTable, ScheduleManager};
 use crate::shared::fullname::FullName;
@@ -8,11 +8,13 @@ use crate::utils::{IntegerUtils, StringUtils};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 
 use crate::continent::Continent;
-use crate::people::{
-    Mental, Physical, Player, PlayerAttributes, PlayerClubContract, PlayerCollection,
+
+use crate::club::{
+    Mental, Physical, Player, PlayerAttributes, PlayerClubContract,
     PlayerPosition, PlayerPositionType, PlayerSkills, Staff, StaffClubContract, StaffCollection,
     StaffPosition, StaffStatus, Technical,
 };
+
 use crate::transfers::TransferPool;
 
 impl SimulatorData {

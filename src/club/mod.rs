@@ -9,6 +9,9 @@ mod result;
 mod history;
 mod training;
 mod finance;
+mod player;
+mod staff;
+mod person;
 
 pub use board::*;
 pub use club::*;
@@ -21,3 +24,6 @@ pub use result::*;
 pub use history::*;
 pub use training::*;
 pub use finance::*;
+pub use player::*;
+pub use staff::*;
+pub use person::*;

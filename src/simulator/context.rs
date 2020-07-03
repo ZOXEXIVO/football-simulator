@@ -1,10 +1,9 @@
 pub use chrono::prelude::*;
 
-use crate::club::{BoardContext, ClubContext, ClubFinanceContext};
+use crate::club::{BoardContext, ClubContext, ClubFinanceContext, PlayerContext, StaffContext};
 use crate::continent::ContinentContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
-use crate::people::{PlayerContext, StaffContext};
 
 #[derive(Clone)]
 pub struct GlobalContext {

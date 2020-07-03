@@ -1,4 +1,4 @@
-use crate::people::{Player, Staff};
+use crate::club::{Player, Staff};
 
 #[derive(Debug)]
 pub struct Training{

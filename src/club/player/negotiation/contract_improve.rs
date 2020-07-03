@@ -1,5 +1,4 @@
-use crate::club::Club;
-use crate::people::Player;
+use crate::club::{Club, Player};
 
 pub struct ContractImproveRequestNegotiation {}
 

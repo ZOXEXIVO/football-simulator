@@ -1,5 +1,4 @@
-use crate::people::{StaffResult, PlayerCollectionResult};
-use crate::club::{BoardResult, ClubFinanceResult};
+use crate::club::{BoardResult, ClubFinanceResult, StaffResult, PlayerCollectionResult};
 use crate::simulator::SimulatorData;
 
 pub struct ClubResult {

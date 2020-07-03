@@ -1,6 +1,6 @@
 use crate::club::ClubFinancialBalance;
-use crate::people::NaiveDate;
 use std::collections::LinkedList;
+use chrono::NaiveDate;
 
 #[derive(Debug)]
 pub struct ClubFinancialBalanceHistory{

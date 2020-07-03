@@ -4,7 +4,7 @@ use chrono::{NaiveDateTime, Duration};
 use rand::Rng;
 use rand::distributions::Alphanumeric;
 use crate::transfers::TransferPool;
-use crate::people::Player;
+use crate::club::Player;
 
 pub struct SimulatorData {
     pub id: String,

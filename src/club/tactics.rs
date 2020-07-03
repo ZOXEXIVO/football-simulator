@@ -1,5 +1,4 @@
-use crate::club::Club;
-use crate::people::{BehaviourState, PlayerPositionType, Staff};
+use crate::club::{Club, Staff, PlayerPositionType, PersonBehaviourState};
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -37,9 +36,9 @@ pub struct TacticsSelector;
 impl TacticsSelector {
     pub fn select(club: &Club, coach: &Staff) -> Tactics {
         match coach.behaviour.state {
-            BehaviourState::Poor => Tactics::new(TacticsPositioning::T451),
-            BehaviourState::Normal => Tactics::new(Self::club_players(club)),
-            BehaviourState::Good => Tactics::new(Self::club_players(club)),
+            PersonBehaviourState::Poor => Tactics::new(TacticsPositioning::T451),
+            PersonBehaviourState::Normal => Tactics::new(Self::club_players(club)),
+            PersonBehaviourState::Good => Tactics::new(Self::club_players(club)),
         }
     }
 

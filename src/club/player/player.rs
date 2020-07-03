@@ -1,21 +1,20 @@
-use crate::people::{PlayerAttributes, PlayerClubContract, PlayerMailbox, PlayerSkills, PlayerResult, PlayerCollectionResult, PlayerTraining, Staff};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
 use crate::utils::{DateUtils};
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
-use crate::people::behaviour::{Behaviour, BehaviourState};
+use crate::club::{PlayerSkills, PlayerClubContract, PlayerAttributes, PlayerMailbox, PlayerTraining, PlayerResult, PersonBehaviour, Staff, PersonBehaviourState, PlayerCollectionResult};
 
 #[derive(Debug)]
 pub struct Player {
     pub id: u32,
     pub full_name: FullName,
     pub birth_date: NaiveDate,
-    pub behaviour: Behaviour,
+    pub behaviour: PersonBehaviour,
     pub skills: PlayerSkills,
     pub contract: Option<PlayerClubContract>,
     pub positions: Vec<PlayerPosition>,
-    pub preferred_foot: PlayerFoot,
+    pub preferred_foot: PlayerPrefferedFoot,
     pub attributes: PlayerAttributes,
     pub mailbox: PlayerMailbox,
     pub training: PlayerTraining
@@ -37,10 +36,10 @@ impl Player {
             id,
             full_name,
             birth_date,
-            behaviour: Behaviour::default(),
+            behaviour: PersonBehaviour::default(),
             skills,
             positions,
-            preferred_foot: PlayerFoot::Right,
+            preferred_foot: PlayerPrefferedFoot::Right,
             attributes,
             contract,
             training: PlayerTraining::new(),
@@ -55,7 +54,7 @@ impl Player {
             self.behaviour.try_increase();
         }
 
-        if self.behaviour.state == BehaviourState::Poor {
+        if self.behaviour.state == PersonBehaviourState::Poor {
             result.request_transfer(self.id);
         }
 
@@ -66,14 +65,14 @@ impl Player {
         let training = &self.training;
         
         match coach.behaviour.state {
-            BehaviourState::Good => {
+            PersonBehaviourState::Good => {
                 self.skills.mental.train(1);
                 self.skills.technical.train(1)
             },
-            BehaviourState::Normal => {
+            PersonBehaviourState::Normal => {
                 self.skills.train(1)
             },
-            BehaviourState::Poor => {
+            PersonBehaviourState::Poor => {
                 self.skills.physical.train(2)
             }
         }
@@ -98,7 +97,7 @@ impl Player {
 }
 
 #[derive(Debug)]
-pub enum PlayerFoot {
+pub enum PlayerPrefferedFoot {
     Left,
     Right,
     Both,

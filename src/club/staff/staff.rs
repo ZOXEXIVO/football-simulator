@@ -1,19 +1,17 @@
-use crate::people::player::player::Player;
-use crate::people::{StaffClubContract, StaffResult, StaffPosition};
 use crate::shared::fullname::FullName;
 use crate::simulator::context::GlobalContext;
 use crate::utils::DateUtils;
 use chrono::NaiveDate;
 use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Result};
-use crate::people::behaviour::Behaviour;
+use crate::club::{StaffClubContract, Player, StaffResult, StaffPosition, PersonBehaviour};
 
 #[derive(Debug)]
 pub struct Staff {
     pub id: u32,
     pub full_name: FullName,
     pub birth_date: NaiveDate,
-    pub behaviour: Behaviour,
+    pub behaviour: PersonBehaviour,
 
     pub contract: Option<StaffClubContract>,
 
@@ -32,7 +30,7 @@ impl Staff {
             full_name,
             birth_date,
             contract,
-            behaviour: Behaviour::default(),
+            behaviour: PersonBehaviour::default(),
             favorite_players: HashSet::new(),
         }
     }
@@ -46,7 +44,7 @@ impl Staff {
                 middle_name: "stub".to_string(),
             },
             contract: None,
-            behaviour: Behaviour::default(),
+            behaviour: PersonBehaviour::default(),
             birth_date: NaiveDate::from_ymd(2019, 1, 1),
             favorite_players: HashSet::new(),
         }

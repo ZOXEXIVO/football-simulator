@@ -162,7 +162,6 @@ impl Tour {
 mod tests {
     use super::*;
     use crate::club::ClubMood;
-    use crate::people::{PlayerCollection, StaffCollection};
     use crate::ClubBoard;
 
     #[test]

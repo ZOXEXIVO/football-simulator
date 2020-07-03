@@ -1,5 +1,5 @@
-use crate::people::Player;
 use crate::simulator::SimulatorData;
+use crate::club::Player;
 
 pub struct PlayerCollectionResult {
     pub players: Vec<PlayerResult>,

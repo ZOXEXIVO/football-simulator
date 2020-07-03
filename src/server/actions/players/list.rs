@@ -1,7 +1,6 @@
 use actix_web::{web, HttpResponse, Result};
 use crate::server::{GLOBAL_DATA};
 use serde::{Serialize, Deserialize};
-use crate::people::{PlayerPosition, PlayerPositionType};
 
 #[derive(Deserialize)]
 pub struct PlayerListRequest {

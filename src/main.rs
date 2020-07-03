@@ -8,7 +8,6 @@ mod continent;
 mod country;
 mod league;
 mod r#match;
-mod people;
 mod server;
 mod transfers;
 

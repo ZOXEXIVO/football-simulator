@@ -1,11 +1,8 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances, ClubSponsorshipContract};
+use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances, ClubSponsorshipContract, StaffCollection, PlayerCollection, Player, PlayerSelector};
 use crate::simulator::context::GlobalContext;
-use crate::people::{
-    Player, PlayerCollection, PlayerSelector, StaffCollection,
-};
 
 #[derive(Debug)]
 pub struct Club {

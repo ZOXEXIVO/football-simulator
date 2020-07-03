@@ -1,8 +1,7 @@
 use crate::club::club::Club;
 use crate::club::squad::SquadPlayer;
-use crate::people::staff::staff::Staff;
-use crate::people::{Player, PlayerPositionType};
 use lazy_static::lazy_static;
+use crate::club::{Staff, PlayerPositionType, Player};
 
 pub struct PlayerSelector;
 
