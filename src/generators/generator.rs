@@ -1,6 +1,6 @@
 use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract, PlayerCollection};
 use crate::country::Country;
-use crate::league::{League, LeagueSettings, LeagueTable, ScheduleManager};
+use crate::league::{League, LeagueSettings, LeagueTable, ScheduleManager, DayMonthPeriod};
 use crate::shared::fullname::FullName;
 use crate::simulator::SimulatorData;
 use crate::utils::{IntegerUtils, StringUtils};
@@ -187,8 +187,8 @@ impl SimulatorData {
                             name: String::from("Russia"),
                             leagues: vec![
                                 League::new(1, String::from("Premier league"), 5000, LeagueSettings {
-                                    season_starting: (1, 1),
-                                    season_ending: (1, 12),
+                                    season_starting_half: DayMonthPeriod::new(1,7, 5,12),
+                                    season_ending_half: DayMonthPeriod::new(1,3, 31, 5),
                                 }, clubs)
                             ],
                             reputation: 5000,
@@ -230,8 +230,8 @@ impl League {
             clubs,
             schedule: ScheduleManager::new(),
             settings: LeagueSettings {
-                season_starting: (1, 12),
-                season_ending: (1, 12),
+                season_starting_half: DayMonthPeriod::new(1,7, 5,12),
+                                    season_ending_half: DayMonthPeriod::new(1,3, 31, 5),
             },
             league_table: LeagueTable::new(club_headers),
             reputation: 5000,

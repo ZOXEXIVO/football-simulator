@@ -86,31 +86,10 @@
           <p>Saturday 17th December 2020</p>
 
           <table class="week-results">
-            <tr>
-              <td>Spartak-Moscow</td>
-              <td class="score">0 - 1</td>
-              <td>Zenith</td>
-            </tr>
-            <tr>
-              <td>Dinamo</td>
-              <td class="score">0 - 0</td>
-              <td>Rostov</td>
-            </tr>
-            <tr>
-              <td>Krasnodar</td>
-              <td class="score">2 - 0</td>
-              <td>Arsenal Tula</td>
-            </tr>
-            <tr>
-              <td>Lokomotiv Moscow</td>
-              <td class="score">3 - 1</td>
-              <td>Tom</td>
-            </tr>
-
             <tr *ngFor="let item of league.week_schedule.items;let i = index">
-              <td># {{ item.home_club_name }}</td>
+              <td>{{ item.home_club_name }}</td>
               <td class="score">{{ item.home_goals }} - {{ item.away_goals }} </td>
-              <td># {{ item.away_club_name }}</td>
+              <td>{{ item.away_club_name }}</td>
             </tr>            
           </table>
         </div>

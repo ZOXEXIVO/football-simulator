@@ -6,12 +6,12 @@ use crate::league::ScheduleItem;
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
     game_id: String,
-    league_id: u32
+    league_id: u32,
 }
 
 #[derive(Serialize)]
 pub struct LeagueGetResponse<'l> {
-   league: LeagueDto<'l>
+    league: LeagueDto<'l>
 }
 
 #[derive(Serialize)]
@@ -19,7 +19,7 @@ pub struct LeagueDto<'l> {
     pub id: u32,
     pub name: &'l str,
     pub table: LeagueTableDto<'l>,
-    pub week_schedule: LeagueSchedule<'l>
+    pub week_schedule: LeagueSchedule<'l>,
 }
 
 #[derive(Serialize)]
@@ -31,10 +31,10 @@ pub struct LeagueSchedule<'s> {
 pub struct LeagueScheduleItem<'si> {
     pub home_goals: Option<u8>,
     pub away_goals: Option<u8>,
-    
+
     pub home_club_id: u32,
     pub home_club_name: &'si str,
-    
+
     pub away_club_id: u32,
     pub away_club_name: &'si str,
 }
@@ -58,7 +58,7 @@ pub struct LeagueTableRow<'l> {
 }
 
 pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Result<HttpResponse> {
-    if !GLOBAL_DATA.contains_key(&route_params.game_id){
+    if !GLOBAL_DATA.contains_key(&route_params.game_id) {
         return Ok(HttpResponse::NotFound().finish());
     }
 
@@ -67,10 +67,10 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
     let league = simulator_data.continents.iter().flat_map(|c| &c.countries)
         .flat_map(|cn| &cn.leagues)
         .find(|l| l.id == route_params.league_id).unwrap();
-    
+
     let league_table = league.league_table.get();
-    
-    let mut result = LeagueGetResponse{
+
+    let mut result = LeagueGetResponse {
         league: LeagueDto {
             id: league.id,
             name: &league.name,
@@ -84,29 +84,33 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
                     lost: t.lost,
                     goal_scored: t.goal_scored,
                     goal_concerned: t.goal_concerned,
-                    points: t.points
+                    points: t.points,
                 }).collect()
             },
             week_schedule: LeagueSchedule {
                 items: Vec::new()
-            }
+            },
         }
     };
-    
-    if let Some(tour) = &league.schedule.current_tour {
-        for item in &tour.games {
-            result.league.week_schedule.items.push(LeagueScheduleItem{
+
+    for tour in &league.schedule.tours {
+        for item in &tour.items {
+            result.league.week_schedule.items.push(LeagueScheduleItem {
                 away_goals: None,
                 home_goals: None,
-                
+
                 home_club_id: item.home_club_id,
                 home_club_name: &league.clubs.iter().find(|c| c.id == item.home_club_id).unwrap().name,
-                
+
                 away_club_id: item.home_club_id,
                 away_club_name: &league.clubs.iter().find(|c| c.id == item.away_club_id).unwrap().name,
             })
         }
-    }   
-    
+    }
+
+    // if let Some(tour) = &league.schedule.tours {
+    //    
+    // }   
+
     Ok(HttpResponse::Ok().json(result))
 }

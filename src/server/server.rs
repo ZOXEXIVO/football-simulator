@@ -4,6 +4,7 @@ use lazy_static::lazy_static;
 use crate::simulator::SimulatorData;
 use std::sync::Mutex;
 use chashmap::*;
+use actix_web::middleware::Logger;
 
 lazy_static!{
     pub static ref GAMES: Mutex<Vec<(String, String)>> = Mutex::new(Vec::new());
@@ -20,11 +21,11 @@ impl Server {
     }
 
     pub async fn start(&self) {
-        //std::env::set_var("RUST_LOG", "actix_web=info");
-        //env_logger::init();
+        std::env::set_var("RUST_LOG", "actix_web=info");
+        env_logger::init();
         
         HttpServer::new(move || {
-            App::new()//.wrap(Logger::default())                
+            App::new().wrap(Logger::default())                
                 .service(web::resource("/api/game").route(web::get().to(game_list_action)))
                 .service(web::resource("/api/game/create").route(web::post().to(game_create_action)))
                 .service(web::resource("/api/game/{game_id}/process").route(web::post().to(game_process_action)))

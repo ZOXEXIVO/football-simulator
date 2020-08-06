@@ -3,12 +3,26 @@ use chrono::prelude::*;
 use chrono::Duration;
 use chrono::NaiveDate;
 use crate::league::LeagueSettings;
-use rand::seq::IteratorRandom;
+use super::DayMonthPeriod;
+
+#[derive(Debug, Clone)]
+pub struct ScheduleTour {
+    pub items: Vec<ScheduleItem>,
+    pub played: bool
+}
+
+impl ScheduleTour{ 
+    pub fn new(games_count: usize) -> Self {
+        ScheduleTour {
+            items: Vec::with_capacity(games_count),
+            played: false
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct ScheduleManager {
-    pub items: Vec<ScheduleItem>,
-    pub current_tour: Option<Tour>
+    pub tours: Vec<ScheduleTour>
 }
 
 #[derive(Debug, Clone)]
@@ -17,44 +31,89 @@ pub struct ScheduleItem {
     pub home_club_id: u32,
     pub away_club_id: u32,
 }
-
-#[derive(Debug)]
-pub struct Tour {
-    pub games: Vec<ScheduleItem>
-}
-
 const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
 
 impl ScheduleManager {
     pub fn new() -> Self {
         ScheduleManager {
-            items: Vec::new(),
-            current_tour: None
+            tours: Vec::new()
         }
     }
     
     pub fn exists(&self) -> bool {
-        !self.items.is_empty()
+        !self.tours.is_empty()
+    }
+    
+    pub fn generate(&mut self, year: u16, clubs: &[Club], tours_count: usize, league_settings: &LeagueSettings) {
+        self.tours = Vec::with_capacity( (clubs.len() / 2) * tours_count);
+        
+        for item in self.generate_for_period(&league_settings.season_starting_half, year, clubs, tours_count){
+            self.tours.push(item);
+        }
+
+        for item in self.generate_for_period(&league_settings.season_ending_half, year, clubs, tours_count){
+            self.tours.push(item);
+        }
+    }
+    
+    fn generate_for_period(&mut self, period: &DayMonthPeriod, year: u16, clubs: &[Club], tours_count: usize) -> Vec<ScheduleTour> {
+        let current_date = ScheduleManager::get_nearest_saturday(
+            NaiveDate::from_ymd(year as i32, period.from_month as u32, period.from_day as u32));
+
+        let items_count = (clubs.len() / 2) * tours_count;
+        
+        let mut result = Vec::with_capacity(items_count);
+
+        for _ in 0..tours_count {
+            result.push(ScheduleTour::new(clubs.len() / 2))
+        }
+        
+        let mut current_tour = 0;
+
+        for (idx, club) in clubs.iter().enumerate() {
+
+            for (inner_idx, inner_club) in clubs.iter().enumerate() {
+    
+                if club.id == inner_club.id {
+                    continue;
+                }
+                
+                let item = ScheduleItem {
+                    home_club_id: club.id,
+                    away_club_id: inner_club.id,
+                    date: current_date
+                };
+
+                result[current_tour].items.push(item);
+                
+                current_tour += 1;
+                current_tour %= tours_count;
+            }
+        }
+        
+        for tour_id in 1..result.len(){
+            let current_tour = &mut result[tour_id].items;
+        }
+        
+        result
     }
     
     pub fn start_new_tour(&mut self, date: NaiveDate){
-        let mut current_week_games = Vec::with_capacity(30);
-        
+        //let mut current_week_games = Vec::with_capacity(30);
+
         let start_date = date;
         let end_date = date + Duration::days(7);
 
-        for day_game in self.items.iter().filter(|s| s.date.date() >= start_date && s.date.date() <= end_date) {
-            current_week_games.push(day_game.clone())
-        }
-
-        self.current_tour = Some(Tour::new(current_week_games));
+        // for day_game in self.tours.iter().filter(|s| s.date.date() >= start_date && s.date.date() <= end_date) {
+        //     current_week_games.push(day_game.clone())
+        // }
     }
-    
-    fn get_nearest_saturday(current_date: NaiveDate, league_settings: &LeagueSettings) -> NaiveDate {
-        let (start_day, start_month) = league_settings.season_starting;
-        
-        let mut current_date = NaiveDate::from_ymd(
-            current_date.year(), start_month as u32, start_day as u32);
+
+    fn get_nearest_saturday(date: NaiveDate) -> NaiveDateTime {
+        let mut current_date = NaiveDateTime::new(NaiveDate::from_ymd(
+            date.year(), date.month() as u32, date.day() as u32),
+            NaiveTime::from_hms(0, 0, 0)
+        );
         
         loop {
             if current_date.weekday() == Weekday::Sat {
@@ -67,93 +126,18 @@ impl ScheduleManager {
         current_date
     }
     
-    fn generate_for_day(clubs: &[&Club], date: NaiveDate) -> Vec<ScheduleItem> {
-        let schedule_time = NaiveDateTime::new(date, NaiveTime::from_hms(18, 0, 0));
-  
-        let clubs_len_half = clubs.len() / 2;
-        
-        let home_clubs: Vec<_> = clubs.iter().take(clubs_len_half).collect();
-        let away_clubs: Vec<_> = clubs.iter().skip(clubs_len_half).take(clubs_len_half).collect();
-
-        let mut res = Vec::with_capacity(clubs_len_half as usize);
-
-        for club_idx in 0..clubs_len_half {
-            res.push(ScheduleItem {
-                date: schedule_time,
-                home_club_id: home_clubs[club_idx].id,
-                away_club_id: away_clubs[club_idx].id
-            })
-        }
-  
-        res
-    }
-    
-    pub fn generate(&mut self, current_date: NaiveDate, clubs: &[Club], league_settings: &LeagueSettings) {
-        let club_len = clubs.len();
-
-        let club_len_half: u8 = (club_len / 2) as u8;
-  
-        let mut schedule_items = Vec::with_capacity(club_len * 2);
-
-        let mut current_date = ScheduleManager::get_nearest_saturday(current_date, league_settings);
-
-        println!("nearest saturday: {}", current_date);
-        
-        let end_date = {
-            let (end_day, end_month) = league_settings.season_ending;
-
-            NaiveDate::from_ymd(
-                current_date.year(), end_month as u32, end_day as u32)
-        };
-
-        println!("end date: {}", end_date);
-
-        let mut rng = &mut rand::thread_rng();
-
-        loop {
-            println!("current_date: {}, end_date: {}", current_date, end_date);
-
-            if current_date >= end_date {
-                println!("current_date: == end_date. break");
-                break;
-            }
-
-            let random_clubs: Vec<&Club> = clubs.iter()
-                .choose_multiple(&mut rng, club_len as usize);
-            
-            let saturday = current_date;
-            let saturday_clubs = &random_clubs[0..(club_len_half as usize)];
-            
-            let sunday = current_date + Duration::days(1);
-            let sunday_clubs = &random_clubs[(club_len_half as usize)..(club_len_half as usize)];
-            
-            for item in Self::generate_for_day(saturday_clubs, saturday) {
-                schedule_items.push(item);
-            }
-
-            for item in Self::generate_for_day(sunday_clubs, sunday) {
-                schedule_items.push(item);
-            }
-
-            current_date += Duration::days(7);
-        }
-
-        println!("generated: {} items", schedule_items.len());
-        
-        self.items = schedule_items;
-        self.current_tour = None;
-    }
-
     pub fn get_matches(&self, date: NaiveDateTime) -> Vec<&ScheduleItem> {
-        self.items.iter().filter(|x| x.date == date).collect()
-    }
-}
-
-impl Tour {
-    pub fn new(games: Vec<ScheduleItem>) -> Self {
-        Tour {
-            games
+        let mut result = Vec::new();
+        
+        for tour in &self.tours {
+            for item in &tour.items {
+                if item.date == date {
+                    result.push(item);
+                }
+            }
         }
+        
+        result
     }
 }
 

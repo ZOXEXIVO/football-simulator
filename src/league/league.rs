@@ -35,8 +35,7 @@ impl League {
         let current_date = ctx.simulation.date.date();
         
         if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule.generate(ctx.simulation.date.date(),
-                                   &self.clubs, &self.settings);
+            self.schedule.generate(2020, &self.clubs, 30,&self.settings);
         }
 
         if self.schedule.exists() && ctx.simulation.is_week_beginning() {
@@ -103,17 +102,37 @@ impl League {
 
 #[derive(Debug)]
 pub struct LeagueSettings {
-    pub season_starting: (u8, u8),
-    pub season_ending: (u8, u8),
+    pub season_starting_half: DayMonthPeriod,
+    pub season_ending_half: DayMonthPeriod,
+}
+
+#[derive(Debug)]
+pub struct DayMonthPeriod {
+    pub from_day: u8,
+    pub from_month: u8,
+
+    pub to_day: u8,
+    pub to_month: u8
+}
+
+impl DayMonthPeriod {
+    pub fn new(from_day: u8, from_month: u8, to_day: u8, to_month: u8) -> Self {
+        DayMonthPeriod {
+            from_day,
+            from_month,
+            to_day,
+            to_month
+        }
+    }
 }
 
 impl LeagueSettings {
     pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool {
-        let (start_day, start_month) = self.season_starting;
+        let season_starting_date = &self.season_starting_half;
         
         let date = context.date.date();
 
-        (date.day() as u8) == start_day && (date.month() as u8) == start_month
+        (date.day() as u8) == season_starting_date.from_day && (date.month() as u8) == season_starting_date.from_month
     }
 }
 
