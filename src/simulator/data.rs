@@ -18,7 +18,7 @@ pub struct SimulatorData {
 
 impl SimulatorData {
     pub fn next_date(&mut self) {
-        self.date += Duration::hours(1);
+        self.date += Duration::days(1);
     }
     
     pub fn id(&self) -> String {

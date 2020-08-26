@@ -21,8 +21,8 @@ impl Server {
     }
 
     pub async fn start(&self) {
-        std::env::set_var("RUST_LOG", "actix_web=info");
-        env_logger::init();
+        //std::env::set_var("RUST_LOG", "actix_web=info");
+        //env_logger::init();
         
         HttpServer::new(move || {
             App::new().wrap(Logger::default())                

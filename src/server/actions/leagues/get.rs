@@ -96,8 +96,8 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
     for tour in &league.schedule.tours {
         for item in &tour.items {
             result.league.week_schedule.items.push(LeagueScheduleItem {
-                away_goals: None,
-                home_goals: None,
+                home_goals: item.home_goals,
+                away_goals: item.away_goals,               
 
                 home_club_id: item.home_club_id,
                 home_club_name: &league.clubs.iter().find(|c| c.id == item.home_club_id).unwrap().name,

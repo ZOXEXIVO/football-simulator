@@ -4,13 +4,15 @@ use crate::r#match::FootballEngine;
 
 #[derive(Clone)]
 pub struct Match<'m> {
+    schedule_id: &'m str,
     home_club: &'m Club,
     away_club: &'m Club,
 }
 
 impl<'m> Match<'m> {
-    pub fn make(home_club: &'m Club, away_club: &'m Club) -> Self {
+    pub fn make(schedule_id: &'m str, home_club: &'m Club, away_club: &'m Club) -> Self {
         Match {
+            schedule_id,
             home_club,
             away_club,
         }
@@ -25,6 +27,7 @@ impl<'m> Match<'m> {
         let play_result = engine.play();
 
         MatchResult {
+            schedule_id: String::from(self.schedule_id),
             player_changes: play_result.player_changes,
             home_club_id: self.home_club.id,
             home_goals: play_result.score.home,
@@ -34,7 +37,8 @@ impl<'m> Match<'m> {
     }
 }
 
-pub struct MatchResult {
+pub struct MatchResult  {
+    pub schedule_id: String,
     pub player_changes: Vec<PlayerChanges>,
     pub home_club_id: u32,
     pub home_goals: u8,

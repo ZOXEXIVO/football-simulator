@@ -1,5 +1,5 @@
 use crate::club::{Club, ClubResult, MatchHistory};
-use crate::league::{ScheduleManager, LeagueResult, LeagueTable};
+use crate::league::{ScheduleManager, LeagueResult, LeagueTable, Season};
 use crate::r#match::{Match, MatchResult};
 use crate::simulator::context::GlobalContext;
 use crate::simulator::SimulationContext;
@@ -35,7 +35,7 @@ impl League {
         let current_date = ctx.simulation.date.date();
         
         if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule.generate(2020, &self.clubs, 30,&self.settings);
+            self.schedule.generate(Season::TwoYear(2020, 2021), &self.clubs, 30,&self.settings);
         }
 
         if self.schedule.exists() && ctx.simulation.is_week_beginning() {
@@ -68,7 +68,8 @@ impl League {
             self.schedule.get_matches(current_date)
                 .iter()
                 .map(|m| {
-                    Match::make(self.get_club(&m.home_club_id),
+                    Match::make(&m.id,
+                                self.get_club(&m.home_club_id),
                                 self.get_club(&m.away_club_id),
                     )
                 }).collect()
@@ -77,6 +78,8 @@ impl League {
         let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
 
         for match_result in &match_results {
+            self.schedule.set_goals(&match_result.schedule_id, match_result.home_goals, match_result.away_goals);
+
             self.add_match_to_club_history(match_result.home_club_id,
                 MatchHistory::new(
                     current_date, match_result.away_club_id, 
