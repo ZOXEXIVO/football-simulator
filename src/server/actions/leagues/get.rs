@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse, Result};
 use crate::server::{GLOBAL_DATA};
 use serde::{Serialize, Deserialize};
-use crate::league::ScheduleItem;
+use crate::league::{ScheduleItem, ScheduleTour};
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
@@ -93,7 +93,7 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
         }
     };
 
-    for tour in &league.schedule.tours {
+    for tour in league.schedule_manager.tours.iter().filter(|t| !t.played).take(1) {
         for item in &tour.items {
             result.league.week_schedule.items.push(LeagueScheduleItem {
                 home_goals: item.home_goals,
@@ -107,10 +107,6 @@ pub async fn league_get_action(route_params: web::Path<LeagueGetRequest>) -> Res
             })
         }
     }
-
-    // if let Some(tour) = &league.schedule.tours {
-    //    
-    // }   
 
     Ok(HttpResponse::Ok().json(result))
 }

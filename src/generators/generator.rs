@@ -228,7 +228,7 @@ impl League {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(30),
             clubs,
-            schedule: ScheduleManager::new(),
+            schedule_manager: ScheduleManager::new(),
             settings: LeagueSettings {
                 season_starting_half: DayMonthPeriod::new(1,7, 5,12),
                                     season_ending_half: DayMonthPeriod::new(1,3, 31, 5),

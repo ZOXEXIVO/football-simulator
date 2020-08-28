@@ -10,7 +10,7 @@ pub struct League {
     pub id: u32,
     pub name: String,
     pub clubs: Vec<Club>,
-    pub schedule: ScheduleManager,
+    pub schedule_manager: ScheduleManager,
     pub settings: LeagueSettings,
     pub league_table: LeagueTable,
     pub reputation: u16,
@@ -24,7 +24,7 @@ impl League {
             id,
             name,
             clubs,
-            schedule: ScheduleManager::new(),
+            schedule_manager: ScheduleManager::new(),
             settings,
             league_table: LeagueTable::new(club_headers),
             reputation,
@@ -34,12 +34,8 @@ impl League {
     pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
         let current_date = ctx.simulation.date.date();
         
-        if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule.generate(Season::TwoYear(2020, 2021), &self.clubs, 30,&self.settings);
-        }
-
-        if self.schedule.exists() && ctx.simulation.is_week_beginning() {
-            self.schedule.start_new_tour(current_date);
+        if !self.schedule_manager.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
+            self.schedule_manager.generate(Season::TwoYear(2020, 2021), &self.clubs, 30, &self.settings);
         }
         
         let club_result: Vec<ClubResult> = self.clubs.iter_mut()
@@ -65,7 +61,7 @@ impl League {
         let current_date = context.simulation.date;
 
         let matches: Vec<Match> = {
-            self.schedule.get_matches(current_date)
+            self.schedule_manager.get_matches(current_date)
                 .iter()
                 .map(|m| {
                     Match::make(&m.id,
@@ -78,7 +74,7 @@ impl League {
         let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
 
         for match_result in &match_results {
-            self.schedule.set_goals(&match_result.schedule_id, match_result.home_goals, match_result.away_goals);
+            self.schedule_manager.update_match_result(&match_result.schedule_id, match_result.home_goals, match_result.away_goals);
 
             self.add_match_to_club_history(match_result.home_club_id,
                 MatchHistory::new(
