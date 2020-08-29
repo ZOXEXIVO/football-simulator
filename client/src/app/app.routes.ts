@@ -11,4 +11,4 @@ export const APP_ROUTES: Routes = [
     },
   ];
 
-  export const routing: ModuleWithProviders<RouteModule> = RouterModule.forRoot(APP_ROUTES);
+  export const routing: ModuleWithProviders<RouterModule> = RouterModule.forRoot(APP_ROUTES);

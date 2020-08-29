@@ -1,17 +1,23 @@
 use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
-use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances, ClubSponsorshipContract, StaffCollection, PlayerCollection, Player, PlayerSelector};
+use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances, ClubSponsorshipContract, StaffCollection, PlayerCollection, Player, PlayerSelector, ClubReputation};
 use crate::simulator::context::GlobalContext;
+use crate::shared::Location;
 
 #[derive(Debug)]
 pub struct Club {
     pub id: u32,
     pub name: String,
+    
+    pub location: Location,
+    
     pub mood: ClubMood,
     pub board: ClubBoard,
     
     pub finance: ClubFinances,
+    
+    pub reputation: ClubReputation,
     
     pub tactics: Option<Tactics>,
 
@@ -26,11 +32,20 @@ pub struct Club {
 }
 
 impl Club {
-    pub fn new(id: u32, name: String, finance: ClubFinances, training_schedule: TrainingSchedule, players: PlayerCollection, staffs: StaffCollection) -> Self {
+    pub fn new(id: u32, 
+               name: String,
+               location: Location,
+               finance: ClubFinances, 
+               reputation: ClubReputation,
+               training_schedule: TrainingSchedule, 
+               players: PlayerCollection, 
+               staffs: StaffCollection) -> Self {
         Club {
             id,
             name,
+            location,
             finance,
+            reputation,
             mood: ClubMood::default(),
             board: ClubBoard::new(),
             players,

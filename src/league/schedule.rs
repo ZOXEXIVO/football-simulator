@@ -119,19 +119,19 @@ impl ScheduleManager {
             result.push(ScheduleTour::new(club_half_len))
         }
 
-        let mut set = HashMap::with_capacity(club_half_len);
+        let mut rival_map = HashMap::with_capacity(club_half_len);
 
         for tour in 0..tours_count { 
             let current_tour = &mut result[tour];
 
-            for club in 0..club_half_len - 1 {
-                let rival_idx = set.entry(club).or_insert(club_half_len + club);
+            for club_idx in 0..club_half_len - 1 {
+                let rival_idx = rival_map.entry(club_idx).or_insert(club_half_len + club_idx);
 
-                let home_club_id = club_ids[club];
+                let home_club_id = club_ids[club_idx];
                 let away_club_id = club_ids[*rival_idx];
 
                 *rival_idx += 1;
-                *rival_idx %= club_len;
+                //*rival_idx %= club_len;
 
                 current_tour.items.push(ScheduleItem::new(
                     current_date, home_club_id, away_club_id));

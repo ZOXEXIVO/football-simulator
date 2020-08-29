@@ -1,4 +1,4 @@
-use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract, PlayerCollection};
+use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract, PlayerCollection, ClubReputation};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings, LeagueTable, ScheduleManager, DayMonthPeriod};
 use crate::shared::fullname::FullName;
@@ -16,6 +16,7 @@ use crate::club::{
 };
 
 use crate::transfers::TransferPool;
+use crate::shared::Location;
 
 impl SimulatorData {
     pub fn generate() -> SimulatorData {
@@ -24,7 +25,9 @@ impl SimulatorData {
 
         let clubs = vec![
             Club::new(1, String::from("Zenit St. Petersburg"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -33,7 +36,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(2, String::from("Krasnodar"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -42,7 +47,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(3, String::from("CSKA Moscow"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -51,7 +58,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(4, String::from("Lokomotiv Moscow "),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -60,7 +69,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(5, String::from("Spartak Moscow"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -69,7 +80,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(6, String::from("Dinamo Moscow"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -79,7 +92,9 @@ impl SimulatorData {
 
 
             Club::new(7, String::from("Rubin Kazan"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -88,7 +103,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(8, String::from("Rostov"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -97,7 +114,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(9, String::from("Akhmat"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -106,7 +125,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(10, String::from("Arsenal Tula"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -115,7 +136,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(11, String::from("Sochi"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -124,7 +147,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(12, String::from("Ufa"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -133,7 +158,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(13, String::from("Ural"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -142,7 +169,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(14, String::from("Orenburg"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -151,7 +180,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(15, String::from("Krylya Sovetov"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -160,7 +191,9 @@ impl SimulatorData {
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
 
             Club::new(16, String::from("Tambov"),
+                      Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
+                      ClubReputation::new(3000, 2000, 1000),
                       TrainingSchedule::new(
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
@@ -261,7 +294,9 @@ impl Club {
         Club::new(
             IntegerUtils::random(1, 10_000_000) as u32,
             StringUtils::random_string(15),
+            Location::new(2),
             ClubFinances::new(IntegerUtils::random(-10000, 10000000) as i32, sponsorship_contracts),
+            ClubReputation::new(3000, 2000, 1000),
             training_schedule,
             PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
             StaffCollection::new((0..10).map(|_| Staff::generate()).collect()),
