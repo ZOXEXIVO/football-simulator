@@ -8,6 +8,7 @@ use actix_web::web::to;
 use std::collections::{HashSet, HashMap};
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
+use crate::utils::DateUtils;
 
 #[derive(Debug, Clone)]
 pub struct ScheduleTour {
@@ -105,7 +106,7 @@ impl ScheduleManager {
     }
 
     fn generate_for_period(&mut self, period: &DayMonthPeriod, year: u16, club_ids: &[u32], tours_count: usize) -> Vec<ScheduleTour> {
-        let mut current_date = ScheduleManager::get_nearest_saturday(
+        let mut current_date = DateUtils::get_next_saturday(
             NaiveDate::from_ymd(year as i32, period.from_month as u32, period.from_day as u32));
 
         let club_len = club_ids.len();
@@ -143,23 +144,6 @@ impl ScheduleManager {
         }
         
         result
-    }
-
-    fn get_nearest_saturday(date: NaiveDate) -> NaiveDateTime {
-        let mut current_date = NaiveDateTime::new(NaiveDate::from_ymd(
-            date.year(), date.month() as u32, date.day() as u32),
-                                                  NaiveTime::from_hms(0, 0, 0),
-        );
-
-        loop {
-            if current_date.weekday() == Weekday::Sat {
-                break;
-            }
-
-            current_date += Duration::days(1)
-        }
-
-        current_date
     }
 
     
