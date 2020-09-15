@@ -1,0 +1,55 @@
+﻿{% extends "layout.html" %}
+
+{% block header %}
+    <div class="page-title">Search game to play</div>
+    <div>Select a game from the list or create a new one</div>
+{% endblock %}
+
+{% block processblock %}
+
+<script>
+    function onClick(){
+        document.getElementById('create-game-btn').style.display = 'none'; 
+        document.getElementById('create-game-btn-spinner').style.display = 'block';
+
+        window.createGame();        
+    }    
+</script>
+
+<div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()" >Create game</div>
+<div style="margin-top:5px;width:100px;padding-top: 20px;">
+    <div class="spinner" id="create-game-btn-spinner" style="display: none;"></div>
+</div>
+{% endblock %}
+
+{% block leftmenu %}
+<div class="left_col scroll-view">
+    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a><i class="fa fa-home"></i>Home</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a><i class="fas fa-inbox"></i>Inbox</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/squad"><i class="fas fa-user-friends"></i>Squad</a></li>
+                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>
+                <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>             
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="content_body">
+
+</div>
+
+{% endblock %}

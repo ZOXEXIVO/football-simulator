@@ -5,7 +5,7 @@
             "name": "(Windows) Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/target/debug/football.exe",
+            "program": "${workspaceRoot}/target/debug/football_simulator.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
@@ -16,9 +16,9 @@
             "name": "(OSX) Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceRoot}/target/debug/football",
+            "program": "${workspaceRoot}/target/debug/football_simulator",
             "args": [],
             "cwd": "${workspaceRoot}",
         }
     ]
-}
+} 

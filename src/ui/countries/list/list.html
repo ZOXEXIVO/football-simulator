@@ -1,0 +1,98 @@
+﻿{% extends "../../layout.html" %}
+
+{% block header %}
+    <div class="page-title">headerTitle</div>
+    <div>subTitle</div>
+{% endblock %}
+
+{% block processblock %}
+
+<script>
+    function onClick(){
+        document.getElementById('create-game-btn').style.display = 'none'; 
+        document.getElementById('create-game-btn-spinner').style.display = 'block';
+
+        window.processGame();        
+    }    
+</script>
+
+<div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()" >Process</div>
+<div style="margin-top:5px;width:100px;padding-top: 20px;">
+    <div class="spinner" id="create-game-btn-spinner" style="display: none;"></div>
+</div>
+{% endblock %}
+
+{% block leftmenu %}
+<div class="left_col scroll-view">
+    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a><i class="fa fa-home"></i>Home</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a><i class="fas fa-inbox"></i>Inbox</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/squad"><i class="fas fa-user-friends"></i>Squad</a></li>
+                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>
+                <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>
+                <!-- <li><a href="/#"><i class="fas fa-trophy"></i> Competitions</a></li>
+                <li><a href="/#"><i class="fas fa-user-friends"></i> Under 23s</a></li>
+                <li><a href="/#"><i class="fas fa-user-friends"></i> Under 18s</a></li> -->
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <!-- <li><a href="/#"><i class="fa fa-home"></i> Tactics</a></li>
+                <li><a href="/#"><i class="fas fa-clipboard-list"></i>Отчеты</a></li> -->
+                <!-- <li><a href="/#"><i class="fas fa-user-shield"></i> Персонал</a></li>
+                <li><a href="/#"><i class="fab fa-ethereum"></i> Обучение</a></li> -->
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/#"><i class="fas fa-search"></i> Резерв</a></li>
+                <!-- <li><a href="/#"><i class="fas fa-exchange-alt"></i> Transfers</a></li> -->
+            </ul>
+        </div>
+        <!-- <div class="menu_section">
+          <ul class="nav">
+            <li><a href="/#"><i class="fas fa-map-marker"></i> Club</a></li>
+            <li><a href="/#"><i class="fas fa-briefcase"></i> Board</a></li>
+          </ul>
+        </div> -->
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    {% for continent in continents %}
+
+        <div class="country-box">
+            <h2>{{continent.name}} ({{continent.countries.len()}})</h2>
+            <hr />
+            <div>
+                <ul class="countries-list">
+                    {% for country in continent.countries %}
+                                       
+                    <li>
+                        <a href="/country/{{ country.id }}">
+                           {{ country.name }}
+                        </a>
+                    </li>
+
+                    {% endfor %}
+                </ul>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+    
+    {% endfor %}    
+</div>
+
+{% endblock %}

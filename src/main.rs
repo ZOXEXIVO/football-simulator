@@ -1,45 +1,43 @@
-extern crate chrono;
-extern crate rayon;
+mod ui;
+use ui::*;
+use actix_web::{App, HttpServer};
+use actix_web::middleware::Logger;
+use actix_files::Files;
+use std::sync::{Arc, Mutex};
+use core::SimulatorData;
 
-mod simulator;
+pub struct GameAppData {
+    data: Arc<Mutex<Option<SimulatorData>>>
+}
 
-mod club;
-mod continent;
-mod country;
-mod league;
-mod r#match;
-mod server;
-mod transfers;
-
-mod shared;
-mod utils;
-
-mod generators;
-
-use club::*;
-use country::*;
-
-use crate::server::Server;
-use crate::utils::TimeEstimation;
-use crate::simulator::{FootballSimulator, SimulatorData};
-
-// #[global_allocator]
-// static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+impl Clone for GameAppData{
+    fn clone(&self) -> Self {
+        GameAppData {
+            data: self.data.clone()
+        }
+    }
+}
 
 #[actix_web::main]
 async fn main() {
-    let server = Server::new("0.0.0.0:18000");
-
-    server.start().await;
-    //
-    // let (mut data, generate_estimation) = TimeEstimation::estimate(SimulatorData::generate);
-    //
-    // println!("data generated with {} ms", generate_estimation);
-    //
-    // loop {
-    //     let (_, result_estimation) =
-    //         TimeEstimation::estimate(|| FootballSimulator::simulate(&mut data));
-    //
-    //     println!("simulated with {} ms", result_estimation);
-    // }
+    let data = GameAppData {
+        data: Arc::new(Mutex::new(None))
+    };
+    
+    HttpServer::new(move || {
+        App::new()
+            .data(data.clone())
+            .service(Files::new("/assets", "src/ui/assets").show_files_listing())
+            .wrap(Logger::default())
+            .configure(index_routes)
+            .configure(game_routes)        
+            .configure(country_routes)
+        // .configure(league_routes)
+        // .configure(club_routes)
+        // .configure(player_routes)
+    }).bind("0.0.0.0:18000")
+      .unwrap()
+      .run()
+      .await
+      .unwrap()
 }
