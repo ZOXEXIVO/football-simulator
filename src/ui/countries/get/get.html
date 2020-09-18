@@ -1,19 +1,19 @@
 ﻿{% extends "../../layout.html" %}
 
 {% block header %}
-    <div class="page-title">headerTitle</div>
-    <div>subTitle</div>
+<div class="page-title">headerTitle</div>
+<div>subTitle</div>
 {% endblock %}
 
 {% block processblock %}
 
 <script>
     function onClick(){
-        document.getElementById('create-game-btn').style.display = 'none'; 
+        document.getElementById('create-game-btn').style.display = 'none';
         document.getElementById('create-game-btn-spinner').style.display = 'block';
 
-        window.processGame();        
-    }    
+        window.processGame();
+    }
 </script>
 
 <div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()" >Process</div>
@@ -71,28 +71,18 @@
 
 {% block content %}
 <div class="content">
-    {% for continent in continents %}
-
-        <div class="country-box">
-            <h2>{{continent.name}} ({{continent.countries.len()}})</h2>
-            <hr />
-            <div>
-                <ul class="countries-list">
-                    {% for country in continent.countries %}
-                                       
-                    <li>
-                        <a href="/countries/{{ country.id }}">
-                           {{ country.name }}
-                        </a>
-                    </li>
-
-                    {% endfor %}
-                </ul>
-            </div>
-            <div style="clear:both"></div>
-        </div>
-    
-    {% endfor %}    
+    <div>
+        <ul class="countries-list">
+            {% for league in leagues %}
+            <li>
+                <a href="/league/{league.id}">
+                    {{ league.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>    
+    <div style="clear:both"></div>
 </div>
 
 {% endblock %}
