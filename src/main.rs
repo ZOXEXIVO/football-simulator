@@ -5,6 +5,7 @@ use actix_web::middleware::Logger;
 use actix_files::Files;
 use std::sync::{Arc, Mutex};
 use core::SimulatorData;
+use crate::ui::assets::static_routes;
 
 pub struct GameAppData {
     data: Arc<Mutex<Option<SimulatorData>>>
@@ -28,7 +29,9 @@ async fn main() {
         App::new()
             .data(data.clone())
             .service(Files::new("/assets", "src/ui/assets").show_files_listing())
+            
             .wrap(Logger::default())
+            .configure(static_routes)
             .configure(index_routes)
             .configure(game_routes)        
             .configure(country_routes)

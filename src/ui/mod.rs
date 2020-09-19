@@ -1,5 +1,6 @@
 pub mod game;
 pub mod index;
+pub mod assets;
 
 // pub mod clubs;
 // pub mod players;
