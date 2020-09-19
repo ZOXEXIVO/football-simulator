@@ -4,7 +4,7 @@ use chrono::Duration;
 use chrono::NaiveDate;
 use crate::league::{LeagueSettings, Season};
 use super::DayMonthPeriod;
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap};
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 use crate::utils::DateUtils;

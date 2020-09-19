@@ -1,7 +1,7 @@
-use crate::r#match::random_gamma;
 use crate::Squad;
 use std::mem;
 use crate::club::PlayerPositionType;
+use super::distributions::random_gamma;
 
 pub struct FootballEngine<'s> {
     home_squad: Squad<'s>,
