@@ -1,0 +1,149 @@
+﻿﻿{% extends "../../layout.html" %}
+
+{% block header %}
+<div class="page-title">{{ name }}</div>
+<div>subTitle</div>
+{% endblock %}
+
+{% block processblock %}
+
+<div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()" >Process</div>
+<div style="margin-top:5px;width:100px;padding-top: 20px;">
+    <div class="spinner" id="create-game-btn-spinner" style="display: none;"></div>
+</div>
+{% endblock %}
+
+{% block leftmenu %}
+<div class="left_col scroll-view">
+    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a><i class="fa fa-home"></i>Home</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a><i class="fas fa-inbox"></i>Inbox</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/squad"><i class="fas fa-user-friends"></i>Squad</a></li>
+                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>
+                <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/#"><i class="fas fa-search"></i> Резерв</a></li>             
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="header_row" style="height: 55px;margin-left: 0">
+    <div class="header_bottom">
+        <ul class="nav navbar-left">
+            <li><a href="/#">Players</a></li>
+            <li><a href="/#">International</a></li>
+            <li><a href="/#">Players on Loan</a></li>
+            <li><a href="/#">Extended Leave</a></li>
+            <li><a href="/#">Team Meeting</a></li>
+        </ul>
+        <ul class="nav navbar-right" style="margin-right: 0">
+            <li class="item-user"><a href=""><i class="fas fa-user-friends"></i></a></li>
+        </ul>
+    </div>
+</div>
+<br />
+<div class="content">
+    <table class="squad-table">
+        <tr>
+            <th style="width: 50px">
+                Inf
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Position
+            </th>
+            <th>
+                Nat
+            </th>
+            <th>
+                Ability
+            </th>
+            <th>
+                Potential
+            </th>
+            <th>
+                Morale
+            </th>
+            <th>
+                Conditions
+            </th>
+            <th>
+                Played
+            </th>
+            <th>
+                Value
+            </th>
+        </tr>
+        {% for player in players %}
+        <tr>
+            <td style="width: 50px">
+                <div class="status-badge wanted">
+                </div>
+            </td>
+            <td>
+                <a href="/clubs/{{ id }}/players/{{ player.id }}">
+                    {{ player.last_name }}&nbsp;{{ player.first_name }}
+                </a>
+            </td>
+            <td style="width: 80px">
+                GK
+            </td>
+            <td style="width: 50px">
+               RUS
+            </td>
+            <td style="width: 150px">
+                <fieldset class="rating">
+                    <label></label>
+                    <label></label>
+                    <label class="checked"></label>
+                    <label class="checked"></label>
+                    <label class="checked"></label>
+                </fieldset>
+            </td>
+            <td style="width: 150px">
+                <fieldset class="rating">
+                    <label></label>
+                    <label class="checked"></label>
+                    <label class="checked"></label>
+                    <label class="checked"></label>
+                    <label class="checked"></label>
+                </fieldset>
+            </td>
+            <td style="width: 150px">
+                Good
+            </td>
+            <td style="width: 100px">
+                97%
+            </td>
+
+            <td style="width: 70px">
+                25
+            </td>
+            <td style="width: 170px">
+                100 000
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div style="clear:both"></div>
+</div>
+{% endblock %}

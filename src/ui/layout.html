@@ -40,7 +40,15 @@
 
                     <div class="col-md-6">
                         <ul class="nav navbar-right">
-                            <li class="item-msg" style="cursor: pointer;" >
+                            <li class="item-msg" style="cursor: pointer;">
+                                <script>
+                                    function onClick(){
+                                        document.getElementById('create-game-btn').style.display = 'none';
+                                        document.getElementById('create-game-btn-spinner').style.display = 'block';
+
+                                        window.processGame();
+                                    }
+                                </script>
                                 {% block processblock %}{% endblock %}          
                             </li>
                             <li class="item-date">
