@@ -1,9 +1,10 @@
 use actix_web::{web, HttpResponse, Result, HttpRequest};
-use core::{TimeEstimation, FootballSimulator};
+use core::{FootballSimulator};
 use crate::GameAppData;
 use actix_web::web::Data;
 use std::sync::Arc;
 use actix_web::http::header::REFERER;
+use core::utils::TimeEstimation;
 
 pub async fn game_process_action(request: HttpRequest, state: Data<GameAppData>) -> Result<HttpResponse> {
     let mut data = state.data.lock().unwrap();

@@ -1,5 +1,5 @@
 use crate::club::{ClubFinancialBalanceHistory, ClubFinanceResult, ClubSponsorship, ClubSponsorshipContract};
-use crate::simulator::context::GlobalContext;
+use crate::context::GlobalContext;
 use chrono::NaiveDate;
 
 #[derive(Debug)]

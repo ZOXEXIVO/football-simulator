@@ -2,7 +2,7 @@ mod champion_league;
 mod context;
 mod league_europe;
 
-use crate::simulator::context::GlobalContext;
+use crate::context::GlobalContext;
 pub use context::*;
 
 pub trait Tournament {

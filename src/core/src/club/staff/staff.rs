@@ -1,5 +1,5 @@
 use crate::shared::fullname::FullName;
-use crate::simulator::context::GlobalContext;
+use crate::context::GlobalContext;
 use crate::utils::DateUtils;
 use chrono::NaiveDate;
 use std::collections::HashSet;

@@ -2,7 +2,7 @@ use crate::club::board::ClubBoard;
 use crate::club::squad::Squad;
 use crate::club::tactics::Tactics;
 use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances, ClubSponsorshipContract, StaffCollection, PlayerCollection, Player, PlayerSelector, ClubReputation};
-use crate::simulator::context::GlobalContext;
+use crate::context::GlobalContext;
 use crate::shared::Location;
 
 #[derive(Debug)]

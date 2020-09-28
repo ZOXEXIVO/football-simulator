@@ -1,7 +1,7 @@
 mod simulator;
-
 pub use simulator::*;
 
+pub mod context;
 pub mod club;
 pub mod continent;
 pub mod country;

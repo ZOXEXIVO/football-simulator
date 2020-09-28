@@ -1,4 +1,4 @@
-use crate::simulator::context::GlobalContext;
+use crate::context::GlobalContext;
 use crate::league::{League, LeagueResult};
 use crate::country::CountryResult;
 

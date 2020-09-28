@@ -1,9 +1,9 @@
 [attr]rust text eol=lf whitespace=tab-in-indent,trailing-space,tabwidth=4
 
 * text=auto eol=lf
-*.cpp rust
-*.h rust
 *.rs rust
+*.html linguist-vendored=false
+*.htm linguist-vendored=false
 *.fixed linguist-language=Rust
 src/etc/installer/gfx/* binary
 *.woff binary

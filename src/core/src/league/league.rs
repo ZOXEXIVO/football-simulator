@@ -1,8 +1,7 @@
 use crate::club::{Club, ClubResult, MatchHistory};
 use crate::league::{ScheduleManager, LeagueResult, LeagueTable};
 use crate::r#match::{Match, MatchResult};
-use crate::simulator::context::GlobalContext;
-use crate::simulator::SimulationContext;
+use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
 
 #[derive(Debug)]

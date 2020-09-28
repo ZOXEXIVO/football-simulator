@@ -1,6 +1,6 @@
 use crate::Country;
 
-use crate::simulator::context::GlobalContext;
+use crate::context::GlobalContext;
 pub use rayon::prelude::*;
 use crate::country::CountryResult;
 use crate::continent::ContinentResult;
