@@ -428,7 +428,7 @@ p {
  margin: 0;
 }
 
-.player-.delim {
+.player-content .delim {
  border-left: 2px solid #2E3238;
  height: 100%;
 }
