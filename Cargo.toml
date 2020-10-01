@@ -6,9 +6,9 @@ edition = "2018"
 
 [dependencies]
 core = { path = "src/core" }
-actix-web = "3.0.0"
+actix-web = "3.1.0"
 askama = "0.10.3"
 lazy_static = "1.4.0"
 actix-files = "0.3.0"
-serde_json = "1.0.57"
+serde_json = "1.0.58"
 serde = "1.0.116"

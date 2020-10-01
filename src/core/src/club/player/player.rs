@@ -54,11 +54,19 @@ impl Player {
             self.behaviour.try_increase();
         }
 
+        self.process_mailbox();        
+        
         if self.behaviour.state == PersonBehaviourState::Poor {
             result.request_transfer(self.id);
         }
 
         result
+    }
+    
+    fn process_mailbox(&mut self){
+        for message in self.mailbox.get() {
+            // handle
+        }
     }
 
     pub fn train(&mut self, coach: &Staff){
