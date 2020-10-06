@@ -24,7 +24,7 @@ pub struct LeagueDto<'l> {
 }
 
 pub async fn country_get_action(state: Data<GameAppData>, route_params: web::Path<CountryGetRequest>) -> Result<HttpResponse> {
-    let guard = state.data.lock().unwrap();
+    let guard = state.data.lock();
     
     let mut simulator_data = guard.as_ref().unwrap();
 

@@ -27,7 +27,7 @@ pub struct LeagueDto<'l> {
 }
 
 pub async fn country_list_action(state: Data<GameAppData>) -> Result<HttpResponse> {
-    let guard = state.data.lock().unwrap();
+    let guard = state.data.lock();
     
     let mut simulator_data = guard.as_ref().unwrap();
 

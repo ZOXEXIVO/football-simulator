@@ -1,5 +1,5 @@
 use crate::club::{Club, ClubResult, MatchHistory};
-use crate::league::{ScheduleManager, LeagueResult, LeagueTable};
+use crate::league::{ScheduleManager, LeagueResult, LeagueTable, Season};
 use crate::r#match::{Match, MatchResult};
 use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
@@ -32,7 +32,7 @@ impl League {
     
     pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
         if !self.schedule_manager.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            //self.schedule_manager.generate(Season::TwoYear(2020, 2021), &self.clubs, 30, &self.settings);
+            self.schedule_manager.generate(Season::TwoYear(2020, 2021), &self.clubs, 30, &self.settings);
         }
         
         let club_result: Vec<ClubResult> = self.clubs.iter_mut()

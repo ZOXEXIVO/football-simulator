@@ -125,13 +125,16 @@ impl ScheduleManager {
             let current_tour = &mut result[tour];
 
             for club_idx in 0..club_half_len - 1 {
-                let rival_idx = rival_map.entry(club_idx).or_insert(club_half_len + club_idx);
+                let rival_idx = rival_map.entry(club_idx).or_insert(club_half_len - club_idx);
+             
+                //println!("club_idx = {}, rival_idx = {}",  club_idx, *rival_idx);
+                
+                *rival_idx += 1;
+                *rival_idx %= club_len;
 
                 let home_club_id = club_ids[club_idx];
                 let away_club_id = club_ids[*rival_idx];
 
-                *rival_idx += 1;
-                //*rival_idx %= club_len;
 
                 current_tour.items.push(ScheduleItem::new(
                     current_date, home_club_id, away_club_id));

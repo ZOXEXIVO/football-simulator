@@ -13,7 +13,7 @@ pub struct IndexViewModel {
 }
 
 pub async fn index_action(state: Data<GameAppData>) -> Result<HttpResponse> {
-    let data = state.data.lock().unwrap();
+    let data = state.data.lock();
     
     if data.is_some() {
         Ok(HttpResponse::Found().header("Location", "/countries").finish())

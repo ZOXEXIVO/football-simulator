@@ -3,9 +3,10 @@ use ui::*;
 use actix_web::{App, HttpServer};
 use actix_web::middleware::Logger;
 use actix_files::Files;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 use core::SimulatorData;
 use crate::ui::assets::static_routes;
+use parking_lot::Mutex;
 
 pub struct GameAppData {
     data: Arc<Mutex<Option<SimulatorData>>>

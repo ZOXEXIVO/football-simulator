@@ -76,7 +76,7 @@ pub struct PhysicalDto {
 }
 
 pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path<PlayerGetRequest>) -> Result<HttpResponse> {
-    let guard = state.data.lock().unwrap();
+    let guard = state.data.lock();
 
     let mut simulator_data = guard.as_ref().unwrap();
 

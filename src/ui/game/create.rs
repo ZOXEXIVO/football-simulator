@@ -9,7 +9,7 @@ use core::utils::TimeEstimation;
 pub async fn game_create_action(state: Data<GameAppData>) -> Result<HttpResponse> {
     let (generated_data, estimated) = TimeEstimation::estimate(SimulatorData::generate);
 
-    let mut data = state.data.lock().unwrap();
+    let mut data = state.data.lock();
 
     *data = Some(generated_data);
 

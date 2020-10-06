@@ -7,7 +7,7 @@ use actix_web::http::header::REFERER;
 use core::utils::TimeEstimation;
 
 pub async fn game_process_action(request: HttpRequest, state: Data<GameAppData>) -> Result<HttpResponse> {
-    let mut data = state.data.lock().unwrap();
+    let mut data = state.data.lock();
     
     let simulator_data = data.as_mut().unwrap();
     
