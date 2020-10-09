@@ -2,8 +2,8 @@
 
 * text=auto eol=lf
 *.rs rust
-*.html linguist-vendored=false
-*.htm linguist-vendored=false
+*.html linguist-generated=false
+*.htm linguist-generated=false
 *.fixed linguist-language=Rust
 src/etc/installer/gfx/* binary
 *.woff binary
