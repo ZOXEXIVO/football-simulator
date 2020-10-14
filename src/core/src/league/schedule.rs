@@ -24,6 +24,7 @@ impl ScheduleTour {
     }
 }
 
+
 #[derive(Debug)]
 pub struct ScheduleManager {
     pub tours: Vec<ScheduleTour>
@@ -83,8 +84,12 @@ impl ScheduleManager {
         !self.tours.is_empty()
     }
 
-    pub fn generate(&mut self, season: Season, clubs: &[Club], tours_count: usize, league_settings: &LeagueSettings) {
-        self.tours = Vec::with_capacity((clubs.len() / 2) * tours_count);
+    pub fn generate(&mut self, season: Season, clubs: &[Club], league_settings: &LeagueSettings) {
+        let clubs_len = clubs.len();
+        
+        let tours_count = (clubs_len * clubs_len - clubs_len) / (clubs_len / 2);
+
+        self.tours = Vec::with_capacity((clubs_len / 2) * tours_count);
 
         let (season_year_start, season_year_end) = match season {
             Season::OneYear(year) => (year, year),
@@ -92,7 +97,7 @@ impl ScheduleManager {
         };
 
         let mut club_ids: Vec<u32> = clubs.iter().map(|c| c.id).collect();
-        
+
         for item in self.generate_for_period(&league_settings.season_starting_half, season_year_start, &club_ids, tours_count / 2) {
             self.tours.push(item);
         }
@@ -104,40 +109,45 @@ impl ScheduleManager {
         }
     }
 
-    fn generate_for_period(&mut self, period: &DayMonthPeriod, year: u16, club_ids: &[u32], tours_count: usize) -> Vec<ScheduleTour> {
+    fn generate_for_period(&mut self, period: &DayMonthPeriod, year: u16, club_ids: &[u32], tours_generate_count: usize) -> Vec<ScheduleTour> {
         let mut current_date = DateUtils::get_next_saturday(
             NaiveDate::from_ymd(year as i32, period.from_month as u32, period.from_day as u32));
 
         let club_len = club_ids.len();
         let club_half_len = club_len / 2;
         
-        let items_count = (club_len / 2) * tours_count;
+        let items_count = (club_len / 2) * tours_generate_count;
 
         let mut result = Vec::with_capacity(items_count);
 
-        for _ in 0..tours_count {
+        for _ in 0..tours_generate_count {
             result.push(ScheduleTour::new(club_half_len))
         }
 
-        let mut rival_map = HashMap::with_capacity(club_half_len);
+        for tour in 0..tours_generate_count {
+            let mut rival_map = HashMap::with_capacity(club_half_len);
 
-        for tour in 0..tours_count { 
             let current_tour = &mut result[tour];
 
-            for club_idx in 0..club_half_len - 1 {
-                let rival_idx = rival_map.entry(club_idx).or_insert(club_half_len - club_idx);
+            println!("fill tour {}",  tour);
+            
+            for club_idx in 0..club_half_len {
+                let rival_idx = rival_map.entry(club_idx).or_insert(club_half_len + club_idx);
              
-                //println!("club_idx = {}, rival_idx = {}",  club_idx, *rival_idx);
-                
-                *rival_idx += 1;
-                *rival_idx %= club_len;
+                println!("club_idx = {}, rival_idx = {}",  club_idx, *rival_idx);
 
+                if club_idx == *rival_idx {
+                    continue;    
+                }
+                                
                 let home_club_id = club_ids[club_idx];
                 let away_club_id = club_ids[*rival_idx];
 
-
                 current_tour.items.push(ScheduleItem::new(
                     current_date, home_club_id, away_club_id));
+
+                *rival_idx += 1;
+                *rival_idx %= club_half_len;
             }
 
             current_tour.items.shuffle(&mut thread_rng());
