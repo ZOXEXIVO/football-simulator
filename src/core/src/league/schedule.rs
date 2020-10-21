@@ -11,13 +11,15 @@ use crate::utils::DateUtils;
 
 #[derive(Debug, Clone)]
 pub struct ScheduleTour {
+    pub num: u8,
     pub items: Vec<ScheduleItem>,
     pub played: bool,
 }
 
 impl ScheduleTour {
-    pub fn new(games_count: usize) -> Self {
+    pub fn new(num: u8, games_count: usize) -> Self {
         ScheduleTour {
+            num,
             items: Vec::with_capacity(games_count),
             played: false,
         }
@@ -43,7 +45,7 @@ pub struct ScheduleItem {
 }
 
 impl ScheduleItem {
-    pub fn new(date: NaiveDateTime, home_club_id: u32, away_club_id: u32) -> Self {
+    pub fn new(home_club_id: u32, away_club_id: u32, date: NaiveDateTime) -> Self {
         let id = format!("{}{}{}", date, home_club_id, away_club_id);
 
         ScheduleItem {
@@ -54,19 +56,6 @@ impl ScheduleItem {
 
             home_goals: None,
             away_goals: None,
-        }
-    }
-}
-
-impl Default for ScheduleItem {
-    fn default() -> Self {
-        ScheduleItem{
-            id: "".to_string(),
-            date: NaiveDateTime::from_timestamp(0, 0),
-            home_club_id: 0,
-            away_club_id: 0,
-            home_goals: None,
-            away_goals: None
         }
     }
 }
@@ -91,73 +80,92 @@ impl ScheduleManager {
 
         self.tours = Vec::with_capacity((clubs_len / 2) * tours_count);
 
+        let mut club_ids: Vec<u32> = clubs.iter().map(|c| c.id).collect();
+
         let (season_year_start, season_year_end) = match season {
             Season::OneYear(year) => (year, year),
             Season::TwoYear(start_year, end_year) => (start_year, end_year)
         };
 
-        let mut club_ids: Vec<u32> = clubs.iter().map(|c| c.id).collect();
+        let mut current_date = DateUtils::get_next_saturday(
+            NaiveDate::from_ymd(season_year_start as i32, league_settings.season_starting_half.from_month as u32, league_settings.season_starting_half.from_day as u32));
 
-        for item in self.generate_for_period(&league_settings.season_starting_half, season_year_start, &club_ids, tours_count / 2) {
-            self.tours.push(item);
-        }
-
-        club_ids.reverse();
-        
-        for item in self.generate_for_period(&league_settings.season_ending_half, season_year_end, &club_ids, tours_count / 2) {
+        for item in Self::generate_tours(&club_ids, current_date) {
             self.tours.push(item);
         }
     }
 
-    fn generate_for_period(&mut self, period: &DayMonthPeriod, year: u16, club_ids: &[u32], tours_generate_count: usize) -> Vec<ScheduleTour> {
-        let mut current_date = DateUtils::get_next_saturday(
-            NaiveDate::from_ymd(year as i32, period.from_month as u32, period.from_day as u32));
-
-        let club_len = club_ids.len();
-        let club_half_len = club_len / 2;
+    fn generate_tours(clubs: &[u32], mut current_date: NaiveDateTime) -> Vec<ScheduleTour> {
+        let club_len= clubs.len() as u32;
+        let games_count = (club_len / 2) as usize;
         
-        let items_count = (club_len / 2) * tours_generate_count;
+        let tours_count = ((club_len * club_len - club_len) / (club_len / 2)) as usize;
 
-        let mut result = Vec::with_capacity(items_count);
+        let mut result = Vec::with_capacity(tours_count);
+        
+        let mut games_offset = 0;
+        
+        let games = Self::generate_game_pairs(clubs, tours_count);
+        
+        for tour in 1..tours_count {           
+            let mut tour = ScheduleTour::new(tour as u8, games_count);
 
-        for _ in 0..tours_generate_count {
-            result.push(ScheduleTour::new(club_half_len))
-        }
-
-        for tour in 0..tours_generate_count {
-            let mut rival_map = HashMap::with_capacity(club_half_len);
-
-            let current_tour = &mut result[tour];
-
-            println!("fill tour {}",  tour);
-            
-            for club_idx in 0..club_half_len {
-                let rival_idx = rival_map.entry(club_idx).or_insert(club_half_len + club_idx);
-             
-                println!("club_idx = {}, rival_idx = {}",  club_idx, *rival_idx);
-
-                if club_idx == *rival_idx {
-                    continue;    
-                }
-                                
-                let home_club_id = club_ids[club_idx];
-                let away_club_id = club_ids[*rival_idx];
-
-                current_tour.items.push(ScheduleItem::new(
-                    current_date, home_club_id, away_club_id));
-
-                *rival_idx += 1;
-                *rival_idx %= club_half_len;
+            for game_idx in 0..games_count {
+                let (home_club_id, away_club_id) = games[games_offset + game_idx as usize];
+                
+                tour.items.push(ScheduleItem::new(home_club_id, away_club_id, current_date))
             }
-
-            current_tour.items.shuffle(&mut thread_rng());
             
+            games_offset += games_count;
             current_date += Duration::days(7);
+            
+            result.push(tour);
         }
-        
+
+        result
+    }
+    
+    fn generate_game_pairs(clubs: &[u32], tours_count: usize) -> Vec<(u32, u32)> {
+        let mut result = Vec::new();
+
+        let mut temp_vec = Vec::new();
+
+        let club_len= clubs.len() as u32;
+        let club_len_half = club_len / 2 as u32;
+
+        for club in 1..club_len_half + 1 {
+            temp_vec.push((club, club_len - club + 1))
+        }
+
+        for club in &temp_vec {
+            result.push((club.0, club.1));
+        }
+
+        for _ in 0..tours_count {
+            Self::rotate(&mut temp_vec);
+
+            for club in &temp_vec {
+                result.push((club.0, club.1));
+            }
+        }
+
         result
     }
 
+    fn rotate(clubs: &mut Vec<(u32, u32)>){
+        let clubs_len = clubs.len();
+
+        let right_top = clubs[0].1;
+        let left_bottom = clubs[clubs_len - 1].0;
+
+        for i in 0..clubs_len - 1{
+            clubs[i].1 =  clubs[i + 1].1;
+            clubs[clubs_len-i-1].0 =  clubs[clubs_len-i - 2].0;
+        }
+
+        clubs[0].0 = right_top;
+        clubs[clubs_len - 1].1 = left_bottom;
+    }
     
     pub fn update_match_result(&mut self, id: &str, home_goals: u8, away_goals: u8) {
         for tour in &mut self.tours {
