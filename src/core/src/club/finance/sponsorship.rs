@@ -16,29 +16,23 @@ impl ClubSponsorship {
         self.sponsorship_contracts.retain(|contract| !contract.is_expired(date))
     }
     
-    pub fn get_sponsorship_incomes(&mut self, date: NaiveDate) -> Vec<(String, u32)> {
+    pub fn get_sponsorship_incomes<'s>(&mut self, date: NaiveDate) -> &[ClubSponsorshipContract] {
         self.remove_expired_contracts(date);
         
-        let mut result = Vec::with_capacity(self.sponsorship_contracts.len());
-        
-        for contract in &self.sponsorship_contracts{
-            result.push((contract.sponsor_name.clone(), contract.wage));
-        }
-        
-        result
+        &self.sponsorship_contracts
     }
 }
 
 
 #[derive(Debug)]
 pub struct ClubSponsorshipContract {
-    sponsor_name: String,
-    wage: u32,
+    pub sponsor_name: String,
+    pub wage: i32,
     expiration: NaiveDate
 }
 
 impl ClubSponsorshipContract {
-    pub fn new(sponsor_name: String, wage: u32, expiration: NaiveDate) -> Self {
+    pub fn new(sponsor_name: String, wage: i32, expiration: NaiveDate) -> Self {
         ClubSponsorshipContract {
             sponsor_name,
             wage,

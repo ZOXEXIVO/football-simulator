@@ -13,6 +13,7 @@ mod player;
 mod staff;
 mod person;
 mod reputation;
+mod relations;
 
 pub use board::*;
 pub use club::*;
@@ -29,3 +30,4 @@ pub use player::*;
 pub use staff::*;
 pub use person::*;
 pub use reputation::*;
+pub use relations::*;

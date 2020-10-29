@@ -26,7 +26,7 @@ impl PlayerClubContract {
 
     pub fn is_expired(&self) -> bool {
         let now = Utc::now();
-
+        
         let naive_now = NaiveDate::from_ymd(now.year(), now.month(), now.day());
 
         self.expired >= naive_now

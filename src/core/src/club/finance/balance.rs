@@ -26,15 +26,15 @@ impl ClubFinances {
         }
 
         if ctx.simulation.is_year_beginning() {
-            for (_, wage) in self.sponsorship.get_sponsorship_incomes(ctx.simulation.date.date()) {
-                self.balance.push_income(wage)
+            for sponsorship_contract in self.sponsorship.get_sponsorship_incomes(ctx.simulation.date.date()) {
+                self.balance.push_income(sponsorship_contract.wage)
             }
         }
 
         result
     }
     
-    pub fn push_salary(&mut self, amount: u32){
+    pub fn push_salary(&mut self, amount: i32){
         self.balance.push_outcome(amount);
     }
     
@@ -60,14 +60,14 @@ impl ClubFinancialBalance {
         }
     }
     
-    pub fn push_income(&mut self, wage: u32){
-        self.amount = self.amount + wage as i32;
-        self.income = self.income + wage as i32;
+    pub fn push_income(&mut self, wage: i32){
+        self.amount = self.amount + wage;
+        self.income = self.income + wage;
     }
 
-    pub fn push_outcome(&mut self, wage: u32){
-        self.amount = self.amount - wage as i32;
-        self.outcome = self.outcome + wage as i32;
+    pub fn push_outcome(&mut self, wage: i32){
+        self.amount = self.amount - wage;
+        self.outcome = self.outcome + wage;
     }
     
     pub fn clear(&mut self){

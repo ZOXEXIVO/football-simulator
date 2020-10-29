@@ -81,7 +81,7 @@ impl ScheduleManager {
         self.tours = Vec::with_capacity((clubs_len / 2) * tours_count);
 
         let mut club_ids: Vec<u32> = clubs.iter().map(|c| c.id).collect();
-
+        
         let (season_year_start, season_year_end) = match season {
             Season::OneYear(year) => (year, year),
             Season::TwoYear(start_year, end_year) => (start_year, end_year)
@@ -109,7 +109,7 @@ impl ScheduleManager {
         
         for tour in 1..tours_count {           
             let mut tour = ScheduleTour::new(tour as u8, games_count);
-
+            
             for game_idx in 0..games_count {
                 let (home_club_id, away_club_id) = games[games_offset + game_idx as usize];
                 

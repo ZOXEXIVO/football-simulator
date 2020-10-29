@@ -81,7 +81,7 @@ impl Club {
 
         if ctx.simulation.is_week_beginning() {
             let weekly_salary = self.players.get_week_salary();
-            self.finance.push_salary(weekly_salary);
+            self.finance.push_salary(weekly_salary as i32);
         }
         
         if self.training_schedule.is_time(ctx.simulation.date) {

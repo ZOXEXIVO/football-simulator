@@ -3,7 +3,11 @@ use crate::context::GlobalContext;
 use crate::utils::{DateUtils};
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
-use crate::club::{PlayerSkills, PlayerClubContract, PlayerAttributes, PlayerMailbox, PlayerTraining, PlayerResult, PersonBehaviour, Staff, PersonBehaviourState, PlayerCollectionResult};
+use crate::club::{PlayerSkills, PlayerClubContract, PlayerAttributes, PlayerMailbox, 
+                  PlayerTraining, PlayerResult, PersonBehaviour, Staff, 
+                  PersonBehaviourState, PlayerCollectionResult};
+use std::collections::HashSet;
+use crate::Relations;
 
 #[derive(Debug)]
 pub struct Player {
@@ -14,10 +18,11 @@ pub struct Player {
     pub skills: PlayerSkills,
     pub contract: Option<PlayerClubContract>,
     pub positions: Vec<PlayerPosition>,
-    pub preferred_foot: PlayerPrefferedFoot,
+    pub preferred_foot: PlayerPreferredFoot,
     pub attributes: PlayerAttributes,
     pub mailbox: PlayerMailbox,
-    pub training: PlayerTraining
+    pub training: PlayerTraining,
+    pub relations: Relations
 }
 
 impl Player {
@@ -39,11 +44,12 @@ impl Player {
             behaviour: PersonBehaviour::default(),
             skills,
             positions,
-            preferred_foot: PlayerPrefferedFoot::Right,
+            preferred_foot: PlayerPreferredFoot::Right,
             attributes,
             contract,
             training: PlayerTraining::new(),
             mailbox: PlayerMailbox::new(),
+            relations: Relations::new()
         }
     }
 
@@ -105,7 +111,7 @@ impl Player {
 }
 
 #[derive(Debug)]
-pub enum PlayerPrefferedFoot {
+pub enum PlayerPreferredFoot {
     Left,
     Right,
     Both,
@@ -168,12 +174,9 @@ impl PlayerCollection {
         let mut result: u32 = 0;
         
         for player in &self.players {
-            match &player.contract {
-                Some(contract) => {
-                    result += contract.salary as u32
-                },
-                None => {}
-            }           
+            if let Some(contract) = &player.contract {
+                result += contract.salary as u32
+            }
         }       
         
         result

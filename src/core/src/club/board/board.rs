@@ -27,7 +27,7 @@ impl ClubBoard {
         if self.sport_director.is_none() {
             self.run_sport_director_election(&ctx.simulation);
         }
-
+        
         if ctx.simulation.check_contract_expiration() {
             if self.is_director_contract_expiring(&ctx.simulation) {}
 

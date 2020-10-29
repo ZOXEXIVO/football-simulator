@@ -4,7 +4,9 @@ use crate::utils::DateUtils;
 use chrono::NaiveDate;
 use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Result};
-use crate::club::{StaffClubContract, Player, StaffResult, StaffPosition, PersonBehaviour};
+use crate::club::{StaffClubContract, Player, StaffResult, 
+                  StaffPosition, PersonBehaviour};
+use crate::{Relations};
 
 #[derive(Debug)]
 pub struct Staff {
@@ -15,7 +17,7 @@ pub struct Staff {
 
     pub contract: Option<StaffClubContract>,
 
-    favorite_players: HashSet<u32>,
+    pub relations: Relations
 }
 
 impl Staff {
@@ -31,7 +33,7 @@ impl Staff {
             birth_date,
             contract,
             behaviour: PersonBehaviour::default(),
-            favorite_players: HashSet::new(),
+            relations: Relations::new(),
         }
     }
 
@@ -46,16 +48,8 @@ impl Staff {
             contract: None,
             behaviour: PersonBehaviour::default(),
             birth_date: NaiveDate::from_ymd(2019, 1, 1),
-            favorite_players: HashSet::new(),
+            relations: Relations::new(),
         }
-    }
-
-    pub fn add_to_favorites(&mut self, player: &Player) {
-        self.favorite_players.insert(player.id);
-    }
-
-    pub fn is_favorite(&self, player: &Player) -> bool {
-        self.favorite_players.contains(&player.id)
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext) -> StaffResult {
@@ -111,21 +105,21 @@ impl StaffCollection {
     }
 
     pub fn main_coach(&self) -> &Staff {
-        let main_coach = self.get_by_position(&StaffPosition::MainCoach);
+        let main_coach = self.get_by_position(StaffPosition::MainCoach);
         *main_coach.first().unwrap()
     }
 
     pub fn coaches(&self) -> Vec<&Staff> {
-        self.get_by_position(&StaffPosition::Coach)
+        self.get_by_position(StaffPosition::Coach)
     }
 
     pub fn contract_resolver(&self) -> &Staff {
-        *self.get_by_position(&StaffPosition::MainCoach).first().unwrap()
+        *self.get_by_position(StaffPosition::MainCoach).first().unwrap()
     }
 
-    fn get_by_position(&self, position: &StaffPosition) -> Vec<&Staff> {
+    fn get_by_position(&self, position: StaffPosition) -> Vec<&Staff> {
         let staffs: Vec<&Staff> = self.staffs.iter().filter(|staff| {
-            staff.contract.is_some() && staff.contract.as_ref().unwrap().position == *position
+            staff.contract.is_some() && staff.contract.as_ref().unwrap().position == position
         }).collect();
 
         if staffs.is_empty() {

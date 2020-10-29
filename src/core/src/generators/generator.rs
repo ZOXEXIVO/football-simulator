@@ -281,13 +281,13 @@ impl Club {
 
         let sponsorship_contracts = vec![
             ClubSponsorshipContract::new(String::from("Sponsor 1"),
-                                         IntegerUtils::random(1, 10_000_000) as u32,
+                                         IntegerUtils::random(1, 10_000_000),
                                          NaiveDate::from_ymd(2023, 1, 1)),
             ClubSponsorshipContract::new(String::from("Sponsor 2"),
-                                         IntegerUtils::random(1, 10_000_000) as u32,
+                                         IntegerUtils::random(1, 10_000_000),
                                          NaiveDate::from_ymd(2025, 1, 1)),
             ClubSponsorshipContract::new(String::from("Sponsor 3"),
-                                         IntegerUtils::random(1, 10_000_000) as u32,
+                                         IntegerUtils::random(1, 10_000_000),
                                          NaiveDate::from_ymd(2020, 1, 1))
         ];
 

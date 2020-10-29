@@ -2,6 +2,7 @@ use crate::club::club::Club;
 use crate::club::squad::SquadPlayer;
 use lazy_static::lazy_static;
 use crate::club::{Staff, PlayerPositionType, Player};
+use crate::RelationType;
 
 pub struct PlayerSelector;
 
@@ -48,7 +49,7 @@ impl PlayerSelector {
             .collect();
 
         for player in current_players {
-            if staff.is_favorite(&player) {
+            if staff.relations.is_favorite_player(player.id) {
                 result.push(SquadPlayer::new(&player, *position))
             }
             else{
