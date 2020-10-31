@@ -3,7 +3,7 @@ WORKDIR /src
 
 COPY ./ ./
 
-RUN cargo test
+RUN cargo test -p core
 
 RUN cargo build --release
 
