@@ -192,3 +192,8 @@ impl PlayerCollection {
     }
 }
 
+impl PartialEq for Player{
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}

@@ -1,4 +1,5 @@
-use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract, PlayerCollection, ClubReputation};
+use crate::club::{Club, ClubBoard, ClubMood, TrainingSchedule, ClubFinances, ClubSponsorshipContract,
+                  PlayerCollection, ClubReputation};
 use crate::country::Country;
 use crate::league::{League, LeagueSettings, LeagueTable, ScheduleManager, DayMonthPeriod};
 use crate::shared::fullname::FullName;
@@ -10,13 +11,14 @@ use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 use crate::continent::Continent;
 
 use crate::club::{
-    Mental, Physical, Player, PlayerAttributes, PlayerClubContract,
+    Mental, Physical, PlayerAttributes, PlayerClubContract,
     PlayerPosition, PlayerPositionType, PlayerSkills, Staff, StaffClubContract, StaffCollection,
     StaffPosition, StaffStatus, Technical,
 };
 
 use crate::transfers::TransferPool;
 use crate::shared::Location;
+use crate::generators::PlayerGenerator;
 
 impl SimulatorData {
     pub fn generate() -> SimulatorData {
@@ -32,9 +34,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(2, String::from("Krasnodar"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -43,9 +44,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(3, String::from("CSKA Moscow"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -54,9 +54,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(4, String::from("Lokomotiv Moscow "),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -65,9 +64,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(5, String::from("Spartak Moscow"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -76,9 +74,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(6, String::from("Dinamo Moscow"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -87,10 +84,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
-
             Club::new(7, String::from("Rubin Kazan"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -99,9 +94,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(8, String::from("Rostov"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -110,9 +104,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(9, String::from("Akhmat"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -121,9 +114,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(10, String::from("Arsenal Tula"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -132,9 +124,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(11, String::from("Sochi"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -143,9 +134,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(12, String::from("Ufa"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -154,9 +144,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(13, String::from("Ural"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -165,9 +154,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(14, String::from("Orenburg"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -176,9 +164,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(15, String::from("Krylya Sovetov"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -187,9 +174,8 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect())),
-
             Club::new(16, String::from("Tambov"),
                       Location::new(1),
                       ClubFinances::new(25_000_000, Vec::new()),
@@ -198,7 +184,7 @@ impl SimulatorData {
                           NaiveTime::from_hms(10, 0, 0),
                           NaiveTime::from_hms(17, 0, 0),
                       ),
-                      PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+                      PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
                       StaffCollection::new((0..10).map(|_| Staff::generate()).collect()))
         ];
 
@@ -220,8 +206,8 @@ impl SimulatorData {
                             name: String::from("Russia"),
                             leagues: vec![
                                 League::new(1, String::from("Premier league"), 5000, LeagueSettings {
-                                    season_starting_half: DayMonthPeriod::new(1,7, 5,12),
-                                    season_ending_half: DayMonthPeriod::new(1,3, 31, 5),
+                                    season_starting_half: DayMonthPeriod::new(1, 7, 5, 12),
+                                    season_ending_half: DayMonthPeriod::new(1, 3, 31, 5),
                                 }, clubs)
                             ],
                             reputation: 5000,
@@ -256,15 +242,15 @@ impl League {
 
         let clubs: Vec<Club> = (0..clubs_count).map(|_| Club::generate()).collect();
         let club_headers = clubs.iter().map(|c| c.id).collect();
-        
+
         League {
             id: IntegerUtils::random(1, 10_000_000) as u32,
             name: StringUtils::random_string(30),
             clubs,
             schedule_manager: ScheduleManager::new(),
             settings: LeagueSettings {
-                season_starting_half: DayMonthPeriod::new(1,7, 5,12),
-                                    season_ending_half: DayMonthPeriod::new(1,3, 31, 5),
+                season_starting_half: DayMonthPeriod::new(1, 7, 5, 12),
+                season_ending_half: DayMonthPeriod::new(1, 3, 31, 5),
             },
             league_table: LeagueTable::new(club_headers),
             reputation: 5000,
@@ -298,102 +284,9 @@ impl Club {
             ClubFinances::new(IntegerUtils::random(-10000, 10000000) as i32, sponsorship_contracts),
             ClubReputation::new(3000, 2000, 1000),
             training_schedule,
-            PlayerCollection::new((0..30).map(|_| Player::generate()).collect()),
+            PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
             StaffCollection::new((0..10).map(|_| Staff::generate()).collect()),
         )
-    }
-}
-
-impl Player {
-    fn generate() -> Player {
-        let year = IntegerUtils::random(1980, 2010) as u32;
-        let month = IntegerUtils::random(1, 12) as u32;
-        let day = IntegerUtils::random(1, 29) as u32;
-
-        return Player::new(
-            IntegerUtils::random(1, 1_000_000) as u32,
-            FullName {
-                first_name: StringUtils::random_string(5),
-                last_name: StringUtils::random_string(10),
-                middle_name: StringUtils::random_string(15),
-            },
-            NaiveDate::from_ymd(year as i32, month, day),
-            generate_skills(),
-            generate_attributes(),
-            Some(PlayerClubContract::new(
-                IntegerUtils::random(1980, 2010) as f64, NaiveDate::from_ymd(2020, 3, 14))),
-            generate_positions(),
-        );
-
-        fn generate_skills() -> PlayerSkills {
-            PlayerSkills {
-                technical: Technical {
-                    corners: IntegerUtils::random(1, 20) as u8,
-                    crossing: IntegerUtils::random(1, 20) as u8,
-                    dribbling: IntegerUtils::random(1, 20) as u8,
-                    finishing: IntegerUtils::random(1, 20) as u8,
-                    first_touch: IntegerUtils::random(1, 20) as u8,
-                    free_kick_taking: IntegerUtils::random(1, 20) as u8,
-                    heading: IntegerUtils::random(1, 20) as u8,
-                    long_shots: IntegerUtils::random(1, 20) as u8,
-                    long_throws: IntegerUtils::random(1, 20) as u8,
-                    marking: IntegerUtils::random(1, 20) as u8,
-                    passing: IntegerUtils::random(1, 20) as u8,
-                    penalty_taking: IntegerUtils::random(1, 20) as u8,
-                    tackling: IntegerUtils::random(1, 20) as u8,
-                    technique: IntegerUtils::random(1, 20) as u8,
-                },
-                mental: Mental {
-                    aggression: IntegerUtils::random(1, 20) as u8,
-                    anticipation: IntegerUtils::random(1, 20) as u8,
-                    bravery: IntegerUtils::random(1, 20) as u8,
-                    composure: IntegerUtils::random(1, 20) as u8,
-                    concentration: IntegerUtils::random(1, 20) as u8,
-                    decisions: IntegerUtils::random(1, 20) as u8,
-                    determination: IntegerUtils::random(1, 20) as u8,
-                    flair: IntegerUtils::random(1, 20) as u8,
-                    leadership: IntegerUtils::random(1, 20) as u8,
-                    off_the_ball: IntegerUtils::random(1, 20) as u8,
-                    positioning: IntegerUtils::random(1, 20) as u8,
-                    teamwork: IntegerUtils::random(1, 20) as u8,
-                    vision: IntegerUtils::random(1, 20) as u8,
-                    work_rate: IntegerUtils::random(1, 20) as u8,
-                },
-                physical: Physical {
-                    acceleration: IntegerUtils::random(1, 20) as u8,
-                    agility: IntegerUtils::random(1, 20) as u8,
-                    balance: IntegerUtils::random(1, 20) as u8,
-                    jumping_reach: IntegerUtils::random(1, 20) as u8,
-                    natural_fitness: IntegerUtils::random(1, 20) as u8,
-                    pace: IntegerUtils::random(1, 20) as u8,
-                    stamina: IntegerUtils::random(1, 20) as u8,
-                    strength: IntegerUtils::random(1, 20) as u8,
-                    match_readiness: IntegerUtils::random(1, 20) as u8,
-                },
-            }
-        }
-
-        fn generate_positions() -> Vec<PlayerPosition> {
-            let positions_to_generate = IntegerUtils::random(1, 4) as u32;
-
-            let mut positions = Vec::with_capacity(positions_to_generate as usize);
-
-            for pos in 0..positions_to_generate {
-                positions.push(PlayerPosition {
-                    position: PlayerPositionGenerator::generate(),
-                    level: IntegerUtils::random(0, 20) as u8,
-                })
-            }
-
-            positions
-        }
-
-        fn generate_attributes() -> PlayerAttributes {
-            PlayerAttributes::new(
-                IntegerUtils::random(0, 20) as u8,
-                IntegerUtils::random(-20, 20) as i8,
-            )
-        }
     }
 }
 

@@ -14,6 +14,7 @@ mod staff;
 mod person;
 mod reputation;
 mod relations;
+mod academy;
 
 pub use board::*;
 pub use club::*;

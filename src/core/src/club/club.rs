@@ -4,6 +4,7 @@ use crate::club::tactics::Tactics;
 use crate::club::{ClubMood, TacticsSelector, TransferItem, ClubResult, MatchHistory, TrainingSchedule, Training, ClubFinances, ClubSponsorshipContract, StaffCollection, PlayerCollection, Player, PlayerSelector, ClubReputation};
 use crate::context::GlobalContext;
 use crate::shared::Location;
+use crate::club::academy::ClubAcademy;
 
 #[derive(Debug)]
 pub struct Club {
@@ -18,6 +19,8 @@ pub struct Club {
     pub finance: ClubFinances,
     
     pub reputation: ClubReputation,
+    
+    pub academy: ClubAcademy,
     
     pub tactics: Option<Tactics>,
 
@@ -46,6 +49,7 @@ impl Club {
             location,
             finance,
             reputation,
+            academy: ClubAcademy::new(10),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
             players,
@@ -76,7 +80,8 @@ impl Club {
             self.board.simulate(ctx.with_board()),
             self.players.simulate(ctx.with_player(None)),
             self.staffs.simulate(ctx.with_staff()),
-            self.finance.simulate(ctx.with_finance())
+            self.finance.simulate(ctx.with_finance()),
+            self.academy.simulate(ctx.clone()),
         );
 
         if ctx.simulation.is_week_beginning() {
