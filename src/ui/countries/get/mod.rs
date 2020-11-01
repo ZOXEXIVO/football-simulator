@@ -26,7 +26,7 @@ pub struct LeagueDto<'l> {
 pub async fn country_get_action(state: Data<GameAppData>, route_params: web::Path<CountryGetRequest>) -> Result<HttpResponse> {
     let guard = state.data.lock();
     
-    let mut simulator_data = guard.as_ref().unwrap();
+    let simulator_data = guard.as_ref().unwrap();
 
     let country: &Country = simulator_data.continents.iter().flat_map(|c| &c.countries)
         .find(|country| country.id == route_params.country_id)

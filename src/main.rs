@@ -1,4 +1,6 @@
 mod ui;
+mod db;
+
 use ui::*;
 use actix_web::{App, HttpServer};
 use actix_web::middleware::Logger;
@@ -7,14 +9,18 @@ use std::sync::{Arc};
 use core::SimulatorData;
 use crate::ui::assets::static_routes;
 use parking_lot::Mutex;
+use crate::db::{DatabaseLoader, DatabaseEntity};
+use core::utils::TimeEstimation;
 
 pub struct GameAppData {
+    database: Arc<DatabaseEntity>,
     data: Arc<Mutex<Option<SimulatorData>>>
 }
 
 impl Clone for GameAppData{
     fn clone(&self) -> Self {
         GameAppData {
+            database: Arc::clone(&self.database),
             data: self.data.clone()
         }
     }
@@ -22,7 +28,12 @@ impl Clone for GameAppData{
 
 #[actix_web::main]
 async fn main() {
+    let (database, estimated) = TimeEstimation::estimate(|| DatabaseLoader::load());
+
+    println!("database loaded: {} ms", estimated);
+    
     let data = GameAppData {
+        database: Arc::new(database),
         data: Arc::new(Mutex::new(None))
     };
     

@@ -1,8 +1,7 @@
-use crate::utils::{IntegerUtils, StringUtils};
-use crate::{PlayerPosition, Player, PlayerClubContract, PlayerSkills, Technical, Mental, Physical, PlayerAttributes};
-use chrono::NaiveDate;
-use crate::shared::FullName;
-use crate::generators::PlayerPositionGenerator;
+use core::{Player, NaiveDate, PlayerClubContract, PlayerSkills, Technical, Mental, Physical, PlayerPosition, PlayerAttributes};
+use core::utils::{IntegerUtils, StringUtils};
+use core::shared::FullName;
+use crate::db::PlayerPositionGenerator;
 
 pub struct PlayerGenerator{
 }

@@ -78,7 +78,7 @@ pub struct PhysicalDto {
 pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path<PlayerGetRequest>) -> Result<HttpResponse> {
     let guard = state.data.lock();
 
-    let mut simulator_data = guard.as_ref().unwrap();
+    let simulator_data = guard.as_ref().unwrap();
 
     let player: &Player = simulator_data.continents.iter().flat_map(|c| &c.countries)
         .flat_map(|cn| &cn.leagues)

@@ -1,8 +1,7 @@
-use actix_web::{web, HttpResponse, Result, HttpRequest};
+use actix_web::{HttpResponse, Result, HttpRequest};
 use core::{FootballSimulator};
 use crate::GameAppData;
 use actix_web::web::Data;
-use std::sync::Arc;
 use actix_web::http::header::REFERER;
 use core::utils::TimeEstimation;
 

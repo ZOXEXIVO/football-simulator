@@ -12,7 +12,5 @@ pub mod transfers;
 pub mod shared;
 pub mod utils;
 
-pub mod generators;
-
 pub use club::*;
 pub use country::*;

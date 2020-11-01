@@ -1,4 +1,4 @@
-﻿use actix_web::{web, HttpResponse, Result};
+﻿use actix_web::{HttpResponse, Result};
 use actix_web::web::Data;
 use crate::GameAppData;
 use askama::Template;
@@ -29,7 +29,7 @@ pub struct LeagueDto<'l> {
 pub async fn country_list_action(state: Data<GameAppData>) -> Result<HttpResponse> {
     let guard = state.data.lock();
     
-    let mut simulator_data = guard.as_ref().unwrap();
+    let simulator_data = guard.as_ref().unwrap();
 
     let mut model = CountryListViewModel {
         continents: Vec::with_capacity(simulator_data.continents.len())

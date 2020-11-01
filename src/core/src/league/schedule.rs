@@ -80,14 +80,14 @@ impl ScheduleManager {
 
         self.tours = Vec::with_capacity((clubs_len / 2) * tours_count);
 
-        let mut club_ids: Vec<u32> = clubs.iter().map(|c| c.id).collect();
+        let club_ids: Vec<u32> = clubs.iter().map(|c| c.id).collect();
         
         let (season_year_start, season_year_end) = match season {
             Season::OneYear(year) => (year, year),
             Season::TwoYear(start_year, end_year) => (start_year, end_year)
         };
 
-        let mut current_date = DateUtils::get_next_saturday(
+        let current_date = DateUtils::get_next_saturday(
             NaiveDate::from_ymd(season_year_start as i32, league_settings.season_starting_half.from_month as u32, league_settings.season_starting_half.from_day as u32));
 
         for item in Self::generate_tours(&club_ids, current_date) {

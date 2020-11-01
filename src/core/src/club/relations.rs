@@ -35,7 +35,7 @@ impl RelationStore {
     }
 
     pub fn remove(&mut self, relation_type: RelationType, id: u32) {
-        if let Some(mut tree) = self.data.get_mut(&relation_type) {
+        if let Some(tree) = self.data.get_mut(&relation_type) {
             tree.remove(&id);
         }
     }
