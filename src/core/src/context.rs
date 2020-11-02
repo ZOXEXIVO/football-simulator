@@ -4,6 +4,7 @@ use crate::club::{BoardContext, ClubContext, ClubFinanceContext, PlayerContext, 
 use crate::continent::ContinentContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
+use crate::TeamContext;
 
 #[derive(Clone)]
 pub struct GlobalContext {
@@ -12,6 +13,7 @@ pub struct GlobalContext {
     pub country: Option<CountryContext>,
     pub league: Option<LeagueContext>,
     pub club: Option<ClubContext>,
+    pub team: Option<TeamContext>,    
     pub finance: Option<ClubFinanceContext>,
     pub board: Option<BoardContext>,
     pub player: Option<PlayerContext>,
@@ -26,6 +28,7 @@ impl GlobalContext {
             country: None,
             league: None,
             club: None,
+            team: None,
             finance: None,
             board: None,
             player: None,
@@ -58,6 +61,12 @@ impl GlobalContext {
         ctx
     }
 
+    pub fn with_team(&self, team_id: u32) -> Self {
+        let mut ctx = self.clone();
+        ctx.team = Some(TeamContext::new(team_id));
+        ctx
+    }    
+    
     pub fn with_board(&self) -> Self {
         let mut ctx = self.clone();
         ctx.board = Some(BoardContext::new());

@@ -1,10 +1,12 @@
 use core::context::{NaiveDateTime, NaiveTime};
-use core::{NaiveDate, SimulatorData, Country, PlayerPositionType, Club};
-use crate::db::DatabaseEntity;
+use core::{NaiveDate, SimulatorData, Country, PlayerPositionType, Club, ClubMood, ClubBoard, ClubFinances, ClubSponsorship, ClubFinancialBalance, ClubReputation, PlayerCollection, TrainingSchedule, StaffCollection};
+use crate::db::{DatabaseEntity, PlayerGenerator};
 use core::continent::Continent;
 use core::transfers::TransferPool;
 use core::utils::IntegerUtils;
 use core::league::{League, ScheduleManager, LeagueSettings, DayMonthPeriod, LeagueTable};
+use core::shared::Location;
+use core::club::academy::ClubAcademy;
 
 const CONTINENTS: [(u32, &'static str); 5] = [
     (0, "Africa"), 
@@ -85,88 +87,38 @@ impl Generator{
     }
 
     fn generate_clubs(league_id: u32, data: &DatabaseEntity) -> Vec<Club> {
-        Vec::new()
-        // return data..iter().filter(|l| l.country_id == country_id).map(|l| {
-        //     let league = League {
-        //         id: l.id,
-        //         name: l.name.clone(),
-        //         clubs: vec![],
-        //         schedule_manager: ScheduleManager::new(),
-        //         settings: LeagueSettings { season_starting_half: DayMonthPeriod {
-        //             from_day: l.settings.season_starting_half.from_day,
-        //             from_month: l.settings.season_starting_half.from_month,
-        //             to_day: l.settings.season_starting_half.to_day,
-        //             to_month: l.settings.season_starting_half.to_month
-        //         }, season_ending_half: DayMonthPeriod {
-        //             from_day: l.settings.season_ending_half.from_day,
-        //             from_month: l.settings.season_ending_half.from_month,
-        //             to_day: l.settings.season_ending_half.to_day,
-        //             to_month: l.settings.season_ending_half.to_month
-        //         } },
-        //         league_table: LeagueTable::new,
-        //         reputation: 0
-        //     };
-        // 
-        //     league;
-        // }).collect();
+        return data.clubs.iter().filter(|c| c.league_id == league_id).map(|club| {
+            let club = Club {
+                id: club.id,
+                name: club.name.clone(),
+                location: Location {
+                    city_id: club.location.city_id
+                },
+                mood: ClubMood::default(),
+                board: ClubBoard::new(),
+                finance: ClubFinances::new(club.finance.balance, Vec::new()),
+                reputation: ClubReputation {
+                    home: club.reputation.home,
+                    national: club.reputation.national,
+                    world: club.reputation.world,
+                },
+                academy: ClubAcademy::new(100),
+                tactics: Option::None,
+                players: PlayerCollection::new((0..50).map(|i|PlayerGenerator::generate()).collect()),
+                staffs: StaffCollection::new(Vec::new()),
+                training_schedule: TrainingSchedule::new(
+                NaiveTime::from_hms(10, 0, 0),
+                NaiveTime::from_hms(17, 0, 0),
+                ),
+                transfer_list: vec![],
+                match_history: vec![]
+            };
+
+            club
+        }).collect();
     }
 }
 
-// impl Club {
-//     fn generate() -> Club {
-//         let training_schedule = TrainingSchedule::new(
-//             NaiveTime::from_hms(10, 0, 0),
-//             NaiveTime::from_hms(17, 0, 0),
-//         );
-// 
-//         let sponsorship_contracts = vec![
-//             ClubSponsorshipContract::new(String::from("Sponsor 1"),
-//                                          IntegerUtils::random(1, 10_000_000),
-//                                          NaiveDate::from_ymd(2023, 1, 1)),
-//             ClubSponsorshipContract::new(String::from("Sponsor 2"),
-//                                          IntegerUtils::random(1, 10_000_000),
-//                                          NaiveDate::from_ymd(2025, 1, 1)),
-//             ClubSponsorshipContract::new(String::from("Sponsor 3"),
-//                                          IntegerUtils::random(1, 10_000_000),
-//                                          NaiveDate::from_ymd(2020, 1, 1))
-//         ];
-// 
-//         Club::new(
-//             IntegerUtils::random(1, 10_000_000) as u32,
-//             StringUtils::random_string(15),
-//             Location::new(2),
-//             ClubFinances::new(IntegerUtils::random(-10000, 10000000) as i32, sponsorship_contracts),
-//             ClubReputation::new(3000, 2000, 1000),
-//             training_schedule,
-//             PlayerCollection::new((0..30).map(|_| PlayerGenerator::generate()).collect()),
-//             StaffCollection::new((0..10).map(|_| Staff::generate()).collect()),
-//         )
-//     }
-// }
-// 
-// impl Staff {
-//     fn generate() -> Staff {
-//         let year = IntegerUtils::random(1980, 2010) as u32;
-//         let month = IntegerUtils::random(1, 12) as u32;
-//         let day = IntegerUtils::random(1, 29) as u32;
-// 
-//         Staff::new(
-//             IntegerUtils::random(1, 10_000_000) as u32,
-//             FullName {
-//                 first_name: StringUtils::random_string(5),
-//                 last_name: StringUtils::random_string(10),
-//                 middle_name: StringUtils::random_string(15),
-//             },
-//             NaiveDate::from_ymd(year as i32, month, day),
-//             Some(StaffClubContract::new(
-//                 NaiveDate::from_ymd(2020, 3, 14),
-//                 StaffPosition::MainCoach,
-//                 StaffStatus::Active,
-//             )),
-//         )
-//     }
-// }
-// 
 pub struct PlayerPositionGenerator;
 
 impl PlayerPositionGenerator {

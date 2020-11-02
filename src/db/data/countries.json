@@ -1,7 +1,9 @@
-{
-  "id": 0,
-  "code": "ru",
-  "name": "Russia",
-  "continent": "Europe",
-  "reputation": 1000
-}
+[
+  {
+    "id": 0,
+    "code": "ru",
+    "name": "Russia",
+    "continent": "Europe",
+    "reputation": 1000
+  }
+]

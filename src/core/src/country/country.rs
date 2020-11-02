@@ -15,8 +15,7 @@ impl Country {
         let league_results: Vec<LeagueResult> = self.leagues.iter_mut()
             .map(|league| league.simulate(ctx.with_league(league.id)))
             .collect();
-        
-        
+
         CountryResult::new(league_results)
     }
 }

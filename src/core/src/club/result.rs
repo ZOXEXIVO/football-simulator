@@ -1,33 +1,33 @@
-use crate::club::{BoardResult, ClubFinanceResult, StaffResult, PlayerCollectionResult};
-use crate::simulator::SimulatorData;
 use crate::club::academy::result::ClubAcademyResult;
+use crate::club::{BoardResult, ClubFinanceResult};
+use crate::simulator::SimulatorData;
+use crate::TeamResult;
 
 pub struct ClubResult {
-    pub board: BoardResult,
-    pub player: PlayerCollectionResult,
-    pub staff: StaffResult,
     pub finance: ClubFinanceResult,
-    pub academy: ClubAcademyResult
+    pub teams: Vec<TeamResult>,
+    pub board: BoardResult,
+    pub academy: ClubAcademyResult,
 }
 
 impl ClubResult {
-    pub fn new(board: BoardResult, player: PlayerCollectionResult, 
-               staff: StaffResult, finance: ClubFinanceResult,
-               academy: ClubAcademyResult) -> Self {
+    pub fn new(finance: ClubFinanceResult, teams: Vec<TeamResult>, board: BoardResult, academy: ClubAcademyResult) -> Self {
         ClubResult {
-            board,
-            player,
-            staff,
             finance,
-            academy
+            teams,
+            board,
+            academy,
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData){
-        self.board.process(data);
-        self.player.process(data);
-        self.staff.process(data);
+    pub fn process(&self, data: &mut SimulatorData) {
         self.finance.process(data);
+        
+        for team_result in self.teams {
+            team_result.process(data);
+        }
+        
+        self.board.process(data);       
         self.academy.process(data);
     }
 }

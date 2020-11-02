@@ -7,12 +7,12 @@ pub struct LeagueTable {
 }
 
 impl LeagueTable {
-    pub fn new(clubs: Vec<u32>) -> Self {
-        let mut rows = Vec::with_capacity(clubs.len());
+    pub fn new(teams: Vec<u32>) -> Self {
+        let mut rows = Vec::with_capacity(teams.len());
         
-        for club_id in clubs {
+        for team_id in teams {
             let table_row = LeagueTableRow {
-                club_id,
+                team_id,
                 played: 0,
                 win: 0,
                 draft: 0,
@@ -31,14 +31,14 @@ impl LeagueTable {
     }
    
     #[inline]
-    fn get_club(&mut self, club_id: u32) -> &mut LeagueTableRow {
+    fn get_team(&mut self, team_id: u32) -> &mut LeagueTableRow {
         self.rows.iter_mut()
-            .find(|c| c.club_id == club_id)
+            .find(|c| c.team_id == team_id)
             .unwrap()
     }
 
-    fn winner(&mut self, club_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut club = self.get_club(club_id);
+    fn winner(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
+        let mut club = self.get_team(team_id);
 
         club.played += 1;
         club.win += 1;
@@ -47,8 +47,8 @@ impl LeagueTable {
         club.points += 3;
     }
 
-    fn looser(&mut self, club_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut club = self.get_club(club_id);
+    fn looser(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
+        let mut club = self.get_team(team_id);
 
         club.played += 1;
         club.lost += 1;
@@ -56,8 +56,8 @@ impl LeagueTable {
         club.goal_concerned += goal_concerned;
     }
 
-    fn draft(&mut self, club_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut club = self.get_club(club_id);
+    fn draft(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
+        let mut club = self.get_team(team_id);
 
         club.played += 1;
         club.draft += 1;
@@ -70,16 +70,16 @@ impl LeagueTable {
         for result in match_result {
             match Ord::cmp(&result.home_goals, &result.away_goals) {
                 Ordering::Equal => {
-                    self.draft(result.home_club_id, result.home_goals, result.away_goals);
-                    self.draft(result.away_club_id, result.away_goals, result.away_goals);
+                    self.draft(result.home_team_id, result.home_goals, result.away_goals);
+                    self.draft(result.away_team_id, result.away_goals, result.away_goals);
                 },
                 Ordering::Greater => {
-                    self.winner(result.home_club_id, result.home_goals, result.away_goals);
-                    self.looser(result.away_club_id, result.away_goals, result.home_goals);
+                    self.winner(result.home_team_id, result.home_goals, result.away_goals);
+                    self.looser(result.away_team_id, result.away_goals, result.home_goals);
                 },
                 Ordering::Less => {
-                    self.looser(result.home_club_id, result.home_goals, result.away_goals);
-                    self.winner(result.away_club_id, result.away_goals, result.home_goals);
+                    self.looser(result.home_team_id, result.home_goals, result.away_goals);
+                    self.winner(result.away_team_id, result.away_goals, result.home_goals);
                 }
             }
         }
@@ -94,7 +94,7 @@ impl LeagueTable {
 
 #[derive(Debug)]
 pub struct LeagueTableRow {
-    pub club_id: u32,
+    pub team_id: u32,
     pub played: u8,
     pub win: u8,
     pub draft: u8,
@@ -112,12 +112,12 @@ mod tests {
 
     #[test]
     fn table_draft() {
-        let first_club_id = 1;
-        let second_club_id = 2;
+        let first_team_id = 1;
+        let second_team_id = 2;
         
         let clubs = vec![
-            first_club_id,
-            second_club_id
+            first_team_id,
+            second_team_id
         ];
         
         let mut table = LeagueTable::new(clubs);
@@ -125,8 +125,8 @@ mod tests {
         let match_results = vec![
             MatchResult {
                 schedule_id: "123".to_string(),
-                home_club_id: 1,
-                away_club_id: 2,
+                home_team_id: 1,
+                away_team_id: 2,
                 home_goals: 3,
                 away_goals: 3,
                 player_changes: Vec::new()
@@ -160,24 +160,24 @@ mod tests {
 
     #[test]
     fn table_winner() {
-        let first_club_id = 1;
-        let second_club_id = 2;
+        let first_team_id = 1;
+        let second_team_id = 2;
 
         let clubs = vec![
-            first_club_id,
-            second_club_id
+            first_team_id,
+            second_team_id
         ];
 
         let mut table = LeagueTable::new(clubs);
 
-        let home_club_id = 1;
-        let away_club_id = 2;
+        let home_team_id = 1;
+        let away_team_id = 2;
         
         let match_results = vec![
             MatchResult {
                 schedule_id: "123".to_string(),
-                home_club_id,
-                away_club_id,
+                home_team_id,
+                away_team_id,
                 home_goals: 3,
                 away_goals: 0,
                 player_changes: Vec::new()
@@ -189,10 +189,10 @@ mod tests {
         let returned_table = table.get();
 
         let home = returned_table.iter()
-            .find(|c| c.club_id == home_club_id)
+            .find(|c| c.team_id == home_team_id)
             .unwrap();
         
-        assert_eq!(1, home.club_id);
+        assert_eq!(1, home.team_id);
         assert_eq!(1, home.played);
         assert_eq!(0, home.draft);
         assert_eq!(1, home.win);
@@ -202,10 +202,10 @@ mod tests {
         assert_eq!(3, home.points);
 
         let away = returned_table.iter()
-            .find(|c| c.club_id == away_club_id)
+            .find(|c| c.team_id == away_team_id)
             .unwrap();
         
-        assert_eq!(2, away.club_id);
+        assert_eq!(2, away.team_id);
         assert_eq!(1, away.played);
         assert_eq!(0, away.draft);
         assert_eq!(0, away.win);
@@ -217,24 +217,24 @@ mod tests {
 
     #[test]
     fn table_looser() {
-        let first_club_id = 1;
-        let second_club_id = 2;
+        let first_team_id = 1;
+        let second_team_id = 2;
 
         let clubs = vec![
-            first_club_id,
-            second_club_id
+            first_team_id,
+            second_team_id
         ];
 
         let mut table = LeagueTable::new(clubs);
 
-        let home_club_id = 1;
-        let away_club_id = 2;
+        let home_team_id = 1;
+        let away_team_id = 2;
 
         let match_results = vec![
             MatchResult {
                 schedule_id: "123".to_string(),
-                home_club_id,
-                away_club_id,
+                home_team_id,
+                away_team_id,
                 home_goals: 0,
                 away_goals: 3,
                 player_changes: Vec::new()
@@ -246,10 +246,10 @@ mod tests {
         let returned_table = table.get();
 
         let home = returned_table.iter()
-            .find(|c| c.club_id == home_club_id)
+            .find(|c| c.team_id == home_team_id)
             .unwrap();
 
-        assert_eq!(1, home.club_id);
+        assert_eq!(1, home.team_id);
         assert_eq!(1, home.played);
         assert_eq!(0, home.draft);
         assert_eq!(0, home.win);
@@ -259,10 +259,10 @@ mod tests {
         assert_eq!(0, home.points);
 
         let away = returned_table.iter()
-            .find(|c| c.club_id == away_club_id)
+            .find(|c| c.team_id == away_team_id)
             .unwrap();
 
-        assert_eq!(2, away.club_id);
+        assert_eq!(2, away.team_id);
         assert_eq!(1, away.played);
         assert_eq!(0, away.draft);
         assert_eq!(1, away.win);

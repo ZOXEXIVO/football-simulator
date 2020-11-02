@@ -6,7 +6,6 @@ use std::fmt::{Display, Formatter, Result};
 use crate::club::{PlayerSkills, PlayerClubContract, PlayerAttributes, PlayerMailbox, 
                   PlayerTraining, PlayerResult, PersonBehaviour, Staff, 
                   PersonBehaviourState, PlayerCollectionResult};
-use std::collections::HashSet;
 use crate::Relations;
 
 #[derive(Debug)]

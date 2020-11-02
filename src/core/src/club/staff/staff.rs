@@ -2,9 +2,8 @@ use crate::shared::fullname::FullName;
 use crate::context::GlobalContext;
 use crate::utils::DateUtils;
 use chrono::NaiveDate;
-use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Result};
-use crate::club::{StaffClubContract, Player, StaffResult, 
+use crate::club::{StaffClubContract, StaffResult, 
                   StaffPosition, PersonBehaviour};
 use crate::{Relations};
 

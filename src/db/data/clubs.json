@@ -1,2 +1,18 @@
-{
-}
+[
+  {
+    "id": 0,
+    "name": "Spartak Moscow",
+    "league_id": 0,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 17000000
+    },
+    "reputation": {
+      "home": 6000,
+      "national": 3000,
+      "world": 1500
+    }
+  }
+]
