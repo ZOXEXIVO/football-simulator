@@ -2,17 +2,35 @@
   {
     "id": 0,
     "name": "Spartak Moscow",
-    "league_id": 0,
     "location": {
       "city_id": 0
     },
     "finance": {
       "balance": 17000000
     },
-    "reputation": {
-      "home": 6000,
-      "national": 3000,
-      "world": 1500
-    }
+    "teams": [
+      {
+        "id": 0,
+        "name": "Spartak Moscow",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 3000,
+          "world": 1500
+        }
+      },
+      {
+        "id": 1,
+        "name": "Spartak Moscow 2",
+        "team_type": "B",
+        "league_id": 1,
+        "reputation": {
+          "home": 2000,
+          "national": 2000,
+          "world": 100
+        }
+      }
+    ]
   }
 ]

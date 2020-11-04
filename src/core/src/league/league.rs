@@ -6,21 +6,21 @@ use chrono::Datelike;
 pub struct League {
     pub id: u32,
     pub name: String,
+    pub country_id: u32,
     pub schedule_manager: ScheduleManager,
-    pub league_table: LeagueTable,
+    pub table: LeagueTable,
     pub settings: LeagueSettings,
     pub reputation: u16,
 }
 
 impl League {
-    pub fn new(id: u32, name: String, reputation: u16, settings: LeagueSettings) -> Self {
-        let club_headers = clubs.iter().map(|c| c.id).collect();
-        
+    pub fn new(id: u32, name: String, country_id: u32, reputation: u16, settings: LeagueSettings) -> Self {
         League {
             id,
             name,
+            country_id,
             schedule_manager: ScheduleManager::new(),
-            league_table: LeagueTable::new(club_headers),
+            table: LeagueTable::empty(),
             settings,
             reputation,
         }
@@ -28,7 +28,7 @@ impl League {
     
     pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
         if !self.schedule_manager.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule_manager.generate(Season::TwoYear(2020, 2021), &self.teams,  &self.settings);
+            self.schedule_manager.generate(Season::TwoYear(2020, 2021), &Vec::new(),  &self.settings);
         }
 
         let matches_to_play = self.schedule_manager.get_matches(ctx.simulation.date);

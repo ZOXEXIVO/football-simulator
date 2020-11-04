@@ -1,20 +1,16 @@
 use serde::Deserialize;
+use core::TeamType;
 
 const STATIC_CLUB_JSON: &'static str = include_str!("../data/clubs.json");
 
 #[derive(Deserialize)]
 pub struct ClubEntity{
     pub id: u32,
-    
     pub name: String,
-
-    pub league_id: u32,
-
+    pub country_id: u32,
     pub location: ClubLocationEntity,
-
     pub finance: ClubFinanceEntity,
-
-    pub reputation: ClubReputationEntity
+    pub teams: Vec<ClubTeamEntity>
 }
 
 #[derive(Deserialize)]
@@ -32,6 +28,16 @@ pub struct ClubReputationEntity{
     pub home: u16,
     pub national: u16,
     pub world: u16
+}
+
+#[derive(Deserialize)]
+pub struct ClubTeamEntity{
+    pub id: u32,
+    pub name: String,
+    pub team_type: String,
+    pub league_id: u32,
+    pub finance: Option<ClubFinanceEntity>,
+    pub reputation: ClubReputationEntity
 }
 
 pub struct ClubLoader;

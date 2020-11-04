@@ -42,13 +42,13 @@ impl Country {
             .map(|club| club.simulate(ctx.with_club(club.id)))
             .collect();
   
-        for league_result in league_results {
+        for league_result in &league_results {
             
         }
         
        // let match_results = self.play_matches(&ctx);
 
-        CountryResult::new(league_results, clubs_results, match_results)
+        CountryResult::new(league_results, clubs_results, Vec::new())
     }
 
     // fn play_matches(&mut self, context: &GlobalContext) -> Vec<MatchResult> {

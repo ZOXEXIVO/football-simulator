@@ -7,7 +7,13 @@ pub struct LeagueTable {
 }
 
 impl LeagueTable {
-    pub fn new(teams: Vec<u32>) -> Self {
+    pub fn empty() -> Self {
+        LeagueTable {
+            rows: Vec::new()
+        }
+    }
+    
+    pub fn setup(teams: Vec<u32>) -> Self {
         let mut rows = Vec::with_capacity(teams.len());
         
         for team_id in teams {

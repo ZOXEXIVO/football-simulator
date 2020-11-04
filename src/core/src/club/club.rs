@@ -1,9 +1,9 @@
 use crate::club::academy::ClubAcademy;
 use crate::club::board::ClubBoard;
-use crate::club::{ClubFinances, ClubMood, ClubReputation, ClubResult};
+use crate::club::{ClubFinances, ClubMood, ClubResult};
 use crate::context::GlobalContext;
 use crate::shared::Location;
-use crate::Team;
+use crate::{Team, TeamType};
 
 #[derive(Debug)]
 pub struct Club {
@@ -17,8 +17,6 @@ pub struct Club {
 
     pub finance: ClubFinances,
 
-    pub reputation: ClubReputation,
-
     pub academy: ClubAcademy,
 
     pub teams: Vec<Team>,
@@ -30,7 +28,6 @@ impl Club {
         name: String,
         location: Location,
         finance: ClubFinances,
-        reputation: ClubReputation,
         teams: Vec<Team>,
     ) -> Self {
         Club {
@@ -38,7 +35,6 @@ impl Club {
             name,
             location,
             finance,
-            reputation,
             academy: ClubAcademy::new(10),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
@@ -46,6 +42,10 @@ impl Club {
         }
     }
 
+    pub fn main_team_id(&self) -> Option<u32> {
+        self.teams.iter().find(|t| t.team_type == TeamType::Main).map(|t|t.id)
+    }
+    
     pub fn simulate(&mut self, ctx: GlobalContext) -> ClubResult {
         let team_results = self
             .teams

@@ -99,8 +99,8 @@
                             {{loop.index}}st
                         </td>
                         <td>
-                            <a href="/clubs/{{ row.club_id }}">
-                                {{ row.club_name }}
+                            <a href="/clubs/{{ row.team_id }}">
+                                {{ row.team_name }}
                             </a>
                         </td>
                         <td style="text-align: center;">
@@ -136,13 +136,21 @@
                     <table class="week-results">
                         {% for item in week_schedule.items %}
                         <tr>
-                            <td>{{ item.home_club_name }}</td>
+                            <td>{{ item.home_team_name }}</td>
                             <td class="score">
-                                {% if item.home_goals.is_some() %} {{ item.home_goals.as_ref().unwrap() }}{% endif %}
+                                {% if item.result.is_some() %} 
+                                
+                                {{ item.result.as_ref().unwrap().home_goals }}
                                 -
-                                {% if item.away_goals.is_some() %}{{ item.away_goals.as_ref().unwrap() }}{% endif %}
+                                {{ item.result.as_ref().unwrap().away_goals }}
+                                
+                                {% endif %}
+
+                                {% if item.result.is_none() %}
+                                -
+                                {% endif %}
                             </td>
-                            <td>{{ item.away_club_name }}</td>
+                            <td>{{ item.away_team_name }}</td>
                         </tr>
                         {% endfor %}
                     </table>

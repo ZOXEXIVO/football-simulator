@@ -8,6 +8,7 @@ use core::Club;
 #[derive(Deserialize)]
 pub struct ClubGetRequest {
     club_id: u32,
+    team_id: u32
 }
 
 #[derive(Template)]
@@ -36,12 +37,13 @@ pub async fn club_get_action(state: Data<GameAppData>, route_params: web::Path<C
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let club: &Club = simulator_data.continents.iter().flat_map(|c| &c.countries)
-        .flat_map(|cn| &cn.leagues)
-        .flat_map(|l| &l.clubs)
+    let club: &Club = simulator_data.continents.iter().flat_map(|c| &c.countries)      
+        .flat_map(|c| &c.clubs)
         .find(|club| club.id == route_params.club_id)
         .unwrap();
 
+    let team = club.teams.iter().find(|t| t.id == route_params.team_id).unwrap();
+    
     let model = ClubGetViewModel {
         id: club.id,
         name: &club.name,
@@ -50,7 +52,7 @@ pub async fn club_get_action(state: Data<GameAppData>, route_params: web::Path<C
             income: club.finance.balance.income,
             outcome: club.finance.balance.outcome
         },
-        players: club.players().iter().map(|p| {
+        players: team.players().iter().map(|p| {
             ClubPlayer {
                 id: p.id,
                 first_name: &p.full_name.first_name,
