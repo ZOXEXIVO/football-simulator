@@ -2,6 +2,7 @@
   {
     "id": 0,
     "name": "Spartak Moscow",
+    "country_id": 0,
     "location": {
       "city_id": 0
     },
