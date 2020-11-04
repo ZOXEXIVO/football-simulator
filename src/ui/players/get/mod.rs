@@ -7,7 +7,7 @@ use core::{Club, Player};
 
 #[derive(Deserialize)]
 pub struct PlayerGetRequest {
-    club_id: u32,
+    team_id: u32,
     player_id: u32,
 }
 
@@ -81,9 +81,9 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
     let simulator_data = guard.as_ref().unwrap();
 
     let player: &Player = simulator_data.continents.iter().flat_map(|c| &c.countries)
-        .flat_map(|cn| &cn.leagues)
         .flat_map(|l| &l.clubs)
-        .filter(|club| club.id == route_params.club_id)
+        .flat_map(|c| &c.teams)
+        .filter(|team| team.id == route_params.team_id)
         .flat_map(|c| c.players())
         .find(|p| p.id == route_params.player_id)
         .unwrap();

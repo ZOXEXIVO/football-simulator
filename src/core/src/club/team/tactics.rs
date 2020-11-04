@@ -1,5 +1,6 @@
-use crate::club::{Club, Staff, PlayerPositionType, PersonBehaviourState};
+use crate::club::{Staff, PlayerPositionType, PersonBehaviourState};
 use std::collections::HashMap;
+use crate::Team;
 
 #[derive(Debug)]
 pub struct Tactics {
@@ -34,16 +35,16 @@ pub enum TacticsPositioning {
 pub struct TacticsSelector;
 
 impl TacticsSelector {
-    pub fn select(club: &Club, coach: &Staff) -> Tactics {
+    pub fn select(team: &Team, coach: &Staff) -> Tactics {
         match coach.behaviour.state {
             PersonBehaviourState::Poor => Tactics::new(TacticsPositioning::T451),
-            PersonBehaviourState::Normal => Tactics::new(Self::club_players(club)),
-            PersonBehaviourState::Good => Tactics::new(Self::club_players(club)),
+            PersonBehaviourState::Normal => Tactics::new(Self::team_players(team)),
+            PersonBehaviourState::Good => Tactics::new(Self::team_players(team)),
         }
     }
 
-    fn club_players(club: &Club) -> TacticsPositioning {
-        let player_stats = Self::players_by_position(club);
+    fn team_players(team: &Team) -> TacticsPositioning {
+        let player_stats = Self::players_by_position(team);
 
         let scores = {
             let mut defending_score: i8 = 0;
@@ -98,12 +99,12 @@ impl TacticsSelector {
         TacticsPositioning::T442
     }
 
-    fn players_by_position(club: &Club) -> HashMap<PlayerPositionType, i16> {
+    fn players_by_position(team: &Team) -> HashMap<PlayerPositionType, i16> {
         let mut player_positions = HashMap::<PlayerPositionType, i16>::new();
 
-        let club_players = club.players();
+        let team_players = team.players();
 
-        let ready_for_match_players = club_players.iter().filter(|p| p.is_ready_for_match());
+        let ready_for_match_players = team_players.iter().filter(|p| p.is_ready_for_match());
 
         for player in ready_for_match_players {
             let position = player.position();

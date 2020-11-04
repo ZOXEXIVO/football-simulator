@@ -3,6 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
+use core::Team;
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
@@ -23,14 +24,18 @@ pub struct LeagueSchedule<'s> {
 }
 
 pub struct LeagueScheduleItem<'si> {
-    pub home_goals: Option<u8>,
-    pub away_goals: Option<u8>,
+    pub home_team_id: u32,
+    pub home_team_name: &'si str,
 
-    pub home_club_id: u32,
-    pub home_club_name: &'si str,
+    pub away_team_id: u32,
+    pub away_team_name: &'si str,
 
-    pub away_club_id: u32,
-    pub away_club_name: &'si str,
+    pub result: Option<LeagueScheduleItemResult>
+}
+
+pub struct LeagueScheduleItemResult {
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 pub struct LeagueTableDto<'l> {
@@ -38,8 +43,8 @@ pub struct LeagueTableDto<'l> {
 }
 
 pub struct LeagueTableRow<'l> {
-    pub club_id: u32,
-    pub club_name: &'l str,
+    pub team_id: u32,
+    pub team_name: &'l str,
     pub played: u8,
     pub win: u8,
     pub draft: u8,
@@ -58,15 +63,21 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
         .flat_map(|cn| &cn.leagues)
         .find(|l| l.id == route_params.league_id).unwrap();
 
-    let league_table = league.league_table.get();
+    let teams: Vec<&Team> = simulator_data.continents.iter().flat_map(|c| &c.countries)
+        .filter(|cn| cn.id == league.country_id)
+        .flat_map(|cn| &cn.clubs)
+        .flat_map(|cn| &cn.teams)
+        .collect();
 
+    let league_table = league.table.get();
+       
     let mut model = LeagueGetViewModel {
         id: league.id,
         name: &league.name,
         table: LeagueTableDto {
             rows: league_table.iter().map(|t| LeagueTableRow {
-                club_id: t.club_id,
-                club_name: &league.clubs.iter().find(|c| c.id == t.club_id).unwrap().name,
+                team_id: t.team_id,
+                team_name: &teams.iter().find(|c| c.id == t.team_id).unwrap().name,
                 played: t.played,
                 win: t.win,
                 draft: t.draft,
@@ -83,16 +94,25 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
 
     for tour in league.schedule_manager.tours.iter().filter(|t| !t.played).take(1) {
         for item in &tour.items {
-            model.week_schedule.items.push(LeagueScheduleItem {
-                home_goals: item.home_goals,
-                away_goals: item.away_goals,               
+            let schedule_item = LeagueScheduleItem {
+                result: match &item.result {
+                    Some(res) => {
+                        Some(LeagueScheduleItemResult {
+                            home_goals: res.home_goals,
+                            away_goals: res.away_goals,
+                        })
+                    },
+                    None => None
+                },
 
-                home_club_id: item.home_club_id,
-                home_club_name: &league.clubs.iter().find(|c| c.id == item.home_club_id).unwrap().name,
+                home_team_id: item.home_team_id,
+                home_team_name: &teams.iter().find(|c| c.id == item.home_team_id).unwrap().name,
 
-                away_club_id: item.home_club_id,
-                away_club_name: &league.clubs.iter().find(|c| c.id == item.away_club_id).unwrap().name,
-            })
+                away_team_id: item.home_team_id,
+                away_team_name: &teams.iter().find(|c| c.id == item.away_team_id).unwrap().name,
+            };
+            
+            model.week_schedule.items.push(schedule_item)
         }
     }
 

@@ -8,7 +8,7 @@ pub enum TransferRequestNegotiationResult {
 
 impl TransferRequestNegotiation {
     pub fn negotiate(club: &Club, player: &Player) -> TransferRequestNegotiationResult {
-        let coach = club.staffs.main_coach();
+        //let coach = club.staffs.main_coach();
 
         TransferRequestNegotiationResult::Complete
     }

@@ -1,6 +1,4 @@
-use crate::club::{Club, ClubResult, MatchHistory};
 use crate::league::{ScheduleManager, LeagueResult, LeagueTable, Season};
-use crate::r#match::{Match, MatchResult};
 use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
 
@@ -8,91 +6,34 @@ use chrono::Datelike;
 pub struct League {
     pub id: u32,
     pub name: String,
-    pub clubs: Vec<Club>,
+    pub country_id: u32,
     pub schedule_manager: ScheduleManager,
+    pub table: LeagueTable,
     pub settings: LeagueSettings,
-    pub league_table: LeagueTable,
     pub reputation: u16,
 }
 
 impl League {
-    pub fn new(id: u32, name: String, reputation: u16, settings: LeagueSettings, clubs: Vec<Club>) -> Self {
-        let club_headers = clubs.iter().map(|c| c.id).collect();
-        
+    pub fn new(id: u32, name: String, country_id: u32, reputation: u16, settings: LeagueSettings) -> Self {
         League {
             id,
             name,
-            clubs,
+            country_id,
             schedule_manager: ScheduleManager::new(),
+            table: LeagueTable::empty(),
             settings,
-            league_table: LeagueTable::new(club_headers),
             reputation,
         }
     }
     
     pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
         if !self.schedule_manager.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule_manager.generate(Season::TwoYear(2020, 2021), &self.clubs,  &self.settings);
-        }
-        
-        let club_result: Vec<ClubResult> = self.clubs.iter_mut()
-            .map(|club| club.simulate(ctx.with_club(club.id)))
-            .collect();
-
-        let match_results = self.play_matches(&ctx);
-        
-        self.league_table.update(&match_results);
-        
-        LeagueResult::new(club_result, match_results)
-    }
-
-    fn get_club(&self, club_id: &u32) -> &Club {
-        self.clubs.iter().find(|c| c.id == *club_id).unwrap()
-    }
-
-    fn get_club_mut(&mut self, club_id: u32) -> &mut Club {
-        self.clubs.iter_mut().find(|c| c.id == club_id).unwrap()
-    }
-
-    fn play_matches(&mut self, context: &GlobalContext) -> Vec<MatchResult> {
-        let current_date = context.simulation.date;
-
-        let matches: Vec<Match> = {
-            self.schedule_manager.get_matches(current_date)
-                .iter()
-                .map(|m| {
-                    Match::make(&m.id,
-                                self.get_club(&m.home_club_id),
-                                self.get_club(&m.away_club_id),
-                    )
-                }).collect()
-        };
-
-        let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
-
-        for match_result in &match_results {
-            self.schedule_manager.update_match_result(&match_result.schedule_id, match_result.home_goals, match_result.away_goals);
-
-            self.add_match_to_club_history(match_result.home_club_id,
-                MatchHistory::new(
-                    current_date, match_result.away_club_id, 
-                    (match_result.home_goals, match_result.away_goals)),
-            );
-
-            self.add_match_to_club_history(match_result.away_club_id,
-                MatchHistory::new(
-                    current_date, match_result.home_club_id, 
-                    (match_result.away_goals, match_result.home_goals)),
-            );
+            self.schedule_manager.generate(Season::TwoYear(2020, 2021), &Vec::new(),  &self.settings);
         }
 
-        match_results
-    }
-
-    fn add_match_to_club_history(&mut self, club_id: u32, history: MatchHistory) {
-        let club = self.get_club_mut(club_id);
-
-        club.match_history.push(history);
+        let matches_to_play = self.schedule_manager.get_matches(ctx.simulation.date);
+        
+        LeagueResult::new(self.id, matches_to_play)
     }
 }
 

@@ -1,20 +1,42 @@
-{
-  "id": 0,
-  "name": "Tinkoff Premier league",
-  "country_id": 0,
-  "reputation": 1000,
-  "settings": {
-    "season_starting_half": {
-      "from_day": 1,
-      "from_month": 7,
-      "to_day": 5,
-      "to_month": 12
-    },
-    "season_ending_half": {
-      "from_day": 1,
-      "from_month": 3,
-      "to_day": 31,
-      "to_month": 5
+[
+  {
+    "id": 0,
+    "name": "Tinkoff Premier league",
+    "country_id": 0,
+    "reputation": 6000,
+    "settings": {
+      "season_starting_half": {
+        "from_day": 1,
+        "from_month": 7,
+        "to_day": 5,
+        "to_month": 12
+      },
+      "season_ending_half": {
+        "from_day": 1,
+        "from_month": 3,
+        "to_day": 31,
+        "to_month": 5
+      }
+    }
+  },
+  {
+    "id": 1,
+    "name": "Russian First Division",
+    "country_id": 0,
+    "reputation": 2000,
+    "settings": {
+      "season_starting_half": {
+        "from_day": 1,
+        "from_month": 7,
+        "to_day": 5,
+        "to_month": 12
+      },
+      "season_ending_half": {
+        "from_day": 1,
+        "from_month": 3,
+        "to_day": 31,
+        "to_month": 5
+      }
     }
   }
-}
+]

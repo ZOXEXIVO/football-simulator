@@ -1,8 +1,7 @@
-use crate::club::club::Club;
 use crate::club::squad::SquadPlayer;
 use lazy_static::lazy_static;
 use crate::club::{Staff, PlayerPositionType, Player};
-use crate::RelationType;
+use crate::{Team};
 
 pub struct PlayerSelector;
 
@@ -19,7 +18,7 @@ lazy_static! {
 }
 
 impl PlayerSelector {
-    pub fn select<'c>(club: &'c Club, staff: &Staff) -> Vec<SquadPlayer<'c>> {
+    pub fn select<'c>(club: &'c Team, staff: &Staff) -> Vec<SquadPlayer<'c>> {
         let mut result: Vec<SquadPlayer<'c>> =
             Vec::with_capacity((DEFAULT_SQUAD_SIZE + DEFAULT_BENCH_SIZE) as usize);
 
@@ -31,7 +30,7 @@ impl PlayerSelector {
     }
 
     fn select_by_type<'c>(
-        club: &'c Club,
+        club: &'c Team,
         staff: &Staff,
         position: &PlayerPositionType,
     ) -> Vec<SquadPlayer<'c>> {
