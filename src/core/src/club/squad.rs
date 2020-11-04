@@ -1,5 +1,5 @@
-use crate::club::tactics::Tactics;
 use crate::club::{PlayerPositionType, Player};
+use crate::Tactics;
 
 #[derive(Debug)]
 pub struct Squad<'s> {

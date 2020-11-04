@@ -102,9 +102,9 @@ impl TacticsSelector {
     fn players_by_position(team: &Team) -> HashMap<PlayerPositionType, i16> {
         let mut player_positions = HashMap::<PlayerPositionType, i16>::new();
 
-        let club_players = club.players();
+        let team_players = team.players();
 
-        let ready_for_match_players = club_players.iter().filter(|p| p.is_ready_for_match());
+        let ready_for_match_players = team_players.iter().filter(|p| p.is_ready_for_match());
 
         for player in ready_for_match_players {
             let position = player.position();

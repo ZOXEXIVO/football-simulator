@@ -36,13 +36,13 @@ impl League {
             self.schedule_manager.generate(Season::TwoYear(2020, 2021), &self.teams,  &self.settings);
         }
 
-        self.league_table.update(&match_results);
+        let match_results = self.play_matches(&ctx);
 
+        self.league_table.update(&match_results);
 
         let clubs_results: Vec<ClubResult> = self.clubs.iter_mut()
             .map(|club| club.simulate(ctx.with_club(club.id)))
             .collect();
-
 
         LeagueResult::new(clubs_results, match_results)
     }

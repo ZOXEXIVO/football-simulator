@@ -45,7 +45,7 @@ impl Team {
     pub fn get_week_salary(&self) -> u32 {
         let mut result: u32 = 0;
 
-        for player in &self.players.players {
+        for player in self.players.players {
             if let Some(contract) = player.contract {
                 result += contract.salary as u32
             }
