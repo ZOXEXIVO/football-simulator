@@ -13,7 +13,7 @@ impl LeagueTable {
         }
     }
     
-    pub fn setup(teams: Vec<u32>) -> Self {
+    pub fn with_clubs(teams: Vec<u32>) -> Self {
         let mut rows = Vec::with_capacity(teams.len());
         
         for team_id in teams {
@@ -126,7 +126,7 @@ mod tests {
             second_team_id
         ];
         
-        let mut table = LeagueTable::new(clubs);
+        let mut table = LeagueTable::with_clubs(clubs);
         
         let match_results = vec![
             MatchResult {
@@ -174,7 +174,7 @@ mod tests {
             second_team_id
         ];
 
-        let mut table = LeagueTable::new(clubs);
+        let mut table = LeagueTable::with_clubs(clubs);
 
         let home_team_id = 1;
         let away_team_id = 2;
@@ -231,7 +231,7 @@ mod tests {
             second_team_id
         ];
 
-        let mut table = LeagueTable::new(clubs);
+        let mut table = LeagueTable::with_clubs(clubs);
 
         let home_team_id = 1;
         let away_team_id = 2;
