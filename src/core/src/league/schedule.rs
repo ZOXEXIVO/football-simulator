@@ -36,8 +36,13 @@ pub struct ScheduleItem {
     pub home_team_id: u32,
     pub away_team_id: u32,
 
-    pub home_goals: Option<u8>,
-    pub away_goals: Option<u8>,
+    pub result: Option<ScheduleItemResult>
+}
+
+#[derive(Debug, Clone)]
+pub struct ScheduleItemResult{
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 impl ScheduleItem {
@@ -50,8 +55,7 @@ impl ScheduleItem {
             home_team_id,
             away_team_id,
 
-            home_goals: None,
-            away_goals: None,
+            result: None
         }
     }
 }
@@ -170,20 +174,29 @@ impl ScheduleManager {
             }
             
             if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {
-                item.home_goals = Some(home_goals);
-                item.away_goals = Some(away_goals);
+                item.result = Some(ScheduleItemResult {
+                    home_goals,
+                    away_goals
+                });
                 
-                if tour.items.iter().all(|i| i.home_goals.is_some() && i.away_goals.is_some()) {
+                if tour.items.iter().all(|i| i.result.is_some()) {
                     tour.played = true;
                 }
             }
         }
     }
 
-    pub fn get_matches(&self, date: NaiveDateTime) -> Vec<&ScheduleItem> {
+    pub fn get_matches(&self, date: NaiveDateTime) -> Vec<ScheduleItem> {
         self.tours.iter()
             .flat_map(|t| &t.items)
             .filter(|s| s.date == date)
+            .map(|s| {
+                ScheduleItem::new(
+                    s.home_team_id,
+                    s.away_team_id,
+                    s.date
+                )
+            })
             .collect()
     }
 }

@@ -1,23 +1,25 @@
-use crate::club::{ClubResult};
 use crate::simulator::SimulatorData;
 use crate::r#match::MatchResult;
+use crate::league::ScheduleItem;
 
 pub struct LeagueResult{
-    pub clubs: Vec<ClubResult>,
-    pub match_results: Vec<MatchResult>
+    id: u32,
+    matches: Vec<ScheduleItem>
 }
 
 impl LeagueResult {
-    pub fn new(clubs: Vec<ClubResult>, match_results: Vec<MatchResult>) -> Self {
+    pub fn new(id: u32, matches: Vec<ScheduleItem>) -> Self {
         LeagueResult {
-            clubs,
-            match_results
+            id,
+            matches
         }
     }
 
     pub fn process(self, data: &mut SimulatorData){
-        for result in self.clubs {
-            result.process(data);
+        let league = data.leagues_mut(self.id).unwrap();
+        
+        for match_item in self.matches {
+            //league.league_table.update()
         }
     }
 }
