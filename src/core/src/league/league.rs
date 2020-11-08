@@ -1,4 +1,4 @@
-use crate::league::{ScheduleManager, LeagueResult, LeagueTable, Season};
+use crate::league::{ScheduleManager, LeagueResult, LeagueTable, Season, LeagueMatchResult};
 use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
 
@@ -31,9 +31,18 @@ impl League {
             self.schedule_manager.generate(Season::TwoYear(2020, 2021), &Vec::new(),  &self.settings);
         }
 
-        let matches_to_play = self.schedule_manager.get_matches(ctx.simulation.date);
-        
-        LeagueResult::new(self.id, matches_to_play)
+        let scheduled_matches  = 
+            self.schedule_manager.get_matches(ctx.simulation.date)
+                .iter()
+                .map(|sm| 
+                    LeagueMatchResult {
+                        schedule: &sm,
+                        home_goals: sm.home_goals,
+                        away_goals: sm.away_goals
+                    }
+                ).collect();
+
+        LeagueResult::new(self.id, scheduled_matches)
     }
 }
 
