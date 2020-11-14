@@ -6,22 +6,29 @@ use crate::transfers::TransferPool;
 use crate::{Player, Country};
 use crate::context::{GlobalContext, SimulationContext};
 use crate::league::League;
+use log::{debug};
 
 pub struct FootballSimulator;
 
 impl FootballSimulator {
     pub fn simulate(data: &mut SimulatorData) {
+        debug!("start simulating for {}", data.date);
+        
         let ctx = GlobalContext::new(SimulationContext::new(data.date));
 
         let results: Vec<ContinentResult> = data.continents.iter_mut()
             .map(|continent| continent.simulate(ctx.with_continent(continent.id)))
             .collect();
 
+        debug!("produced {} continent results", results.len());
+        
         for result in results {
             result.process(data);
         }
         
         data.next_date();
+
+        debug!("end simulating for {}", data.date);
     }
 }
 

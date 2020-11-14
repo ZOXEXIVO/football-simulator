@@ -11,6 +11,8 @@ use crate::ui::assets::static_routes;
 use parking_lot::Mutex;
 use crate::db::{DatabaseLoader, DatabaseEntity};
 use core::utils::TimeEstimation;
+use log::{info, debug};
+use env_logger::Env;
 
 pub struct GameAppData {
     database: Arc<DatabaseEntity>,
@@ -28,9 +30,11 @@ impl Clone for GameAppData{
 
 #[actix_web::main]
 async fn main() {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
+    
     let (database, estimated) = TimeEstimation::estimate(|| DatabaseLoader::load());
 
-    println!("database loaded: {} ms", estimated);
+    info!("database loaded: {} ms", estimated);
     
     let data = GameAppData {
         database: Arc::new(database),
@@ -41,7 +45,6 @@ async fn main() {
         App::new()
             .data(data.clone())
             .service(Files::new("/assets", "src/ui/assets").show_files_listing())
-            
             .wrap(Logger::default())
             .configure(static_routes)
             .configure(index_routes)

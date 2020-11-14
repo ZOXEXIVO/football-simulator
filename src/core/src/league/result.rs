@@ -1,5 +1,4 @@
 use crate::simulator::SimulatorData;
-use crate::r#match::MatchResult;
 use crate::league::ScheduleItem;
 use chrono::NaiveDateTime;
 
@@ -47,7 +46,7 @@ impl From<ScheduleItem> for LeagueMatchResult {
             date: item.date,
             home_team_id: item.home_team_id,
             away_team_id: item.away_team_id,
-            result: item.None
+            result: None
         };
         
         if let Some(res) = item.result {

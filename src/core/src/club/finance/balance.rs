@@ -1,6 +1,7 @@
 use crate::club::{ClubFinancialBalanceHistory, ClubFinanceResult, ClubSponsorship, ClubSponsorshipContract};
 use crate::context::GlobalContext;
 use chrono::NaiveDate;
+use log::{debug};
 
 #[derive(Debug)]
 pub struct ClubFinances {
@@ -22,11 +23,15 @@ impl ClubFinances {
         let result = ClubFinanceResult::new();
 
         if ctx.simulation.is_month_beginning() {
+            debug!("finance start new month");
             self.start_new_month(ctx.simulation.date.date())
         }
 
         if ctx.simulation.is_year_beginning() {
             for sponsorship_contract in self.sponsorship.get_sponsorship_incomes(ctx.simulation.date.date()) {
+                debug!("sponsorship push money: {} {}", 
+                       &sponsorship_contract.sponsor_name, sponsorship_contract.wage);
+                
                 self.balance.push_income(sponsorship_contract.wage)
             }
         }
@@ -35,10 +40,14 @@ impl ClubFinances {
     }
     
     pub fn push_salary(&mut self, amount: i32){
+        debug!("finance: push salary");
+        
         self.balance.push_outcome(amount);
     }
     
     fn start_new_month(&mut self, date: NaiveDate){
+        debug!("finance: add history");
+        
         self.history.add(date, self.balance.clone());
         self.balance.clear();
     }

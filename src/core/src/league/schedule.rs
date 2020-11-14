@@ -4,6 +4,7 @@ use chrono::NaiveDate;
 use crate::league::{LeagueSettings, Season};
 use crate::utils::DateUtils;
 use crate::Team;
+use log::{debug};
 
 #[derive(Debug, Clone)]
 pub struct ScheduleTour {
@@ -73,14 +74,20 @@ impl ScheduleManager {
         !self.tours.is_empty()
     }
 
-    pub fn generate(&mut self, season: Season, clubs: &[Team], league_settings: &LeagueSettings) {
-        let teams_len = clubs.len();
+    pub fn generate(&mut self, season: Season, teams: &[Team], league_settings: &LeagueSettings) {
+        debug!("schedule: generation for {:?}", season);
+        
+        let teams_len = teams.len();
+
+        debug!("schedule: team_len = {}", teams_len);
         
         let tours_count = (teams_len * teams_len - teams_len) / (teams_len / 2);
 
+        debug!("schedule: tours_count = {}", tours_count);
+        
         self.tours = Vec::with_capacity((teams_len / 2) * tours_count);
 
-        let team_ids: Vec<u32> = clubs.iter().map(|c| c.id).collect();
+        let team_ids: Vec<u32> = teams.iter().map(|c| c.id).collect();
         
         let (season_year_start, season_year_end) = match season {
             Season::OneYear(year) => (year, year),

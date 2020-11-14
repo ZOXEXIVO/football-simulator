@@ -1,6 +1,7 @@
 use crate::context::GlobalContext;
 use crate::{MatchHistory, Player, PlayerCollection, PlayerSelector, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
 use std::str::FromStr;
+use log::{debug};
 
 #[derive(Debug)]
 pub struct Team {
@@ -75,6 +76,8 @@ impl Team {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext) -> TeamResult {
+        debug!("start simulating team: {}", &self.name);
+        
         let result = TeamResult::new(
             self.players.simulate(ctx.with_player(None)),
             self.staffs.simulate(ctx.with_staff()),
@@ -84,6 +87,8 @@ impl Team {
             Training::train_players(&mut self.players.players, self.staffs.coaches());
         }
 
+        debug!("end simulating team: {}", &self.name);
+        
         result
     }
 }

@@ -13,3 +13,5 @@ actix-files = "0.4.0"
 serde_json = "1.0.59"
 serde = "1.0.117"
 parking_lot = "0.11.0"
+log = { version = "0.4.11", features = ["release_max_level_off"] }
+env_logger = "0.8.1"

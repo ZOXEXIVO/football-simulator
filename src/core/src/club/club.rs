@@ -4,6 +4,7 @@ use crate::club::{ClubFinances, ClubMood, ClubResult};
 use crate::context::GlobalContext;
 use crate::shared::Location;
 use crate::{Team, TeamType};
+use log::{debug};
 
 #[derive(Debug)]
 pub struct Club {
@@ -47,6 +48,8 @@ impl Club {
     }
     
     pub fn simulate(&mut self, ctx: GlobalContext) -> ClubResult {
+        debug!("start simulating club: {}", &self.name);
+        
         let team_results = self
             .teams
             .iter_mut()
@@ -66,6 +69,8 @@ impl Club {
                 self.finance.push_salary(weekly_salary as i32);
             }
         }
+        
+        debug!("end simulating club: {}", &self.name);
 
         result
     }
