@@ -13,7 +13,7 @@ pub struct Continent {
 }
 
 impl Continent {
-    pub fn simulate(&mut self, ctx: GlobalContext) -> ContinentResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ContinentResult {
         debug!("start simulating continent: {}", &self.name);
         
         let country_results: Vec<CountryResult> = self.countries.iter_mut().map(

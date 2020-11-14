@@ -27,11 +27,12 @@ impl League {
         }
     }
     
-    pub fn simulate(&mut self, ctx: GlobalContext) -> LeagueResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
         debug!("start simulating league: {}", &self.name);
         
         if !self.schedule_manager.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            self.schedule_manager.generate(Season::TwoYear(2020, 2021), &Vec::new(),  &self.settings);
+            let league_ctx = ctx.league.unwrap();
+            self.schedule_manager.generate(Season::TwoYear(2020, 2021), league_ctx.club_ids, &self.settings);
         }
 
         let scheduled_matches  = 

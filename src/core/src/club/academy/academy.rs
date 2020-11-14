@@ -20,7 +20,7 @@ impl ClubAcademy {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> ClubAcademyResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubAcademyResult {
         debug!("start simulating academy");
         
         let result = ClubAcademyResult::new();

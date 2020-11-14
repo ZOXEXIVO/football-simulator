@@ -33,17 +33,17 @@ impl Country {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> CountryResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> CountryResult {
         debug!("start simulating country: {}", &self.name);
         
-        let club_ids = self.clubs
+        let club_ids: Vec<u32> = self.clubs
             .iter()
             .map(|c| c.id).collect();
         
         let mut league_results: Vec<LeagueResult> = self
             .leagues
             .iter_mut()
-            .map(|league| league.simulate(ctx.with_league(league.id, club_ids)))
+            .map(|league| league.simulate(ctx.with_league(league.id, &club_ids)))
             .collect();
         
         let clubs_results: Vec<ClubResult> = self.clubs.iter_mut()

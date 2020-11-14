@@ -47,7 +47,7 @@ impl Club {
         self.teams.iter().find(|t| t.team_type == TeamType::Main).map(|t|t.id)
     }
     
-    pub fn simulate(&mut self, ctx: GlobalContext) -> ClubResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubResult {
         debug!("start simulating club: {}", &self.name);
         
         let team_results = self

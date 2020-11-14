@@ -74,7 +74,7 @@ impl ScheduleManager {
         !self.tours.is_empty()
     }
 
-    pub fn generate(&mut self, season: Season, teams: &[Team], league_settings: &LeagueSettings) {
+    pub fn generate(&mut self, season: Season, teams: &[u32], league_settings: &LeagueSettings) {
         debug!("schedule: generation for {:?}", season);
         
         let teams_len = teams.len();
@@ -87,8 +87,6 @@ impl ScheduleManager {
         
         self.tours = Vec::with_capacity((teams_len / 2) * tours_count);
 
-        let team_ids: Vec<u32> = teams.iter().map(|c| c.id).collect();
-        
         let (season_year_start, season_year_end) = match season {
             Season::OneYear(year) => (year, year),
             Season::TwoYear(start_year, end_year) => (start_year, end_year)
@@ -97,13 +95,13 @@ impl ScheduleManager {
         let current_date = DateUtils::get_next_saturday(
             NaiveDate::from_ymd(season_year_start as i32, league_settings.season_starting_half.from_month as u32, league_settings.season_starting_half.from_day as u32));
 
-        for item in Self::generate_tours(&team_ids, current_date) {
+        for item in Self::generate_tours(teams, current_date) {
             self.tours.push(item);
         }
     }
 
-    fn generate_tours(clubs: &[u32], mut current_date: NaiveDateTime) -> Vec<ScheduleTour> {
-        let team_len= clubs.len() as u32;
+    fn generate_tours(teams: &[u32], mut current_date: NaiveDateTime) -> Vec<ScheduleTour> {
+        let team_len= teams.len() as u32;
         let games_count = (team_len / 2) as usize;
         
         let tours_count = ((team_len * team_len - team_len) / (team_len / 2)) as usize;
@@ -112,7 +110,7 @@ impl ScheduleManager {
         
         let mut games_offset = 0;
         
-        let games = Self::generate_game_pairs(clubs, tours_count);
+        let games = Self::generate_game_pairs(teams, tours_count);
         
         for tour in 1..tours_count {           
             let mut tour = ScheduleTour::new(tour as u8, games_count);

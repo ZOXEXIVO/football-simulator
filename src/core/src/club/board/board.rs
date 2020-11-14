@@ -18,7 +18,7 @@ impl ClubBoard {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> BoardResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> BoardResult {
         debug!("start simulating board");
         
         let result = BoardResult::new();

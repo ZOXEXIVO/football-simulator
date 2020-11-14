@@ -75,7 +75,7 @@ impl Team {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> TeamResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> TeamResult {
         debug!("start simulating team: {}", &self.name);
         
         let result = TeamResult::new(

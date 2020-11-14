@@ -34,7 +34,7 @@ async fn main() {
     
     let (database, estimated) = TimeEstimation::estimate(|| DatabaseLoader::load());
 
-    info!("database loaded: {} ms", estimated);
+    debug!("database loaded: {} ms", estimated);
     
     let data = GameAppData {
         database: Arc::new(database),
@@ -45,7 +45,6 @@ async fn main() {
         App::new()
             .data(data.clone())
             .service(Files::new("/assets", "src/ui/assets").show_files_listing())
-            .wrap(Logger::default())
             .configure(static_routes)
             .configure(index_routes)
             .configure(game_routes)        

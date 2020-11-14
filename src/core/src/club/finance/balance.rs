@@ -19,7 +19,7 @@ impl ClubFinances {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> ClubFinanceResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubFinanceResult {
         let result = ClubFinanceResult::new();
 
         if ctx.simulation.is_month_beginning() {

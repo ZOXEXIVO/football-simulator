@@ -53,7 +53,7 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> PlayerResult {
         debug!("start simulating player: {} {} {}", 
                &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
         
@@ -156,7 +156,7 @@ impl PlayerCollection {
         PlayerCollection { players }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerCollectionResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> PlayerCollectionResult {
         let player_results: Vec<PlayerResult> = self.players.iter_mut()
             .map(|player| player.simulate(ctx.with_player(Some(player.id))))
             .collect();
