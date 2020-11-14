@@ -6,6 +6,7 @@ use std::fmt::{Display, Formatter, Result};
 use crate::club::{StaffClubContract, StaffResult, 
                   StaffPosition, PersonBehaviour};
 use crate::{Relations};
+use log::{debug};
 
 #[derive(Debug)]
 pub struct Staff {
@@ -51,11 +52,17 @@ impl Staff {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> StaffResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> StaffResult {
+        debug!("start simulating staff: {} {} {}", 
+               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
+        
         let result = StaffResult::new();
         
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {}
 
+        debug!("start simulating staff: {} {} {}", 
+               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
+        
         result  
     }
 }
@@ -93,7 +100,7 @@ impl StaffCollection {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> StaffResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> StaffResult {
         let result = StaffResult::new();
 
         for staff_contract in &mut self.staffs {

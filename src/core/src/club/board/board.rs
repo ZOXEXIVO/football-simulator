@@ -1,5 +1,6 @@
 use crate::club::{BoardResult, BoardMood, StaffClubContract};
 use crate::context::{GlobalContext, SimulationContext};
+use log::{debug};
 
 #[derive(Debug)]
 pub struct ClubBoard {
@@ -17,7 +18,9 @@ impl ClubBoard {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> BoardResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> BoardResult {
+        debug!("start simulating board");
+        
         let result = BoardResult::new();
         
         if self.director.is_none() {
@@ -34,6 +37,8 @@ impl ClubBoard {
             if self.is_sport_director_contract_expiring(&ctx.simulation) {}
         }
 
+        debug!("end simulating board");
+        
         result
     }
 

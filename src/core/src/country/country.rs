@@ -1,7 +1,9 @@
 use crate::context::GlobalContext;
 use crate::country::CountryResult;
 use crate::league::{League, LeagueResult};
-use crate::{Club, ClubResult, MatchHistory};
+use crate::{Club, ClubResult, Team};
+use crate::r#match::{Match, MatchResult};
+use log::{debug};
 
 pub struct Country {
     pub id: u32,
@@ -31,58 +33,59 @@ impl Country {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> CountryResult {
-        let league_results: Vec<LeagueResult> = self
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> CountryResult {
+        debug!("start simulating country: {}", &self.name);
+        
+        let club_ids: Vec<u32> = self.clubs
+            .iter()
+            .map(|c| c.id).collect();
+        
+        let mut league_results: Vec<LeagueResult> = self
             .leagues
             .iter_mut()
-            .map(|league| league.simulate(ctx.with_league(league.id)))
+            .map(|league| league.simulate(ctx.with_league(league.id, &club_ids)))
             .collect();
         
         let clubs_results: Vec<ClubResult> = self.clubs.iter_mut()
             .map(|club| club.simulate(ctx.with_club(club.id)))
             .collect();
   
-        for league_result in &league_results {
-            
-        }
-        
-       // let match_results = self.play_matches(&ctx);
+        self.process_league_results(&mut league_results);
 
+        debug!("end simulating country: {}", &self.name);
+        
         CountryResult::new(league_results, clubs_results, Vec::new())
     }
+    
+    fn process_league_results(&mut self, results: &mut Vec<LeagueResult>) {
+        let match_results: Vec<MatchResult> = 
+            results.iter()
+                .flat_map(|lr| &lr.matches)
+                .map(|m| 
+                    Match::make(&m.id, 
+                                self.get_team(m.home_team_id), 
+                                self.get_team(m.away_team_id))
+                ).map(|m| m.play())
+                .collect();
 
-    // fn play_matches(&mut self, context: &GlobalContext) -> Vec<MatchResult> {
-    //     let current_date = context.simulation.date;
-    // 
-    //     let matches: Vec<Match> = {
-    //         self.schedule_manager.get_matches(current_date)
-    //             .iter()
-    //             .map(|m| {
-    //                 Match::make(&m.id,
-    //                             self.get_team(&m.home_team_id),
-    //                             self.get_team(&m.away_team_id),
-    //                 )
-    //             }).collect()
-    //     };
-    // 
-    //     let match_results: Vec<MatchResult> = matches.into_iter().map(|game| game.play()).collect();
-    // 
-    //     for match_result in &match_results {
-    //         self.schedule_manager.update_match_result(&match_result.schedule_id, match_result.home_goals, match_result.away_goals);
-    // 
-    //         self.add_match_to_team_history(match_result.home_team_id,
-    //                                        MatchHistory::new(
-    //                                            current_date, match_result.away_team_id,
-    //                                            (match_result.home_goals, match_result.away_goals)),
-    //         );
-    // 
-    //         self.add_match_to_team_history(match_result.away_team_id,
-    //                                        MatchHistory::new(
-    //                                            current_date, match_result.home_team_id,
-    //                                            (match_result.away_goals, match_result.home_goals)),
-    //         );
-    //     }
-    // 
-    //     match_results
-    // }
+        // for match_result in &match_results {
+        //     self.schedule_manager.update_match_result(&match_result.schedule_id, match_result.home_goals, match_result.away_goals);
+        // 
+        //     self.add_match_to_team_history(match_result.home_team_id,
+        //                                    MatchHistory::new(
+        //                                        current_date, match_result.away_team_id,
+        //                                        (match_result.home_goals, match_result.away_goals)),
+        //     );
+        // 
+        //     self.add_match_to_team_history(match_result.away_team_id,
+        //                                    MatchHistory::new(
+        //                                        current_date, match_result.home_team_id,
+        //                                        (match_result.away_goals, match_result.home_goals)),
+        //     );
+        // }
+    }
+    
+    fn get_team(&self, id: u32) -> &Team {
+        self.clubs.iter().flat_map(|c| &c.teams).find(|team| team.id == id).unwrap()
+    }
 }

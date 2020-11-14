@@ -7,6 +7,7 @@ use crate::club::{PlayerSkills, PlayerClubContract, PlayerAttributes, PlayerMail
                   PlayerTraining, PlayerResult, PersonBehaviour, Staff, 
                   PersonBehaviourState, PlayerCollectionResult};
 use crate::Relations;
+use log::{debug};
 
 #[derive(Debug)]
 pub struct Player {
@@ -52,7 +53,10 @@ impl Player {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> PlayerResult {
+        debug!("start simulating player: {} {} {}", 
+               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
+        
         let mut result = PlayerResult::new();
 
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
@@ -64,6 +68,9 @@ impl Player {
         if self.behaviour.state == PersonBehaviourState::Poor {
             result.request_transfer(self.id);
         }
+        
+        debug!("end simulating player: {} {} {}", 
+               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
 
         result
     }
@@ -149,7 +156,7 @@ impl PlayerCollection {
         PlayerCollection { players }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext) -> PlayerCollectionResult {
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> PlayerCollectionResult {
         let player_results: Vec<PlayerResult> = self.players.iter_mut()
             .map(|player| player.simulate(ctx.with_player(Some(player.id))))
             .collect();
