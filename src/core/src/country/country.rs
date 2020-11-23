@@ -50,39 +50,24 @@ impl Country {
             .map(|club| club.simulate(ctx.with_club(club.id)))
             .collect();
   
-        self.process_league_results(&mut league_results);
-
+        let match_results = self.process_league_results(&mut league_results);
+        
+        debug!("match played: {}", match_results.len());
+        
         debug!("end simulating country: {}", &self.name);
         
-        CountryResult::new(league_results, clubs_results, Vec::new())
+        CountryResult::new(league_results, clubs_results, match_results)
     }
     
-    fn process_league_results(&mut self, results: &mut Vec<LeagueResult>) {
-        let match_results: Vec<MatchResult> = 
+    fn process_league_results(&mut self, results: &mut Vec<LeagueResult>) -> Vec<MatchResult> {
             results.iter()
                 .flat_map(|lr| &lr.matches)
                 .map(|m| 
-                    Match::make(&m.id, 
+                    Match::make(m.league_id, &m.id, 
                                 self.get_team(m.home_team_id), 
                                 self.get_team(m.away_team_id))
                 ).map(|m| m.play())
-                .collect();
-
-        // for match_result in &match_results {
-        //     self.schedule_manager.update_match_result(&match_result.schedule_id, match_result.home_goals, match_result.away_goals);
-        // 
-        //     self.add_match_to_team_history(match_result.home_team_id,
-        //                                    MatchHistory::new(
-        //                                        current_date, match_result.away_team_id,
-        //                                        (match_result.home_goals, match_result.away_goals)),
-        //     );
-        // 
-        //     self.add_match_to_team_history(match_result.away_team_id,
-        //                                    MatchHistory::new(
-        //                                        current_date, match_result.home_team_id,
-        //                                        (match_result.away_goals, match_result.home_goals)),
-        //     );
-        // }
+                .collect()
     }
     
     fn get_team(&self, id: u32) -> &Team {

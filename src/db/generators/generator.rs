@@ -2,7 +2,7 @@ use crate::db::{DatabaseEntity, PlayerGenerator};
 use core::club::academy::ClubAcademy;
 use core::context::{NaiveDateTime, NaiveTime};
 use core::continent::Continent;
-use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, ScheduleManager};
+use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule};
 use core::shared::Location;
 use core::transfers::TransferPool;
 use core::utils::IntegerUtils;
@@ -83,7 +83,7 @@ impl Generator {
                     id: l.id,
                     name: l.name.clone(),
                     country_id: l.country_id,
-                    schedule_manager: ScheduleManager::new(),
+                    schedule: Schedule::new(),
                     settings: LeagueSettings {
                         season_starting_half: DayMonthPeriod {
                             from_day: l.settings.season_starting_half.from_day,

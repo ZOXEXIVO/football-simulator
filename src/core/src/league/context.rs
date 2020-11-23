@@ -1,5 +1,3 @@
-use crate::Club;
-
 #[derive(Clone)]
 pub struct LeagueContext<'l> {
     id: u32,

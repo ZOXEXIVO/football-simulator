@@ -3,7 +3,6 @@ use chrono::Duration;
 use chrono::NaiveDate;
 use crate::league::{LeagueSettings, Season};
 use crate::utils::DateUtils;
-use crate::Team;
 use log::{debug};
 
 #[derive(Debug, Clone)]
@@ -25,13 +24,15 @@ impl ScheduleTour {
 
 
 #[derive(Debug)]
-pub struct ScheduleManager {
+pub struct Schedule {
     pub tours: Vec<ScheduleTour>
 }
 
 #[derive(Debug, Clone)]
 pub struct ScheduleItem {
     pub id: String,
+    pub league_id: u32,
+    
     pub date: NaiveDateTime,
 
     pub home_team_id: u32,
@@ -47,11 +48,12 @@ pub struct ScheduleItemResult{
 }
 
 impl ScheduleItem {
-    pub fn new(home_team_id: u32, away_team_id: u32, date: NaiveDateTime) -> Self {
+    pub fn new(league_id: u32, home_team_id: u32, away_team_id: u32, date: NaiveDateTime) -> Self {
         let id = format!("{}{}{}", date, home_team_id, away_team_id);
 
         ScheduleItem {
             id,
+            league_id,
             date,
             home_team_id,
             away_team_id,
@@ -63,9 +65,9 @@ impl ScheduleItem {
 
 const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
 
-impl ScheduleManager {
+impl Schedule {
     pub fn new() -> Self {
-        ScheduleManager {
+        Schedule {
             tours: Vec::new()
         }
     }
@@ -74,7 +76,7 @@ impl ScheduleManager {
         !self.tours.is_empty()
     }
 
-    pub fn generate(&mut self, season: Season, teams: &[u32], league_settings: &LeagueSettings) {
+    pub fn generate(&mut self, league_id: u32, season: Season, teams: &[u32], league_settings: &LeagueSettings) {
         debug!("schedule: generation for {:?}", season);
         
         let teams_len = teams.len();
@@ -95,12 +97,12 @@ impl ScheduleManager {
         let current_date = DateUtils::get_next_saturday(
             NaiveDate::from_ymd(season_year_start as i32, league_settings.season_starting_half.from_month as u32, league_settings.season_starting_half.from_day as u32));
 
-        for item in Self::generate_tours(teams, current_date) {
+        for item in Self::generate_tours(league_id, teams, current_date) {
             self.tours.push(item);
         }
     }
 
-    fn generate_tours(teams: &[u32], mut current_date: NaiveDateTime) -> Vec<ScheduleTour> {
+    fn generate_tours(league_id: u32, teams: &[u32], mut current_date: NaiveDateTime) -> Vec<ScheduleTour> {
         let team_len= teams.len() as u32;
         let games_count = (team_len / 2) as usize;
         
@@ -118,7 +120,7 @@ impl ScheduleManager {
             for game_idx in 0..games_count {
                 let (home_team_id, away_team_id) = games[games_offset + game_idx as usize];
                 
-                tour.items.push(ScheduleItem::new(home_team_id, away_team_id, current_date))
+                tour.items.push(ScheduleItem::new(league_id, home_team_id, away_team_id, current_date))
             }
             
             games_offset += games_count;
@@ -197,6 +199,7 @@ impl ScheduleManager {
             .filter(|s| s.date == date)
             .map(|s| {
                 ScheduleItem::new(
+                    s.league_id,
                     s.home_team_id,
                     s.away_team_id,
                     s.date
