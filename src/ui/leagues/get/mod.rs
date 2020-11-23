@@ -92,7 +92,7 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
         },
     };
 
-    for tour in league.schedule_manager.tours.iter().filter(|t| !t.played).take(1) {
+    for tour in league.schedule.tours.iter().filter(|t| !t.played).take(1) {
         for item in &tour.items {
             let schedule_item = LeagueScheduleItem {
                 result: match &item.result {

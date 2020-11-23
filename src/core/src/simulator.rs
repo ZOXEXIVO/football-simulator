@@ -58,17 +58,34 @@ impl SimulatorData {
             .take(30)
             .collect::<String>()
     }
+
+    pub fn continents(&self, id: u32) -> Option<&Continent>{
+        self.continents.iter().find(|c| c.id == id)
+    }
     
-    pub fn continent_mut(&mut self, id: u32) -> Option<&mut Continent>{
+    pub fn continents_mut(&mut self, id: u32) -> Option<&mut Continent>{
         self.continents.iter_mut().find(|c| c.id == id)
     }
 
+    pub fn counties(&self, id: u32) -> Option<&Country>{
+        self.continents.iter()
+            .flat_map(|c|&c.countries)
+            .find(|c| c.id == id)
+    }
+    
     pub fn counties_mut(&mut self, id: u32) -> Option<&mut Country>{
         self.continents.iter_mut()
             .flat_map(|c|&mut c.countries)
             .find(|c| c.id == id)
     }
 
+    pub fn leagues(&self, id: u32) -> Option<&League>{
+        self.continents.iter()
+            .flat_map(|c|&c.countries)
+            .flat_map(|c|&c.leagues)
+            .find(|c| c.id == id)
+    }
+    
     pub fn leagues_mut(&mut self, id: u32) -> Option<&mut League>{
         self.continents.iter_mut()
             .flat_map(|c|&mut c.countries)

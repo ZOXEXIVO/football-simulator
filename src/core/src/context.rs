@@ -4,7 +4,7 @@ use crate::club::{BoardContext, ClubContext, ClubFinanceContext, PlayerContext, 
 use crate::continent::ContinentContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
-use crate::{TeamContext, Club};
+use crate::{TeamContext};
 
 #[derive(Clone)]
 pub struct GlobalContext<'gc>{

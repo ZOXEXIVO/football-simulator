@@ -1,4 +1,4 @@
-use crate::league::{ScheduleManager, LeagueResult, LeagueTable, Season, LeagueMatchResult};
+use crate::league::{Schedule, LeagueResult, LeagueTable, Season, LeagueMatchResult};
 use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
 use log::{debug};
@@ -8,7 +8,7 @@ pub struct League {
     pub id: u32,
     pub name: String,
     pub country_id: u32,
-    pub schedule_manager: ScheduleManager,
+    pub schedule: Schedule,
     pub table: LeagueTable,
     pub settings: LeagueSettings,
     pub reputation: u16,
@@ -20,7 +20,7 @@ impl League {
             id,
             name,
             country_id,
-            schedule_manager: ScheduleManager::new(),
+            schedule: Schedule::new(),
             table: LeagueTable::empty(),
             settings,
             reputation,
@@ -30,17 +30,18 @@ impl League {
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
         debug!("start simulating league: {}", &self.name);
         
-        if !self.schedule_manager.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
+        if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
             let league_ctx = ctx.league.unwrap();
-            self.schedule_manager.generate(Season::TwoYear(2020, 2021), league_ctx.club_ids, &self.settings);
+            self.schedule.generate(self.id,Season::TwoYear(2020, 2021), league_ctx.club_ids, &self.settings);
         }
 
         let scheduled_matches  = 
-            self.schedule_manager.get_matches(ctx.simulation.date)
+            self.schedule.get_matches(ctx.simulation.date)
                 .iter()
                 .map(|sm| 
                     LeagueMatchResult {
                         id: sm.id.clone(),
+                        league_id: sm.league_id,
                         date: sm.date,
                         home_team_id: sm.home_team_id,
                         away_team_id: sm.away_team_id,
