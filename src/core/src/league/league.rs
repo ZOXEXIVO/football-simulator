@@ -1,7 +1,6 @@
 use crate::league::{Schedule, LeagueResult, LeagueTable, Season, LeagueMatchResult};
 use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
-use log::{debug};
 
 #[derive(Debug)]
 pub struct League {

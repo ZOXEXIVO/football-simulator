@@ -42,13 +42,11 @@ impl Country {
             .iter_mut()
             .map(|club| {
                 let message = &format!("simulate club: {}", &club.name);
-                Logging::wrap_call(|| club.simulate(ctx.with_club(club.id)), message)
+                Logging::estimate_result(|| club.simulate(ctx.with_club(club.id)), message)
             })
             .collect();
 
         let match_results = self.process_league_results(&mut league_results);
-
-        debug!("match played: {}", match_results.len());
 
         CountryResult::new(league_results, clubs_results, match_results)
     }
@@ -71,7 +69,7 @@ impl Country {
                     .collect();
                 {
                     let message = &format!("simulate league: {}", &league.name);
-                    Logging::wrap_call(
+                    Logging::estimate_result(
                         || league.simulate(ctx.with_league(league.id, &league_team_ids)),
                         message,
                     )

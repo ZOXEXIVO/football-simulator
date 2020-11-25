@@ -153,7 +153,7 @@ impl PlayerCollection {
             .iter_mut()
             .map(|player| {
                 let message = &format!("simulate player: id: {}", &player.id);
-                Logging::wrap_call(
+                Logging::estimate_result(
                     || player.simulate(ctx.with_player(Some(player.id))),
                     message,
                 )

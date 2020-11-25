@@ -99,7 +99,7 @@ impl StaffCollection {
             .iter_mut()
             .map(|staff| {
                 let message = &format!("simulate staff: id: {}", &staff.id);
-                Logging::wrap_call(
+                Logging::estimate_result(
                     || staff.simulate(ctx.with_staff(Some(staff.id))),
                     message,
                 )

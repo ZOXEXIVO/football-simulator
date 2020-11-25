@@ -2,7 +2,6 @@ use crate::club::academy::result::ClubAcademyResult;
 use crate::context::GlobalContext;
 use crate::Player;
 use crate::club::academy::settings::AcademySettings;
-use log::{debug};
 
 #[derive(Debug)]
 pub struct ClubAcademy{

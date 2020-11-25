@@ -7,31 +7,29 @@ use crate::{Player, Country};
 use crate::context::{GlobalContext, SimulationContext};
 use crate::league::League;
 use log::{debug};
+use crate::utils::Logging;
 
 pub struct FootballSimulator;
 
 impl FootballSimulator {
     pub fn simulate(data: &mut SimulatorData) {
-        debug!("start simulating for {}", data.date);
+        let message = &format!("simulating date {}", data.date);
         
-        let ctx = GlobalContext::new(SimulationContext::new(data.date));
+        Logging::estimate(|| {
+            let ctx = GlobalContext::new(SimulationContext::new(data.date));
 
-        let results: Vec<ContinentResult> = data.continents.iter_mut()
-            .map(|continent| continent.simulate(ctx.with_continent(continent.id)))
-            .collect();
+            let results: Vec<ContinentResult> = data.continents.iter_mut()
+                .map(|continent| continent.simulate(ctx.with_continent(continent.id)))
+                .collect();
 
-        debug!("produced {} continent results", results.len());
-        
-        for result in results {
-            result.process(data);
-        }
-        
-        data.next_date();
+            for result in results {
+                result.process(data);
+            }
 
-        debug!("end simulating for {}", data.date);
+            data.next_date();
+        }, message);        
     }
 }
-
 
 pub struct SimulatorData {
     pub id: String,
