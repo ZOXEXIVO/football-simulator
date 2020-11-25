@@ -28,8 +28,6 @@ impl League {
     }
     
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
-        debug!("start simulating league: {}", &self.name);
-        
         if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
             let league_ctx = ctx.league.unwrap();
             self.schedule.generate(self.id,Season::TwoYear(2020, 2021), league_ctx.club_ids, &self.settings);
@@ -49,8 +47,6 @@ impl League {
                     }
                 ).collect();
 
-        debug!("end simulating league: {}", &self.name);
-        
         LeagueResult::new(self.id, scheduled_matches)
     }
 }

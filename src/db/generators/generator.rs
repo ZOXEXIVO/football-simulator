@@ -56,16 +56,16 @@ impl Generator {
             .countries
             .iter()
             .filter(|cn| cn.continent == continent)
-            .map(|c| {
-                let clubs = Generator::generate_clubs(c.id, data);
+            .map(|country| {
+                let clubs = Generator::generate_clubs(country.id, data);
 
                 let country = Country {
-                    id: c.id,
-                    code: c.code.clone(),
-                    name: c.name.clone(),
-                    leagues: Generator::generate_leagues(c.id, data),
+                    id: country.id,
+                    code: country.code.clone(),
+                    name: country.name.clone(),
+                    leagues: Generator::generate_leagues(country.id, data),
                     clubs,
-                    reputation: c.reputation,
+                    reputation: country.reputation,
                 };
 
                 country
@@ -78,24 +78,24 @@ impl Generator {
             .leagues
             .iter()
             .filter(|l| l.country_id == country_id)
-            .map(|l| {
+            .map(|league| {
                 let league = League {
-                    id: l.id,
-                    name: l.name.clone(),
-                    country_id: l.country_id,
+                    id: league.id,
+                    name: league.name.clone(),
+                    country_id: league.country_id,
                     schedule: Schedule::new(),
                     settings: LeagueSettings {
                         season_starting_half: DayMonthPeriod {
-                            from_day: l.settings.season_starting_half.from_day,
-                            from_month: l.settings.season_starting_half.from_month,
-                            to_day: l.settings.season_starting_half.to_day,
-                            to_month: l.settings.season_starting_half.to_month,
+                            from_day: league.settings.season_starting_half.from_day,
+                            from_month: league.settings.season_starting_half.from_month,
+                            to_day: league.settings.season_starting_half.to_day,
+                            to_month: league.settings.season_starting_half.to_month,
                         },
                         season_ending_half: DayMonthPeriod {
-                            from_day: l.settings.season_ending_half.from_day,
-                            from_month: l.settings.season_ending_half.from_month,
-                            to_day: l.settings.season_ending_half.to_day,
-                            to_month: l.settings.season_ending_half.to_month,
+                            from_day: league.settings.season_ending_half.from_day,
+                            from_month: league.settings.season_ending_half.from_month,
+                            to_day: league.settings.season_ending_half.to_day,
+                            to_month: league.settings.season_ending_half.to_month,
                         },
                     },
                     table: LeagueTable::empty(),
@@ -129,6 +129,7 @@ impl Generator {
                         .map(|t| {
                             Team::new(
                                 t.id,
+                                t.league_id,
                                 t.name.clone(),
                                 TeamType::from_str(&t.team_type).unwrap(),
                                 TrainingSchedule::new(
@@ -140,7 +141,7 @@ impl Generator {
                                     t.reputation.national,
                                     t.reputation.world,
                                 ),
-                                PlayerCollection::new(Vec::new()),
+                                PlayerCollection::new((0..50).map(|i| PlayerGenerator::generate()).collect()),
                                 StaffCollection::new(Vec::new()),
                             )
                         })

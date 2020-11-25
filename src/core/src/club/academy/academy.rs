@@ -21,15 +21,11 @@ impl ClubAcademy {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubAcademyResult {
-        debug!("start simulating academy");
-        
         let result = ClubAcademyResult::new();
         
         if self.players.len() < self.settings.players_count_range.start as usize {
             self.produce_youth_players();
         }
-
-        debug!("end simulating academy");
         
         result
     }

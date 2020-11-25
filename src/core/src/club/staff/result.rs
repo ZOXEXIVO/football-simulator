@@ -1,5 +1,21 @@
 use crate::simulator::SimulatorData;
 
+pub struct StaffCollectionResult {
+    pub staff: Vec<StaffResult>
+}
+
+impl StaffCollectionResult{
+    pub fn new(staff: Vec<StaffResult>) -> Self {
+        StaffCollectionResult {
+            staff
+        }
+    }
+
+    pub fn process(&self, data: &mut SimulatorData){
+
+    }
+}
+
 pub struct StaffResult {
     pub transfer_requests: Vec<u32>
 }

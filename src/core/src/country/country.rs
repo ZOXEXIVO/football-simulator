@@ -1,9 +1,10 @@
 use crate::context::GlobalContext;
 use crate::country::CountryResult;
 use crate::league::{League, LeagueResult};
-use crate::{Club, ClubResult, Team};
 use crate::r#match::{Match, MatchResult};
-use log::{debug};
+use crate::utils::Logging;
+use crate::{Club, ClubResult, Team};
+use log::debug;
 
 pub struct Country {
     pub id: u32,
@@ -34,43 +35,72 @@ impl Country {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> CountryResult {
-        debug!("start simulating country: {}", &self.name);
-        
-        let club_ids: Vec<u32> = self.clubs
-            .iter()
-            .map(|c| c.id).collect();
-        
-        let mut league_results: Vec<LeagueResult> = self
-            .leagues
+        let mut league_results = self.simulate_leagues(&ctx);
+
+        let clubs_results: Vec<ClubResult> = self
+            .clubs
             .iter_mut()
-            .map(|league| league.simulate(ctx.with_league(league.id, &club_ids)))
+            .map(|club| {
+                let message = &format!("simulate club: {}", &club.name);
+                Logging::wrap_call(|| club.simulate(ctx.with_club(club.id)), message)
+            })
             .collect();
-        
-        let clubs_results: Vec<ClubResult> = self.clubs.iter_mut()
-            .map(|club| club.simulate(ctx.with_club(club.id)))
-            .collect();
-  
+
         let match_results = self.process_league_results(&mut league_results);
-        
+
         debug!("match played: {}", match_results.len());
-        
-        debug!("end simulating country: {}", &self.name);
-        
+
         CountryResult::new(league_results, clubs_results, match_results)
     }
-    
-    fn process_league_results(&mut self, results: &mut Vec<LeagueResult>) -> Vec<MatchResult> {
-            results.iter()
-                .flat_map(|lr| &lr.matches)
-                .map(|m| 
-                    Match::make(m.league_id, &m.id, 
-                                self.get_team(m.home_team_id), 
-                                self.get_team(m.away_team_id))
-                ).map(|m| m.play())
-                .collect()
+
+    fn simulate_leagues(&mut self, ctx: &GlobalContext<'_>) -> Vec<LeagueResult> {
+        let teams_ids: Vec<(u32, u32)> = self
+            .clubs
+            .iter()
+            .flat_map(|c| &c.teams)
+            .map(|c| (c.id, c.league_id))
+            .collect();
+
+        self.leagues
+            .iter_mut()
+            .map(|league| {
+                let league_team_ids: Vec<u32> = teams_ids
+                    .iter()
+                    .filter(|(_, league_id)| *league_id == league.id)
+                    .map(|(id, _)| *id)
+                    .collect();
+                {
+                    let message = &format!("simulate league: {}", &league.name);
+                    Logging::wrap_call(
+                        || league.simulate(ctx.with_league(league.id, &league_team_ids)),
+                        message,
+                    )
+                }
+            })
+            .collect()
     }
-    
+
+    fn process_league_results(&mut self, results: &mut Vec<LeagueResult>) -> Vec<MatchResult> {
+        results
+            .iter()
+            .flat_map(|lr| &lr.matches)
+            .map(|m| {
+                Match::make(
+                    m.league_id,
+                    &m.id,
+                    self.get_team(m.home_team_id),
+                    self.get_team(m.away_team_id),
+                )
+            })
+            .map(|m| m.play())
+            .collect()
+    }
+
     fn get_team(&self, id: u32) -> &Team {
-        self.clubs.iter().flat_map(|c| &c.teams).find(|team| team.id == id).unwrap()
+        self.clubs
+            .iter()
+            .flat_map(|c| &c.teams)
+            .find(|team| team.id == id)
+            .unwrap()
     }
 }

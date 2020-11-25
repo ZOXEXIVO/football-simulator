@@ -67,6 +67,7 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
         .filter(|cn| cn.id == league.country_id)
         .flat_map(|cn| &cn.clubs)
         .flat_map(|cn| &cn.teams)
+        .filter(|t| t.league_id == route_params.league_id)
         .collect();
 
     let league_table = league.table.get();
