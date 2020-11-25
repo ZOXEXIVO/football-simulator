@@ -22,15 +22,18 @@ impl ClubFinances {
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubFinanceResult {
         let result = ClubFinanceResult::new();
 
+        let club_name = ctx.club.as_ref().unwrap().name;
+        
         if ctx.simulation.is_month_beginning() {
-            debug!("finance start new month");
-            self.start_new_month(ctx.simulation.date.date())
+            debug!("club: {}, finance: start new month", club_name);
+            
+            self.start_new_month(club_name, ctx.simulation.date.date())
         }
 
         if ctx.simulation.is_year_beginning() {
             for sponsorship_contract in self.sponsorship.get_sponsorship_incomes(ctx.simulation.date.date()) {
-                debug!("sponsorship push money: {} {}", 
-                       &sponsorship_contract.sponsor_name, sponsorship_contract.wage);
+                debug!("club: {}, finance: sponsorship push money: {} {}",
+                       club_name, &sponsorship_contract.sponsor_name, sponsorship_contract.wage);
                 
                 self.balance.push_income(sponsorship_contract.wage)
             }
@@ -39,14 +42,15 @@ impl ClubFinances {
         result
     }
     
-    pub fn push_salary(&mut self, amount: i32){
-        debug!("finance: push salary");
+    pub fn push_salary(&mut self, club_name: &str, amount: i32){
+        debug!("club: {}, finance: push salary, amount = {}", club_name, amount);
         
         self.balance.push_outcome(amount);
     }
     
-    fn start_new_month(&mut self, date: NaiveDate){
-        debug!("finance: add history");
+    fn start_new_month(&mut self, club_name: &str, date: NaiveDate){
+        debug!("club: {}, finance: add history, date = {}, amount = {}, income={}, outcome={}",
+               club_name, date, self.balance.amount, self.balance.income, self.balance.outcome);
         
         self.history.add(date, self.balance.clone());
         self.balance.clear();
@@ -98,7 +102,7 @@ mod tests {
 
         let date = NaiveDate::from_ymd(2020, 2, 1);
 
-        finances.start_new_month(date);
+        finances.start_new_month("club_name", date);
         
         let history_result = finances.history.get(date);
 

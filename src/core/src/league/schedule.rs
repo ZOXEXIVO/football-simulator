@@ -63,7 +63,7 @@ impl ScheduleItem {
     }
 }
 
-const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
+// const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
 
 impl Schedule {
     pub fn new() -> Self {

@@ -81,7 +81,7 @@ impl PlayerGenerator{
 
         let mut positions = Vec::with_capacity(positions_to_generate as usize);
 
-        for pos in 0..positions_to_generate {
+        for _ in 0..positions_to_generate {
             positions.push(PlayerPosition {
                 position: PlayerPositionGenerator::generate(),
                 level: IntegerUtils::random(0, 20) as u8,

@@ -4,7 +4,6 @@ use crate::league::{League, LeagueResult};
 use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, ClubResult, Team};
-use log::debug;
 
 pub struct Country {
     pub id: u32,
@@ -42,7 +41,10 @@ impl Country {
             .iter_mut()
             .map(|club| {
                 let message = &format!("simulate club: {}", &club.name);
-                Logging::estimate_result(|| club.simulate(ctx.with_club(club.id)), message)
+                Logging::estimate_result(
+                    || club.simulate(ctx.with_club(club.id, &club.name.clone())),
+                    message,
+                )
             })
             .collect();
 
@@ -90,7 +92,10 @@ impl Country {
                     self.get_team(m.away_team_id),
                 )
             })
-            .map(|m| m.play())
+            .map(|m| {
+                let message = &format!("simulate play match: {} - {}", &m.home_team.name, &m.away_team.name);
+                Logging::estimate_result(|| m.play(), message)
+            })
             .collect()
     }
 

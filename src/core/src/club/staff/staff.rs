@@ -6,7 +6,6 @@ use std::fmt::{Display, Formatter, Result};
 use crate::club::{StaffClubContract, StaffResult, 
                   StaffPosition, PersonBehaviour};
 use crate::{Relations, StaffCollectionResult};
-use log::{debug};
 
 #[derive(Debug)]
 pub struct Staff {

@@ -1,5 +1,4 @@
 use std::time::Instant;
-use log::{info};
 
 pub struct TimeEstimation;
 

@@ -8,8 +8,8 @@ use log::{debug};
 pub struct Match<'m> {
     league_id: u32,
     schedule_id: &'m str,
-    home_team: &'m Team,
-    away_team: &'m Team,
+    pub home_team: &'m Team,
+    pub away_team: &'m Team,
 }
 
 impl<'m> Match<'m> {

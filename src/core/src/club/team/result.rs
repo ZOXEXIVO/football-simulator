@@ -1,4 +1,4 @@
-use crate::club::{StaffResult, PlayerCollectionResult};
+use crate::club::{PlayerCollectionResult};
 use crate::simulator::SimulatorData;
 use crate::StaffCollectionResult;
 

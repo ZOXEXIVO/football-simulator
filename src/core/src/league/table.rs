@@ -130,6 +130,7 @@ mod tests {
         
         let match_results = vec![
             MatchResult {
+                league_id: 0,
                 schedule_id: "123".to_string(),
                 home_team_id: 1,
                 away_team_id: 2,
@@ -181,6 +182,7 @@ mod tests {
         
         let match_results = vec![
             MatchResult {
+                league_id: 0,
                 schedule_id: "123".to_string(),
                 home_team_id,
                 away_team_id,
@@ -238,6 +240,7 @@ mod tests {
 
         let match_results = vec![
             MatchResult {
+                league_id: 0,
                 schedule_id: "123".to_string(),
                 home_team_id,
                 away_team_id,
@@ -254,7 +257,7 @@ mod tests {
         let home = returned_table.iter()
             .find(|c| c.team_id == home_team_id)
             .unwrap();
-
+  
         assert_eq!(1, home.team_id);
         assert_eq!(1, home.played);
         assert_eq!(0, home.draft);

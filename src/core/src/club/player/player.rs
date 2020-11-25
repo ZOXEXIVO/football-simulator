@@ -7,7 +7,6 @@ use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::Relations;
 use chrono::NaiveDate;
-use log::debug;
 use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug)]

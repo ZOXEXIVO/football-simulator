@@ -1,5 +1,4 @@
 use serde::Deserialize;
-use core::TeamType;
 
 const STATIC_CLUB_JSON: &'static str = include_str!("../data/clubs.json");
 

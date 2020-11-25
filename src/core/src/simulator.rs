@@ -6,14 +6,13 @@ use crate::transfers::TransferPool;
 use crate::{Player, Country};
 use crate::context::{GlobalContext, SimulationContext};
 use crate::league::League;
-use log::{debug};
 use crate::utils::Logging;
 
 pub struct FootballSimulator;
 
 impl FootballSimulator {
     pub fn simulate(data: &mut SimulatorData) {
-        let message = &format!("simulating date {}", data.date);
+        let message = &format!("simulate date {}", data.date);
         
         Logging::estimate(|| {
             let ctx = GlobalContext::new(SimulationContext::new(data.date));

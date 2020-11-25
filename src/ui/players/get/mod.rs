@@ -3,7 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
-use core::{Club, Player};
+use core::{Player};
 
 #[derive(Deserialize)]
 pub struct PlayerGetRequest {

@@ -141,7 +141,7 @@ impl Generator {
                                     t.reputation.national,
                                     t.reputation.world,
                                 ),
-                                PlayerCollection::new((0..50).map(|i| PlayerGenerator::generate()).collect()),
+                                PlayerCollection::new((0..50).map(|_| PlayerGenerator::generate()).collect()),
                                 StaffCollection::new(Vec::new()),
                             )
                         })
