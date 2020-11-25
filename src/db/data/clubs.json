@@ -68,5 +68,88 @@
         }
       }
     ]
+  },
+  {
+    "id": 2,
+    "name": "CSKA Moscow",
+    "country_id": 0,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 7000000
+    },
+    "teams": [
+      {
+        "id": 4,
+        "name": "CSKA Moscow",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 3000,
+          "world": 1500
+        }
+      }      
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Dinamo Moscow",
+    "country_id": 0,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 17000000
+    },
+    "teams": [
+      {
+        "id": 5,
+        "name": "Dinamo Moscow",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 3000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Kranodar",
+    "country_id": 0,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 17000000
+    },
+    "teams": [
+      {
+        "id": 6,
+        "name": "Kranodar",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 3000,
+          "world": 1500
+        }
+      },
+      {
+        "id": 7,
+        "name": "Kranodar 2",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 3000,
+          "world": 1500
+        }
+      }
+    ]
   }
 ]

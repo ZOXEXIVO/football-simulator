@@ -79,9 +79,9 @@ impl<'gc> GlobalContext<'gc> {
         ctx
     }
 
-    pub fn with_staff(&self) -> Self {
+    pub fn with_staff(&self, staff_id: Option<u32>) -> Self {
         let mut ctx = self.clone();
-        ctx.staff = Some(StaffContext::new());
+        ctx.staff = Some(StaffContext::new(staff_id));
         ctx
     }
 

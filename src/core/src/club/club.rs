@@ -3,8 +3,9 @@ use crate::club::board::ClubBoard;
 use crate::club::{ClubFinances, ClubMood, ClubResult};
 use crate::context::GlobalContext;
 use crate::shared::Location;
+use crate::utils::Logging;
 use crate::{Team, TeamType};
-use log::{debug};
+use log::debug;
 
 #[derive(Debug)]
 pub struct Club {
@@ -44,16 +45,20 @@ impl Club {
     }
 
     pub fn main_team_id(&self) -> Option<u32> {
-        self.teams.iter().find(|t| t.team_type == TeamType::Main).map(|t|t.id)
+        self.teams
+            .iter()
+            .find(|t| t.team_type == TeamType::Main)
+            .map(|t| t.id)
     }
-    
+
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubResult {
-        debug!("start simulating club: {}", &self.name);
-        
         let team_results = self
             .teams
             .iter_mut()
-            .map(|team| team.simulate(ctx.with_team(team.id)))
+            .map(|team| {
+                let message = &format!("simulate team: {}", &team.name);
+                Logging::wrap_call(|| team.simulate(ctx.with_team(team.id)), message)
+            })
             .collect();
 
         let result = ClubResult::new(
@@ -69,8 +74,6 @@ impl Club {
                 self.finance.push_salary(weekly_salary as i32);
             }
         }
-        
-        debug!("end simulating club: {}", &self.name);
 
         result
     }

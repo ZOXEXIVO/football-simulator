@@ -5,6 +5,7 @@ pub use rayon::prelude::*;
 use crate::country::CountryResult;
 use crate::continent::ContinentResult;
 use log::{debug};
+use crate::utils::{TimeEstimation, Logging};
 
 pub struct Continent {
     pub id: u32,
@@ -17,7 +18,11 @@ impl Continent {
         debug!("start simulating continent: {}", &self.name);
         
         let country_results: Vec<CountryResult> = self.countries.iter_mut().map(
-            |country| country.simulate(ctx.with_country(country.id))
+            |country| {
+                let message = &format!("simulate country: {}", &country.name);
+                Logging::wrap_call(
+                    || country.simulate(ctx.with_country(country.id)), message)
+            }
         ).collect();
 
         debug!("end simulating continent: {}", &self.name);

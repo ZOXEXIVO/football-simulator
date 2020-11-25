@@ -6,6 +6,7 @@ use log::{debug};
 #[derive(Debug)]
 pub struct Team {
     pub id: u32,
+    pub league_id: u32,
     pub name: String,    
     pub team_type: TeamType,    
     pub tactics: Option<Tactics>,
@@ -22,6 +23,7 @@ pub struct Team {
 impl Team {
     pub fn new(
         id: u32,
+        league_id: u32,
         name: String,
         team_type: TeamType,
         training_schedule: TrainingSchedule,
@@ -31,6 +33,7 @@ impl Team {
     ) -> Self {
         Team {
             id,
+            league_id,
             name,
             team_type,
             players,
@@ -76,18 +79,14 @@ impl Team {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> TeamResult {
-        debug!("start simulating team: {}", &self.name);
-        
         let result = TeamResult::new(
             self.players.simulate(ctx.with_player(None)),
-            self.staffs.simulate(ctx.with_staff()),
+            self.staffs.simulate(ctx.with_staff(None)),
         );
 
         if self.training_schedule.is_time(ctx.simulation.date) {
             Training::train_players(&mut self.players.players, self.staffs.coaches());
         }
-
-        debug!("end simulating team: {}", &self.name);
         
         result
     }

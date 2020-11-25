@@ -1,14 +1,15 @@
 use crate::club::{StaffResult, PlayerCollectionResult};
 use crate::simulator::SimulatorData;
+use crate::StaffCollectionResult;
 
 pub struct TeamResult {
     pub player: PlayerCollectionResult,
-    pub staff: StaffResult
+    pub staff: StaffCollectionResult
 }
 
 impl TeamResult {
     pub fn new(player: PlayerCollectionResult, 
-               staff: StaffResult) -> Self {
+               staff: StaffCollectionResult) -> Self {
         TeamResult {
             player,
             staff

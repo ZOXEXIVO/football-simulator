@@ -1,13 +1,14 @@
-use crate::shared::fullname::FullName;
+use crate::club::{
+    PersonBehaviour, PersonBehaviourState, PlayerAttributes, PlayerClubContract,
+    PlayerCollectionResult, PlayerMailbox, PlayerResult, PlayerSkills, PlayerTraining, Staff,
+};
 use crate::context::GlobalContext;
-use crate::utils::{DateUtils};
-use chrono::NaiveDate;
-use std::fmt::{Display, Formatter, Result};
-use crate::club::{PlayerSkills, PlayerClubContract, PlayerAttributes, PlayerMailbox, 
-                  PlayerTraining, PlayerResult, PersonBehaviour, Staff, 
-                  PersonBehaviourState, PlayerCollectionResult};
+use crate::shared::fullname::FullName;
+use crate::utils::{DateUtils, Logging};
 use crate::Relations;
-use log::{debug};
+use chrono::NaiveDate;
+use log::debug;
+use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug)]
 pub struct Player {
@@ -22,7 +23,7 @@ pub struct Player {
     pub attributes: PlayerAttributes,
     pub mailbox: PlayerMailbox,
     pub training: PlayerTraining,
-    pub relations: Relations
+    pub relations: Relations,
 }
 
 impl Player {
@@ -36,7 +37,7 @@ impl Player {
         mut positions: Vec<PlayerPosition>,
     ) -> Self {
         positions.sort_by_key(|c| c.level);
- 
+
         Player {
             id,
             full_name,
@@ -49,55 +50,45 @@ impl Player {
             contract,
             training: PlayerTraining::new(),
             mailbox: PlayerMailbox::new(),
-            relations: Relations::new()
+            relations: Relations::new(),
         }
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> PlayerResult {
-        debug!("start simulating player: {} {} {}", 
-               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
-        
         let mut result = PlayerResult::new();
 
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
             self.behaviour.try_increase();
         }
 
-        self.process_mailbox();        
-        
+        self.process_mailbox();
+
         if self.behaviour.state == PersonBehaviourState::Poor {
             result.request_transfer(self.id);
         }
-        
-        debug!("end simulating player: {} {} {}", 
-               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
 
         result
     }
-    
-    fn process_mailbox(&mut self){
+
+    fn process_mailbox(&mut self) {
         for message in self.mailbox.get() {
             // handle
         }
     }
 
-    pub fn train(&mut self, coach: &Staff){
+    pub fn train(&mut self, coach: &Staff) {
         let training = &self.training;
-        
+
         match coach.behaviour.state {
             PersonBehaviourState::Good => {
                 self.skills.mental.train(1);
                 self.skills.technical.train(1)
-            },
-            PersonBehaviourState::Normal => {
-                self.skills.train(1)
-            },
-            PersonBehaviourState::Poor => {
-                self.skills.physical.train(2)
             }
+            PersonBehaviourState::Normal => self.skills.train(1),
+            PersonBehaviourState::Poor => self.skills.physical.train(2),
         }
     }
-    
+
     #[inline]
     pub fn position(&self) -> PlayerPositionType {
         self.positions.first().unwrap().position
@@ -157,17 +148,25 @@ impl PlayerCollection {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> PlayerCollectionResult {
-        let player_results: Vec<PlayerResult> = self.players.iter_mut()
-            .map(|player| player.simulate(ctx.with_player(Some(player.id))))
+        let player_results: Vec<PlayerResult> = self
+            .players
+            .iter_mut()
+            .map(|player| {
+                let message = &format!("simulate player: id: {}", &player.id);
+                Logging::wrap_call(
+                    || player.simulate(ctx.with_player(Some(player.id))),
+                    message,
+                )
+            })
             .collect();
 
         let mut outgoing_players = Vec::with_capacity(DEFAULT_PLAYER_TRANSFER_BUFFER_SIZE);
-                       
+
         for transfer_request_player_id in player_results.iter().flat_map(|p| &p.transfer_requests) {
             outgoing_players.push(self.take(transfer_request_player_id))
-        }       
+        }
 
-        PlayerCollectionResult::new(player_results, outgoing_players)        
+        PlayerCollectionResult::new(player_results, outgoing_players)
     }
 
     pub fn add(&mut self, players: Vec<Player>) {
@@ -175,16 +174,16 @@ impl PlayerCollection {
             self.players.push(player);
         }
     }
-    
+
     pub fn get_week_salary(&self) -> u32 {
         let mut result: u32 = 0;
-        
+
         for player in &self.players {
             if let Some(contract) = &player.contract {
                 result += contract.salary as u32
             }
-        }       
-        
+        }
+
         result
     }
 
@@ -193,12 +192,16 @@ impl PlayerCollection {
     }
 
     pub fn take(&mut self, player_id: &u32) -> Player {
-        let player_idx = self.players.iter().position(|p| p.id == *player_id).unwrap();
+        let player_idx = self
+            .players
+            .iter()
+            .position(|p| p.id == *player_id)
+            .unwrap();
         self.players.remove(player_idx)
     }
 }
 
-impl PartialEq for Player{
+impl PartialEq for Player {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
     }

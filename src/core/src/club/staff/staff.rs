@@ -1,11 +1,11 @@
 use crate::shared::fullname::FullName;
 use crate::context::GlobalContext;
-use crate::utils::DateUtils;
+use crate::utils::{DateUtils, Logging};
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
 use crate::club::{StaffClubContract, StaffResult, 
                   StaffPosition, PersonBehaviour};
-use crate::{Relations};
+use crate::{Relations, StaffCollectionResult};
 use log::{debug};
 
 #[derive(Debug)]
@@ -53,16 +53,10 @@ impl Staff {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> StaffResult {
-        debug!("start simulating staff: {} {} {}", 
-               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
-        
         let result = StaffResult::new();
         
         if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {}
 
-        debug!("start simulating staff: {} {} {}", 
-               &self.full_name.last_name, &self.full_name.first_name, &self.full_name.middle_name);
-        
         result  
     }
 }
@@ -100,14 +94,19 @@ impl StaffCollection {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> StaffResult {
-        let result = StaffResult::new();
-
-        for staff_contract in &mut self.staffs {
-            staff_contract.simulate(ctx.with_staff());
-        }
-
-        result
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> StaffCollectionResult {
+        let staff_results = self.staffs
+            .iter_mut()
+            .map(|staff| {
+                let message = &format!("simulate staff: id: {}", &staff.id);
+                Logging::wrap_call(
+                    || staff.simulate(ctx.with_staff(Some(staff.id))),
+                    message,
+                )
+            })
+            .collect();
+        
+        return StaffCollectionResult::new(staff_results);
     }
 
     pub fn main_coach(&self) -> &Staff {
