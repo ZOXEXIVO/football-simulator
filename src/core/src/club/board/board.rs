@@ -1,6 +1,5 @@
 use crate::club::{BoardResult, BoardMood, StaffClubContract};
 use crate::context::{GlobalContext, SimulationContext};
-use log::{debug};
 
 #[derive(Debug)]
 pub struct ClubBoard {

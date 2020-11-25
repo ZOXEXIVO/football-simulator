@@ -57,7 +57,7 @@ impl Club {
             .iter_mut()
             .map(|team| {
                 let message = &format!("simulate team: {}", &team.name);
-                Logging::wrap_call(|| team.simulate(ctx.with_team(team.id)), message)
+                Logging::estimate_result(|| team.simulate(ctx.with_team(team.id)), message)
             })
             .collect();
 

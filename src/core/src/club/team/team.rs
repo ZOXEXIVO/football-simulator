@@ -1,7 +1,6 @@
 use crate::context::GlobalContext;
 use crate::{MatchHistory, Player, PlayerCollection, PlayerSelector, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
 use std::str::FromStr;
-use log::{debug};
 
 #[derive(Debug)]
 pub struct Team {
