@@ -43,7 +43,7 @@ impl Country {
                 let message = &format!("simulate club: {}", &club.name);
                 Logging::estimate_result(
                     || club.simulate(ctx.with_club(club.id, &club.name.clone())),
-                    message,
+                    message
                 )
             })
             .collect();
