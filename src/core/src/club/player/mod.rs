@@ -8,6 +8,8 @@ pub mod skills;
 pub mod result;
 pub mod training;
 pub mod status;
+mod utils;
+pub mod position;
 
 pub use attributes::*;
 pub use context::*;
@@ -19,3 +21,4 @@ pub use skills::*;
 pub use result::*;
 pub use training::*;
 pub use status::*;
+pub use position::*;

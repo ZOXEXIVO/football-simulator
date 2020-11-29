@@ -1,11 +1,37 @@
-use chrono::NaiveDate;
+use chrono::{NaiveDate, Datelike, Duration};
 use crate::shared::FullName;
+use std::ops::Add;
 
-pub trait Person{
-    fn id() -> u32;
-    fn fullname(&self) -> FullName;
+pub trait Person {
+    fn id(&self) -> u32;
+    fn fullname(&self) -> &FullName;
     fn birthday(&self) -> NaiveDate;
-    fn behaviour(&self) -> PersonBehaviourState;
+    
+    fn age(&self, now: NaiveDate) -> u8 { 
+        let mut age = now.year() - self.birthday().year();
+ 
+        if now.month() < self.birthday().month() || 
+            (now.month() == self.birthday().month() && now.day() < self.birthday().day()) {
+            age -= 1;
+        }
+        
+        age as u8
+    }
+    
+    fn behaviour(&self) -> &PersonBehaviour;
+    fn attributes(&self) -> &PersonAttributes;
+}
+
+#[derive(Debug)]
+pub struct PersonAttributes{
+    pub adaptability: u8,
+    pub ambition: u8,
+    pub controversy: u8,
+    pub loyalty: u8,
+    pub pressure: u8,
+    pub professionalism: u8,
+    pub sportsmanship: u8,
+    pub temperament: u8
 }
 
 #[derive(Debug)]

@@ -20,12 +20,14 @@ impl PlayerCollectionResult{
 }
 
 pub struct PlayerResult {
+    pub player_id: u32,
     pub transfer_requests: Vec<u32>
 }
 
 impl PlayerResult{
-    pub fn new() -> Self {
+    pub fn new(player_id: u32) -> Self {
         PlayerResult {
+            player_id,
             transfer_requests: Vec::new()
         }
     }

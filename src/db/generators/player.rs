@@ -1,4 +1,4 @@
-use core::{Player, NaiveDate, PlayerClubContract, PlayerSkills, Technical, Mental, Physical, PlayerPosition, PlayerAttributes};
+use core::{Player, NaiveDate, PlayerClubContract, PlayerSkills, Technical, Mental, Physical, PlayerPosition, PlayerAttributes, PersonAttributes, PlayerPositions};
 use core::utils::{IntegerUtils, StringUtils};
 use core::shared::FullName;
 use crate::db::PlayerPositionGenerator;
@@ -21,7 +21,8 @@ impl PlayerGenerator{
             },
             NaiveDate::from_ymd(year as i32, month, day),
             Self::generate_skills(),
-            Self::generate_attributes(),
+            Self::generate_person_attributes(),
+            Self::generate_player_attributes(),
             Some(PlayerClubContract::new(
                 IntegerUtils::random(1980, 2010) as f64, NaiveDate::from_ymd(2020, 3, 14))),
             Self::generate_positions(),
@@ -76,7 +77,7 @@ impl PlayerGenerator{
         }
     }
     
-    fn generate_positions() -> Vec<PlayerPosition> {
+    fn generate_positions() -> PlayerPositions {
         let positions_to_generate = IntegerUtils::random(1, 4) as u32;
 
         let mut positions = Vec::with_capacity(positions_to_generate as usize);
@@ -88,13 +89,43 @@ impl PlayerGenerator{
             })
         }
 
-        positions
+        PlayerPositions {
+            positions
+        }
     }
 
-    fn generate_attributes() -> PlayerAttributes {
-        PlayerAttributes::new(
-            IntegerUtils::random(0, 20) as u8,
-            IntegerUtils::random(-20, 20) as i8,
-        )
+    fn generate_person_attributes() -> PersonAttributes {
+        PersonAttributes {
+            adaptability: IntegerUtils::random(0, 20) as u8,
+            ambition: IntegerUtils::random(0, 20) as u8,
+            controversy: IntegerUtils::random(0, 20) as u8,
+            loyalty: IntegerUtils::random(0, 20) as u8,
+            pressure: IntegerUtils::random(0, 20) as u8,
+            professionalism: IntegerUtils::random(0, 20) as u8,
+            sportsmanship: IntegerUtils::random(0, 20) as u8,
+            temperament: IntegerUtils::random(0, 20) as u8
+        }
+    }
+    
+    fn generate_player_attributes() -> PlayerAttributes {
+        PlayerAttributes {
+            is_banned: false,
+            is_injured: false,
+            condition: IntegerUtils::random(0, 10000) as i16,
+            fitness: IntegerUtils::random(0, 10000) as i16,
+            jadedness: IntegerUtils::random(0, 10000) as i16,
+            weight: IntegerUtils::random(60, 100) as u8,
+            height: IntegerUtils::random(150, 220) as u8,
+            value: 0,
+            current_reputation: IntegerUtils::random(0, 3000) as i16,
+            home_reputation: IntegerUtils::random(0, 3000) as i16,
+            world_reputation: IntegerUtils::random(0, 1000) as i16,
+            current_ability: IntegerUtils::random(0, 20) as u8,
+            potential_ability: IntegerUtils::random(0, 20) as i8,
+            international_apps: IntegerUtils::random(0, 100) as u16,
+            international_goals: IntegerUtils::random(0, 40) as u16,
+            under_21_international_apps: IntegerUtils::random(0, 30) as u16,
+            under_21_international_goals: IntegerUtils::random(0, 10) as u16
+        }
     }
 }

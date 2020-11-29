@@ -36,6 +36,10 @@ impl PlayerStatusData{
             self.statuses.remove(idx);
         }
     }
+    
+    pub fn get(&self) -> Vec<PlayerStatus> {
+        self.statuses.iter().map(|s| s.status).collect()
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
