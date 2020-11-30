@@ -49,8 +49,8 @@ impl ClubFinances {
     }
     
     fn start_new_month(&mut self, club_name: &str, date: NaiveDate){
-        debug!("club: {}, finance: add history, date = {}, amount = {}, income={}, outcome={}",
-               club_name, date, self.balance.amount, self.balance.income, self.balance.outcome);
+        debug!("club: {}, finance: add history, date = {}, balance = {}, income={}, outcome={}",
+               club_name, date, self.balance.balance, self.balance.income, self.balance.outcome);
         
         self.history.add(date, self.balance.clone());
         self.balance.clear();
@@ -59,27 +59,43 @@ impl ClubFinances {
 
 #[derive(Debug, Clone)]
 pub struct ClubFinancialBalance {
-    pub amount: i32,
+    pub balance: i32,
     pub income: i32,
     pub outcome: i32,
+    highest_wage_paid: i32,
+    latest_season_tickets: i32,
+    remaining_budget: i32,
+    season_transfer_funds: i32,
+    transfer_income_percentage: i32,
+    weekly_wage_budget: i32,
+    highest_wage: i32,
+    youth_grant_income: i32,
 }
 
 impl ClubFinancialBalance {
-    pub fn new(amount: i32) -> Self {
+    pub fn new(balance: i32) -> Self {
         ClubFinancialBalance{
-            amount,
+            balance,
             income: 0,
             outcome: 0,
+            highest_wage_paid: 0,
+            latest_season_tickets: 0,
+            remaining_budget: 0,
+            season_transfer_funds: 0,
+            transfer_income_percentage: 0,
+            weekly_wage_budget: 0,
+            highest_wage: 0,
+            youth_grant_income: 0
         }
     }
     
     pub fn push_income(&mut self, wage: i32){
-        self.amount = self.amount + wage;
+        self.balance = self.balance + wage;
         self.income = self.income + wage;
     }
 
     pub fn push_outcome(&mut self, wage: i32){
-        self.amount = self.amount - wage;
+        self.balance = self.balance - wage;
         self.outcome = self.outcome + wage;
     }
     
@@ -108,11 +124,11 @@ mod tests {
 
         assert!(history_result.is_some());
 
-        assert_eq!(123, finances.balance.amount);
+        assert_eq!(123, finances.balance.balance);
         assert_eq!(0, finances.balance.income);
         assert_eq!(0, finances.balance.outcome);
 
-        assert_eq!(123, history_result.unwrap().amount);
+        assert_eq!(123, history_result.unwrap().balance);
         assert_eq!(1, history_result.unwrap().income);
         assert_eq!(2, history_result.unwrap().outcome);
     }
@@ -121,13 +137,13 @@ mod tests {
     fn balance_push_income_is_correct() {
         let mut finances = ClubFinancialBalance::new(-1);
 
-        finances.amount = 1;
+        finances.balance = 1;
         finances.income = 2;
         finances.outcome = 3;
 
         finances.push_income(20);
 
-        assert_eq!(21, finances.amount);
+        assert_eq!(21, finances.balance);
         assert_eq!(22, finances.income);
         assert_eq!(3, finances.outcome);
     }
@@ -136,13 +152,13 @@ mod tests {
     fn balance_push_outcome_is_correct() {
         let mut finances = ClubFinancialBalance::new(-1);
 
-        finances.amount = 10;
+        finances.balance = 10;
         finances.income = 20;
         finances.outcome = 30;
 
         finances.push_outcome(5);
 
-        assert_eq!(5, finances.amount);
+        assert_eq!(5, finances.balance);
         assert_eq!(20, finances.income);
         assert_eq!(35, finances.outcome);
     }
@@ -151,13 +167,13 @@ mod tests {
     fn balance_clear_is_correct() {
         let mut finances = ClubFinancialBalance::new(-1);
 
-        finances.amount = 1;
+        finances.balance = 1;
         finances.income = 2;
         finances.outcome = 3;
 
         finances.clear();
 
-        assert_eq!(1, finances.amount);
+        assert_eq!(1, finances.balance);
         assert_eq!(0, finances.income);
         assert_eq!(0, finances.outcome);
     }

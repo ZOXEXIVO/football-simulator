@@ -2,6 +2,16 @@ use crate::context::GlobalContext;
 use crate::{MatchHistory, Player, PlayerCollection, PlayerSelector, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
 use std::str::FromStr;
 
+#[derive(Debug, PartialEq)]
+pub enum TeamType {
+    Main = 0,
+    B = 1,
+    U18 = 2,
+    U19 = 3,
+    U21 = 4,
+    U23 = 5
+}
+
 #[derive(Debug)]
 pub struct Team {
     pub id: u32,
@@ -89,16 +99,6 @@ impl Team {
         
         result
     }
-}
-
-#[derive(Debug, PartialEq)]
-pub enum TeamType {
-    Main = 0,
-    B = 1,
-    U18 = 2,
-    U19 = 3,
-    U21 = 4,
-    U23 = 5
 }
 
 impl FromStr for TeamType {

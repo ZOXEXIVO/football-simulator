@@ -48,7 +48,7 @@ pub async fn club_get_action(state: Data<GameAppData>, route_params: web::Path<C
         id: club.id,
         name: &club.name,
         balance: ClubBalance {
-            amount: club.finance.balance.amount,
+            amount: club.finance.balance.balance,
             income: club.finance.balance.income,
             outcome: club.finance.balance.outcome
         },

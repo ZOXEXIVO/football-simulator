@@ -109,7 +109,7 @@ impl StaffCollection {
     }
 
     pub fn main_coach(&self) -> &Staff {
-        let main_coach = self.get_by_position(StaffPosition::MainCoach);
+        let main_coach = self.get_by_position(StaffPosition::Coach);
         *main_coach.first().unwrap()
     }
 
@@ -118,7 +118,7 @@ impl StaffCollection {
     }
 
     pub fn contract_resolver(&self) -> &Staff {
-        *self.get_by_position(StaffPosition::MainCoach).first().unwrap()
+        *self.get_by_position(StaffPosition::Coach).first().unwrap()
     }
 
     fn get_by_position(&self, position: StaffPosition) -> Vec<&Staff> {

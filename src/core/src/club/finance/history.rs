@@ -57,6 +57,6 @@ mod tests {
         let result = history.get(date);
 
         assert!(result.is_some());
-        assert_eq!(123, result.unwrap().amount);
+        assert_eq!(123, result.unwrap().balance);
     }
 }

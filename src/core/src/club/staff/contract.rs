@@ -3,10 +3,28 @@ use crate::context::SimulationContext;
 
 #[derive(Debug, PartialEq)]
 pub enum StaffPosition {
-    SportDirector,
-    MainCoach,
+    Free,
     Coach,
+    Chairman,
+    Director,
+    ManagingDirector,
+    DirectorOfFootball,
     Physio,
+    Scout,
+    Manager,
+    AssistantManager,
+    MediaPundit,
+    GeneralManager,
+    FitnessCoach,
+    GoalkeeperCoach,
+    U21Manager,
+    ChiefScout,
+    YouthCoach,
+    HeadOfPhysio,
+    U19Manager,
+    FirstTeamCoach,
+    HeadOfYouthDevelopment,
+    CaretakerManager
 }
 
 #[derive(Debug, PartialEq)]
