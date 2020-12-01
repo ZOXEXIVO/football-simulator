@@ -6,7 +6,7 @@ use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{Person, PersonAttributes, PlayerStatusData, Relations, PlayerPositionType, PlayerPositions};
-use chrono::NaiveDate;
+use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
 use rayon::iter::Positions;
 
@@ -60,13 +60,15 @@ impl Player {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> PlayerResult {
+        let now = ctx.simulation.date;
+        
         let mut result = PlayerResult::new(self.id);
 
-        if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
+        if DateUtils::is_birthday(self.birth_date, now.date()) {
             self.behaviour.try_increase();
         }
         
-        self.process_contract(&mut result);
+        self.process_contract(&mut result, now);
         self.process_mailbox(&mut result);
 
         if self.behaviour.state == PersonBehaviourState::Poor {
@@ -76,9 +78,18 @@ impl Player {
         result
     }
 
-    fn process_contract(&mut self, result: &mut PlayerResult) {
-        if self.contract.is_none() {
-            
+    fn process_contract(&mut self, result: &mut PlayerResult, now: NaiveDateTime) {
+        const HALF_YEAR_DAYS: i64 = 30 * 6;
+        
+        match &self.contract {
+            Some(contract) => {
+                if contract.days_to_expiration(now) < HALF_YEAR_DAYS {
+                    result.want_new_contract = true;
+                }
+            },
+            None => {
+                result.want_new_contract = true;
+            }
         }
     }
 
@@ -116,52 +127,6 @@ impl Player {
 
     pub fn get_skill(&self) -> u32 {
         self.skills.get_for_position(self.position())
-    }
-
-    pub fn growth_potential(&self) -> f32 {
-        let mut dap = ((self.skills.mental.determination as f32) / 5.0) * 0.05
-            + ((self.attributes.ambition as f32) * 0.09)
-            + ((self.attributes.professionalism as f32) * 0.115);
-       
-        let age = self.age(NaiveDate::from_num_days_from_ce(200));
-        
-        let ca = self.player_attributes.current_ability;
-        let pa = self.player_attributes.potential_ability;
-
-        if age < 24 {
-            if pa <= (ca + 10) as i8 {
-                dap = dap - 0.5;
-            }
-        }
-        
-        if age >= 24 && age < 29 {
-            dap = dap - 0.5;
-            if pa <= (ca + 10) as i8 {
-                dap = dap - 0.5;
-            }
-        }
-        
-        if age >= 29 && age < 34 {
-            dap = dap - 1.0;
-            if pa <= (ca + 10) as i8 {
-                dap = dap - 0.5;
-            }
-        }
-        
-        if age >= 34 {
-            dap = dap - 1.0;
-            if pa <= (ca + 10) as i8 && self.positions.position() == PlayerPositionType::Goalkeeper {
-                dap = 0.5;
-            }
-        }
-
-        dap = dap * 2.0;
-              
-        dap = dap.round();
-        
-        dap /= 2.0;
-
-        dap
     }
 }
 

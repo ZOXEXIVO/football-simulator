@@ -56,7 +56,10 @@ impl Club {
             .iter_mut()
             .map(|team| {
                 let message = &format!("simulate team: {}", &team.name);
-                Logging::estimate_result(|| team.simulate(ctx.with_team(team.id, &team.name.clone())), message)
+                Logging::estimate_result(
+                    || team.simulate(ctx.with_team(team.id, &team.name.clone())),
+                    message,
+                )
             })
             .collect();
 
@@ -68,12 +71,17 @@ impl Club {
         );
 
         if ctx.simulation.is_week_beginning() {
-            for team in &self.teams {
-                let weekly_salary = team.get_week_salary();
-                self.finance.push_salary(ctx.club.as_ref().unwrap().name, weekly_salary as i32);
-            }
+            self.process_salaries(ctx);
         }
 
         result
+    }
+
+    fn process_salaries(&mut self, ctx: GlobalContext<'_>) {
+        for team in &self.teams {
+            let weekly_salary = team.get_week_salary();
+            self.finance
+                .push_salary(ctx.club.as_ref().unwrap().name, weekly_salary as i32);
+        }
     }
 }

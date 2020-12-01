@@ -15,11 +15,15 @@ impl PlayerCollectionResult{
     }
 
     pub fn process(&self, data: &mut SimulatorData){
-        
+        for player in &self.players {
+            player.process(data);
+        }
     }
 }
 
 pub struct PlayerResult {
+    pub want_new_contract: bool,
+    pub is_transfer_requested: bool,
     pub player_id: u32,
     pub transfer_requests: Vec<u32>
 }
@@ -27,8 +31,16 @@ pub struct PlayerResult {
 impl PlayerResult{
     pub fn new(player_id: u32) -> Self {
         PlayerResult {
+            want_new_contract: false,
+            is_transfer_requested: false,
             player_id,
             transfer_requests: Vec::new()
+        }
+    }
+
+    pub fn process(&self, data: &mut SimulatorData){
+        if self.is_transfer_requested {
+            
         }
     }
     

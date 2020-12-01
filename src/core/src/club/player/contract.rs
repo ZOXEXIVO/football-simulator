@@ -1,5 +1,6 @@
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 use crate::context::SimulationContext;
+use chrono::NaiveDateTime;
 
 #[derive(Debug)]
 pub enum ContractType{
@@ -41,7 +42,7 @@ pub struct PlayerClubContract {
     pub transfer_status: PlayerTransferStatus,
     
     pub started: Option<NaiveDate>,
-    pub expired: NaiveDate,
+    pub expiration: NaiveDate,
     
     pub bonuses: Vec<ContractBonus>,
     pub clauses: Vec<ContractClause>,
@@ -56,22 +57,28 @@ impl PlayerClubContract {
             transfer_status: PlayerTransferStatus::TransferListed,
             is_transfer_listed: false,
             started: Option::None,
-            expired,
+            expiration: expired,
             bonuses: vec![],
             clauses: vec![]
         }
     }
 
-    pub fn is_expired(&self) -> bool {
-        let now = Utc::now();
-        
+    pub fn is_expired(&self, now: NaiveDateTime) -> bool {
         let naive_now = NaiveDate::from_ymd(now.year(), now.month(), now.day());
 
-        self.expired >= naive_now
+        self.expiration >= naive_now
+    }
+    
+    pub fn days_to_expiration(&self, now: NaiveDateTime) -> i64 {
+        let naive_now = NaiveDate::from_ymd(now.year(), now.month(), now.day());
+        
+        let diff = self.expiration - naive_now;
+        
+        diff.num_days().abs()
     }
 
     pub fn simulate(&mut self, context: &mut SimulationContext) {
-        if context.check_contract_expiration() && self.is_expired() {}
+        if context.check_contract_expiration() && self.is_expired(context.date) {}
     }
 }
 
