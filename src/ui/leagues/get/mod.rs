@@ -70,7 +70,7 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
         .filter(|t| t.league_id == route_params.league_id)
         .collect();
 
-    let league_table = league.table.get();
+    let league_table = league.table.as_ref().unwrap().get();
        
     let mut model = LeagueGetViewModel {
         id: league.id,

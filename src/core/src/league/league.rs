@@ -8,7 +8,7 @@ pub struct League {
     pub name: String,
     pub country_id: u32,
     pub schedule: Schedule,
-    pub table: LeagueTable,
+    pub table: Option<LeagueTable>,
     pub settings: LeagueSettings,
     pub reputation: u16,
 }
@@ -20,15 +20,20 @@ impl League {
             name,
             country_id,
             schedule: Schedule::new(),
-            table: LeagueTable::empty(),
+            table: Option::None,
             settings,
             reputation,
         }
     }
     
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
-        if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
-            let league_ctx = ctx.league.unwrap();
+        let league_ctx = ctx.league.unwrap();
+        
+        if self.table.is_none() {
+            self.table = Some(LeagueTable::with_clubs(&league_ctx.club_ids));
+        }
+        
+        if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {           
             self.schedule.generate(self.id,Season::TwoYear(2020, 2021), league_ctx.club_ids, &self.settings);
         }
 

@@ -49,7 +49,7 @@ async fn main() {
             .configure(game_routes)
             .configure(country_routes)
             .configure(league_routes)
-            .configure(club_routes)
+            .configure(team_routes)
             .configure(player_routes)
     })
     .bind("0.0.0.0:18000")

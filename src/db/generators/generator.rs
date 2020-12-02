@@ -98,7 +98,7 @@ impl Generator {
                             to_month: league.settings.season_ending_half.to_month,
                         },
                     },
-                    table: LeagueTable::empty(),
+                    table: Option::None,
                     reputation: 0,
                 };
 
