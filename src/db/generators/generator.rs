@@ -6,11 +6,7 @@ use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule
 use core::shared::Location;
 use core::transfers::TransferPool;
 use core::utils::IntegerUtils;
-use core::{
-    Club, ClubBoard, ClubFinances, ClubMood,
-    Country, NaiveDate, PlayerCollection, PlayerPositionType, SimulatorData, StaffCollection, Team,
-    TeamReputation, TeamType, TrainingSchedule,
-};
+use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, NaiveDate, PlayerCollection, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, SimulatorDataIndexes};
 use std::str::FromStr;
 
 const CONTINENTS: [(u32, &'static str); 5] = [
@@ -43,12 +39,11 @@ impl Generator {
             })
             .collect();
 
-        SimulatorData {
-            id: SimulatorData::generate_id(),
-            continents,
-            date: current_date,
-            transfer_pool: TransferPool::new(),
-        }
+        let mut data = SimulatorData::new(current_date, continents);
+        
+        data.refresh_indexes();
+        
+        data
     }
 
     fn generate_countries(continent: &str, data: &DatabaseEntity) -> Vec<Country> {
