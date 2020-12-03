@@ -4,7 +4,8 @@ use chrono::{NaiveDate};
 pub struct PlayerUtils;
 
 impl PlayerUtils {
-    pub fn growth_potential(player: Player, now: NaiveDate) -> f32 {
+    #[inline]
+    pub fn growth_potential(player: &Player, now: NaiveDate) -> f32 {
         let mut dap = ((player.skills.mental.determination as f32) / 5.0) * 0.05
             + ((player.attributes.ambition as f32) * 0.09)
             + ((player.attributes.professionalism as f32) * 0.115);

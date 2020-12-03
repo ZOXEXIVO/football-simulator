@@ -3,7 +3,7 @@ use chrono::{NaiveDateTime, Duration};
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use crate::transfers::TransferPool;
-use crate::{Player, Country};
+use crate::{Player, Country, Team};
 use crate::context::{GlobalContext, SimulationContext};
 use crate::league::League;
 use crate::utils::Logging;
@@ -87,6 +87,22 @@ impl SimulatorData {
         self.continents.iter_mut()
             .flat_map(|c|&mut c.countries)
             .flat_map(|c|&mut c.leagues)
+            .find(|c| c.id == id)
+    }
+
+    pub fn teams(&self, id: u32) -> Option<&Team>{
+        self.continents.iter()
+            .flat_map(|c|&c.countries)
+            .flat_map(|c|&c.clubs)
+            .flat_map(|c|&c.teams)
+            .find(|c| c.id == id)
+    }
+
+    pub fn teams_mut(&mut self, id: u32) -> Option<&mut Team>{
+        self.continents.iter_mut()
+            .flat_map(|c|&mut c.countries)
+            .flat_map(|c|&mut c.clubs)
+            .flat_map(|c|&mut c.teams)
             .find(|c| c.id == id)
     }
 }

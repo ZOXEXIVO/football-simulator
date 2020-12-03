@@ -122,6 +122,10 @@
             <td style="width: 150px">
                 <fieldset class="rating">
                     <label></label>
+                    {% for _ in 0..player.growth_potential %}
+                        <label class="checked"></label>
+                    {% endfor %}
+                    
                     <label class="checked"></label>
                     <label class="checked"></label>
                     <label class="checked"></label>

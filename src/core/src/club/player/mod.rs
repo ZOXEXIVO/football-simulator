@@ -8,7 +8,7 @@ pub mod skills;
 pub mod result;
 pub mod training;
 pub mod status;
-mod utils;
+pub mod utils;
 pub mod position;
 
 pub use attributes::*;

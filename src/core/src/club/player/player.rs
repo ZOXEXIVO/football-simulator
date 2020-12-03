@@ -9,6 +9,7 @@ use crate::{Person, PersonAttributes, PlayerStatusData, Relations, PlayerPositio
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
 use rayon::iter::Positions;
+use crate::club::player::utils::PlayerUtils;
 
 #[derive(Debug)]
 pub struct Player {
@@ -123,6 +124,10 @@ impl Player {
             10..=20 => true,
             _ => false,
         }
+    }
+    
+    pub fn growth_potential(&self, now: NaiveDate) -> f32 {
+        PlayerUtils::growth_potential(self, now)
     }
 
     pub fn get_skill(&self) -> u32 {

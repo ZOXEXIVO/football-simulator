@@ -4,6 +4,7 @@ use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
 use core::{Club, Team};
+use core::club::utils::PlayerUtils;
 
 #[derive(Deserialize)]
 pub struct TeamGetRequest {
@@ -29,6 +30,7 @@ pub struct TeamPlayer<'cp>{
     pub id: u32,
     pub last_name: &'cp str,
     pub first_name: &'cp str,
+    pub growth_potential: i32
 }
 
 pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<TeamGetRequest>) -> Result<HttpResponse> {
@@ -54,7 +56,8 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
             TeamPlayer {
                 id: p.id,
                 first_name: &p.full_name.first_name,
-                last_name: &p.full_name.last_name
+                last_name: &p.full_name.last_name,
+                growth_potential: p.growth_potential(simulator_data.date.date()) as i32
             }
         }).collect()
     };

@@ -1,6 +1,7 @@
 use crate::context::GlobalContext;
 use crate::{MatchHistory, Player, PlayerCollection, PlayerSelector, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
 use std::str::FromStr;
+use crate::shared::CurrencyValue;
 
 #[derive(Debug, PartialEq)]
 pub enum TeamType {
@@ -59,6 +60,13 @@ impl Team {
         self.players.players()
     }
 
+    pub fn add_player_to_transfer_list(&mut self, player_id: u32, value: CurrencyValue){
+        self.transfer_list.push(TransferItem{
+            player_id,
+            amount: value
+        })
+    }
+    
     pub fn get_week_salary(&self) -> u32 {
         let mut result: u32 = 0;
 
@@ -89,6 +97,7 @@ impl Team {
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> TeamResult {
         let result = TeamResult::new(
+            self.id,
             self.players.simulate(ctx.with_player(None)),
             self.staffs.simulate(ctx.with_staff(None)),
         );
