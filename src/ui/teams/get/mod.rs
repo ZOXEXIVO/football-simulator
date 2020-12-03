@@ -38,11 +38,7 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let team: &Team = simulator_data.continents.iter().flat_map(|c| &c.countries)      
-        .flat_map(|c| &c.clubs)
-        .flat_map(|c| &c.teams)
-        .find(|t| t.id == route_params.team_id)
-        .unwrap();
+    let team: &Team = simulator_data.teams(route_params.team_id).unwrap();
 
     let model = TeamGetViewModel {
         id: team.id,

@@ -3,7 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
-use core::{Player};
+use core::{Player, Team};
 
 #[derive(Deserialize)]
 pub struct PlayerGetRequest {
@@ -80,11 +80,9 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let player: &Player = simulator_data.continents.iter().flat_map(|c| &c.countries)
-        .flat_map(|l| &l.clubs)
-        .flat_map(|c| &c.teams)
-        .filter(|team| team.id == route_params.team_id)
-        .flat_map(|c| c.players())
+    let team: &Team = simulator_data.teams(route_params.team_id).unwrap();
+    
+    let player: &Player = team.players.players().iter()
         .find(|p| p.id == route_params.player_id)
         .unwrap();
 

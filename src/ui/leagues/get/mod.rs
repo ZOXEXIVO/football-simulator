@@ -59,16 +59,7 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let league = simulator_data.continents.iter().flat_map(|c| &c.countries)
-        .flat_map(|cn| &cn.leagues)
-        .find(|l| l.id == route_params.league_id).unwrap();
-
-    let teams: Vec<&Team> = simulator_data.continents.iter().flat_map(|c| &c.countries)
-        .filter(|cn| cn.id == league.country_id)
-        .flat_map(|cn| &cn.clubs)
-        .flat_map(|cn| &cn.teams)
-        .filter(|t| t.league_id == route_params.league_id)
-        .collect();
+    let league = simulator_data.leagues(route_params.league_id).unwrap();
 
     let league_table = league.table.as_ref().unwrap().get();
        
@@ -78,7 +69,7 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
         table: LeagueTableDto {
             rows: league_table.iter().map(|t| LeagueTableRow {
                 team_id: t.team_id,
-                team_name: &teams.iter().find(|c| c.id == t.team_id).unwrap().name,
+                team_name: simulator_data.team_name(t.team_id).unwrap(),
                 played: t.played,
                 win: t.win,
                 draft: t.draft,
@@ -107,10 +98,10 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
                 },
 
                 home_team_id: item.home_team_id,
-                home_team_name: &teams.iter().find(|c| c.id == item.home_team_id).unwrap().name,
+                home_team_name: simulator_data.team_name(item.home_team_id).unwrap(),
 
                 away_team_id: item.home_team_id,
-                away_team_name: &teams.iter().find(|c| c.id == item.away_team_id).unwrap().name,
+                away_team_name: simulator_data.team_name(item.away_team_id).unwrap(),
             };
             
             model.week_schedule.items.push(schedule_item)

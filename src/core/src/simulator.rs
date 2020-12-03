@@ -78,7 +78,8 @@ impl SimulatorData {
                 //fill teams
                 for club in &country.clubs {
                     for team in &club.teams {
-                        self.indexes.add_team_location(team.id, continent.id, country.id, club.id);
+                        self.indexes.add_team_name(team.id, team.name.clone());
+                        self.indexes.add_team_location(team.id, continent.id, country.id, club.id);                        
                     }
                 }
             }
@@ -125,6 +126,10 @@ impl SimulatorData {
             .iter_mut().find(|c| c.id == id)
     }
 
+    pub fn team_name(&self, id: u32) -> Option<&str> {
+        self.indexes.get_team_name(id)
+    }
+    
     pub fn teams(&self, id: u32) -> Option<&Team>{
         let (team_continent_id, team_country_id, team_club_id) = 
             self.indexes.get_team_location(id).unwrap();
@@ -150,7 +155,8 @@ impl SimulatorData {
 
 pub struct SimulatorDataIndexes {
     league_indexes: HashMap<u32, (u32, u32)>,
-    team_indexes: HashMap<u32, (u32, u32, u32)>
+    team_indexes: HashMap<u32, (u32, u32, u32)>,
+    team_name_index: HashMap<u32, String>
 }
 
 impl SimulatorDataIndexes {
@@ -158,6 +164,7 @@ impl SimulatorDataIndexes {
         SimulatorDataIndexes {
             league_indexes: HashMap::new(),
             team_indexes: HashMap::new(),
+            team_name_index: HashMap::new()
         }
     }
     
@@ -178,6 +185,20 @@ impl SimulatorDataIndexes {
     }
     
     //team indexes
+    pub fn add_team_name(&mut self, team_id: u32, name: String){
+        self.team_name_index.insert(team_id, name);
+    }
+    pub fn get_team_name(&self, team_id: u32) -> Option<&str> {
+        match self.team_name_index.get(&team_id) {
+            Some(team_name) => {
+                Some(team_name)
+            }
+            None => {
+                None
+            }
+        }
+    }
+    
     pub fn add_team_location(&mut self, team_id: u32, continent_id: u32, country_id: u32, club_id: u32){
         self.team_indexes.insert(team_id, (continent_id, country_id, club_id));
     }
