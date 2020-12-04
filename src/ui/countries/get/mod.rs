@@ -15,6 +15,7 @@ pub struct CountryGetRequest {
 pub struct CountryGetViewModel<'c> {
     pub id: u32,
     pub name: &'c str,
+    pub continent_name: &'c str,
     pub leagues: Vec<LeagueDto<'c>>
 }
 
@@ -32,9 +33,12 @@ pub async fn country_get_action(state: Data<GameAppData>, route_params: web::Pat
         .find(|country| country.id == route_params.country_id)
         .unwrap();
 
+    let continent = simulator_data.continents(country.continent_id).unwrap();
+    
     let model = CountryGetViewModel {
         id: country.id,
         name: &country.name,
+        continent_name: &continent.name,
         leagues: country.leagues.iter().map(|l| LeagueDto {
             id: l.id,
             name: &l.name,

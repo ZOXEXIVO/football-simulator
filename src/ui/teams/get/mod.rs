@@ -15,7 +15,9 @@ pub struct TeamGetRequest {
 #[template(path = "teams/get/get.html")]
 pub struct TeamGetViewModel<'c> {
     pub id: u32,
-    pub name: &'c str, 
+    pub name: &'c str,
+    pub league_id: u32,
+    pub league_name: &'c str,
     pub balance: TeamBalance,
     pub players: Vec<TeamPlayer<'c>>
 }
@@ -40,9 +42,13 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
 
     let team: &Team = simulator_data.teams(route_params.team_id).unwrap();
 
+    let league = simulator_data.leagues(team.league_id).unwrap();
+    
     let model = TeamGetViewModel {
         id: team.id,
         name: &team.name,
+        league_id: league.id,
+        league_name: &league.name,
         balance: TeamBalance {
             amount: 0,
             income: 0,

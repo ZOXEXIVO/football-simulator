@@ -2,7 +2,11 @@
 
 {% block header %}
 <div class="page-title">{{ last_name }} {{ first_name }}</div>
-<div>subTitle</div>
+<div>
+    <a href="/teams/{{ club_id }}" class="sub-title-link">
+        {{ club_name }}
+    </a>
+</div>
 {% endblock %}
 
 {% block processblock %}

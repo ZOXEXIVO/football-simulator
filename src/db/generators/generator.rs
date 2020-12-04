@@ -8,14 +8,7 @@ use core::transfers::TransferPool;
 use core::utils::IntegerUtils;
 use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, NaiveDate, PlayerCollection, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, SimulatorDataIndexes};
 use std::str::FromStr;
-
-const CONTINENTS: [(u32, &'static str); 5] = [
-    (0, "Africa"),
-    (1, "Europe"),
-    (2, "North America"),
-    (3, "South America"),
-    (4, "Australia"),
-];
+use crate::db::loaders::ContinentEntity;
 
 pub struct Generator;
 
@@ -26,31 +19,27 @@ impl Generator {
             NaiveTime::from_hms(0, 0, 0),
         );
 
-        let continents = CONTINENTS
+        let continents = data.continents
             .iter()
-            .map(|(c_ic, c)| {
+            .map(|continent| {
                 let continent = Continent {
-                    id: *c_ic,
-                    name: String::from(c.to_owned()),
-                    countries: Generator::generate_countries(c, data),
+                    id: continent.id,
+                    name: continent.name.clone(),
+                    countries: Generator::generate_countries(continent, data),
                 };
 
                 continent
             })
             .collect();
 
-        let mut data = SimulatorData::new(current_date, continents);
-        
-        data.refresh_indexes();
-        
-        data
+        SimulatorData::new(current_date, continents)
     }
 
-    fn generate_countries(continent: &str, data: &DatabaseEntity) -> Vec<Country> {
+    fn generate_countries(continent: &ContinentEntity, data: &DatabaseEntity) -> Vec<Country> {
         return data
             .countries
             .iter()
-            .filter(|cn| cn.continent == continent)
+            .filter(|cn| cn.continent_id == continent.id)
             .map(|country| {
                 let clubs = Generator::generate_clubs(country.id, data);
 
@@ -58,6 +47,7 @@ impl Generator {
                     id: country.id,
                     code: country.code.clone(),
                     name: country.name.clone(),
+                    continent_id: continent.id,
                     leagues: Generator::generate_leagues(country.id, data),
                     clubs,
                     reputation: country.reputation,

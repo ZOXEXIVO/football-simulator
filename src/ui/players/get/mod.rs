@@ -18,6 +18,7 @@ pub struct PlayerGetViewModel<'p> {
     pub first_name: &'p str,
     pub last_name: &'p str,
     pub middle_name: &'p str,
+    pub club_id: u32,
     pub club_name: &'p str,
     pub skills: PlayerSkillsDto,
 }
@@ -87,11 +88,12 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
         .unwrap();
 
     let model = PlayerGetViewModel {
-        id: player.id,
+        id: player.id,        
         first_name: &player.full_name.first_name,
         last_name: &player.full_name.last_name,
         middle_name: &player.full_name.middle_name,
-        club_name: &"Juventus",
+        club_id: team.id,
+        club_name: &team.name,
         skills: PlayerSkillsDto {
             technical: TechnicalDto {
                 corners: player.skills.technical.corners,

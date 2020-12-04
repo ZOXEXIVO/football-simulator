@@ -50,13 +50,17 @@ impl SimulatorData {
             .take(30)
             .collect::<String>();
         
-        SimulatorData{
+        let mut data = SimulatorData{
             id,
             continents,
             date,
             transfer_pool: TransferPool::new(),
             indexes: SimulatorDataIndexes::new()
-        }
+        };
+        
+        data.refresh_indexes();
+        
+        data
     }
 
     pub fn next_date(&mut self) {

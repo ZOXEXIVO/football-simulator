@@ -15,6 +15,8 @@ pub struct LeagueGetRequest {
 pub struct LeagueGetViewModel<'l> {
     pub id: u32,
     pub name: &'l str,
+    pub country_id: u32,
+    pub country_name: &'l str,
     pub table: LeagueTableDto<'l>,
     pub week_schedule: LeagueSchedule<'l>,
 }
@@ -61,11 +63,15 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
 
     let league = simulator_data.leagues(route_params.league_id).unwrap();
 
+    let country = simulator_data.counties(league.country_id).unwrap();
+    
     let league_table = league.table.as_ref().unwrap().get();
        
     let mut model = LeagueGetViewModel {
         id: league.id,
         name: &league.name,
+        country_id: country.id,
+        country_name: &country.name,
         table: LeagueTableDto {
             rows: league_table.iter().map(|t| LeagueTableRow {
                 team_id: t.team_id,

@@ -7,7 +7,7 @@ pub struct CountryEntity{
     pub id: u32,
     pub code: String,
     pub name: String,
-    pub continent: String,
+    pub continent_id: u32,
     pub reputation: u16
 }
 

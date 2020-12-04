@@ -3,7 +3,7 @@
     "id": 0,
     "code": "ru",
     "name": "Russia",
-    "continent": "Europe",
+    "continent_id": 1,
     "reputation": 1000
   }
 ]

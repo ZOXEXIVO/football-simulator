@@ -1,8 +1,12 @@
 ﻿{% extends "../../layout.html" %}
 
 {% block header %}
-<div class="page-title">headerTitle</div>
-<div>subTitle</div>
+<div class="page-title">{{name}}</div>
+<div>
+    <a href="/countries/{{ country_id }}" class="sub-title-link">
+        {{ country_name }}
+    </a>
+</div>
 {% endblock %}
 
 {% block processblock %}
