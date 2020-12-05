@@ -40,14 +40,14 @@
 
         <div class="country-box">
             <h2>{{continent.name}} ({{continent.countries.len()}})</h2>
-            <hr />
+            <hr />           
             <div>
                 <ul class="countries-list">
                     {% for country in continent.countries %}
                                        
-                    <li>
+                    <li>                        
                         <a href="/countries/{{ country.id }}">
-                            <img src="/assets/images/countries/{{ country.code }}.svg" class="country-logo" />&nbsp;&nbsp; {{ country.name }}
+                            <div class="flag flag-{{country.code}}"></div>&nbsp;&nbsp; {{ country.name }}
                         </a>
                     </li>
 

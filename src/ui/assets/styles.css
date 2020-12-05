@@ -594,3 +594,9 @@ a.sub-title-link {
  font-size: 15px;
  color: #3e4041;
 }
+
+.flag {
+ width: 30px;
+ height: 20px;
+ display: inline-block;
+}
