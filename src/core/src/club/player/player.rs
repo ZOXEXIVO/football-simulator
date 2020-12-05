@@ -17,6 +17,7 @@ pub struct Player {
     pub id: u32,
     pub full_name: FullName,
     pub birth_date: NaiveDate,
+    pub nation_id: u32,
     pub behaviour: PersonBehaviour,
     pub attributes: PersonAttributes,
     //player data
@@ -36,6 +37,7 @@ impl Player {
         id: u32,
         full_name: FullName,
         birth_date: NaiveDate,
+        nation_id: u32,
         skills: PlayerSkills,
         attributes: PersonAttributes,
         player_attributes: PlayerAttributes,
@@ -46,6 +48,7 @@ impl Player {
             id,
             full_name,
             birth_date,
+            nation_id,
             behaviour: PersonBehaviour::default(),
             statuses: PlayerStatusData::new(),
             skills,

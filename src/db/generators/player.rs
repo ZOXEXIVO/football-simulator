@@ -7,7 +7,7 @@ pub struct PlayerGenerator{
 }
 
 impl PlayerGenerator{
-    pub fn generate() -> Player {
+    pub fn generate(nation_id: u32) -> Player {
         let year = IntegerUtils::random(1980, 2010) as u32;
         let month = IntegerUtils::random(1, 12) as u32;
         let day = IntegerUtils::random(1, 29) as u32;
@@ -20,6 +20,7 @@ impl PlayerGenerator{
                 middle_name: StringUtils::random_string(15),
             },
             NaiveDate::from_ymd(year as i32, month, day),
+            nation_id,
             Self::generate_skills(),
             Self::generate_person_attributes(),
             Self::generate_player_attributes(),

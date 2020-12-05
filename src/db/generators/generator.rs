@@ -125,7 +125,7 @@ impl Generator {
                                     t.reputation.national,
                                     t.reputation.world,
                                 ),
-                                PlayerCollection::new((0..50).map(|_| PlayerGenerator::generate()).collect()),
+                                PlayerCollection::new((0..50).map(|_| PlayerGenerator::generate(country_id)).collect()),
                                 StaffCollection::new(Vec::new()),
                             )
                         })

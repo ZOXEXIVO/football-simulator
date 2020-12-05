@@ -3,7 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
-use core::{Player, Team};
+use core::{Player, Team, Country, Person};
 
 #[derive(Deserialize)]
 pub struct PlayerGetRequest {
@@ -18,9 +18,20 @@ pub struct PlayerGetViewModel<'p> {
     pub first_name: &'p str,
     pub last_name: &'p str,
     pub middle_name: &'p str,
+    pub contract: Option<PlayerContractDto>,
+    pub birth_date: String,
+    pub age: u8,
     pub club_id: u32,
     pub club_name: &'p str,
+    pub country_code: &'p str,
+    pub country_name: &'p str,
     pub skills: PlayerSkillsDto,
+}
+
+pub struct PlayerContractDto {
+    pub salary: u32,
+    pub expiration: String,
+    pub squad_status: String
 }
 
 pub struct PlayerSkillsDto {
@@ -87,13 +98,20 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
         .find(|p| p.id == route_params.player_id)
         .unwrap();
 
-    let model = PlayerGetViewModel {
+    let country = simulator_data.counties(player.nation_id).unwrap();
+    
+    let mut model = PlayerGetViewModel {
         id: player.id,        
         first_name: &player.full_name.first_name,
         last_name: &player.full_name.last_name,
         middle_name: &player.full_name.middle_name,
+        contract: Option::None,
+        birth_date: player.birth_date.format("%d.%m.%Y").to_string(),
+        age: player.age(simulator_data.date.date()) as u8,
         club_id: team.id,
         club_name: &team.name,
+        country_code: &country.code,
+        country_name: &country.name,
         skills: PlayerSkillsDto {
             technical: TechnicalDto {
                 corners: player.skills.technical.corners,
@@ -140,6 +158,14 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
             }
         }
     };
+    
+    if let Some(contract) = &player.contract {
+        model.contract = Some(PlayerContractDto{
+            salary: (contract.salary / 1000f64) as u32,
+            expiration: contract.expiration.format("%d.%m.%Y").to_string(),
+            squad_status: String::from("First team player")
+        });
+    }
 
     let html = PlayerGetViewModel::render(&model).unwrap();
 
