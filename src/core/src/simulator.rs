@@ -64,14 +64,14 @@ impl SimulatorData {
     }
 
     pub fn next_date(&mut self) {
-        self.date += Duration::days(1);
+        self.date += Duration::hours(1);
     }
 
     pub fn id(&self) -> String {
         self.id.clone()
     }
     
-    pub fn refresh_indexes(&mut self) {
+    fn refresh_indexes(&mut self) {
         for continent in &self.continents {
             for country in &continent.countries {
                 //fill leagues

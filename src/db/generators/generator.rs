@@ -1,12 +1,12 @@
 use crate::db::{DatabaseEntity, PlayerGenerator};
 use core::club::academy::ClubAcademy;
-use core::context::{NaiveDateTime, NaiveTime};
+use core::context::{NaiveDateTime, NaiveTime, Timelike};
 use core::continent::Continent;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule};
 use core::shared::Location;
 use core::transfers::TransferPool;
 use core::utils::IntegerUtils;
-use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, NaiveDate, PlayerCollection, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, SimulatorDataIndexes};
+use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, NaiveDate, PlayerCollection, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, SimulatorDataIndexes, Utc};
 use std::str::FromStr;
 use crate::db::loaders::ContinentEntity;
 
@@ -14,10 +14,9 @@ pub struct Generator;
 
 impl Generator {
     pub fn generate(data: &DatabaseEntity) -> SimulatorData {
-        let current_date = NaiveDateTime::new(
-            NaiveDate::from_ymd(2020, 11, 15),
-            NaiveTime::from_hms(0, 0, 0),
-        );
+        let current_date = Utc::now().naive_utc()
+            .with_minute(0)
+            .unwrap();
 
         let continents = data.continents
             .iter()

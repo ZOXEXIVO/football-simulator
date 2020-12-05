@@ -110,7 +110,14 @@ impl StaffCollection {
 
     pub fn main_coach(&self) -> &Staff {
         let main_coach = self.get_by_position(StaffPosition::Coach);
-        *main_coach.first().unwrap()
+        match main_coach.first() {
+            Some(coach) => {
+                &coach
+            },
+            None => {
+                &self.stub
+            }
+        }
     }
 
     pub fn coaches(&self) -> Vec<&Staff> {

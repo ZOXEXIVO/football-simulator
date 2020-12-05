@@ -4,6 +4,7 @@ use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
 use core::Team;
+use core::context::NaiveDateTime;
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
@@ -26,6 +27,8 @@ pub struct LeagueSchedule<'s> {
 }
 
 pub struct LeagueScheduleItem<'si> {
+    pub date: NaiveDateTime,
+    
     pub home_team_id: u32,
     pub home_team_name: &'si str,
 
@@ -93,6 +96,7 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
     for tour in league.schedule.tours.iter().filter(|t| !t.played).take(1) {
         for item in &tour.items {
             let schedule_item = LeagueScheduleItem {
+                date: item.date,
                 result: match &item.result {
                     Some(res) => {
                         Some(LeagueScheduleItemResult {

@@ -52,8 +52,8 @@
                                 {% block processblock %}{% endblock %}          
                             </li>
                             <li class="item-date">
-                                <div class="date-title">5 Oct 2018</div>
-                                <div class="date-body">Fri 12:15</div>
+                                <div class="date-title" id="date-up"></div>
+                                <div class="date-body" id="date-down"></div>
                             </li>
                             <li>
                                 <div class="btn-group btn-drop btn-globe">
@@ -84,6 +84,25 @@
 </div>
 
 <script>
+    function updateCurrentDate() {
+        let request = new XMLHttpRequest();
+        
+        request.open('GET', '/current/date', true);
+        
+        request.onreadystatechange = function() {
+            if (request.readyState === 4) {
+                if(request.status === 200) {
+                    let dateTime = JSON.parse(request.responseText);
+                    
+                    document.getElementById('date-up').innerHTML = dateTime.date;
+                    document.getElementById('date-down').innerHTML = dateTime.time;
+                }
+            }
+        };
+
+        request.send(null);
+    }
+    
     function processGame(){
         let form = document.createElement("form");
         
@@ -109,6 +128,8 @@
 
         form.submit();
     }
+
+    updateCurrentDate();
 </script>
 
 </body>

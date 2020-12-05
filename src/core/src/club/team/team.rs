@@ -102,8 +102,9 @@ impl Team {
             self.staffs.simulate(ctx.with_staff(None)),
         );
 
-        if true { //self.training_schedule.is_time(ctx.simulation.date) {
-            Training::train_players(&mut self.players.players, self.staffs.coaches());
+        if self.training_schedule.is_time(ctx.simulation.date) {
+            let coach = self.staffs.main_coach();
+            Training::train_players(&mut self.players.players, coach);
         }
         
         result
