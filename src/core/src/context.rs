@@ -49,9 +49,9 @@ impl<'gc> GlobalContext<'gc> {
         ctx
     }
 
-    pub fn with_league(&self, league_id: u32, club_ids: &'gc[u32]) -> Self {
+    pub fn with_league(&self, league_id: u32, team_ids: &'gc[u32]) -> Self {
         let mut ctx = self.clone();
-        ctx.league = Some(LeagueContext::new(league_id, club_ids));
+        ctx.league = Some(LeagueContext::new(league_id, team_ids));
         ctx
     }
 

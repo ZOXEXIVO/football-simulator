@@ -63,6 +63,12 @@ impl Generator {
             .iter()
             .filter(|l| l.country_id == country_id)
             .map(|league| {
+                let league_clubs: Vec<u32> = data.clubs.iter()
+                    .flat_map(|c| &c.teams)
+                    .filter(|team| team.league_id == league.id)
+                    .map(|t| t.id)
+                    .collect();
+                
                 let league = League {
                     id: league.id,
                     name: league.name.clone(),
@@ -82,7 +88,7 @@ impl Generator {
                             to_month: league.settings.season_ending_half.to_month,
                         },
                     },
-                    table: Option::None,
+                    table: Some(LeagueTable::with_clubs(&league_clubs)),
                     reputation: 0,
                 };
 

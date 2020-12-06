@@ -30,11 +30,11 @@ impl League {
         let league_ctx = ctx.league.unwrap();
         
         if self.table.is_none() {
-            self.table = Some(LeagueTable::with_clubs(&league_ctx.club_ids));
+            self.table = Some(LeagueTable::with_clubs(&league_ctx.team_ids));
         }
         
         if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {           
-            self.schedule.generate(self.id,Season::TwoYear(2020, 2021), league_ctx.club_ids, &self.settings);
+            self.schedule.generate(self.id,Season::TwoYear(2020, 2021), league_ctx.team_ids, &self.settings);
         }
 
         let scheduled_matches  = 
