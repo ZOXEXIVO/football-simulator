@@ -54,7 +54,9 @@ impl Staff {
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> StaffResult {
         let result = StaffResult::new();
         
-        if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {}
+        if DateUtils::is_birthday(self.birth_date, ctx.simulation.date.date()) {
+            self.behaviour.try_increase();
+        }
 
         result  
     }
@@ -109,15 +111,7 @@ impl StaffCollection {
     }
 
     pub fn main_coach(&self) -> &Staff {
-        let main_coach = self.get_by_position(StaffPosition::Coach);
-        match main_coach.first() {
-            Some(coach) => {
-                &coach
-            },
-            None => {
-                &self.stub
-            }
-        }
+        self.get_by_position(StaffPosition::Coach).first().unwrap()
     }
 
     pub fn coaches(&self) -> Vec<&Staff> {
