@@ -1,9 +1,28 @@
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+use std::fmt::{Display, Formatter, Result};
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, PartialOrd)]
 pub enum PlayerPositionType {
     Goalkeeper,
-    Defender,
-    Midfielder,
-    Forward,
+    Sweeper,
+    DefenderLeft,
+    DefenderCenter,
+    DefenderRight,
+    DefensiveMidfielder,
+    MidfielderLeft,
+    MidfielderCenter,
+    MidfielderRight,
+    AttackingMidfielderLeft,
+    AttackingMidfielderCenter,
+    AttackingMidfielderRight,
+    Striker,
+    WingbackLeft,
+    WingbackRight
+}
+
+impl Display for PlayerPositionType {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 #[derive(Debug)]

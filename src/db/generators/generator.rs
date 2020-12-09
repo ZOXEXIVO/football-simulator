@@ -1,53 +1,64 @@
-use crate::db::{DatabaseEntity, PlayerGenerator};
+use crate::db::loaders::ContinentEntity;
+use crate::db::{DatabaseEntity, PlayerGenerator, PositionType};
 use core::club::academy::ClubAcademy;
-use core::context::{NaiveDateTime, NaiveTime, Timelike};
+use core::context::{NaiveTime, Timelike};
 use core::continent::Continent;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule};
 use core::shared::Location;
-use core::transfers::TransferPool;
 use core::utils::IntegerUtils;
-use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, NaiveDate, PlayerCollection, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, SimulatorDataIndexes, Utc};
+use core::{
+    Club, ClubBoard, ClubFinances, ClubMood, Country, Player, PlayerCollection, PlayerPosition,
+    PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType,
+    TrainingSchedule, Utc,
+};
 use std::str::FromStr;
-use crate::db::loaders::ContinentEntity;
 
 pub struct Generator;
 
 impl Generator {
     pub fn generate(data: &DatabaseEntity) -> SimulatorData {
-        let current_date = Utc::now().naive_utc()
+        let current_date = Utc::now()
+            .naive_utc()
             .with_minute(0)
+            .unwrap()
+            .with_second(0)
+            .unwrap()
+            .with_nanosecond(0)
             .unwrap();
 
-        let continents = data.continents
-            .iter()
-            .map(|continent| {
-                let continent = Continent {
-                    id: continent.id,
-                    name: continent.name.clone(),
-                    countries: Generator::generate_countries(continent, data),
-                };
+        let mut player_generator = PlayerGenerator::new();
 
-                continent
+        let continents = data
+            .continents
+            .iter()
+            .map(|continent| Continent {
+                id: continent.id,
+                name: continent.name.clone(),
+                countries: Generator::generate_countries(continent, data, &mut player_generator),
             })
             .collect();
 
         SimulatorData::new(current_date, continents)
     }
 
-    fn generate_countries(continent: &ContinentEntity, data: &DatabaseEntity) -> Vec<Country> {
+    fn generate_countries(
+        continent: &ContinentEntity,
+        data: &DatabaseEntity,
+        player_generator: &mut PlayerGenerator,
+    ) -> Vec<Country> {
         return data
             .countries
             .iter()
             .filter(|cn| cn.continent_id == continent.id)
             .map(|country| {
-                let clubs = Generator::generate_clubs(country.id, data);
+                let clubs = Generator::generate_clubs(country.id, data, player_generator);
 
                 let country = Country {
                     id: country.id,
                     code: country.code.clone(),
                     name: country.name.clone(),
                     continent_id: continent.id,
-                    leagues: Generator::generate_leagues(country.id, data),
+                    leagues: Generator::generate_leagues(country.id, data, player_generator),
                     clubs,
                     reputation: country.reputation,
                 };
@@ -57,19 +68,25 @@ impl Generator {
             .collect();
     }
 
-    fn generate_leagues(country_id: u32, data: &DatabaseEntity) -> Vec<League> {
+    fn generate_leagues(
+        country_id: u32,
+        data: &DatabaseEntity,
+        player_generator: &mut PlayerGenerator,
+    ) -> Vec<League> {
         return data
             .leagues
             .iter()
             .filter(|l| l.country_id == country_id)
             .map(|league| {
-                let league_clubs: Vec<u32> = data.clubs.iter()
+                let league_clubs: Vec<u32> = data
+                    .clubs
+                    .iter()
                     .flat_map(|c| &c.teams)
                     .filter(|team| team.league_id == league.id)
                     .map(|t| t.id)
                     .collect();
-                
-                let league = League {
+
+                League {
                     id: league.id,
                     name: league.name.clone(),
                     country_id: league.country_id,
@@ -90,70 +107,78 @@ impl Generator {
                     },
                     table: Some(LeagueTable::with_clubs(&league_clubs)),
                     reputation: 0,
-                };
-
-                league
+                }
             })
             .collect();
     }
 
-    fn generate_clubs(country_id: u32, data: &DatabaseEntity) -> Vec<Club> {
+    fn generate_clubs(
+        country_id: u32,
+        data: &DatabaseEntity,
+        player_generator: &mut PlayerGenerator,
+    ) -> Vec<Club> {
         return data
             .clubs
             .iter()
             .filter(|c| c.country_id == country_id)
-            .map(|club| {
-                let club = Club {
-                    id: club.id,
-                    name: club.name.clone(),
-                    location: Location {
-                        city_id: club.location.city_id,
-                    },
-                    mood: ClubMood::default(),
-                    board: ClubBoard::new(),
-                    finance: ClubFinances::new(club.finance.balance, Vec::new()),
-                    academy: ClubAcademy::new(100),
-                    teams: club
-                        .teams
-                        .iter()
-                        .map(|t| {
-                            Team::new(
-                                t.id,
-                                t.league_id,
-                                t.name.clone(),
-                                TeamType::from_str(&t.team_type).unwrap(),
-                                TrainingSchedule::new(
-                                    NaiveTime::from_hms(10, 0, 0),
-                                    NaiveTime::from_hms(17, 0, 0),
-                                ),
-                                TeamReputation::new(
-                                    t.reputation.home,
-                                    t.reputation.national,
-                                    t.reputation.world,
-                                ),
-                                PlayerCollection::new((0..50).map(|_| PlayerGenerator::generate(country_id)).collect()),
-                                StaffCollection::new(Vec::new()),
-                            )
-                        })
-                        .collect(),
-                };
+            .map(|club| Club {
+                id: club.id,
+                name: club.name.clone(),
+                location: Location {
+                    city_id: club.location.city_id,
+                },
+                mood: ClubMood::default(),
+                board: ClubBoard::new(),
+                finance: ClubFinances::new(club.finance.balance, Vec::new()),
+                academy: ClubAcademy::new(100),
+                teams: club
+                    .teams
+                    .iter()
+                    .map(|t| {
+                        let mut players = Vec::with_capacity(100);
+                        
+                        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(1, 5)).map(|_| {
+                            player_generator.generate(country_id, PositionType::Goalkeeper)
+                        }).collect();
 
-                club
+                        let mut defenders: Vec<Player> = (0..IntegerUtils::random(5, 8)).map(|_| {
+                            player_generator.generate(country_id, PositionType::Defender)
+                        }).collect();
+
+                        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(5, 10)).map(|_| {
+                            player_generator.generate(country_id, PositionType::Midfielder)
+                        }).collect();
+
+                        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 2)).map(|_| {
+                            player_generator.generate(country_id, PositionType::Striker)
+                        }).collect();
+                   
+                        players.append(&mut goalkeepers);
+                        players.append(&mut defenders);
+                        players.append(&mut midfielders);
+                        players.append(&mut strikers);
+                                                
+                        Team::new(
+                            t.id,
+                            t.league_id,
+                            club.id,
+                            t.name.clone(),
+                            TeamType::from_str(&t.team_type).unwrap(),
+                            TrainingSchedule::new(
+                                NaiveTime::from_hms(10, 0, 0),
+                                NaiveTime::from_hms(17, 0, 0),
+                            ),
+                            TeamReputation::new(
+                                t.reputation.home,
+                                t.reputation.national,
+                                t.reputation.world,
+                            ),
+                            PlayerCollection::new(players),
+                            StaffCollection::new(Vec::new()),
+                        )
+                    })
+                    .collect(),
             })
             .collect();
-    }
-}
-
-pub struct PlayerPositionGenerator;
-
-impl PlayerPositionGenerator {
-    pub fn generate() -> PlayerPositionType {
-        match IntegerUtils::random(0, 3) {
-            0 => PlayerPositionType::Goalkeeper,
-            1 => PlayerPositionType::Defender,
-            2 => PlayerPositionType::Midfielder,
-            3 => PlayerPositionType::Forward,
-            _ => panic!("Unknown player position type"),
-        }
     }
 }

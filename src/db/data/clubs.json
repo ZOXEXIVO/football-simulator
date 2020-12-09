@@ -11,7 +11,7 @@
     },
     "teams": [
       {
-        "id": 0,
+        "id": 1,
         "name": "Spartak Moscow",
         "team_type": "Main",
         "league_id": 0,
@@ -22,7 +22,7 @@
         }
       },
       {
-        "id": 1,
+        "id": 2,
         "name": "Spartak Moscow 2",
         "team_type": "B",
         "league_id": 1,
@@ -35,7 +35,7 @@
     ]
   },
   {
-    "id": 1,
+    "id": 3,
     "name": "Zenith St.Petersbourg",
     "country_id": 0,
     "location": {
@@ -46,7 +46,7 @@
     },
     "teams": [
       {
-        "id": 2,
+        "id": 4,
         "name": "Zenit",
         "team_type": "Main",
         "league_id": 0,
@@ -57,7 +57,7 @@
         }
       },
       {
-        "id": 3,
+        "id": 5,
         "name": "Zenit 2",
         "team_type": "B",
         "league_id": 1,
@@ -70,7 +70,7 @@
     ]
   },
   {
-    "id": 2,
+    "id": 6,
     "name": "CSKA Moscow",
     "country_id": 0,
     "location": {
@@ -81,7 +81,7 @@
     },
     "teams": [
       {
-        "id": 4,
+        "id": 7,
         "name": "CSKA Moscow",
         "team_type": "Main",
         "league_id": 0,
@@ -94,7 +94,7 @@
     ]
   },
   {
-    "id": 3,
+    "id": 8,
     "name": "Dinamo Moscow",
     "country_id": 0,
     "location": {
@@ -105,7 +105,7 @@
     },
     "teams": [
       {
-        "id": 5,
+        "id": 9,
         "name": "Dinamo Moscow",
         "team_type": "Main",
         "league_id": 0,
@@ -118,7 +118,7 @@
     ]
   },
   {
-    "id": 4,
+    "id": 10,
     "name": "Kranodar",
     "country_id": 0,
     "location": {
@@ -129,7 +129,7 @@
     },
     "teams": [
       {
-        "id": 6,
+        "id": 11,
         "name": "Kranodar",
         "team_type": "Main",
         "league_id": 0,
@@ -140,7 +140,7 @@
         }
       },
       {
-        "id": 7,
+        "id": 12,
         "name": "Kranodar 2",
         "team_type": "Main",
         "league_id": 1,
@@ -153,7 +153,7 @@
     ]
   },
   {
-    "id": 5,
+    "id": 13,
     "name": "Rostov",
     "country_id": 0,
     "location": {
@@ -164,7 +164,7 @@
     },
     "teams": [
       {
-        "id": 7,
+        "id": 14,
         "name": "Rostov",
         "team_type": "Main",
         "league_id": 0,

@@ -110,7 +110,7 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
                 home_team_id: item.home_team_id,
                 home_team_name: simulator_data.team_name(item.home_team_id).unwrap(),
 
-                away_team_id: item.home_team_id,
+                away_team_id: item.away_team_id,
                 away_team_name: simulator_data.team_name(item.away_team_id).unwrap(),
             };
             

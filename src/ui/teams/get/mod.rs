@@ -3,8 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
-use core::{Club, Team};
-use core::club::utils::PlayerUtils;
+use core::{Club, Team, SimulatorData, Player, PlayerPositionType};
 
 #[derive(Deserialize)]
 pub struct TeamGetRequest {
@@ -19,7 +18,14 @@ pub struct TeamGetViewModel<'c> {
     pub league_id: u32,
     pub league_name: &'c str,
     pub balance: TeamBalance,
-    pub players: Vec<TeamPlayer<'c>>
+    pub players: Vec<TeamPlayer<'c>>,
+    pub neighbor_teams: Vec<ClubTeam<'c>>
+}
+
+pub struct ClubTeam<'c>{
+    pub id: u32,
+    pub name: &'c str,
+    pub reputation: u16
 }
 
 pub struct TeamBalance{
@@ -32,7 +38,17 @@ pub struct TeamPlayer<'cp>{
     pub id: u32,
     pub last_name: &'cp str,
     pub first_name: &'cp str,
-    pub growth_potential: i32
+    
+    pub position: String,
+    pub position_sort: PlayerPositionType,
+    
+    pub country_id: u32,
+    pub country_code: &'cp str,
+    pub country_name: &'cp str,
+    
+    pub conditions: u8,
+    pub current_ability: u8,
+    pub potential_ability: u8,
 }
 
 pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<TeamGetRequest>) -> Result<HttpResponse> {
@@ -44,6 +60,28 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
 
     let league = simulator_data.leagues(team.league_id).unwrap();
     
+    let mut players: Vec<TeamPlayer> = team.players().iter().map(|p| {
+        let country = simulator_data.counties(p.nation_id).unwrap();
+
+        TeamPlayer {
+            id: p.id,
+            first_name: &p.full_name.first_name,
+            position_sort: p.positions.position(),
+            position: p.positions.position().to_string(),
+            country_id: country.id,
+            country_code: &country.code,
+            country_name: &country.name,
+            last_name: &p.full_name.last_name,
+            conditions: get_conditions(&p),
+            current_ability: get_current_ability_stars(&p),
+            potential_ability: get_potential_ability_stars(&p)
+        }
+    }).collect();
+    
+    players.sort_by(|a, b| {
+        a.position_sort.partial_cmp(&b.position_sort).unwrap()
+    });
+    
     let model = TeamGetViewModel {
         id: team.id,
         name: &team.name,
@@ -54,17 +92,39 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
             income: 0,
             outcome: 0
         },
-        players: team.players().iter().map(|p| {
-            TeamPlayer {
-                id: p.id,
-                first_name: &p.full_name.first_name,
-                last_name: &p.full_name.last_name,
-                growth_potential: p.growth_potential(simulator_data.date.date()) as i32
-            }
-        }).collect()
+        players,
+        neighbor_teams: get_neighbor_teams(team.club_id, simulator_data)
     };
 
     let html = TeamGetViewModel::render(&model).unwrap();
 
     Ok(HttpResponse::Ok().content_type("text/html").body(html))
+}
+
+fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
+    let club = data.clubs(club_id).unwrap();
+
+    let mut teams: Vec<ClubTeam> = club.teams.iter().map(|team| {
+        ClubTeam {
+            id: team.id,
+            name: &team.name,
+            reputation: team.reputation.world
+        }
+    }).collect();
+    
+    teams.sort_by(|a, b| b.reputation.cmp(&a.reputation));
+    
+    teams
+}
+
+pub fn get_conditions(player: &Player) -> u8 {
+    (100f32 * ((player.player_attributes.condition as f32) / 10000.0)) as u8
+}
+
+pub fn get_current_ability_stars(player: &Player) -> u8 {
+    (5.0f32 * ((player.player_attributes.current_ability as f32) / 200.0)) as u8
+}
+
+pub fn get_potential_ability_stars(player: &Player) -> u8 {
+    (5.0f32 * ((player.player_attributes.potential_ability as f32) / 200.0)) as u8
 }

@@ -17,6 +17,7 @@ pub enum TeamType {
 pub struct Team {
     pub id: u32,
     pub league_id: u32,
+    pub club_id: u32,
     pub name: String,    
     pub team_type: TeamType,    
     pub tactics: Option<Tactics>,
@@ -34,6 +35,7 @@ impl Team {
     pub fn new(
         id: u32,
         league_id: u32,
+        club_id: u32,
         name: String,
         team_type: TeamType,
         training_schedule: TrainingSchedule,
@@ -44,6 +46,7 @@ impl Team {
         Team {
             id,
             league_id,
+            club_id,
             name,
             team_type,
             players,
@@ -89,7 +92,7 @@ impl Team {
         let main_coach = self.staffs.main_coach();
 
         Squad {
-            club_id: self.id,
+            team_id: self.id,
             tactics: TacticsSelector::select(self, main_coach),
             players: PlayerSelector::select(self, main_coach),
         }

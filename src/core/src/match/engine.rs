@@ -119,22 +119,22 @@ impl<'s> FootballEngine<'s> {
     }
 
     fn get_team_for_squad(&self, squad: &Squad) -> MatchTeam {
-        let mut team = MatchTeam::new(squad.club_id);
+        let mut team = MatchTeam::new(squad.team_id);
 
         for player in squad.players.iter().map(|p| &p.player) {
             match &player.position() {
                 PlayerPositionType::Goalkeeper => {
                     team.goalkeeping_skill += player.get_skill() as f32;
                 }
-                PlayerPositionType::Defender => {
+                PlayerPositionType::Sweeper | PlayerPositionType::DefenderLeft | PlayerPositionType::DefenderCenter | PlayerPositionType::DefenderRight => {
                     team.defender_skill += player.get_skill() as f32;
                 }
-                PlayerPositionType::Midfielder => {
+                PlayerPositionType::MidfielderLeft | PlayerPositionType::MidfielderCenter | PlayerPositionType::MidfielderRight => {
                     team.defender_skill += 0.5 * player.get_skill() as f32;
                     team.midfielder_skill += player.get_skill() as f32;
                     team.striker_skill += 0.5 * player.get_skill() as f32;
                 }
-                PlayerPositionType::Forward => {
+                PlayerPositionType::WingbackLeft | PlayerPositionType::Striker | PlayerPositionType::WingbackRight  => {
                     team.striker_skill += player.get_skill() as f32;
                 }
                 _ => {}

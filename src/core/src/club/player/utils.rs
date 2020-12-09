@@ -16,28 +16,28 @@ impl PlayerUtils {
         let pa = player.player_attributes.potential_ability;
 
         if age < 24 {
-            if pa <= (ca + 10) as i8 {
+            if pa <= (ca + 10) as u8 {
                 dap = dap - 0.5;
             }
         }
 
         if age >= 24 && age < 29 {
             dap = dap - 0.5;
-            if pa <= (ca + 10) as i8 {
+            if pa <= (ca + 10) as u8 {
                 dap = dap - 0.5;
             }
         }
 
         if age >= 29 && age < 34 {
             dap = dap - 1.0;
-            if pa <= (ca + 10) as i8 {
+            if pa <= (ca + 10) as u8 {
                 dap = dap - 0.5;
             }
         }
 
         if age >= 34 {
             dap = dap - 1.0;
-            if pa <= (ca + 10) as i8 && player.positions.position() == PlayerPositionType::Goalkeeper {
+            if pa <= (ca + 10) as u8 && player.positions.position() == PlayerPositionType::Goalkeeper {
                 dap = 0.5;
             }
         }

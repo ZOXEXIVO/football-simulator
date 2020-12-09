@@ -19,7 +19,7 @@ pub struct PlayerAttributes {
     
     //ability
     pub current_ability: u8,
-    pub potential_ability: i8,
+    pub potential_ability: u8,
     
     //international expirience    
     pub international_apps: u16,

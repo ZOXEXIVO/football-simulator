@@ -132,27 +132,27 @@ impl Schedule {
         result
     }
     
-    fn generate_game_pairs(clubs: &[u32], tours_count: usize) -> Vec<(u32, u32)> {
+    fn generate_game_pairs(teams: &[u32], tours_count: usize) -> Vec<(u32, u32)> {
         let mut result = Vec::new();
 
         let mut temp_vec = Vec::new();
 
-        let team_len= clubs.len() as u32;
+        let team_len= teams.len() as u32;
         let team_len_half = team_len / 2 as u32;
 
-        for club in 1..team_len_half + 1 {
-            temp_vec.push((club, team_len - club + 1))
+        for team in 1..team_len_half + 1 {
+            temp_vec.push((teams[team as usize], teams[(team_len - team) as usize]))
         }
 
-        for club in &temp_vec {
-            result.push((club.0, club.1));
+        for team in &temp_vec {
+            result.push((team.0, team.1));
         }
 
         for _ in 0..tours_count {
             Self::rotate(&mut temp_vec);
 
-            for club in &temp_vec {
-                result.push((club.0, club.1));
+            for team in &temp_vec {
+                result.push((team.0, team.1));
             }
         }
 
@@ -197,6 +197,21 @@ impl Schedule {
         self.tours.iter()
             .flat_map(|t| &t.items)
             .filter(|s| s.date == date)
+            .map(|s| {
+                ScheduleItem::new(
+                    s.league_id,
+                    s.home_team_id,
+                    s.away_team_id,
+                    s.date
+                )
+            })
+            .collect()
+    }
+
+    pub fn get_matches_for_team(&self, team_id: u32) -> Vec<ScheduleItem> {
+        self.tours.iter()
+            .flat_map(|t| &t.items)
+            .filter(|s| s.home_team_id == team_id || s.away_team_id == team_id)
             .map(|s| {
                 ScheduleItem::new(
                     s.league_id,

@@ -3,7 +3,7 @@ use crate::Tactics;
 
 #[derive(Debug)]
 pub struct Squad<'s> {
-    pub club_id: u32,
+    pub team_id: u32,
     pub tactics: Tactics,
     pub players: Vec<SquadPlayer<'s>>,
 }

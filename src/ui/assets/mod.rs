@@ -1,5 +1,5 @@
 ﻿use actix_web::web::ServiceConfig;
-use actix_web::{web, Result, HttpResponse, Responder};
+use actix_web::{web, Result, HttpResponse};
 
 const CSS_CONTENT_TYPE: &'static str = "text/css; charset=utf-8";
 

@@ -10,17 +10,3 @@ impl IntegerUtils {
             min + (random_val * ((max - min) as f64)) as i32
       }
 }
-
-// pub fn SequenceGenerator() -> FnMut() -> u32 {
-//       let currentCounter: u32 = 0;
-
-//       let counterClosure = || {
-//             let current = currentCounter;
-
-//             currentCounter = currentCounter + 1;
-
-//             return current;
-//       };
-
-//       counterClosure
-// }

@@ -1,13 +1,23 @@
 ﻿﻿{% extends "../../layout.html" %}
 
+
 {% block header %}
-<div class="page-title">{{ name }}</div>
-<div>
-    <a href="/leagues/{{ league_id }}" class="sub-title-link">
-        {{ league_name }}
-    </a>
+<div style="float:left;">
+    <div class="club-logo club-default-logo" style="margin-top: 9px;padding: 27px;"></div>
 </div>
+<div style="float:left;">
+    <div class="header-title-block">
+        <div class="page-title">{{ name }}</div>
+        <div>
+            <a href="/leagues/{{ league_id }}" class="sub-title-link">
+                {{ league_name }}
+            </a>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
+
 
 {% block processblock %}
 
@@ -32,14 +42,20 @@
         </div>
         <div class="menu_section">
             <ul class="nav">
-                <li><a href="/squad"><i class="fas fa-user-friends"></i>Squad</a></li>
-                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>
+                {% for team in neighbor_teams %}
+                <li><a href="/teams/{{ team.id }}"><i class="fas fa-user-friends"></i>{{ team.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/teams/{{ id }}/schedule"><i class="fas fa-user-friends"></i>Schedule</a></li>
                 <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>
             </ul>
         </div>
         <div class="menu_section">
             <ul class="nav">
-                <li><a href="/#"><i class="fas fa-search"></i> Резерв</a></li>             
+                <li><a href="/#"><i class="fas fa-search"></i> Резерв</a></li>
             </ul>
         </div>
     </div>
@@ -62,7 +78,7 @@
         </ul>
     </div>
 </div>
-<br />
+<br/>
 <div class="content">
     <table class="squad-table">
         <tr>
@@ -109,38 +125,38 @@
                 </a>
             </td>
             <td style="width: 80px">
-                GK
+                {{ player.position }}
             </td>
             <td style="width: 50px">
-               RUS
+                <a href="/countries/{{ player.country_id }}" class="sub-title-link">
+                    <div class="flag flag-{{player.country_code}}" title="{{ player.country_name }}"></div>
+                </a>
             </td>
             <td style="width: 150px">
                 <fieldset class="rating">
-                    <label></label>
-                    <label></label>
-                    <label class="checked"></label>
-                    <label class="checked"></label>
-                    <label class="checked"></label>
+                    {% for _ in 0..(5 - player.current_ability) %}
+                        <label></label>
+                    {% endfor %}
+                    {% for _ in 0..player.current_ability %}
+                        <label class="checked"></label>
+                    {% endfor %}
                 </fieldset>
             </td>
             <td style="width: 150px">
                 <fieldset class="rating">
-                    <label></label>
-                    {% for _ in 0..player.growth_potential %}
+                    {% for _ in 0..(5 - player.potential_ability) %}
+                        <label></label>
+                    {% endfor %}
+                    {% for _ in 0..player.potential_ability %}
                         <label class="checked"></label>
                     {% endfor %}
-                    
-                    <label class="checked"></label>
-                    <label class="checked"></label>
-                    <label class="checked"></label>
-                    <label class="checked"></label>
                 </fieldset>
             </td>
             <td style="width: 150px">
                 Good
             </td>
-            <td style="width: 100px">
-                97%
+            <td style="width: 100px;text-align: center">
+                {{player.conditions}}%
             </td>
 
             <td style="width: 70px">

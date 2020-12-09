@@ -3,7 +3,7 @@ use chrono::{NaiveDateTime, Duration};
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use crate::transfers::TransferPool;
-use crate::{Player, Country, Team};
+use crate::{Player, Country, Team, Club};
 use crate::context::{GlobalContext, SimulationContext};
 use crate::league::League;
 use crate::utils::Logging;
@@ -81,6 +81,8 @@ impl SimulatorData {
                 
                 //fill teams
                 for club in &country.clubs {
+                    self.indexes.add_club_location(club.id, continent.id, country.id);
+                    
                     for team in &club.teams {
                         self.indexes.add_team_name(team.id, team.name.clone());
                         self.indexes.add_team_location(team.id, continent.id, country.id, club.id);                        
@@ -133,6 +135,26 @@ impl SimulatorData {
     pub fn team_name(&self, id: u32) -> Option<&str> {
         self.indexes.get_team_name(id)
     }
+
+    pub fn clubs(&self, id: u32) -> Option<&Club>{
+        let (club_continent_id, club_country_id) =
+            self.indexes.get_club_location(id).unwrap();
+
+        self.continents
+            .iter().find(|continent| continent.id == club_continent_id).unwrap().countries
+            .iter().find(|country| country.id == club_country_id).unwrap().clubs          
+            .iter().find(|c| c.id == id)
+    }
+
+    pub fn clubs_mut(&mut self, id: u32) -> Option<&mut Club>{
+        let (club_continent_id, club_country_id) =
+            self.indexes.get_club_location(id).unwrap();
+
+        self.continents
+            .iter_mut().find(|continent| continent.id == club_continent_id).unwrap().countries
+            .iter_mut().find(|country| country.id == club_country_id).unwrap().clubs
+            .iter_mut().find(|c| c.id == id)
+    }
     
     pub fn teams(&self, id: u32) -> Option<&Team>{
         let (team_continent_id, team_country_id, team_club_id) = 
@@ -159,6 +181,7 @@ impl SimulatorData {
 
 pub struct SimulatorDataIndexes {
     league_indexes: HashMap<u32, (u32, u32)>,
+    club_indexes: HashMap<u32, (u32, u32)>,
     team_indexes: HashMap<u32, (u32, u32, u32)>,
     team_name_index: HashMap<u32, String>
 }
@@ -167,6 +190,7 @@ impl SimulatorDataIndexes {
     pub fn new() -> Self {
         SimulatorDataIndexes {
             league_indexes: HashMap::new(),
+            club_indexes: HashMap::new(),
             team_indexes: HashMap::new(),
             team_name_index: HashMap::new()
         }
@@ -181,6 +205,23 @@ impl SimulatorDataIndexes {
         match self.league_indexes.get(&league_id) {
             Some((league_continent_id, league_country_id)) => {
                 Some((*league_continent_id, *league_country_id))
+            }
+            None => {
+                None
+            }
+        }
+    }
+    
+    //club indexes
+
+    pub fn add_club_location(&mut self, club_id: u32, continent_id: u32, country_id: u32){
+        self.club_indexes.insert(club_id, (continent_id, country_id));
+    }
+
+    pub fn get_club_location(&self, club_id: u32) -> Option<(u32, u32)> {
+        match self.club_indexes.get(&club_id) {
+            Some((club_continent_id, club_country_id)) => {
+                Some((*club_continent_id, *club_country_id))
             }
             None => {
                 None

@@ -1,12 +1,22 @@
 ﻿{% extends "../../layout.html" %}
 
 {% block header %}
-<div class="page-title">{{name}}</div>
-<div>
-    <a href="/countries" class="sub-title-link">
-        {{ continent_name }}
-    </a>
+
+<div style="float:left;">
+    <div class="flag flag-ru" style="margin-top: 14px;">
+    </div>
 </div>
+<div style="float:left;">
+    <div class="header-title-block">
+        <div class="page-title">{{name}}</div>
+        <div>
+            <a href="/countries" class="sub-title-link">
+                {{ continent_name }}
+            </a>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block processblock %}

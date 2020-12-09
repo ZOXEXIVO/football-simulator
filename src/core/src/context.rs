@@ -109,7 +109,7 @@ impl SimulationContext {
     }
 
     pub fn is_week_beginning(&self) -> bool {
-        self.date.weekday() == Weekday::Mon
+        self.date.weekday() == Weekday::Mon && self.date.hour() == 0 && self.date.minute() == 0
     }    
     
     pub fn is_month_beginning(&self) -> bool {

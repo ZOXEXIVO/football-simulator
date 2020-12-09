@@ -49,7 +49,8 @@ impl TacticsSelector {
         let scores = {
             let mut defending_score: i8 = 0;
 
-            if let Some(defenders) = player_stats.get(&PlayerPositionType::Defender) {
+            //TODO FIX
+            if let Some(defenders) = player_stats.get(&PlayerPositionType::DefenderCenter) {
                 match defenders {
                     1..=2 => defending_score += 1,
                     3..=6 => defending_score += 2,
@@ -59,7 +60,7 @@ impl TacticsSelector {
 
             let mut midfielder_score: i8 = 0;
 
-            if let Some(midfielders) = player_stats.get(&PlayerPositionType::Midfielder) {
+            if let Some(midfielders) = player_stats.get(&PlayerPositionType::MidfielderCenter) {
                 match midfielders {
                     1..=2 => midfielder_score += 1,
                     3..=6 => midfielder_score += 2,
@@ -69,7 +70,7 @@ impl TacticsSelector {
 
             let mut forward_score: i8 = 0;
 
-            if let Some(forwards) = player_stats.get(&PlayerPositionType::Forward) {
+            if let Some(forwards) = player_stats.get(&PlayerPositionType::Striker) {
                 match forwards {
                     1..=2 => forward_score += 1,
                     3..=6 => forward_score += 2,

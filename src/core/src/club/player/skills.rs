@@ -55,11 +55,11 @@ impl Technical {
                 (self.penalty_taking + self.first_touch + self.free_kick_taking) as u32
             }
 
-            PlayerPositionType::Defender => {
+            PlayerPositionType::Sweeper | PlayerPositionType::DefenderLeft  | PlayerPositionType::DefenderCenter | PlayerPositionType::DefenderRight  => {
                 (self.dribbling + self.heading + self.marking + self.passing + self.tackling) as u32
             }
 
-            PlayerPositionType::Midfielder => {
+            PlayerPositionType::MidfielderLeft  | PlayerPositionType::MidfielderCenter | PlayerPositionType::MidfielderRight => {
                 (self.dribbling
                     + self.crossing
                     + self.marking
@@ -69,7 +69,7 @@ impl Technical {
                     + self.long_shots) as u32
             }
 
-            PlayerPositionType::Forward => {
+            PlayerPositionType::WingbackLeft  | PlayerPositionType::Striker | PlayerPositionType::WingbackRight => {
                 (self.dribbling + self.first_touch + self.finishing + self.passing) as u32
             }
 
@@ -122,11 +122,11 @@ impl Mental {
                 (self.vision + self.off_the_ball + self.leadership) as u32
             }
 
-            PlayerPositionType::Defender => {
+            PlayerPositionType::Sweeper | PlayerPositionType::DefenderLeft  | PlayerPositionType::DefenderCenter | PlayerPositionType::DefenderRight => {
                 (self.aggression + self.positioning + self.off_the_ball + self.anticipation) as u32
             }
 
-            PlayerPositionType::Midfielder => {
+            PlayerPositionType::MidfielderLeft  | PlayerPositionType::MidfielderCenter | PlayerPositionType::MidfielderRight => {
                 (self.work_rate
                     + self.teamwork
                     + self.positioning
@@ -135,7 +135,7 @@ impl Mental {
                     + self.off_the_ball) as u32
             }
 
-            PlayerPositionType::Forward => {
+            PlayerPositionType::WingbackLeft  | PlayerPositionType::Striker | PlayerPositionType::WingbackRight => {
                 (self.concentration + self.vision + self.positioning) as u32
             }
 
@@ -184,11 +184,11 @@ impl Physical {
                 (self.agility + self.balance + self.pace + self.jumping_reach) as u32
             }
 
-            PlayerPositionType::Defender => {
+            PlayerPositionType::Sweeper | PlayerPositionType::DefenderLeft  | PlayerPositionType::DefenderCenter | PlayerPositionType::DefenderRight => {
                 (self.agility + self.natural_fitness + self.stamina + self.pace) as u32
             }
 
-            PlayerPositionType::Midfielder => {
+            PlayerPositionType::MidfielderLeft  | PlayerPositionType::MidfielderCenter | PlayerPositionType::MidfielderRight => {
                 (self.acceleration
                     + self.natural_fitness
                     + self.pace
@@ -196,7 +196,7 @@ impl Physical {
                     + self.strength) as u32
             }
 
-            PlayerPositionType::Forward => (self.acceleration + self.stamina) as u32,
+            PlayerPositionType::WingbackLeft  | PlayerPositionType::Striker | PlayerPositionType::WingbackRight => (self.acceleration + self.stamina) as u32,
             _ => 0,
         }
     }

@@ -1,11 +1,17 @@
 ﻿{% extends "../../layout.html" %}
 
 {% block header %}
-<div class="page-title">{{name}}</div>
-<div>
-    <a href="/countries/{{ country_id }}" class="sub-title-link">
-        {{ country_name }}
-    </a>
+<div style="float:left;">
+    <div class="header-title-block">
+        <div class="page-title">{{name}}</div>
+        <div>
+            <div class="flag flag-ru" style="margin-left: 3px; margin-top: 2px;width: 20px; height: 15px;">
+            </div>
+            <a href="/countries/{{ country_id }}" class="sub-title-link">
+                {{ country_name }}
+            </a>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -25,23 +31,11 @@
                 <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
             </ul>
         </div>
-        <div class="menu_section">
-            <ul class="nav">
-                <li><a><i class="fas fa-inbox"></i>Inbox</a></li>
-            </ul>
-        </div>
-        <div class="menu_section">
-            <ul class="nav">
-                <li><a href="/squad"><i class="fas fa-user-friends"></i>Squad</a></li>
-                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>
-                <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>
-            </ul>
-        </div>
-        <div class="menu_section">
-            <ul class="nav">
-                <li><a href="/#"><i class="fas fa-search"></i> Резерв</a></li>             
-            </ul>
-        </div>
+<!--        <div class="menu_section">-->
+<!--            <ul class="nav">            -->
+<!--                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>                -->
+<!--            </ul>-->
+<!--        </div>-->
     </div>
 </div>
 {% endblock %}
@@ -136,7 +130,11 @@
                     <table class="week-results">
                         {% for item in week_schedule.items %}
                         <tr>
-                            <td>{{ item.home_team_name }}</td>
+                            <td>
+                                <a href="/teams/{{ item.home_team_id }}">
+                                    {{ item.home_team_name }}
+                                </a>
+                            </td>
                             <td class="score">
                                 {% if item.result.is_some() %} 
                                 
@@ -150,7 +148,11 @@
                                 -
                                 {% endif %}
                             </td>
-                            <td>{{ item.away_team_name }}</td>
+                            <td>
+                                <a href="/teams/{{ item.away_team_id }}">
+                                    {{ item.away_team_name }}
+                                </a>                               
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -197,7 +199,7 @@
                                             1st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Ezequiel Ponce
@@ -212,7 +214,7 @@
                                             2st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Jordan Larsson
@@ -232,7 +234,7 @@
                                             1st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Guus Til
@@ -247,7 +249,7 @@
                                             2st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             André Schürrle
@@ -267,7 +269,7 @@
                                             1st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Alex Kral
@@ -282,7 +284,7 @@
                                             2st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Nail Umyarov
@@ -304,7 +306,7 @@
                                             1st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Alex Kral
@@ -319,7 +321,7 @@
                                             2st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Georgiy Dzhikiya
@@ -339,7 +341,7 @@
                                             1st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Aleksandr Maksimenko
@@ -354,7 +356,7 @@
                                             2st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Aleksandr Selikhov
@@ -374,7 +376,7 @@
                                             1st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Reziuan Mirzov
@@ -389,7 +391,7 @@
                                             2st
                                         </td>
                                         <td style="width: 30px">
-                                            <img src="/assets/images/logos/inter.png" class="club-logo" />
+                                            <div class="club-logo club-default-logo"></div>
                                         </td>
                                         <td>
                                             Alex Kral
