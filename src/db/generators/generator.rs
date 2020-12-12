@@ -141,15 +141,15 @@ impl Generator {
                             player_generator.generate(country_id, PositionType::Goalkeeper)
                         }).collect();
 
-                        let mut defenders: Vec<Player> = (0..IntegerUtils::random(5, 8)).map(|_| {
+                        let mut defenders: Vec<Player> = (0..IntegerUtils::random(7, 10)).map(|_| {
                             player_generator.generate(country_id, PositionType::Defender)
                         }).collect();
 
-                        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(5, 10)).map(|_| {
+                        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(9, 12)).map(|_| {
                             player_generator.generate(country_id, PositionType::Midfielder)
                         }).collect();
 
-                        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 2)).map(|_| {
+                        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 4)).map(|_| {
                             player_generator.generate(country_id, PositionType::Striker)
                         }).collect();
                    

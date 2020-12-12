@@ -63,11 +63,13 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
     let mut players: Vec<TeamPlayer> = team.players().iter().map(|p| {
         let country = simulator_data.counties(p.nation_id).unwrap();
 
+        let position = p.positions.display_positions().join(", ");
+        
         TeamPlayer {
             id: p.id,
             first_name: &p.full_name.first_name,
             position_sort: p.positions.position(),
-            position: p.positions.position().to_string(),
+            position,
             country_id: country.id,
             country_code: &country.code,
             country_name: &country.name,
