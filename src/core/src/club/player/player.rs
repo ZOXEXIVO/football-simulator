@@ -158,6 +158,10 @@ impl Person for Player {
     fn attributes(&self) -> &PersonAttributes {
         &self.attributes
     }
+
+    fn relations(&self) -> &Relations {
+        &self.relations
+    }
 }
 
 #[derive(Debug)]

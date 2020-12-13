@@ -1,6 +1,7 @@
 use chrono::{NaiveDate, Datelike, Duration};
 use crate::shared::FullName;
 use std::ops::Add;
+use crate::Relations;
 
 pub trait Person {
     fn id(&self) -> u32;
@@ -20,6 +21,8 @@ pub trait Person {
     
     fn behaviour(&self) -> &PersonBehaviour;
     fn attributes(&self) -> &PersonAttributes;
+    
+    fn relations(&self) -> &Relations;
 }
 
 #[derive(Debug)]

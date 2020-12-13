@@ -13,6 +13,7 @@ pub struct Country {
     pub leagues: Vec<League>,
     pub clubs: Vec<Club>,
     pub reputation: u16,
+    pub generator_data: CountryGeneratorData,
 }
 
 impl Country {
@@ -24,6 +25,7 @@ impl Country {
         leagues: Vec<League>,
         clubs: Vec<Club>,
         reputation: u16,
+        generator_data: CountryGeneratorData
     ) -> Self {
         Country {
             id,
@@ -33,6 +35,7 @@ impl Country {
             leagues,
             clubs,
             reputation,
+            generator_data
         }
     }
 
@@ -46,7 +49,7 @@ impl Country {
                 let message = &format!("simulate club: {}", &club.name);
                 Logging::estimate_result(
                     || club.simulate(ctx.with_club(club.id, &club.name.clone())),
-                    message
+                    message,
                 )
             })
             .collect();
@@ -96,7 +99,10 @@ impl Country {
                 )
             })
             .map(|m| {
-                let message = &format!("simulate play match: {} - {}", &m.home_team.name, &m.away_team.name);
+                let message = &format!(
+                    "simulate play match: {} - {}",
+                    &m.home_team.name, &m.away_team.name
+                );
                 Logging::estimate_result(|| m.play(), message)
             })
             .collect()
@@ -109,4 +115,33 @@ impl Country {
             .find(|team| team.id == id)
             .unwrap()
     }
+}
+
+pub struct CountryGeneratorData {
+    pub people_names: PeopleNameGeneratorData,
+}
+
+impl CountryGeneratorData {
+    pub fn new(first_names: Vec<String>, last_names: Vec<String>) -> Self {
+        CountryGeneratorData {
+            people_names: PeopleNameGeneratorData {
+                first_names,
+                last_names,
+            },
+        }
+    }
+
+    pub fn empty() -> Self {
+        CountryGeneratorData {
+            people_names: PeopleNameGeneratorData {
+                first_names: Vec::new(),
+                last_names: Vec::new()
+            },
+        }
+    }
+}
+
+pub struct PeopleNameGeneratorData {
+    pub first_names: Vec<String>,
+    pub last_names: Vec<String>,
 }

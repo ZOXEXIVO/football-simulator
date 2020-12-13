@@ -2,7 +2,7 @@
   {
     "id": 0,
     "name": "Spartak Moscow",
-    "country_id": 0,
+    "country_id": 791,
     "location": {
       "city_id": 0
     },
@@ -37,7 +37,7 @@
   {
     "id": 3,
     "name": "Zenith St.Petersbourg",
-    "country_id": 0,
+    "country_id": 791,
     "location": {
       "city_id": 0
     },
@@ -72,7 +72,7 @@
   {
     "id": 6,
     "name": "CSKA Moscow",
-    "country_id": 0,
+    "country_id": 791,
     "location": {
       "city_id": 0
     },
@@ -96,7 +96,7 @@
   {
     "id": 8,
     "name": "Dinamo Moscow",
-    "country_id": 0,
+    "country_id": 791,
     "location": {
       "city_id": 0
     },
@@ -120,7 +120,7 @@
   {
     "id": 10,
     "name": "Kranodar",
-    "country_id": 0,
+    "country_id": 791,
     "location": {
       "city_id": 0
     },
@@ -155,7 +155,7 @@
   {
     "id": 13,
     "name": "Rostov",
-    "country_id": 0,
+    "country_id": 791,
     "location": {
       "city_id": 0
     },

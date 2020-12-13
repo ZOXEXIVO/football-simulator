@@ -1,18 +1,22 @@
-use core::{Player, NaiveDate, PlayerClubContract, PlayerSkills, Technical, Mental, Physical, PlayerPosition, PlayerAttributes, PersonAttributes, 
-           PlayerPositions, Utc, Datelike, PlayerPositionType};
+use core::{Player, NaiveDate, PlayerClubContract, PlayerSkills, Technical, Mental, Physical, PlayerPosition, PlayerAttributes, PersonAttributes, PlayerPositions, Utc, Datelike, PlayerPositionType, PeopleNameGeneratorData};
 use core::utils::{IntegerUtils, StringUtils};
 use core::shared::FullName;
 use std::sync::atomic::{Ordering, AtomicU32};
 use std::sync::Arc;
 
 pub struct PlayerGenerator {
-    sequence: Arc<AtomicU32>
+    sequence: Arc<AtomicU32>,
+    people_names_data: PeopleNameGeneratorData
 }
 
 impl PlayerGenerator {
-    pub fn new() -> Self {
+    pub fn with_people_names(people_names: &PeopleNameGeneratorData) -> Self {
         PlayerGenerator {
-            sequence: Arc::new(AtomicU32::new(0))
+            sequence: Arc::new(AtomicU32::new(0)),
+            people_names_data: PeopleNameGeneratorData{
+                first_names: people_names.first_names.clone(),
+                last_names: people_names.last_names.clone()
+            }
         }
     }
 }
@@ -35,8 +39,8 @@ impl PlayerGenerator{
         Player::new(
             self.sequence.fetch_add(1, Ordering::SeqCst),
             FullName {
-                first_name: StringUtils::random_string(5),
-                last_name: StringUtils::random_string(12),
+                first_name: self.generate_first_name(),
+                last_name: self.generate_last_name(),
                 middle_name: StringUtils::random_string(17),
             },
             NaiveDate::from_ymd(year as i32, month, day),
@@ -218,5 +222,26 @@ impl PlayerGenerator{
             under_21_international_apps: IntegerUtils::random(0, 30) as u16,
             under_21_international_goals: IntegerUtils::random(0, 10) as u16
         }
+    }
+    
+    fn generate_first_name(&self) -> String {
+        if self.people_names_data.first_names.len() > 0 {
+            let idx = IntegerUtils::random(0, self.people_names_data.first_names.len() as i32) as usize;
+
+            self.people_names_data.first_names[idx].to_owned()
+        }
+        else {
+            StringUtils::random_string(5)
+        }
+    }
+
+    fn generate_last_name(&self) -> String {
+        if self.people_names_data.first_names.len() > 0 {
+            let idx = IntegerUtils::random(0, self.people_names_data.last_names.len() as i32) as usize;
+            self.people_names_data.last_names[idx].to_owned()
+        }
+        else {
+            StringUtils::random_string(12)
+        }        
     }
 }

@@ -6,11 +6,7 @@ use core::continent::Continent;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule};
 use core::shared::Location;
 use core::utils::IntegerUtils;
-use core::{
-    Club, ClubBoard, ClubFinances, ClubMood, Country, Player, PlayerCollection, PlayerPosition,
-    PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType,
-    TrainingSchedule, Utc,
-};
+use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, Player, PlayerCollection, PlayerPosition, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, Utc, CountryGeneratorData};
 use std::str::FromStr;
 
 pub struct Generator;
@@ -26,15 +22,13 @@ impl Generator {
             .with_nanosecond(0)
             .unwrap();
 
-        let mut player_generator = PlayerGenerator::new();
-
         let continents = data
             .continents
             .iter()
             .map(|continent| Continent {
                 id: continent.id,
                 name: continent.name.clone(),
-                countries: Generator::generate_countries(continent, data, &mut player_generator),
+                countries: Generator::generate_countries(continent, data),
             })
             .collect();
 
@@ -43,24 +37,36 @@ impl Generator {
 
     fn generate_countries(
         continent: &ContinentEntity,
-        data: &DatabaseEntity,
-        player_generator: &mut PlayerGenerator,
+        data: &DatabaseEntity
     ) -> Vec<Country> {
         return data
             .countries
             .iter()
             .filter(|cn| cn.continent_id == continent.id)
             .map(|country| {
-                let clubs = Generator::generate_clubs(country.id, data, player_generator);
+          
+                let generator_data = match data.names_by_country.iter().find(|c| c.country_id == country.id) {
+                    Some(names) => {
+                        CountryGeneratorData::new(names.first_names.clone(), names.last_names.clone())
+                    },
+                    None => {
+                        CountryGeneratorData::empty()
+                    }
+                };
+                
+                let mut player_generator = PlayerGenerator::with_people_names(&generator_data.people_names);
+
+                let clubs = Generator::generate_clubs(country.id, data, &mut player_generator);
 
                 let country = Country {
                     id: country.id,
                     code: country.code.clone(),
                     name: country.name.clone(),
                     continent_id: continent.id,
-                    leagues: Generator::generate_leagues(country.id, data, player_generator),
+                    leagues: Generator::generate_leagues(country.id, data),
                     clubs,
                     reputation: country.reputation,
+                    generator_data
                 };
 
                 country
@@ -70,8 +76,7 @@ impl Generator {
 
     fn generate_leagues(
         country_id: u32,
-        data: &DatabaseEntity,
-        player_generator: &mut PlayerGenerator,
+        data: &DatabaseEntity
     ) -> Vec<League> {
         return data
             .leagues

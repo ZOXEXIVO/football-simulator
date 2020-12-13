@@ -5,18 +5,21 @@ use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result};
 use crate::club::{StaffClubContract, StaffResult, 
                   StaffPosition, PersonBehaviour};
-use crate::{Relations, StaffCollectionResult};
+use crate::{Relations, StaffCollectionResult, Person, PersonAttributes};
 
 #[derive(Debug)]
 pub struct Staff {
     pub id: u32,
     pub full_name: FullName,
     pub birth_date: NaiveDate,
+    pub attributes: PersonAttributes,
     pub behaviour: PersonBehaviour,
-
+        
     pub contract: Option<StaffClubContract>,
 
-    pub relations: Relations
+    pub relations: Relations,
+    
+    pub license: StaffLicenseType
 }
 
 impl Staff {
@@ -25,6 +28,8 @@ impl Staff {
         full_name: FullName,
         birth_date: NaiveDate,
         contract: Option<StaffClubContract>,
+        attributes: PersonAttributes,
+        license: StaffLicenseType
     ) -> Self {
         Staff {
             id,
@@ -33,6 +38,8 @@ impl Staff {
             contract,
             behaviour: PersonBehaviour::default(),
             relations: Relations::new(),
+            attributes,
+            license
         }
     }
 
@@ -48,6 +55,17 @@ impl Staff {
             behaviour: PersonBehaviour::default(),
             birth_date: NaiveDate::from_ymd(2019, 1, 1),
             relations: Relations::new(),
+            license: StaffLicenseType::NationalC,
+            attributes: PersonAttributes {
+                adaptability: 1,
+                ambition: 1,
+                controversy: 1,
+                loyalty: 1,
+                pressure: 1,
+                professionalism: 1,
+                sportsmanship: 1,
+                temperament: 1
+            }
         }
     }
 
@@ -133,4 +151,41 @@ impl StaffCollection {
 
         staffs
     }
+}
+
+impl Person for Staff {
+    fn id(&self) -> u32 {
+        self.id
+    }
+
+    fn fullname(&self) -> &FullName {
+        &self.full_name
+    }
+
+    fn birthday(&self) -> NaiveDate {
+        self.birth_date
+    }
+
+    fn behaviour(&self) -> &PersonBehaviour {
+        &self.behaviour
+    }
+
+    fn attributes(&self) -> &PersonAttributes {
+        &self.attributes
+    }
+
+    fn relations(&self) -> &Relations {
+        &self.relations
+    }
+}
+
+#[derive(Debug)]
+pub enum StaffLicenseType{
+    ContinentalPro,
+    ContinentalA,
+    ContinentalB,
+    ContinentalC,
+    NationalA,
+    NationalB,
+    NationalC
 }
