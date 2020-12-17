@@ -843,7 +843,7 @@
     "id": 31,
     "code": "ml",
     "name": "Mali",
-    "continent_id": 1,
+    "continent_id": 0,
     "reputation": 0
   },
   {

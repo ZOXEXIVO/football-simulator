@@ -3,7 +3,7 @@ use chrono::Duration;
 use chrono::NaiveDate;
 use crate::league::{LeagueSettings, Season};
 use crate::utils::DateUtils;
-use log::{debug};
+use log::{debug, warn};
 
 #[derive(Debug, Clone)]
 pub struct ScheduleTour {
@@ -21,7 +21,6 @@ impl ScheduleTour {
         }
     }
 }
-
 
 #[derive(Debug)]
 pub struct Schedule {
@@ -81,11 +80,14 @@ impl Schedule {
         
         let teams_len = teams.len();
 
-        debug!("schedule: team_len = {}", teams_len);
-        
+        if teams_len == 0 {
+            warn!("schedule: team_len is empty. skip generation");
+            return;
+        }
+
         let tours_count = (teams_len * teams_len - teams_len) / (teams_len / 2);
 
-        debug!("schedule: tours_count = {}", tours_count);
+        debug!("schedule: team_len = {}, tours_count = {}", teams_len, tours_count);
         
         self.tours = Vec::with_capacity((teams_len / 2) * tours_count);
 
