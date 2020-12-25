@@ -1,6 +1,7 @@
 pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 use crate::context::SimulationContext;
 use chrono::NaiveDateTime;
+use crate::ContractNegotiationEngine;
 
 #[derive(Debug)]
 pub enum ContractType{
@@ -46,6 +47,8 @@ pub struct PlayerClubContract {
     
     pub bonuses: Vec<ContractBonus>,
     pub clauses: Vec<ContractClause>,
+    
+    pub negotiation: Option<ContractNegotiationEngine>
 }
 
 impl PlayerClubContract {
@@ -59,7 +62,8 @@ impl PlayerClubContract {
             started: Option::None,
             expiration: expired,
             bonuses: vec![],
-            clauses: vec![]
+            clauses: vec![],
+            negotiation: Option::None
         }
     }
 
@@ -121,7 +125,6 @@ pub enum ContractClauseType {
     PromotionWageIncrease,
     RelegationWageDecrease,
     StaffJobRelease,
-    UnknownType7,
     SellOnFee,
     SellOnFeeProfit,
     SeasonalLandmarkGoalBonus,
@@ -134,8 +137,6 @@ pub enum ContractClauseType {
     MinimumFeeReleaseToHigherDivisionClubs,
     MinimumFeeReleaseToDomesticClubs,
     WageAfterReachingInternationalCaps,
-    UnknownType20,
-    UnknownType21,
     OptionalContractExtensionByClub
 }
 

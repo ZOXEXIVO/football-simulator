@@ -20,6 +20,7 @@ pub struct Player {
     pub nation_id: u32,
     pub behaviour: PersonBehaviour,
     pub attributes: PersonAttributes,
+    
     //player data
     pub statuses: PlayerStatusData,
     pub skills: PlayerSkills,
@@ -85,14 +86,19 @@ impl Player {
     fn process_contract(&mut self, result: &mut PlayerResult, now: NaiveDateTime) {
         const HALF_YEAR_DAYS: i64 = 30 * 6;
         
-        match &self.contract {
+        match &mut self.contract {
             Some(contract) => {
                 if contract.days_to_expiration(now) < HALF_YEAR_DAYS {
                     result.want_new_contract = true;
                 }
+                
+                if let Some(contract_negotiation) = &mut contract.negotiation {
+                    
+                }
+                
             },
             None => {
-                result.want_new_contract = true;
+                result.no_contract = true;
             }
         }
     }
