@@ -5,11 +5,12 @@ use crate::club::{
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
-use crate::{Person, PersonAttributes, PlayerStatusData, Relations, PlayerPositionType, PlayerPositions};
+use crate::{Person, PersonAttributes, PlayerStatusData, Relations, PlayerPositionType, PlayerPositions, ContractNegotiationEngine, ContractNegotiationStatus};
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
 use rayon::iter::Positions;
 use crate::club::player::utils::PlayerUtils;
+use std::f64::NEG_INFINITY;
 
 #[derive(Debug)]
 pub struct Player {
@@ -84,25 +85,33 @@ impl Player {
     }
 
     fn process_contract(&mut self, result: &mut PlayerResult, now: NaiveDateTime) {
-        const HALF_YEAR_DAYS: i64 = 30 * 6;
-        
-        match &mut self.contract {
-            Some(contract) => {
+        if let Some(contract) = &mut self.contract {
+            if let Some(contract_negotiation) = &mut contract.negotiation {
+                process_negotiation(contract_negotiation, result);
+            } else {
+                const HALF_YEAR_DAYS: i64 = 30 * 6;
+                
                 if contract.days_to_expiration(now) < HALF_YEAR_DAYS {
-                    result.want_new_contract = true;
+                    contract.negotiation = Some(ContractNegotiationEngine::request_new_contract());
                 }
-                
-                if let Some(contract_negotiation) = &mut contract.negotiation {
-                    
-                }
-                
-            },
-            None => {
-                result.no_contract = true;
+            }
+        } else {
+            self.contract.as_mut().unwrap().negotiation = Some(ContractNegotiationEngine::request_contract());
+        }
+        
+        fn process_negotiation(negotiation: &mut ContractNegotiationEngine, result: &mut PlayerResult){
+            match negotiation.status {
+                ContractNegotiationStatus::PlayerRequestNewContract => {
+                },
+                ContractNegotiationStatus::PlayerMakeRequest(..) => {
+                },
+                ContractNegotiationStatus::RequestPlayerExpectations => {
+                },
+                _=> {}
             }
         }
     }
-
+    
     fn process_mailbox(&mut self, result: &mut PlayerResult) {
         for message in self.mailbox.get() {
             // handle

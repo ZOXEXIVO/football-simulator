@@ -30,6 +30,8 @@ impl TeamResult {
             })
         }
         
+        
+        
         self.players.process(data);
         self.staffs.process(data);
     }
