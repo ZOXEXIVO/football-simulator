@@ -1,5 +1,4 @@
 use crate::club::squad::SquadPlayer;
-use lazy_static::lazy_static;
 use crate::club::{Staff, PlayerPositionType, Player};
 use crate::{Team};
 
@@ -8,18 +7,16 @@ pub struct PlayerSelector;
 const DEFAULT_SQUAD_SIZE: i32 = 11;
 const DEFAULT_BENCH_SIZE: i32 = 6;
 
-lazy_static! {
-    pub static ref POSITIONS: Vec<PlayerPositionType> = vec![
-            PlayerPositionType::Goalkeeper,
-            PlayerPositionType::DefenderLeft,
-            PlayerPositionType::DefenderCenter,
-            PlayerPositionType::DefenderRight,
-            PlayerPositionType::MidfielderLeft,
-            PlayerPositionType::MidfielderCenter,
-            PlayerPositionType::MidfielderRight,
-            PlayerPositionType::Striker,
-    ];
-}
+const POSITIONS: &[PlayerPositionType; 8] = &[
+    PlayerPositionType::Goalkeeper,
+    PlayerPositionType::DefenderLeft,
+    PlayerPositionType::DefenderCenter,
+    PlayerPositionType::DefenderRight,
+    PlayerPositionType::MidfielderLeft,
+    PlayerPositionType::MidfielderCenter,
+    PlayerPositionType::MidfielderRight,
+    PlayerPositionType::Striker
+];
 
 impl PlayerSelector {
     pub fn select<'c>(club: &'c Team, staff: &Staff) -> Vec<SquadPlayer<'c>> {

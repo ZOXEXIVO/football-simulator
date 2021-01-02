@@ -577,7 +577,6 @@ name = "core"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "lazy_static",
  "log",
  "rand",
  "rand_distr",

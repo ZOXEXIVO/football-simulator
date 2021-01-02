@@ -110,6 +110,11 @@ impl Team {
             Training::train_players(&mut self.players.players, coach);
         }
         
+        if self.tactics.is_none() {
+            let main_coach = self.staffs.main_coach();
+            self.tactics = Some(TacticsSelector::select(self, main_coach));
+        }
+        
         result
     }
 }
