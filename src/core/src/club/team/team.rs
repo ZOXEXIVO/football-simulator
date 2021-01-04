@@ -89,12 +89,12 @@ impl Team {
     }
 
     pub fn get_match_squad(&self) -> Squad {
-        let main_coach = self.staffs.main_coach();
+        let head_coach = self.staffs.head_coach();
 
         Squad {
             team_id: self.id,
-            tactics: TacticsSelector::select(self, main_coach),
-            players: PlayerSelector::select(self, main_coach),
+            tactics: TacticsSelector::select(self, head_coach),
+            players: PlayerSelector::select(self, head_coach),
         }
     }
 
@@ -106,13 +106,11 @@ impl Team {
         );
 
         if self.training_schedule.is_time(ctx.simulation.date) {
-            let coach = self.staffs.main_coach();
-            Training::train_players(&mut self.players.players, coach);
+            Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
         }
         
         if self.tactics.is_none() {
-            let main_coach = self.staffs.main_coach();
-            self.tactics = Some(TacticsSelector::select(self, main_coach));
+            self.tactics = Some(TacticsSelector::select(self, self.staffs.head_coach()));
         }
         
         result

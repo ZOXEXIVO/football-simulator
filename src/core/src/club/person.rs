@@ -1,6 +1,5 @@
-use chrono::{NaiveDate, Datelike, Duration};
+use chrono::{NaiveDate, Datelike};
 use crate::shared::FullName;
-use std::ops::Add;
 use crate::Relations;
 
 pub trait Person {

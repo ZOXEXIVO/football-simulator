@@ -1,12 +1,12 @@
 use crate::db::loaders::ContinentEntity;
-use crate::db::{DatabaseEntity, PlayerGenerator, PositionType};
+use crate::db::{DatabaseEntity, PlayerGenerator, PositionType, StaffGenerator};
 use core::club::academy::ClubAcademy;
 use core::context::{NaiveTime, Timelike};
 use core::continent::Continent;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule};
 use core::shared::Location;
 use core::utils::IntegerUtils;
-use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, Player, PlayerCollection, PlayerPosition, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, Utc, CountryGeneratorData};
+use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, Player, PlayerCollection, PlayerPosition, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, Utc, CountryGeneratorData, Staff, StaffPosition};
 use std::str::FromStr;
 
 pub struct Generator;
@@ -55,8 +55,9 @@ impl Generator {
                 };
                 
                 let mut player_generator = PlayerGenerator::with_people_names(&generator_data.people_names);
-
-                let clubs = Generator::generate_clubs(country.id, data, &mut player_generator);
+                let mut staff_generator = StaffGenerator::with_people_names(&generator_data.people_names);
+                
+                let clubs = Generator::generate_clubs(country.id, data, &mut player_generator, &mut staff_generator);
 
                 let country = Country {
                     id: country.id,
@@ -121,6 +122,7 @@ impl Generator {
         country_id: u32,
         data: &DatabaseEntity,
         player_generator: &mut PlayerGenerator,
+        staff_generator: &mut StaffGenerator,
     ) -> Vec<Club> {
         return data
             .clubs
@@ -140,29 +142,6 @@ impl Generator {
                     .teams
                     .iter()
                     .map(|t| {
-                        let mut players = Vec::with_capacity(100);
-                        
-                        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(1, 5)).map(|_| {
-                            player_generator.generate(country_id, PositionType::Goalkeeper)
-                        }).collect();
-
-                        let mut defenders: Vec<Player> = (0..IntegerUtils::random(7, 10)).map(|_| {
-                            player_generator.generate(country_id, PositionType::Defender)
-                        }).collect();
-
-                        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(9, 12)).map(|_| {
-                            player_generator.generate(country_id, PositionType::Midfielder)
-                        }).collect();
-
-                        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 4)).map(|_| {
-                            player_generator.generate(country_id, PositionType::Striker)
-                        }).collect();
-                   
-                        players.append(&mut goalkeepers);
-                        players.append(&mut defenders);
-                        players.append(&mut midfielders);
-                        players.append(&mut strikers);
-                                                
                         Team::new(
                             t.id,
                             t.league_id,
@@ -178,12 +157,57 @@ impl Generator {
                                 t.reputation.national,
                                 t.reputation.world,
                             ),
-                            PlayerCollection::new(players),
-                            StaffCollection::new(Vec::new()),
+                            PlayerCollection::new(Self::generate_players(player_generator, country_id)),
+                            StaffCollection::new(Self::generate_staffs(staff_generator, country_id), Some(Staff::stub())),
                         )
                     })
                     .collect(),
             })
             .collect();
+    }
+    
+    fn generate_players(player_generator: &mut PlayerGenerator, country_id: u32) -> Vec<Player> {
+        let mut players = Vec::with_capacity(100);
+
+        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(1, 5)).map(|_| {
+            player_generator.generate(country_id, PositionType::Goalkeeper)
+        }).collect();
+
+        let mut defenders: Vec<Player> = (0..IntegerUtils::random(7, 10)).map(|_| {
+            player_generator.generate(country_id, PositionType::Defender)
+        }).collect();
+
+        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(9, 12)).map(|_| {
+            player_generator.generate(country_id, PositionType::Midfielder)
+        }).collect();
+
+        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 4)).map(|_| {
+            player_generator.generate(country_id, PositionType::Striker)
+        }).collect();
+
+        players.append(&mut goalkeepers);
+        players.append(&mut defenders);
+        players.append(&mut midfielders);
+        players.append(&mut strikers);
+        
+        players
+    }
+
+    fn generate_staffs(staff_generator: &mut StaffGenerator, country_id: u32) -> Vec<Staff> {
+        let mut staffs = Vec::with_capacity(30);
+
+        staffs.push(staff_generator.generate(country_id, StaffPosition::DirectorOfFootball));
+        staffs.push(staff_generator.generate(country_id, StaffPosition::Director));
+
+        staffs.push(staff_generator.generate(country_id, StaffPosition::AssistantManager));
+        staffs.push(staff_generator.generate(country_id, StaffPosition::Coach));
+        staffs.push(staff_generator.generate(country_id, StaffPosition::Coach));
+        staffs.push(staff_generator.generate(country_id, StaffPosition::Coach));
+        
+        staffs.push(staff_generator.generate(country_id, StaffPosition::Physio));
+        staffs.push(staff_generator.generate(country_id, StaffPosition::Physio));
+        staffs.push(staff_generator.generate(country_id, StaffPosition::Physio));
+
+        staffs
     }
 }

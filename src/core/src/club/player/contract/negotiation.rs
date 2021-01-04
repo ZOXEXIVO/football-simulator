@@ -1,5 +1,3 @@
-use crate::club::{Club, Player};
-
 #[derive(Debug)]
 pub enum ContractNegotiationStatus {
     PlayerRequestContract,

@@ -32,8 +32,6 @@ impl FootballSimulator {
 }
 
 pub struct SimulatorData {
-    pub id: String,
-
     pub continents: Vec<Continent>,
 
     pub date: NaiveDateTime,
@@ -45,13 +43,7 @@ pub struct SimulatorData {
 
 impl SimulatorData {
     pub fn new(date: NaiveDateTime, continents: Vec<Continent>) -> Self{
-        let id = rand::thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(30)
-            .collect::<String>();
-        
         let mut data = SimulatorData{
-            id,
             continents,
             date,
             transfer_pool: TransferPool::new(),
@@ -67,10 +59,6 @@ impl SimulatorData {
         self.date += Duration::hours(1);
     }
 
-    pub fn id(&self) -> String {
-        self.id.clone()
-    }
-    
     fn refresh_indexes(&mut self) {
         for continent in &self.continents {
             for country in &continent.countries {

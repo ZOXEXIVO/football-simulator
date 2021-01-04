@@ -8,9 +8,7 @@ use crate::utils::{DateUtils, Logging};
 use crate::{Person, PersonAttributes, PlayerStatusData, Relations, PlayerPositionType, PlayerPositions, ContractNegotiationEngine, ContractNegotiationStatus};
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
-use rayon::iter::Positions;
 use crate::club::player::utils::PlayerUtils;
-use std::f64::NEG_INFINITY;
 
 #[derive(Debug)]
 pub struct Player {
@@ -85,7 +83,7 @@ impl Player {
     }
 
     fn process_contract(&mut self, result: &mut PlayerResult, now: NaiveDateTime) {
-        if let Some(contract) = &mut self.contract {
+        if let Some(ref mut contract) = self.contract {
             if let Some(contract_negotiation) = &mut contract.negotiation {
                 process_negotiation(contract_negotiation, result);
             } else {
