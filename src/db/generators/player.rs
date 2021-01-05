@@ -29,7 +29,7 @@ pub enum PositionType {
 }
 
 impl PlayerGenerator{
-    pub fn generate(&mut self, nation_id: u32, position: PositionType) -> Player {
+    pub fn generate(&mut self, country_id: u32, position: PositionType) -> Player {
         let now = Utc::now();
         
         let year = IntegerUtils::random(now.year() - 35, now.year() - 15) as u32;
@@ -44,12 +44,12 @@ impl PlayerGenerator{
                 middle_name: StringUtils::random_string(17),
             },
             NaiveDate::from_ymd(year as i32, month, day),
-            nation_id,
+            country_id,
             Self::generate_skills(),
             Self::generate_person_attributes(),
             Self::generate_player_attributes(),
             Some(PlayerClubContract::new(
-                IntegerUtils::random(1000, 200000) as f64, 
+                IntegerUtils::random(1000, 200000) as u32, 
                 NaiveDate::from_ymd(now.year() +  IntegerUtils::random(1, 5), 3, 14))),
             Self::generate_positions(position),
         )

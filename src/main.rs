@@ -33,14 +33,14 @@ async fn main() {
 
     let (database, estimated) = TimeEstimation::estimate(|| DatabaseLoader::load());
     
-    println!("database loaded: {} ms", estimated);
+    info!("database loaded: {} ms", estimated);
 
     let data = GameAppData {
         database: Arc::new(database),
         data: Arc::new(Mutex::new(None)),
     };
 
-    println!("listen at: http://localhost:18000");
+    info!("listen at: http://localhost:18000");
     
     const STATIC_ASSETS_DEBUG_FOLDER: &str = "src/ui/assets";
     

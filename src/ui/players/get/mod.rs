@@ -105,13 +105,13 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let team: &Team = simulator_data.teams(route_params.team_id).unwrap();
+    let team: &Team = simulator_data.team(route_params.team_id).unwrap();
     
     let player: &Player = team.players.players().iter()
         .find(|p| p.id == route_params.player_id)
         .unwrap();
 
-    let country = simulator_data.counties(player.nation_id).unwrap();
+    let country = simulator_data.country(player.country_id).unwrap();
     
     let mut model = PlayerGetViewModel {
         id: player.id,        
@@ -180,7 +180,7 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
     
     if let Some(contract) = &player.contract {
         model.contract = Some(PlayerContractDto{
-            salary: (contract.salary / 1000f64) as u32,
+            salary: (contract.salary / 1000) as u32,
             expiration: contract.expiration.format("%d.%m.%Y").to_string(),
             squad_status: String::from("First team player")
         });
@@ -192,7 +192,7 @@ pub async fn player_get_action(state: Data<GameAppData>, route_params: web::Path
 }
 
 fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
-    let club = data.clubs(club_id).unwrap();
+    let club = data.club(club_id).unwrap();
 
     let mut teams: Vec<ClubTeam> = club.teams.iter().map(|team| {
         ClubTeam {

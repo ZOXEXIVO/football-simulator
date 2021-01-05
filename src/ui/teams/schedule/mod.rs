@@ -41,9 +41,9 @@ pub async fn team_schedule_get_action(state: Data<GameAppData>, route_params: we
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let team: &Team = simulator_data.teams(route_params.team_id).unwrap();
+    let team: &Team = simulator_data.team(route_params.team_id).unwrap();
 
-    let league = simulator_data.leagues(team.league_id).unwrap();
+    let league = simulator_data.league(team.league_id).unwrap();
     
     let model = TeamScheduleViewModel {
         team_name: &team.name,
@@ -64,9 +64,9 @@ pub async fn team_schedule_get_action(state: Data<GameAppData>, route_params: we
                     schedule.home_team_id
                 },
                 opponent_name: if is_home {
-                    &simulator_data.teams(schedule.away_team_id).unwrap().name
+                    &simulator_data.team(schedule.away_team_id).unwrap().name
                 } else {
-                    &simulator_data.teams(schedule.home_team_id).unwrap().name
+                    &simulator_data.team(schedule.home_team_id).unwrap().name
                 },
                 is_home,
                 competition_id: league.id,
@@ -81,7 +81,7 @@ pub async fn team_schedule_get_action(state: Data<GameAppData>, route_params: we
 }
 
 fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
-    let club = data.clubs(club_id).unwrap();
+    let club = data.club(club_id).unwrap();
 
     let mut teams: Vec<ClubTeam> = club.teams.iter().map(|team| {
         ClubTeam {

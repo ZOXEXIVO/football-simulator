@@ -15,10 +15,10 @@ impl LeagueResult {
         }
     }
 
-    pub fn process(self, data: &mut SimulatorData){
-        let league = data.leagues_mut(self.league_id).unwrap();
+    pub fn process(&self, data: &mut SimulatorData){
+        let league = data.league_mut(self.league_id).unwrap();
         
-        for match_item in self.matches {
+        for match_item in &self.matches {
             //league.league_table.update()
         }
     }

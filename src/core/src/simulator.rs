@@ -1,7 +1,5 @@
 use crate::continent::{ContinentResult, Continent};
 use chrono::{NaiveDateTime, Duration};
-use rand::distributions::Alphanumeric;
-use rand::Rng;
 use crate::transfers::TransferPool;
 use crate::{Player, Country, Team, Club};
 use crate::context::{GlobalContext, SimulationContext};
@@ -73,34 +71,38 @@ impl SimulatorData {
                     
                     for team in &club.teams {
                         self.indexes.add_team_name(team.id, team.name.clone());
-                        self.indexes.add_team_location(team.id, continent.id, country.id, club.id);                        
+                        self.indexes.add_team_location(team.id, continent.id, country.id, club.id);
+
+                        for player in &team.players.players {
+                            self.indexes.add_player_location(player.id, continent.id, country.id, club.id, team.id);
+                        }
                     }
                 }
             }
         }
     }
 
-    pub fn continents(&self, id: u32) -> Option<&Continent>{
+    pub fn continent(&self, id: u32) -> Option<&Continent>{
         self.continents.iter().find(|c| c.id == id)
     }
     
-    pub fn continents_mut(&mut self, id: u32) -> Option<&mut Continent>{
+    pub fn continent_mut(&mut self, id: u32) -> Option<&mut Continent>{
         self.continents.iter_mut().find(|c| c.id == id)
     }
 
-    pub fn counties(&self, id: u32) -> Option<&Country>{
+    pub fn country(&self, id: u32) -> Option<&Country>{
         self.continents.iter()
             .flat_map(|c|&c.countries)
             .find(|c| c.id == id)
     }
     
-    pub fn counties_mut(&mut self, id: u32) -> Option<&mut Country>{
+    pub fn countie_mut(&mut self, id: u32) -> Option<&mut Country>{
         self.continents.iter_mut()
             .flat_map(|c|&mut c.countries)
             .find(|c| c.id == id)
     }
 
-    pub fn leagues(&self, id: u32) -> Option<&League>{
+    pub fn league(&self, id: u32) -> Option<&League>{
         let (league_continent_id, league_country_id) =
             self.indexes.get_league_location(id).unwrap();
         
@@ -110,7 +112,7 @@ impl SimulatorData {
             .iter().find(|c| c.id == id)
     }
     
-    pub fn leagues_mut(&mut self, id: u32) -> Option<&mut League>{
+    pub fn league_mut(&mut self, id: u32) -> Option<&mut League>{
         let (league_continent_id, league_country_id) =
             self.indexes.get_league_location(id).unwrap();
 
@@ -124,7 +126,7 @@ impl SimulatorData {
         self.indexes.get_team_name(id)
     }
 
-    pub fn clubs(&self, id: u32) -> Option<&Club>{
+    pub fn club(&self, id: u32) -> Option<&Club>{
         let (club_continent_id, club_country_id) =
             self.indexes.get_club_location(id).unwrap();
 
@@ -134,7 +136,7 @@ impl SimulatorData {
             .iter().find(|c| c.id == id)
     }
 
-    pub fn clubs_mut(&mut self, id: u32) -> Option<&mut Club>{
+    pub fn club_mut(&mut self, id: u32) -> Option<&mut Club>{
         let (club_continent_id, club_country_id) =
             self.indexes.get_club_location(id).unwrap();
 
@@ -144,7 +146,7 @@ impl SimulatorData {
             .iter_mut().find(|c| c.id == id)
     }
     
-    pub fn teams(&self, id: u32) -> Option<&Team>{
+    pub fn team(&self, id: u32) -> Option<&Team>{
         let (team_continent_id, team_country_id, team_club_id) = 
             self.indexes.get_team_location(id).unwrap();
         
@@ -155,7 +157,7 @@ impl SimulatorData {
             .iter().find(|c| c.id == id)
     }
 
-    pub fn teams_mut(&mut self, id: u32) -> Option<&mut Team>{
+    pub fn team_mut(&mut self, id: u32) -> Option<&mut Team>{
         let (team_continent_id, team_country_id, team_club_id) =
             self.indexes.get_team_location(id).unwrap();
 
@@ -165,12 +167,37 @@ impl SimulatorData {
             .iter_mut().find(|club| club.id == team_club_id).unwrap().teams
             .iter_mut().find(|c| c.id == id)
     }
+
+    pub fn player(&self, id: u32) -> Option<&Player>{
+        let (player_continent_id, player_country_id, player_club_id, player_team_id) =
+            self.indexes.get_player_location(id).unwrap();
+
+        self.continents
+            .iter().find(|continent| continent.id == player_continent_id).unwrap().countries
+            .iter().find(|country| country.id == player_country_id).unwrap().clubs
+            .iter().find(|club| club.id == player_club_id).unwrap().teams
+            .iter().find(|team| team.id == player_team_id).unwrap().players.players
+            .iter().find(|c| c.id == id)
+    }
+
+    pub fn player_mut(&mut self, id: u32) -> Option<&mut Player>{
+        let (player_continent_id, player_country_id, player_club_id, player_team_id) =
+            self.indexes.get_player_location(id).unwrap();
+
+        self.continents
+            .iter_mut().find(|continent| continent.id == player_continent_id).unwrap().countries
+            .iter_mut().find(|country| country.id == player_country_id).unwrap().clubs
+            .iter_mut().find(|club| club.id == player_club_id).unwrap().teams
+            .iter_mut().find(|team| team.id == player_team_id).unwrap().players.players
+            .iter_mut().find(|c| c.id == id)
+    }
 }
 
 pub struct SimulatorDataIndexes {
     league_indexes: HashMap<u32, (u32, u32)>,
     club_indexes: HashMap<u32, (u32, u32)>,
     team_indexes: HashMap<u32, (u32, u32, u32)>,
+    player_indexes: HashMap<u32, (u32, u32, u32, u32)>,
     team_name_index: HashMap<u32, String>
 }
 
@@ -180,6 +207,7 @@ impl SimulatorDataIndexes {
             league_indexes: HashMap::new(),
             club_indexes: HashMap::new(),
             team_indexes: HashMap::new(),
+            player_indexes: HashMap::new(),
             team_name_index: HashMap::new()
         }
     }
@@ -231,7 +259,7 @@ impl SimulatorDataIndexes {
             }
         }
     }
-    
+
     pub fn add_team_location(&mut self, team_id: u32, continent_id: u32, country_id: u32, club_id: u32){
         self.team_indexes.insert(team_id, (continent_id, country_id, club_id));
     }
@@ -246,4 +274,23 @@ impl SimulatorDataIndexes {
             }            
         }
     }
+
+
+    //player indexes
+
+    pub fn add_player_location(&mut self, player_id: u32, continent_id: u32, country_id: u32, club_id: u32, team_id: u32){
+        self.player_indexes.insert(player_id, (continent_id, country_id, club_id, team_id));
+    }
+
+    pub fn get_player_location(&self, player_id: u32) -> Option<(u32, u32, u32, u32)> {
+        match self.player_indexes.get(&player_id) {
+            Some((player_continent_id, player_country_id, player_club_id, player_team_id)) => {
+                Some((*player_continent_id, *player_country_id, *player_club_id, *player_team_id))
+            }
+            None => {
+                None
+            }
+        }
+    }
+
 }

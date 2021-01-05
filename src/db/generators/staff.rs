@@ -1,6 +1,10 @@
 use core::shared::FullName;
 use core::utils::{IntegerUtils, StringUtils};
-use core::{Datelike, NaiveDate, PeopleNameGeneratorData, PersonAttributes, Player, Staff, StaffAttributes, StaffClubContract, StaffLicenseType, StaffPosition, StaffStatus, Utc, StaffCoaching, StaffGoalkeeperCoaching, StaffMental, StaffKnowledge, StaffDataAnalysis, StaffMedical};
+use core::{
+    Datelike, NaiveDate, PeopleNameGeneratorData, PersonAttributes, Staff, StaffAttributes,
+    StaffClubContract, StaffCoaching, StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge,
+    StaffLicenseType, StaffMedical, StaffMental, StaffPosition, StaffStatus, Utc,
+};
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
 
@@ -22,11 +26,7 @@ impl StaffGenerator {
 }
 
 impl StaffGenerator {
-    pub fn generate(
-        &mut self,
-        nation_id: u32,
-        position: StaffPosition
-    ) -> Staff {
+    pub fn generate(&mut self, country_id: u32, position: StaffPosition) -> Staff {
         let now = Utc::now();
 
         let year = IntegerUtils::random(now.year() - 35, now.year() - 15) as u32;
@@ -40,7 +40,7 @@ impl StaffGenerator {
                 last_name: self.generate_last_name(),
                 middle_name: StringUtils::random_string(17),
             },
-            nation_id,
+            country_id,
             NaiveDate::from_ymd(year as i32, month, day),
             Self::generate_staff_attributes(),
             Some(StaffClubContract::new(
@@ -68,7 +68,7 @@ impl StaffGenerator {
     }
 
     fn generate_staff_license_type() -> StaffLicenseType {
-        match IntegerUtils::random(0, 6){
+        match IntegerUtils::random(0, 6) {
             0 => StaffLicenseType::ContinentalPro,
             1 => StaffLicenseType::ContinentalA,
             2 => StaffLicenseType::ContinentalB,
@@ -76,48 +76,48 @@ impl StaffGenerator {
             4 => StaffLicenseType::NationalA,
             5 => StaffLicenseType::NationalB,
             6 => StaffLicenseType::NationalC,
-            _ => StaffLicenseType::NationalC
+            _ => StaffLicenseType::NationalC,
         }
     }
 
     fn generate_staff_attributes() -> StaffAttributes {
         StaffAttributes {
-            coaching: StaffCoaching{
+            coaching: StaffCoaching {
                 attacking: IntegerUtils::random(0, 20) as u8,
                 defending: IntegerUtils::random(0, 20) as u8,
                 fitness: IntegerUtils::random(0, 20) as u8,
                 mental: IntegerUtils::random(0, 20) as u8,
                 tactical: IntegerUtils::random(0, 20) as u8,
                 technical: IntegerUtils::random(0, 20) as u8,
-                working_with_youngsters: IntegerUtils::random(0, 20) as u8
+                working_with_youngsters: IntegerUtils::random(0, 20) as u8,
             },
-            goalkeeping: StaffGoalkeeperCoaching{
+            goalkeeping: StaffGoalkeeperCoaching {
                 distribution: IntegerUtils::random(0, 20) as u8,
                 handling: IntegerUtils::random(0, 20) as u8,
-                shot_stopping: IntegerUtils::random(0, 20) as u8
+                shot_stopping: IntegerUtils::random(0, 20) as u8,
             },
-            mental: StaffMental{
+            mental: StaffMental {
                 adaptability: IntegerUtils::random(0, 20) as u8,
                 determination: IntegerUtils::random(0, 20) as u8,
                 discipline: IntegerUtils::random(0, 20) as u8,
                 man_management: IntegerUtils::random(0, 20) as u8,
-                motivating: IntegerUtils::random(0, 20) as u8
+                motivating: IntegerUtils::random(0, 20) as u8,
             },
             knowledge: StaffKnowledge {
                 judging_player_ability: IntegerUtils::random(0, 20) as u8,
                 judging_player_potential: IntegerUtils::random(0, 20) as u8,
-                tactical_knowledge: IntegerUtils::random(0, 20) as u8
+                tactical_knowledge: IntegerUtils::random(0, 20) as u8,
             },
-            data_analysis: StaffDataAnalysis{
+            data_analysis: StaffDataAnalysis {
                 judging_player_data: IntegerUtils::random(0, 20) as u8,
                 judging_team_data: IntegerUtils::random(0, 20) as u8,
-                presenting_data: IntegerUtils::random(0, 20) as u8
+                presenting_data: IntegerUtils::random(0, 20) as u8,
             },
-            medical: StaffMedical{
+            medical: StaffMedical {
                 physiotherapy: IntegerUtils::random(0, 20) as u8,
                 sports_science: IntegerUtils::random(0, 20) as u8,
-                non_player_tendencies: IntegerUtils::random(0, 20) as u8
-            }
+                non_player_tendencies: IntegerUtils::random(0, 20) as u8,
+            },
         }
     }
 

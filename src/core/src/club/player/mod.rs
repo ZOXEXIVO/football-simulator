@@ -9,6 +9,7 @@ pub mod training;
 pub mod status;
 pub mod utils;
 pub mod position;
+pub mod generator;
 
 pub use attributes::*;
 pub use context::*;
@@ -20,3 +21,4 @@ pub use result::*;
 pub use training::*;
 pub use status::*;
 pub use position::*;
+pub use generator::*;

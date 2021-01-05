@@ -3,7 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
-use core::{Club, Team, SimulatorData, Player, PlayerPositionType};
+use core::{Team, SimulatorData, Player, PlayerPositionType};
 
 #[derive(Deserialize)]
 pub struct TeamGetRequest {
@@ -56,12 +56,12 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let team: &Team = simulator_data.teams(route_params.team_id).unwrap();
+    let team: &Team = simulator_data.team(route_params.team_id).unwrap();
 
-    let league = simulator_data.leagues(team.league_id).unwrap();
+    let league = simulator_data.league(team.league_id).unwrap();
     
     let mut players: Vec<TeamPlayer> = team.players().iter().map(|p| {
-        let country = simulator_data.counties(p.nation_id).unwrap();
+        let country = simulator_data.country(p.country_id).unwrap();
 
         let position = p.positions.display_positions().join(", ");
         
@@ -104,7 +104,7 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
 }
 
 fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
-    let club = data.clubs(club_id).unwrap();
+    let club = data.club(club_id).unwrap();
 
     let mut teams: Vec<ClubTeam> = club.teams.iter().map(|team| {
         ClubTeam {

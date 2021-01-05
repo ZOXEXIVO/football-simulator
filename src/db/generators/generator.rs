@@ -6,7 +6,11 @@ use core::continent::Continent;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule};
 use core::shared::Location;
 use core::utils::IntegerUtils;
-use core::{Club, ClubBoard, ClubFinances, ClubMood, Country, Player, PlayerCollection, PlayerPosition, PlayerPositionType, SimulatorData, StaffCollection, Team, TeamReputation, TeamType, TrainingSchedule, Utc, CountryGeneratorData, Staff, StaffPosition};
+use core::{
+    Club, ClubBoard, ClubFinances, ClubMood, Country, CountryGeneratorData, Player,
+    PlayerCollection, SimulatorData, Staff, StaffCollection,
+    StaffPosition, Team, TeamReputation, TeamType, TrainingSchedule, Utc,
+};
 use std::str::FromStr;
 
 pub struct Generator;
@@ -35,29 +39,36 @@ impl Generator {
         SimulatorData::new(current_date, continents)
     }
 
-    fn generate_countries(
-        continent: &ContinentEntity,
-        data: &DatabaseEntity
-    ) -> Vec<Country> {
+    fn generate_countries(continent: &ContinentEntity, data: &DatabaseEntity) -> Vec<Country> {
         return data
             .countries
             .iter()
             .filter(|cn| cn.continent_id == continent.id)
             .map(|country| {
-          
-                let generator_data = match data.names_by_country.iter().find(|c| c.country_id == country.id) {
-                    Some(names) => {
-                        CountryGeneratorData::new(names.first_names.clone(), names.last_names.clone())
-                    },
-                    None => {
-                        CountryGeneratorData::empty()
-                    }
+                let generator_data = match data
+                    .names_by_country
+                    .iter()
+                    .find(|c| c.country_id == country.id)
+                {
+                    Some(names) => CountryGeneratorData::new(
+                        names.first_names.clone(),
+                        names.last_names.clone(),
+                    ),
+                    None => CountryGeneratorData::empty(),
                 };
+
+                let mut player_generator =
+                    PlayerGenerator::with_people_names(&generator_data.people_names);
                 
-                let mut player_generator = PlayerGenerator::with_people_names(&generator_data.people_names);
-                let mut staff_generator = StaffGenerator::with_people_names(&generator_data.people_names);
-                
-                let clubs = Generator::generate_clubs(country.id, data, &mut player_generator, &mut staff_generator);
+                let mut staff_generator =
+                    StaffGenerator::with_people_names(&generator_data.people_names);
+
+                let clubs = Generator::generate_clubs(
+                    country.id,
+                    data,
+                    &mut player_generator,
+                    &mut staff_generator,
+                );
 
                 let country = Country {
                     id: country.id,
@@ -67,7 +78,7 @@ impl Generator {
                     leagues: Generator::generate_leagues(country.id, data),
                     clubs,
                     reputation: country.reputation,
-                    generator_data
+                    generator_data,
                 };
 
                 country
@@ -75,10 +86,7 @@ impl Generator {
             .collect();
     }
 
-    fn generate_leagues(
-        country_id: u32,
-        data: &DatabaseEntity
-    ) -> Vec<League> {
+    fn generate_leagues(country_id: u32, data: &DatabaseEntity) -> Vec<League> {
         return data
             .leagues
             .iter()
@@ -157,39 +165,45 @@ impl Generator {
                                 t.reputation.national,
                                 t.reputation.world,
                             ),
-                            PlayerCollection::new(Self::generate_players(player_generator, country_id)),
-                            StaffCollection::new(Self::generate_staffs(staff_generator, country_id), Some(Staff::stub())),
+                            PlayerCollection::new(Self::generate_players(
+                                player_generator,
+                                country_id,
+                            )),
+                            StaffCollection::new(
+                                Self::generate_staffs(staff_generator, country_id),
+                                Some(Staff::stub()),
+                            ),
                         )
                     })
                     .collect(),
             })
             .collect();
     }
-    
+
     fn generate_players(player_generator: &mut PlayerGenerator, country_id: u32) -> Vec<Player> {
         let mut players = Vec::with_capacity(100);
 
-        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(1, 5)).map(|_| {
-            player_generator.generate(country_id, PositionType::Goalkeeper)
-        }).collect();
+        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(1, 5))
+            .map(|_| player_generator.generate(country_id, PositionType::Goalkeeper))
+            .collect();
 
-        let mut defenders: Vec<Player> = (0..IntegerUtils::random(7, 10)).map(|_| {
-            player_generator.generate(country_id, PositionType::Defender)
-        }).collect();
+        let mut defenders: Vec<Player> = (0..IntegerUtils::random(7, 10))
+            .map(|_| player_generator.generate(country_id, PositionType::Defender))
+            .collect();
 
-        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(9, 12)).map(|_| {
-            player_generator.generate(country_id, PositionType::Midfielder)
-        }).collect();
+        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(9, 12))
+            .map(|_| player_generator.generate(country_id, PositionType::Midfielder))
+            .collect();
 
-        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 4)).map(|_| {
-            player_generator.generate(country_id, PositionType::Striker)
-        }).collect();
+        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 4))
+            .map(|_| player_generator.generate(country_id, PositionType::Striker))
+            .collect();
 
         players.append(&mut goalkeepers);
         players.append(&mut defenders);
         players.append(&mut midfielders);
         players.append(&mut strikers);
-        
+
         players
     }
 
@@ -203,7 +217,7 @@ impl Generator {
         staffs.push(staff_generator.generate(country_id, StaffPosition::Coach));
         staffs.push(staff_generator.generate(country_id, StaffPosition::Coach));
         staffs.push(staff_generator.generate(country_id, StaffPosition::Coach));
-        
+
         staffs.push(staff_generator.generate(country_id, StaffPosition::Physio));
         staffs.push(staff_generator.generate(country_id, StaffPosition::Physio));
         staffs.push(staff_generator.generate(country_id, StaffPosition::Physio));

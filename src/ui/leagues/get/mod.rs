@@ -3,7 +3,6 @@ use serde::{Deserialize};
 use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
-use core::Team;
 use core::context::NaiveDateTime;
 
 #[derive(Deserialize)]
@@ -64,9 +63,9 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let league = simulator_data.leagues(route_params.league_id).unwrap();
+    let league = simulator_data.league(route_params.league_id).unwrap();
 
-    let country = simulator_data.counties(league.country_id).unwrap();
+    let country = simulator_data.country(league.country_id).unwrap();
     
     let league_table = league.table.as_ref().unwrap().get();
        

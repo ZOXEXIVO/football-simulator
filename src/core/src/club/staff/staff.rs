@@ -15,7 +15,7 @@ use std::fmt::{Display, Formatter, Result};
 pub struct Staff {
     pub id: u32,
     pub full_name: FullName,
-    pub nation_id: u32,
+    pub country_id: u32,
 
     pub birth_date: NaiveDate,
     pub attributes: PersonAttributes,
@@ -34,7 +34,7 @@ impl Staff {
     pub fn new(
         id: u32,
         full_name: FullName,
-        nation_id: u32,
+        country_id: u32,
         birth_date: NaiveDate,
         staff_attributes: StaffAttributes,
         contract: Option<StaffClubContract>,
@@ -44,7 +44,7 @@ impl Staff {
         Staff {
             id,
             full_name,
-            nation_id,
+            country_id,
             birth_date,
             staff_attributes,
             contract,
@@ -64,7 +64,7 @@ impl Staff {
                 middle_name: "stub".to_string(),
             },
             contract: None,
-            nation_id: 0,
+            country_id: 0,
             behaviour: PersonBehaviour::default(),
             birth_date: NaiveDate::from_ymd(2019, 1, 1),
             relations: Relations::new(),
@@ -134,7 +134,9 @@ impl Staff {
         result
     }
 
-    fn process_contract(&mut self, result: &mut StaffResult, now: NaiveDateTime) {}
+    fn process_contract(&mut self, result: &mut StaffResult, now: NaiveDateTime) {
+        
+    }
 }
 
 //DISPLAY

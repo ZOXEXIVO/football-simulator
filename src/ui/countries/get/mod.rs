@@ -34,7 +34,7 @@ pub async fn country_get_action(state: Data<GameAppData>, route_params: web::Pat
         .find(|country| country.id == route_params.country_id)
         .unwrap();
 
-    let continent = simulator_data.continents(country.continent_id).unwrap();
+    let continent = simulator_data.continent(country.continent_id).unwrap();
     
     let model = CountryGetViewModel {
         id: country.id,

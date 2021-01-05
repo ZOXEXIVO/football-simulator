@@ -12,8 +12,8 @@ impl ContinentResult {
         }
     }
     
-    pub fn process(self, data: &mut SimulatorData){
-        for result in self.countries {
+    pub fn process(&self, data: &mut SimulatorData){
+        for result in &self.countries {
             result.process(data);
         }
     }

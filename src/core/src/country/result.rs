@@ -18,12 +18,12 @@ impl CountryResult {
         }
     }
 
-    pub fn process(self, data: &mut SimulatorData){
-        for league_result in self.leagues {
+    pub fn process(&self, data: &mut SimulatorData){
+        for league_result in &self.leagues {
             league_result.process(data);
         }
 
-        for club_result in self.clubs {
+        for club_result in &self.clubs {
             club_result.process(data);
         }
         
@@ -33,7 +33,7 @@ impl CountryResult {
     }
     
     fn process_match_results(result: &MatchResult, data: &mut SimulatorData){
-        let league = data.leagues_mut(result.league_id).unwrap();
+        let league = data.league_mut(result.league_id).unwrap();
 
         league.schedule.update_match_result(&result.schedule_id,
                                                     result.home_goals, result.away_goals);

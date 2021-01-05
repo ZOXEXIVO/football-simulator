@@ -2,8 +2,20 @@ use std::collections::VecDeque;
 use std::sync::Mutex;
 
 #[derive(Debug)]
-pub enum PlayerMessage {
+pub struct PlayerMessage {
+    pub message_type: PlayerMessageType
+}
+
+#[derive(Debug)]
+pub enum PlayerMessageType {
     Greeting,
+    ContractProposal(PlayerContractProposal)
+}
+
+#[derive(Debug)]
+pub struct PlayerContractProposal{
+    pub salary: u32,
+    pub years: u8
 }
 
 #[derive(Debug)]
@@ -18,12 +30,12 @@ impl PlayerMailbox {
         }
     }
     
-    pub fn push(&mut self, message: PlayerMessage) {
+    pub fn push(&self, message: PlayerMessage) {
         let mut messages = self.messages.lock().unwrap();
         messages.push_back(message);
     }
     
-    pub fn get(&mut self) -> Vec<PlayerMessage>{
+    pub fn get(&self) -> Vec<PlayerMessage>{
         let mut messages = self.messages.lock().unwrap();
         messages.drain(..).collect()
     }
