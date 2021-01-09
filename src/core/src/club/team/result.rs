@@ -23,7 +23,7 @@ impl TeamResult {
     }
 
     pub fn process(&self, data: &mut SimulatorData) {
-        let mut team = data.team_mut(self.team_id).unwrap();
+        let team = data.team_mut(self.team_id).unwrap();
 
         for player_result in &self.players.players {
             team.add_player_to_transfer_list(

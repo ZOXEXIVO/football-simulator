@@ -1,7 +1,11 @@
-use crate::{Player, Technical, PlayerSkills, PlayerStatusData, Mental, Physical, PlayerPositions, PlayerPreferredFoot, PlayerAttributes, PlayerTraining, PersonBehaviour, PersonAttributes, PersonBehaviourState, PlayerMailbox, Relations};
 use crate::shared::FullName;
 use crate::utils::IntegerUtils;
-use chrono::{NaiveDate, Datelike};
+use crate::{
+    Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player,
+    PlayerAttributes, PlayerMailbox, PlayerPositions, PlayerPreferredFoot, PlayerSkills,
+    PlayerStatusData, PlayerTraining, Relations, Technical,
+};
+use chrono::{Datelike, NaiveDate};
 
 pub struct PlayerGenerator;
 
@@ -10,7 +14,7 @@ impl PlayerGenerator {
         let year = IntegerUtils::random(now.year() - 14, now.year() - 16) as u32;
         let month = IntegerUtils::random(1, 12) as u32;
         let day = IntegerUtils::random(1, 29) as u32;
-        
+
         Player {
             id: 0,
             full_name: FullName {
@@ -20,7 +24,9 @@ impl PlayerGenerator {
             },
             birth_date: NaiveDate::from_ymd(year as i32, month, day),
             country_id,
-            behaviour: PersonBehaviour { state: PersonBehaviourState::Poor },
+            behaviour: PersonBehaviour {
+                state: PersonBehaviourState::Poor,
+            },
             attributes: PersonAttributes {
                 adaptability: 0,
                 ambition: 0,
@@ -101,7 +107,7 @@ impl PlayerGenerator {
             },
             mailbox: PlayerMailbox::new(),
             training: PlayerTraining::new(),
-            relations: Relations::new()
+            relations: Relations::new(),
         }
     }
 }

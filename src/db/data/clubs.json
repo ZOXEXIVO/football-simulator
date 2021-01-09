@@ -175,5 +175,245 @@
         }
       }      
     ]
+  },
+  {
+    "id": 14,
+    "name": "Sochi",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 15,
+        "name": "Sochi",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Lokomotiv Moscow",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 16,
+        "name": "Lokomotiv Moscow",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Rubin",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 17,
+        "name": "Rubin",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Akhmat",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 18,
+        "name": "Akhmat",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Khimki",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 19,
+        "name": "Khimki",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Ural",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 20,
+        "name": "Ural",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Rotor",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 21,
+        "name": "Rotor",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "name": "Arsenal Tula",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 22,
+        "name": "Arsenal Tula",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "name": "Ufa",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 23,
+        "name": "Ufa",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "name": "Tambov",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 24,
+        "name": "Tambov",
+        "team_type": "Main",
+        "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
   }
 ]

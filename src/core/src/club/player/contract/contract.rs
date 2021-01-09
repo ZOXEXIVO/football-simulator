@@ -1,14 +1,14 @@
-pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 use crate::context::SimulationContext;
+pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 use chrono::NaiveDateTime;
 
 #[derive(Debug)]
-pub enum ContractType{
+pub enum ContractType {
     PartTime,
     FullTime,
     Amateur,
     Youth,
-    NonContract
+    NonContract,
 }
 
 #[derive(Debug)]
@@ -22,14 +22,14 @@ pub enum PlayerSquadStatus {
     HotProspectForTheFuture,
     DecentYoungster,
     NotNeeded,
-    SquadStatusCount
+    SquadStatusCount,
 }
 
 #[derive(Debug)]
 pub enum PlayerTransferStatus {
     TransferListed,
     LoadListed,
-    TransferAndLoadListed
+    TransferAndLoadListed,
 }
 
 #[derive(Debug)]
@@ -37,13 +37,13 @@ pub struct PlayerClubContract {
     pub salary: u32,
     pub contract_type: ContractType,
     pub squad_status: PlayerSquadStatus,
-    
+
     pub is_transfer_listed: bool,
     pub transfer_status: Option<PlayerTransferStatus>,
-    
+
     pub started: Option<NaiveDate>,
     pub expiration: NaiveDate,
-    
+
     pub bonuses: Vec<ContractBonus>,
     pub clauses: Vec<ContractClause>,
 }
@@ -53,13 +53,13 @@ impl PlayerClubContract {
         PlayerClubContract {
             salary,
             contract_type: ContractType::FullTime,
-            squad_status: PlayerSquadStatus::NotYetSet,            
+            squad_status: PlayerSquadStatus::NotYetSet,
             transfer_status: None,
             is_transfer_listed: false,
             started: Option::None,
             expiration: expired,
             bonuses: vec![],
-            clauses: vec![]
+            clauses: vec![],
         }
     }
 
@@ -68,12 +68,12 @@ impl PlayerClubContract {
 
         self.expiration >= naive_now
     }
-    
+
     pub fn days_to_expiration(&self, now: NaiveDateTime) -> i64 {
         let naive_now = NaiveDate::from_ymd(now.year(), now.month(), now.day());
-        
+
         let diff = self.expiration - naive_now;
-        
+
         diff.num_days().abs()
     }
 
@@ -93,21 +93,18 @@ pub enum ContractBonusType {
     PromotionFee,
     AvoidRelegationFee,
     InternationalCapFee,
-    UnusedSubstitutionFee
+    UnusedSubstitutionFee,
 }
 
 #[derive(Debug)]
 pub struct ContractBonus {
     pub value: i32,
-    pub bonus_type: ContractBonusType
+    pub bonus_type: ContractBonusType,
 }
 
 impl ContractBonus {
     pub fn new(value: i32, bonus_type: ContractBonusType) -> Self {
-        ContractBonus {
-            value,
-            bonus_type
-        }
+        ContractBonus { value, bonus_type }
     }
 }
 
@@ -133,20 +130,17 @@ pub enum ContractClauseType {
     MinimumFeeReleaseToHigherDivisionClubs,
     MinimumFeeReleaseToDomesticClubs,
     WageAfterReachingInternationalCaps,
-    OptionalContractExtensionByClub
+    OptionalContractExtensionByClub,
 }
 
 #[derive(Debug)]
 pub struct ContractClause {
     pub value: i32,
-    pub bonus_type: ContractClauseType
+    pub bonus_type: ContractClauseType,
 }
 
 impl ContractClause {
     pub fn new(value: i32, bonus_type: ContractClauseType) -> Self {
-        ContractClause {
-            value,
-            bonus_type
-        }
+        ContractClause { value, bonus_type }
     }
 }

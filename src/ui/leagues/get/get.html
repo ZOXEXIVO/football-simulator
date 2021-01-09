@@ -21,7 +21,7 @@
 
 {% block processblock %}
 
-<div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()" >Process</div>
+<div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()">Process</div>
 <div style="margin-top:5px;width:100px;padding-top: 20px;">
     <div class="spinner" id="create-game-btn-spinner" style="display: none;"></div>
 </div>
@@ -35,11 +35,11 @@
                 <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
             </ul>
         </div>
-<!--        <div class="menu_section">-->
-<!--            <ul class="nav">            -->
-<!--                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>                -->
-<!--            </ul>-->
-<!--        </div>-->
+        <!--        <div class="menu_section">-->
+        <!--            <ul class="nav">            -->
+        <!--                <li><a href="/squad"><i class="fas fa-user-friends"></i>Schedule</a></li>                -->
+        <!--            </ul>-->
+        <!--        </div>-->
     </div>
 </div>
 {% endblock %}
@@ -59,7 +59,7 @@
         </ul>
     </div>
 </div>
-<br />
+<br/>
 <div>
     <div class="row">
         <div class="col-xs-3 delim">
@@ -126,13 +126,20 @@
             </div>
         </div>
         <div class="col-xs-7 delim">
-            <div class="row"  style="border-bottom: 2px solid #323A41;">
+            <div class="row" style="border-bottom: 2px solid #323A41;">
                 <div class="col-xs-6">
                     <p class="header">Fixtures/results ></p>
 
-
                     <table class="week-results">
-                        {% for item in week_schedule.items %}
+                        {% for tour_schedule in current_tour_schedule %}
+
+                        <tr>
+                            <td colspan="3">
+                                {{ tour_schedule.date }}
+                            </td>
+                        </tr>
+
+                        {% for item in tour_schedule.matches %}
                         <tr>
                             <td>
                                 <a href="/teams/{{ item.home_team_id }}">
@@ -140,12 +147,12 @@
                                 </a>
                             </td>
                             <td class="score">
-                                {% if item.result.is_some() %} 
-                                
+                                {% if item.result.is_some() %}
+
                                 {{ item.result.as_ref().unwrap().home_goals }}
                                 -
                                 {{ item.result.as_ref().unwrap().away_goals }}
-                                
+
                                 {% endif %}
 
                                 {% if item.result.is_none() %}
@@ -155,9 +162,10 @@
                             <td>
                                 <a href="/teams/{{ item.away_team_id }}">
                                     {{ item.away_team_name }}
-                                </a>                               
+                                </a>
                             </td>
                         </tr>
+                        {% endfor %}
                         {% endfor %}
                     </table>
                 </div>
@@ -169,21 +177,24 @@
                             <td style="width: 20px">1</td>
                             <td>
                                 <p>Spanish Premier Division</p>
-                                <p><div class="flag flag-es"></div>&nbsp;Spain</p>
+                                <p>
+                                <div class="flag flag-es"></div>&nbsp;Spain</p>
                             </td>
                         </tr>
                         <tr>
                             <td style="width: 20px">2</td>
                             <td>
                                 <p>German First Division</p>
-                                <p><div class="flag flag-de"></div>&nbsp;&nbsp;Germany</p>
+                                <p>
+                                <div class="flag flag-de"></div>&nbsp;&nbsp;Germany</p>
                             </td>
                         </tr>
                         <tr>
                             <td style="width: 20px">2</td>
                             <td>
                                 <p>English Premiere Division</p>
-                                <p><div class="flag flag-gb"></div>&nbsp;England</p>
+                                <p>
+                                <div class="flag flag-gb"></div>&nbsp;England</p>
                             </td>
                         </tr>
                     </table>
@@ -414,7 +425,6 @@
             </div>
         </div>
     </div>
-
 
 
 </div>

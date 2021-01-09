@@ -1,22 +1,26 @@
-use core::{Player, NaiveDate, PlayerClubContract, PlayerSkills, Technical, Mental, Physical, PlayerPosition, PlayerAttributes, PersonAttributes, PlayerPositions, Utc, Datelike, PlayerPositionType, PeopleNameGeneratorData};
-use core::utils::{IntegerUtils, StringUtils};
 use core::shared::FullName;
-use std::sync::atomic::{Ordering, AtomicU32};
+use core::utils::{IntegerUtils, StringUtils};
+use core::{
+    Datelike, Mental, NaiveDate, PeopleNameGeneratorData, PersonAttributes, Physical, Player,
+    PlayerAttributes, PlayerClubContract, PlayerPosition, PlayerPositionType, PlayerPositions,
+    PlayerSkills, Technical, Utc,
+};
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
 
 pub struct PlayerGenerator {
     sequence: Arc<AtomicU32>,
-    people_names_data: PeopleNameGeneratorData
+    people_names_data: PeopleNameGeneratorData,
 }
 
 impl PlayerGenerator {
     pub fn with_people_names(people_names: &PeopleNameGeneratorData) -> Self {
         PlayerGenerator {
             sequence: Arc::new(AtomicU32::new(0)),
-            people_names_data: PeopleNameGeneratorData{
+            people_names_data: PeopleNameGeneratorData {
                 first_names: people_names.first_names.clone(),
-                last_names: people_names.last_names.clone()
-            }
+                last_names: people_names.last_names.clone(),
+            },
         }
     }
 }
@@ -24,14 +28,14 @@ impl PlayerGenerator {
 pub enum PositionType {
     Goalkeeper,
     Defender,
-    Midfielder,    
-    Striker
+    Midfielder,
+    Striker,
 }
 
-impl PlayerGenerator{
+impl PlayerGenerator {
     pub fn generate(&mut self, country_id: u32, position: PositionType) -> Player {
         let now = Utc::now();
-        
+
         let year = IntegerUtils::random(now.year() - 35, now.year() - 15) as u32;
         let month = IntegerUtils::random(1, 12) as u32;
         let day = IntegerUtils::random(1, 29) as u32;
@@ -49,12 +53,13 @@ impl PlayerGenerator{
             Self::generate_person_attributes(),
             Self::generate_player_attributes(),
             Some(PlayerClubContract::new(
-                IntegerUtils::random(1000, 200000) as u32, 
-                NaiveDate::from_ymd(now.year() +  IntegerUtils::random(1, 5), 3, 14))),
+                IntegerUtils::random(1000, 200000) as u32,
+                NaiveDate::from_ymd(now.year() + IntegerUtils::random(1, 5), 3, 14),
+            )),
             Self::generate_positions(position),
         )
     }
-    
+
     fn generate_skills() -> PlayerSkills {
         PlayerSkills {
             technical: Technical {
@@ -102,91 +107,81 @@ impl PlayerGenerator{
             },
         }
     }
-    
+
     fn generate_positions(position: PositionType) -> PlayerPositions {
         let mut positions = Vec::with_capacity(5);
 
         match position {
-            PositionType::Goalkeeper => {
-                positions.push(PlayerPosition {
-                    position: PlayerPositionType::Goalkeeper,
-                    level: 20 as u8,
-                })
-            }
-            PositionType::Defender => {
-                match IntegerUtils::random(0, 3) % 3 {
-                    0 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::DefenderLeft,
-                            level: 20 as u8,
-                        });
-                    },
-                    1 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::DefenderCenter,
-                            level: 20 as u8,
-                        });
-                    },
-                    2 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::DefenderRight,
-                            level: 20 as u8,
-                        });
-                    }
-                    _ => {}
+            PositionType::Goalkeeper => positions.push(PlayerPosition {
+                position: PlayerPositionType::Goalkeeper,
+                level: 20 as u8,
+            }),
+            PositionType::Defender => match IntegerUtils::random(0, 3) % 3 {
+                0 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::DefenderLeft,
+                        level: 20 as u8,
+                    });
                 }
-            }
-            PositionType::Midfielder => {
-                match IntegerUtils::random(0, 3) % 3 {
-                    0 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::MidfielderLeft,
-                            level: 20,
-                        });
-                    },
-                    1 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::MidfielderCenter,
-                            level: 20,
-                        });
-                    },
-                    2 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::MidfielderRight,
-                            level: 20 as u8,
-                        });
-                    }
-                    _ => {}
+                1 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::DefenderCenter,
+                        level: 20 as u8,
+                    });
                 }
-            }
-            PositionType::Striker => {
-                match IntegerUtils::random(0, 3) % 3 {
-                    0 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::WingbackLeft,
-                            level: 20 as u8,
-                        });
-                    },
-                    1 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::Striker,
-                            level: 20 as u8,
-                        });
-                    },
-                    2 => {
-                        positions.push(PlayerPosition {
-                            position: PlayerPositionType::WingbackRight,
-                            level: 20 as u8,
-                        });
-                    }
-                    _ => {}
+                2 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::DefenderRight,
+                        level: 20 as u8,
+                    });
                 }
-            }
+                _ => {}
+            },
+            PositionType::Midfielder => match IntegerUtils::random(0, 3) % 3 {
+                0 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::MidfielderLeft,
+                        level: 20,
+                    });
+                }
+                1 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::MidfielderCenter,
+                        level: 20,
+                    });
+                }
+                2 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::MidfielderRight,
+                        level: 20 as u8,
+                    });
+                }
+                _ => {}
+            },
+            PositionType::Striker => match IntegerUtils::random(0, 3) % 3 {
+                0 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::WingbackLeft,
+                        level: 20 as u8,
+                    });
+                }
+                1 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::Striker,
+                        level: 20 as u8,
+                    });
+                }
+                2 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::WingbackRight,
+                        level: 20 as u8,
+                    });
+                }
+                _ => {}
+            },
         }
 
-        PlayerPositions {
-            positions
-        }
+        PlayerPositions { positions }
     }
 
     fn generate_person_attributes() -> PersonAttributes {
@@ -198,10 +193,10 @@ impl PlayerGenerator{
             pressure: IntegerUtils::random(0, 20) as u8,
             professionalism: IntegerUtils::random(0, 20) as u8,
             sportsmanship: IntegerUtils::random(0, 20) as u8,
-            temperament: IntegerUtils::random(0, 20) as u8
+            temperament: IntegerUtils::random(0, 20) as u8,
         }
     }
-    
+
     fn generate_player_attributes() -> PlayerAttributes {
         PlayerAttributes {
             is_banned: false,
@@ -220,28 +215,28 @@ impl PlayerGenerator{
             international_apps: IntegerUtils::random(0, 100) as u16,
             international_goals: IntegerUtils::random(0, 40) as u16,
             under_21_international_apps: IntegerUtils::random(0, 30) as u16,
-            under_21_international_goals: IntegerUtils::random(0, 10) as u16
+            under_21_international_goals: IntegerUtils::random(0, 10) as u16,
         }
     }
-    
+
     fn generate_first_name(&self) -> String {
         if self.people_names_data.first_names.len() > 0 {
-            let idx = IntegerUtils::random(0, self.people_names_data.first_names.len() as i32) as usize;
+            let idx =
+                IntegerUtils::random(0, self.people_names_data.first_names.len() as i32) as usize;
 
             self.people_names_data.first_names[idx].to_owned()
-        }
-        else {
+        } else {
             StringUtils::random_string(5)
         }
     }
 
     fn generate_last_name(&self) -> String {
         if self.people_names_data.first_names.len() > 0 {
-            let idx = IntegerUtils::random(0, self.people_names_data.last_names.len() as i32) as usize;
+            let idx =
+                IntegerUtils::random(0, self.people_names_data.last_names.len() as i32) as usize;
             self.people_names_data.last_names[idx].to_owned()
-        }
-        else {
+        } else {
             StringUtils::random_string(12)
-        }        
+        }
     }
 }

@@ -20,6 +20,15 @@ impl ScheduleTour {
             played: false,
         }
     }
+    
+    pub fn min_date(&self) -> Option<NaiveDate> {
+        match self.items.iter().min_by_key(|t| t.date) {
+            Some(item) => {
+                Some(item.date.date())
+            },
+            None => None
+        }
+    }
 }
 
 #[derive(Debug)]
