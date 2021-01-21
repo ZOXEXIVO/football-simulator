@@ -1,20 +1,20 @@
-use crate::simulator::SimulatorData;
 use crate::club::Player;
+use crate::simulator::SimulatorData;
 
 pub struct PlayerCollectionResult {
     pub players: Vec<PlayerResult>,
-    pub outgoing_players: Vec<Player>
+    pub outgoing_players: Vec<Player>,
 }
 
-impl PlayerCollectionResult{
+impl PlayerCollectionResult {
     pub fn new(players: Vec<PlayerResult>, outgoing_players: Vec<Player>) -> Self {
         PlayerCollectionResult {
             players,
-            outgoing_players
+            outgoing_players,
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData){
+    pub fn process(&self, data: &mut SimulatorData) {
         for player in &self.players {
             player.process(data);
         }
@@ -25,35 +25,41 @@ pub struct PlayerResult {
     pub player_id: u32,
     pub contract: PlayerContractResult,
     pub is_transfer_requested: bool,
-    pub transfer_requests: Vec<u32>
+    pub transfer_requests: Vec<u32>,
 }
 
-pub struct PlayerContractResult{
+pub struct PlayerContractResult {
     pub no_contract: bool,
     pub contract_rejected: bool,
     pub want_improve_contract: bool,
     pub want_extend_contract: bool,
 }
 
-impl PlayerResult{
+impl PlayerResult {
     pub fn new(player_id: u32) -> Self {
         PlayerResult {
             player_id,
-            contract: PlayerContractResult{
+            contract: PlayerContractResult {
                 no_contract: false,
                 contract_rejected: false,
                 want_improve_contract: false,
-                want_extend_contract: false
+                want_extend_contract: false,
             },
             is_transfer_requested: false,
-            transfer_requests: Vec::new()
+            transfer_requests: Vec::new(),
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData){
-    }
-    
+    pub fn process(&self, data: &mut SimulatorData) {}
+
     pub fn request_transfer(&mut self, player_id: u32) {
         self.transfer_requests.push(player_id);
+    }
+
+    pub fn has_contract_actions(&self) -> bool {
+        self.contract.no_contract
+            || self.contract.contract_rejected
+            || self.contract.want_extend_contract
+            || self.contract.want_improve_contract
     }
 }

@@ -11,8 +11,9 @@ use crate::{
     PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerTransferStatus,
     Relations,
 };
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::{NaiveDate, NaiveDateTime, Duration};
 use std::fmt::{Display, Formatter, Result};
+use std::ops::Add;
 
 #[derive(Debug)]
 pub struct Player {
@@ -156,7 +157,7 @@ impl Player {
     }
 
     pub fn personal_training(&mut self, coach: &Staff) {
-        PlayerTraining::personal_train(self, coach);
+        PlayerTraining::personal_training(self, coach);
     }
 
     #[inline]

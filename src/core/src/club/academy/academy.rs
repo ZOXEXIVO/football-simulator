@@ -5,7 +5,7 @@ use crate::club::academy::settings::AcademySettings;
 use crate::utils::IntegerUtils;
 
 #[derive(Debug)]
-pub struct ClubAcademy{
+pub struct ClubAcademy {
     settings: AcademySettings,
     players: Vec<Player>,
     level: u8,

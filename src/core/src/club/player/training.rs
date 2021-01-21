@@ -23,7 +23,7 @@ impl PlayerTraining {
         self.has_individual_training = true;
     }
     
-    pub fn personal_train(player: &mut Player, coach: &Staff) {
+    pub fn personal_training(player: &mut Player, coach: &Staff) {
         match coach.behaviour.state {
             PersonBehaviourState::Good => {
                 player.skills.mental.train(1);
