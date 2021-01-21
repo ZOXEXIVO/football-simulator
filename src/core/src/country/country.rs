@@ -53,7 +53,7 @@ impl Country {
                 )
             })
             .collect();
-
+        
         let match_results = self.process_league_results(&mut league_results);
 
         CountryResult::new(league_results, clubs_results, match_results)

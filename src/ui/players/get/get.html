@@ -79,7 +79,13 @@
                 <div class="col-xs-5 basic-info">
                     <p><span>{{ age }} years old</span> ({{ birth_date }})</p>
                     <p>{{ country_name }}</p>
-                    <p>90 caps / 2 goals</p>
+                    <p>{{ player_attributes.international_apps}} caps / {{ player_attributes.international_goals }} goals</p>
+
+                    {% if player_attributes.under_21_international_apps > 0 %}
+                        <p>{{ player_attributes.under_21_international_apps}} U21 caps / {{ player_attributes.under_21_international_goals }} U21 goals</p>
+                    {%- else %}
+                    <p>No youth caps</p>
+                    {%- endif %}
                 </div>
             </div>
         </div>
@@ -91,7 +97,7 @@
                 </div>
                 <div class="col-xs-11 contract-info">
                     <p class="contracted">Contracted to <a href="/teams/{{ team_id }}" style="color: #787B7A;">{{ team_name }}</a></p>
-                    <p>Valued at $1.8</p>
+                    <p>Valued at ${{value}}</p>
 
                     {% if contract.is_some() %}
 
@@ -456,7 +462,7 @@
                     <div class="col-xs-4 prefered">
                         <dl>
                             <dt>Prefered foot</dt>
-                            <dd>Left</dd>
+                            <dd>{{preferred_foot}}</dd>
                         </dl>
                         <dl>
                             <dt>Personality</dt>

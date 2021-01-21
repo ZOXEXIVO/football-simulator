@@ -32,7 +32,7 @@ impl<'s> FootballEngine<'s> {
         let mut attacking_team = &home_team;
         let mut defending_team = &away_team;
 
-        for i in 0..MATCH_ACTIONS {
+        for _ in 0..MATCH_ACTIONS {
             let winner_team = self.get_battle_winner(&attacking_team, &defending_team, &field_zone);
 
             if winner_team.id == attacking_team.id {

@@ -5,13 +5,9 @@ use crate::club::{
 };
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
-use crate::utils::{DateUtils, Logging};
-use crate::{
-    ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerMessageType,
-    PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerTransferStatus,
-    Relations,
-};
-use chrono::{NaiveDate, NaiveDateTime, Duration};
+use crate::utils::{DateUtils, Logging, FormattingUtils};
+use crate::{ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerTransferStatus, Relations, PlayerValueCalculator};
+use chrono::{Duration, NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
 use std::ops::Add;
 
@@ -113,7 +109,7 @@ impl Player {
             player: &mut Player,
             proposal: PlayerContractProposal,
             now: NaiveDate,
-            result: &mut PlayerResult
+            result: &mut PlayerResult,
         ) {
             match &player.contract {
                 Some(player_contract) => {
@@ -127,9 +123,7 @@ impl Player {
                     PersonBehaviourState::Poor => {
                         result.contract.contract_rejected = true;
                     }
-                    PersonBehaviourState::Normal => {
-                        
-                    }
+                    PersonBehaviourState::Normal => {}
                     PersonBehaviourState::Good => {
                         accept_contract_proposal(player, proposal, now);
                     }
@@ -160,9 +154,21 @@ impl Player {
         PlayerTraining::personal_training(self, coach);
     }
 
+    pub fn value(&self) -> f64 {
+       PlayerValueCalculator::calculate_value(self)      
+    }
+
     #[inline]
     pub fn position(&self) -> PlayerPositionType {
         self.positions.position()
+    }
+
+    pub fn preferred_foot_str(&self) -> &'static str {
+        match self.preferred_foot {
+            PlayerPreferredFoot::Left => "Left",
+            PlayerPreferredFoot::Right => "Right",
+            PlayerPreferredFoot::Both => "Both",
+        }
     }
 
     pub fn is_ready_for_match(&self) -> bool {

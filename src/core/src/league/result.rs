@@ -1,5 +1,6 @@
 use crate::simulator::SimulatorData;
-use crate::league::ScheduleItem;
+use crate::league::{ScheduleItem, LeagueTable};
+use crate::r#match::game::MatchResult;
 use chrono::NaiveDateTime;
 
 pub struct LeagueResult{
@@ -18,9 +19,17 @@ impl LeagueResult {
     pub fn process(&self, data: &mut SimulatorData){
         let league = data.league_mut(self.league_id).unwrap();
         
-        for match_item in &self.matches {
-            //league.league_table.update()
-        }
+        let matches = self.matches.iter().map(|m| MatchResult {
+            league_id: m.league_id,
+            schedule_id: m.id.clone(),
+            player_changes: vec![],
+            home_team_id: m.home_team_id,
+            home_goals: m.result.as_ref().unwrap().home_goals,
+            away_team_id: m.away_team_id,
+            away_goals: m.result.as_ref().unwrap().away_goals
+        }).collect();
+
+        league.table.as_mut().unwrap().update(&matches)
     }
 }
 
