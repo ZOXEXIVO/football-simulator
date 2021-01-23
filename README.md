@@ -3,11 +3,11 @@
 
 Attempt to implement Sigames Football Manager simulation engine without manual control.
 
-Site: **[football-simulator.org](https://football-simulator.org)**
+**[football-simulator.org](https://football-simulator.org)**
 
 It is **not gamable** right now and I need a lot of work to make it workable.
 
-Currently, most of elements are subs, but I change it step by step
+Currently, most of elements are stubs, but I change it step by step
 
 Currently available nation for simulation - **Russia**
 
