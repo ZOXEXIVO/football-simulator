@@ -5,21 +5,21 @@ use chrono::NaiveDateTime;
 
 pub struct LeagueResult{
     pub league_id: u32,
-    pub matches: Vec<LeagueMatchResult>
+    pub scheduled_matches: Vec<LeagueMatchResult>
 }
 
 impl LeagueResult {
-    pub fn new(league_id: u32, matches: Vec<LeagueMatchResult>) -> Self {
+    pub fn new(league_id: u32, scheduled_matches: Vec<LeagueMatchResult>) -> Self {
         LeagueResult {
             league_id,
-            matches
+            scheduled_matches
         }
     }
 
     pub fn process(&self, data: &mut SimulatorData){
         let league = data.league_mut(self.league_id).unwrap();
         
-        let matches = self.matches.iter().map(|m| MatchResult {
+        let matches = self.scheduled_matches.iter().map(|m| MatchResult {
             league_id: m.league_id,
             schedule_id: m.id.clone(),
             player_changes: vec![],

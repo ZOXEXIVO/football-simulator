@@ -25,7 +25,7 @@ impl Country {
         leagues: Vec<League>,
         clubs: Vec<Club>,
         reputation: u16,
-        generator_data: CountryGeneratorData
+        generator_data: CountryGeneratorData,
     ) -> Self {
         Country {
             id,
@@ -35,12 +35,14 @@ impl Country {
             leagues,
             clubs,
             reputation,
-            generator_data
+            generator_data,
         }
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> CountryResult {
         let mut league_results = self.simulate_leagues(&ctx);
+
+        let match_results = self.process_matches(&league_results);
 
         let clubs_results: Vec<ClubResult> = self
             .clubs
@@ -53,8 +55,6 @@ impl Country {
                 )
             })
             .collect();
-        
-        let match_results = self.process_league_results(&mut league_results);
 
         CountryResult::new(league_results, clubs_results, match_results)
     }
@@ -86,10 +86,10 @@ impl Country {
             .collect()
     }
 
-    fn process_league_results(&mut self, results: &mut Vec<LeagueResult>) -> Vec<MatchResult> {
+    fn process_matches(&mut self, results: &Vec<LeagueResult>) -> Vec<MatchResult> {
         results
             .iter()
-            .flat_map(|lr| &lr.matches)
+            .flat_map(|lr| &lr.scheduled_matches)
             .map(|m| {
                 Match::make(
                     m.league_id,
@@ -99,10 +99,7 @@ impl Country {
                 )
             })
             .map(|m| {
-                let message = &format!(
-                    "simulate play match: {} - {}",
-                    &m.home_team.name, &m.away_team.name
-                );
+                let message = &format!("play match: {} - {}", &m.home_team.name, &m.away_team.name);
                 Logging::estimate_result(|| m.play(), message)
             })
             .collect()
@@ -135,7 +132,7 @@ impl CountryGeneratorData {
         CountryGeneratorData {
             people_names: PeopleNameGeneratorData {
                 first_names: Vec::new(),
-                last_names: Vec::new()
+                last_names: Vec::new(),
             },
         }
     }
