@@ -41,7 +41,7 @@ impl CountryResult {
 
         let league = data.league_mut(result.league_id).unwrap();
 
-        league.schedule.update_match_result(
+        league.schedule.as_mut().unwrap().update_match_result(
             &result.schedule_id,
             result.home_goals,
             result.away_goals,

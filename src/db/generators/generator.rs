@@ -104,7 +104,7 @@ impl Generator {
                     id: league.id,
                     name: league.name.clone(),
                     country_id: league.country_id,
-                    schedule: Schedule::new(),
+                    schedule: Option::None,
                     settings: LeagueSettings {
                         season_starting_half: DayMonthPeriod {
                             from_day: league.settings.season_starting_half.from_day,

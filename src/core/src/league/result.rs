@@ -1,15 +1,15 @@
 use crate::simulator::SimulatorData;
-use crate::league::{ScheduleItem, LeagueTable};
 use crate::r#match::game::MatchResult;
 use chrono::NaiveDateTime;
+use crate::league::ScheduleItem;
 
 pub struct LeagueResult{
     pub league_id: u32,
-    pub scheduled_matches: Vec<LeagueMatchResult>
+    pub scheduled_matches: Vec<LeagueMatch>
 }
 
 impl LeagueResult {
-    pub fn new(league_id: u32, scheduled_matches: Vec<LeagueMatchResult>) -> Self {
+    pub fn new(league_id: u32, scheduled_matches: Vec<LeagueMatch>) -> Self {
         LeagueResult {
             league_id,
             scheduled_matches
@@ -33,7 +33,7 @@ impl LeagueResult {
     }
 }
 
-pub struct LeagueMatchResult {
+pub struct LeagueMatch {
     pub id: String,
     pub league_id: u32,
     
@@ -50,9 +50,9 @@ pub struct LeagueMatchResultResult {
     pub away_goals: u8
 }
 
-impl From<ScheduleItem> for LeagueMatchResult {
+impl From<ScheduleItem> for LeagueMatch {
     fn from(item: ScheduleItem) -> Self {
-        let mut result = LeagueMatchResult{
+        let mut result = LeagueMatch {
             id: item.id.clone(),
             league_id: item.league_id,
             date: item.date,

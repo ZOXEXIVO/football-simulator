@@ -3,7 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use actix_web::web::Data;
 use itertools::*;
-use core::league::ScheduleTour;
+use core::league::{ScheduleTour, Schedule};
 use crate::GameAppData;
 
 #[derive(Deserialize)]
@@ -92,52 +92,57 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
         current_tour_schedule: Vec::new()
     };
 
-    let actual_tour: Vec<&ScheduleTour> = league.schedule.tours
-        .iter()
-        .map(|t| (t, t.min_date()))
-        .filter_map(|(tour, min_date)| {
-            if !tour.played && min_date.is_some() && min_date.unwrap() > now {
-                return Some(tour);
-            }          
-            
-            None
-        })
-        .take(1)
-        .collect();    
+    match &league.schedule {
+        Some(schedule) => {
+            let actual_tour: Vec<&ScheduleTour> = schedule.tours
+                .iter()
+                .map(|t| (t, t.min_date()))
+                .filter_map(|(tour, min_date)| {
+                    if !tour.played && min_date.is_some() && min_date.unwrap() > now {
+                        return Some(tour);
+                    }
 
-    
-    match actual_tour.first() {
-        Some(tour) => {
-            for (key, group) in &tour.items.iter().group_by(|t| t.date.date()) {
-                let tour_schedule = TourSchedule {
-                    date: key.format("%d.%m.%Y").to_string(),
-                    matches: group.map(|item| {
-                        LeagueScheduleItem {
-                            result: match &item.result {
-                                Some(res) => {
-                                    Some(LeagueScheduleItemResult {
-                                        home_goals: res.home_goals,
-                                        away_goals: res.away_goals,
-                                    })
-                                },
-                                None => None
-                            },
+                    None
+                })
+                .take(1)
+                .collect();
 
-                            home_team_id: item.home_team_id,
-                            home_team_name: simulator_data.team_name(item.home_team_id).unwrap(),
 
-                            away_team_id: item.away_team_id,
-                            away_team_name: simulator_data.team_name(item.away_team_id).unwrap(),
-                        }
-                    }).collect()
-                };
-                  
-                model.current_tour_schedule.push(tour_schedule)
+            match actual_tour.first() {
+                Some(tour) => {
+                    for (key, group) in &tour.items.iter().group_by(|t| t.date.date()) {
+                        let tour_schedule = TourSchedule {
+                            date: key.format("%d.%m.%Y").to_string(),
+                            matches: group.map(|item| {
+                                LeagueScheduleItem {
+                                    result: match &item.result {
+                                        Some(res) => {
+                                            Some(LeagueScheduleItemResult {
+                                                home_goals: res.home_goals,
+                                                away_goals: res.away_goals,
+                                            })
+                                        },
+                                        None => None
+                                    },
+
+                                    home_team_id: item.home_team_id,
+                                    home_team_name: simulator_data.team_name(item.home_team_id).unwrap(),
+
+                                    away_team_id: item.away_team_id,
+                                    away_team_name: simulator_data.team_name(item.away_team_id).unwrap(),
+                                }
+                            }).collect()
+                        };
+
+                        model.current_tour_schedule.push(tour_schedule)
+                    }
+                },
+                None => {
+
+                }
             }
         },
-        None => {
-           
-        }
+        None => {}
     }
     
     let html = LeagueGetViewModel::render(&model).unwrap();

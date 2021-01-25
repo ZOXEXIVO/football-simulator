@@ -4,6 +4,7 @@ use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
 use core::{Team, SimulatorData};
+use core::league::Schedule;
 
 #[derive(Deserialize)]
 pub struct TeamScheduleGetRequest {
@@ -52,7 +53,7 @@ pub async fn team_schedule_get_action(state: Data<GameAppData>, route_params: we
         league_name: &league.name,
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
         
-        items: league.schedule.get_matches_for_team(team.id).iter().map(|schedule| {
+        items: league.schedule.as_ref().unwrap_or(&Schedule::stub()).get_matches_for_team(team.id).iter().map(|schedule| {
             let is_home = schedule.home_team_id == team.id;
 
             TeamScheduleItem {

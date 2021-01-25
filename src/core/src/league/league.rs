@@ -1,13 +1,14 @@
-use crate::league::{Schedule, LeagueResult, LeagueTable, Season, LeagueMatchResult};
+use crate::league::{Schedule, LeagueResult, LeagueTable, Season, LeagueMatch, RoundSchedule, ScheduleGenerator, LeagueContext};
 use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
+use log::{error};
 
 #[derive(Debug)]
 pub struct League {
     pub id: u32,
     pub name: String,
     pub country_id: u32,
-    pub schedule: Schedule,
+    pub schedule: Option<Schedule>,
     pub table: Option<LeagueTable>,
     pub settings: LeagueSettings,
     pub reputation: u16,
@@ -19,7 +20,7 @@ impl League {
             id,
             name,
             country_id,
-            schedule: Schedule::new(),
+            schedule: None,
             table: Option::None,
             settings,
             reputation,
@@ -27,21 +28,38 @@ impl League {
     }
     
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
-        let league_ctx = ctx.league.unwrap();
+        let league_ctx = ctx.league.as_ref().unwrap();
         
         if self.table.is_none() {
             self.table = Some(LeagueTable::with_clubs(&league_ctx.team_ids));
         }
         
-        if !self.schedule.exists() || self.settings.is_time_for_new_schedule(&ctx.simulation) {           
-            self.schedule.generate(self.id,Season::TwoYear(2020, 2021), league_ctx.team_ids, &self.settings);
+        let scheduled_matches = self.simulate_schedule(&ctx);
+
+        LeagueResult::new(self.id, scheduled_matches)
+    }
+
+    fn simulate_schedule(&mut self, ctx: &GlobalContext<'_>) -> Vec<LeagueMatch> {
+        if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
+            let schedule_generator = self.get_schedule_generator();
+
+            let league_ctx = ctx.league.as_ref().unwrap();
+
+            match schedule_generator.generate(self.id,Season::OneYear(2021), league_ctx.team_ids, &self.settings) {
+                Ok(generated_schedule) => {
+                    self.schedule = Some(generated_schedule);
+                },
+                Err(error) => {
+                    error!("Generating schedule error: {}", error.message);
+                }
+            }
         }
 
-        let scheduled_matches  = 
-            self.schedule.get_matches(ctx.simulation.date)
+        let scheduled_matches  =
+            self.schedule.as_ref().unwrap().get_matches(ctx.simulation.date)
                 .iter()
-                .map(|sm| 
-                    LeagueMatchResult {
+                .map(|sm|
+                    LeagueMatch {
                         id: sm.id.clone(),
                         league_id: sm.league_id,
                         date: sm.date,
@@ -51,8 +69,12 @@ impl League {
                     }
                 ).collect();
 
-        LeagueResult::new(self.id, scheduled_matches)
+        scheduled_matches
     }
+    
+    fn get_schedule_generator(&self) -> impl ScheduleGenerator {
+        RoundSchedule::new()
+    }   
 }
 
 #[derive(Debug)]
