@@ -26,8 +26,6 @@ impl ScheduleGenerator for RoundSchedule {
         teams: &[u32],
         league_settings: &LeagueSettings,
     ) -> Result<Schedule, ScheduleError> {
-        debug!("schedule: generation for {:?}", season);
-
         let teams_len = teams.len();
 
         if teams_len == 0 {
