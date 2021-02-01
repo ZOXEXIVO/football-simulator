@@ -1,8 +1,7 @@
 pub mod models;
-pub mod types;
+pub mod round;
 
 pub use models::*;
-pub use types::*;
 use crate::league::{Season, LeagueSettings};
 
 pub trait ScheduleGenerator {

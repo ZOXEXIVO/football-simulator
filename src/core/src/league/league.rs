@@ -1,7 +1,8 @@
-use crate::league::{Schedule, LeagueResult, LeagueTable, Season, LeagueMatch, RoundSchedule, ScheduleGenerator, LeagueContext};
+use crate::league::{Schedule, LeagueResult, LeagueTable, Season, LeagueMatch, ScheduleGenerator};
 use crate::context::{GlobalContext, SimulationContext};
 use chrono::Datelike;
 use log::{error};
+use crate::league::schedule::round::RoundSchedule;
 
 #[derive(Debug)]
 pub struct League {
