@@ -40,7 +40,7 @@ impl Country {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> CountryResult {
-        let mut league_results = self.simulate_leagues(&ctx);
+        let league_results = self.simulate_leagues(&ctx);
 
         let match_results = self.process_matches(&league_results);
 

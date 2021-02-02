@@ -9,6 +9,7 @@ RUN cargo build --release
 
 FROM rust:1.49-slim
 WORKDIR /app
-COPY --from=build /src/target/release .
+
+COPY --from=build /src/target/release/football_simulator .
 
 ENTRYPOINT ["./football_simulator"]

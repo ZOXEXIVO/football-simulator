@@ -11,6 +11,7 @@ pub mod utils;
 pub mod position;
 pub mod generator;
 pub mod calculators;
+pub mod happiness;
 
 pub use attributes::*;
 pub use context::*;
@@ -24,3 +25,4 @@ pub use status::*;
 pub use position::*;
 pub use generator::*;
 pub use calculators::*;
+pub use happiness::*;

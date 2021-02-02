@@ -2,6 +2,7 @@
 use actix_web::{web, Result, HttpResponse};
 
 const CSS_CONTENT_TYPE: &'static str = "text/css; charset=utf-8";
+const STATIC_FILES_CACHE_CONTROL_HEADER: &'static str = "public, max-age=15552000";
 
 pub const FONT_CSS: &[u8] = include_bytes!("fonts.css.gz");
 pub const STYLE_CSS: &[u8] = include_bytes!("styles.css");
@@ -18,12 +19,14 @@ pub fn static_routes(cfg: &mut ServiceConfig) {
 pub async fn serve_styles() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .header("Content-Type", CSS_CONTENT_TYPE)
+        .header("Cache-Control", STATIC_FILES_CACHE_CONTROL_HEADER)
         .body(STYLE_CSS))
 }
 
 pub async fn serve_images() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .header("Content-Type", CSS_CONTENT_TYPE)
+        .header("Cache-Control", STATIC_FILES_CACHE_CONTROL_HEADER)
         .body(IMAGES_CSS))
 }
 
@@ -31,6 +34,7 @@ pub async fn serve_fonts() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .header("Content-Type", CSS_CONTENT_TYPE)
         .header("Content-Encoding", "gzip")
+        .header("Cache-Control", STATIC_FILES_CACHE_CONTROL_HEADER)
         .body(FONT_CSS))
 }
 
@@ -38,5 +42,6 @@ pub async fn serve_flags_css() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok()
         .header("Content-Type", CSS_CONTENT_TYPE)
         .header("Content-Encoding", "gzip")
+        .header("Cache-Control", STATIC_FILES_CACHE_CONTROL_HEADER)
         .body(FLAG_ICONS_GZIPPED_CSS))
 }

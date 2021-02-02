@@ -1,9 +1,11 @@
+use crate::league::{
+    LeagueSettings, Schedule, ScheduleError, ScheduleGenerator, ScheduleItem, ScheduleTour, Season,
+};
 use crate::utils::DateUtils;
 use chrono::prelude::*;
 use chrono::Duration;
 use chrono::NaiveDate;
 use log::{debug, warn};
-use crate::league::{ScheduleGenerator, Season, LeagueSettings, ScheduleError, Schedule, ScheduleTour, ScheduleItem};
 
 // const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
 

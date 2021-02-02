@@ -3,7 +3,7 @@ use crate::db::{DatabaseEntity, PlayerGenerator, PositionType, StaffGenerator};
 use core::club::academy::ClubAcademy;
 use core::context::{NaiveTime, Timelike};
 use core::continent::Continent;
-use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable, Schedule};
+use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable};
 use core::shared::Location;
 use core::utils::IntegerUtils;
 use core::{

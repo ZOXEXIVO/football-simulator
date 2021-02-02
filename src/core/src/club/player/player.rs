@@ -6,7 +6,7 @@ use crate::club::{
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging, FormattingUtils};
-use crate::{ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerTransferStatus, Relations, PlayerValueCalculator};
+use crate::{ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerTransferStatus, Relations, PlayerValueCalculator, PlayerHappiness};
 use chrono::{Duration, NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
 use std::ops::Add;
@@ -22,6 +22,7 @@ pub struct Player {
     pub attributes: PersonAttributes,
 
     //player data
+    pub happiness: PlayerHappiness,
     pub statuses: PlayerStatusData,
     pub skills: PlayerSkills,
     pub contract: Option<PlayerClubContract>,
@@ -51,6 +52,7 @@ impl Player {
             birth_date,
             country_id,
             behaviour: PersonBehaviour::default(),
+            happiness: PlayerHappiness::new(),
             statuses: PlayerStatusData::new(),
             skills,
             positions,

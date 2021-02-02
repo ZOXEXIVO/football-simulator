@@ -3,7 +3,7 @@ use serde::{Deserialize};
 use askama::Template;
 use actix_web::web::Data;
 use itertools::*;
-use core::league::{ScheduleTour, Schedule};
+use core::league::{ScheduleTour};
 use crate::GameAppData;
 
 #[derive(Deserialize)]
@@ -63,8 +63,6 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let now = simulator_data.date.date();
-    
     let league = simulator_data.league(route_params.league_id).unwrap();
 
     let country = simulator_data.country(league.country_id).unwrap();
@@ -92,6 +90,8 @@ pub async fn league_get_action(state: Data<GameAppData>, route_params: web::Path
         current_tour_schedule: Vec::new()
     };
 
+    let now = simulator_data.date.date();
+    
     match &league.schedule {
         Some(schedule) => {
             let actual_tour: Vec<&ScheduleTour> = schedule.tours
