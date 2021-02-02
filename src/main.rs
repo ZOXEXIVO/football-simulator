@@ -13,6 +13,17 @@ use parking_lot::Mutex;
 use std::sync::Arc;
 use ui::*;
 
+
+#[cfg(not(target_env = "msvc"))]
+extern crate jemallocator;
+
+#[cfg(not(target_env = "msvc"))]
+use jemallocator::Jemalloc;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+
 pub struct GameAppData {
     database: Arc<DatabaseEntity>,
     data: Arc<Mutex<Option<SimulatorData>>>,
