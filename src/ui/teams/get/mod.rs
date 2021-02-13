@@ -4,6 +4,7 @@ use askama::Template;
 use crate::GameAppData;
 use actix_web::web::Data;
 use core::{Team, SimulatorData, Player, PlayerPositionType};
+use core::utils::FormattingUtils;
 
 #[derive(Deserialize)]
 pub struct TeamGetRequest {
@@ -39,8 +40,12 @@ pub struct TeamPlayer<'cp>{
     pub last_name: &'cp str,
     pub first_name: &'cp str,
     
+    pub behaviour: &'cp str,
+    
     pub position: String,
     pub position_sort: PlayerPositionType,
+    
+    pub value: String,
     
     pub country_id: u32,
     pub country_code: &'cp str,
@@ -59,6 +64,8 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
     let team: &Team = simulator_data.team(route_params.team_id).unwrap();
 
     let league = simulator_data.league(team.league_id).unwrap();
+
+    let now = simulator_data.date.date();
     
     let mut players: Vec<TeamPlayer> = team.players().iter().map(|p| {
         let country = simulator_data.country(p.country_id).unwrap();
@@ -70,11 +77,13 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
             first_name: &p.full_name.first_name,
             position_sort: p.positions.position(),
             position,
+            behaviour: p.behaviour.as_str(),
             country_id: country.id,
             country_code: &country.code,
             country_name: &country.name,
             last_name: &p.full_name.last_name,
             conditions: get_conditions(&p),
+            value: FormattingUtils::short_money_str(p.value(now)),
             current_ability: get_current_ability_stars(&p),
             potential_ability: get_potential_ability_stars(&p)
         }

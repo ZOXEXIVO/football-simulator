@@ -59,6 +59,10 @@ impl PersonBehaviour {
             _ => {}
         }
     }
+    
+    pub fn as_str(&self) -> &'static str {
+        self.state.as_str()
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -66,4 +70,14 @@ pub enum PersonBehaviourState {
     Poor,
     Normal,
     Good,
+}
+
+impl PersonBehaviourState{
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            PersonBehaviourState::Poor => "Poor",
+            PersonBehaviourState::Normal => "Normal",
+            PersonBehaviourState::Good => "Good"
+        }
+    }
 }

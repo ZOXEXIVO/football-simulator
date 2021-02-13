@@ -156,8 +156,8 @@ impl Player {
         PlayerTraining::personal_training(self, coach);
     }
 
-    pub fn value(&self) -> f64 {
-       PlayerValueCalculator::calculate_value(self)      
+    pub fn value(&self, date: NaiveDate) -> f64 {
+       PlayerValueCalculator::calculate_value(self, date)      
     }
 
     #[inline]

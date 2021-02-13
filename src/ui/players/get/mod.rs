@@ -134,6 +134,8 @@ pub async fn player_get_action(
 
     let country = simulator_data.country(player.country_id).unwrap();
 
+    let now = simulator_data.date.date();
+    
     let mut model = PlayerGetViewModel {
         id: player.id,
         first_name: &player.full_name.first_name,
@@ -152,7 +154,7 @@ pub async fn player_get_action(
         conditions: get_conditions(&player),
         current_ability: get_current_ability_stars(&player),
         potential_ability: get_potential_ability_stars(&player),
-        value: &FormattingUtils::short_money_str(player.value()),
+        value: &FormattingUtils::short_money_str(player.value(now)),
         preferred_foot: player.preferred_foot_str(),
         player_attributes: get_attributes(&player),
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),

@@ -156,17 +156,17 @@
                 </fieldset>
             </td>
             <td style="width: 150px">
-                Good
+                {{ player.behaviour}}
             </td>
             <td style="width: 100px;text-align: center">
-                {{player.conditions}}%
+                {{ player.conditions }}%
             </td>
 
             <td style="width: 70px">
                 25
             </td>
             <td style="width: 170px">
-                100 000
+                {{player.value}}
             </td>
         </tr>
         {% endfor %}
