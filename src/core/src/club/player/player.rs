@@ -9,7 +9,7 @@ use crate::utils::{DateUtils, Logging, FormattingUtils};
 use crate::{ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerTransferStatus, Relations, PlayerValueCalculator, PlayerHappiness};
 use chrono::{Duration, NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
-use std::ops::Add;
+use std::ops::{Add, Index};
 
 #[derive(Debug)]
 pub struct Player {
@@ -293,6 +293,14 @@ impl PlayerCollection {
             .position(|p| p.id == *player_id)
             .unwrap();
         self.players.remove(player_idx)
+    }
+}
+
+impl Index<u32> for PlayerCollection {
+    type Output = Player;
+
+    fn index(&self, player_id: u32) -> &Self::Output {
+        &self.players.iter().find(|p| p.id == player_id).unwrap()
     }
 }
 

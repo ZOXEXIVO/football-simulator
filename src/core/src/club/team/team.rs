@@ -2,6 +2,7 @@ use crate::context::GlobalContext;
 use crate::{MatchHistory, Player, PlayerCollection, PlayerSelector, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
 use std::str::FromStr;
 use crate::shared::CurrencyValue;
+use std::ops::Index;
 
 #[derive(Debug, PartialEq)]
 pub enum TeamType {
@@ -105,14 +106,14 @@ impl Team {
             self.staffs.simulate(ctx.with_staff(None)),
         );
 
-        if self.training_schedule.is_time(ctx.simulation.date) {
-            Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
-        }
-        
         if self.tactics.is_none() {
             self.tactics = Some(TacticsSelector::select(self, self.staffs.head_coach()));
         }
-        
+
+        if self.training_schedule.is_time(ctx.simulation.date) {
+            Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
+        }
+ 
         result
     }
 }

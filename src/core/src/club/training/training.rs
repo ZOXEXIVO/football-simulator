@@ -11,6 +11,8 @@ impl Training{
             player.personal_training(coach);
         }
         
-        
+        for player in players {
+           
+        }
     }
 }
