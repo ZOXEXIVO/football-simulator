@@ -1,4 +1,4 @@
-﻿{% extends "../../layout.html" %}
+﻿{% extends "../../layouts/layout_game.html" %}
 
 {% block pagetitle %}
 {{name}}
@@ -19,14 +19,6 @@
 </div>
 {% endblock %}
 
-{% block processblock %}
-
-<div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()">Process</div>
-<div style="margin-top:5px;width:100px;padding-top: 20px;">
-    <div class="spinner" id="create-game-btn-spinner" style="display: none;"></div>
-</div>
-{% endblock %}
-
 {% block leftmenu %}
 <div class="left_col scroll-view">
     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
@@ -44,7 +36,7 @@
 </div>
 {% endblock %}
 
-{% block content %}
+{% block game_content %}
 
 <div class="header_row" style="height: 55px;margin-left: 0">
     <div class="header_bottom">

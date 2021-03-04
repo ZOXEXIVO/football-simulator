@@ -1,0 +1,51 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>
+        {% block pagetitle %}{% endblock %} | Football Simulator
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/fonts" media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="/styles">
+    <link rel="stylesheet" href="/assets/styles.css">
+
+    <link rel="stylesheet" href="/images">
+    <link rel="stylesheet" href="/assets/images.css">
+
+    <link rel="stylesheet" href="/flags-icons">
+
+    <base href="/">
+</head>
+
+<body>
+<div class="main_container">
+    <div>
+        <div class="main_content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DECXRGVMT0"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-DECXRGVMT0');
+</script>
+
+</body>
+
+</html>

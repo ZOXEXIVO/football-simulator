@@ -1,4 +1,4 @@
-﻿{% extends "../../layout.html" %}
+﻿{% extends "../../layouts/layout_game.html" %}
 
 {% block pagetitle %}
 Countries
@@ -15,23 +15,6 @@ Countries
 
 {% endblock %}
 
-{% block processblock %}
-
-<script>
-    function onClick(){
-        document.getElementById('create-game-btn').style.display = 'none'; 
-        document.getElementById('create-game-btn-spinner').style.display = 'block';
-
-        window.processGame();        
-    }    
-</script>
-
-<div style="text-transform: uppercase;text-align: center;" id="create-game-btn" onclick="onClick()">Process</div>
-<div style="margin-top:5px;width:100px;padding-top: 20px;">
-    <div class="spinner" id="create-game-btn-spinner" style="display: none;"></div>
-</div>
-{% endblock %}
-
 {% block leftmenu %}
 <div class="left_col scroll-view">
     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
@@ -44,7 +27,7 @@ Countries
 </div>
 {% endblock %}
 
-{% block content %}
+{% block game_content %}
 <div class="content">
     {% for continent in continents %}
 
