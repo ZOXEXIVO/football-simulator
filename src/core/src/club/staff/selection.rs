@@ -36,19 +36,19 @@ impl PlayerSelector {
         position: &PlayerPositionType,
     ) -> Vec<SquadPlayer<'c>> {
         let mut result: Vec<SquadPlayer<'c>> = Vec::with_capacity(3);
-
-        //let current_tactics = club.tactics.unwrap();
-
-        //current_tactics.positioning
-
-        let current_players: Vec<&Player> = club
+        
+        let mut players_on_position: Vec<&Player> = club
             .players
             .players
             .iter()
             .filter(|p| p.position() == *position)
             .collect();
 
-        for player in current_players {
+        players_on_position.sort_by(|a, b| {
+            a.player_attributes.condition.cmp(&b.player_attributes.condition) 
+        });
+        
+        for player in players_on_position.iter().rev() {
             if staff.relations.is_favorite_player(player.id) {
                 result.push(SquadPlayer::new(&player, *position))
             }
