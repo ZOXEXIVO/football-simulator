@@ -19,6 +19,8 @@ impl Generator {
     pub fn generate(data: &DatabaseEntity) -> SimulatorData {
         let current_date = Utc::now()
             .naive_utc()
+            .with_hour(0)
+            .unwrap()
             .with_minute(0)
             .unwrap()
             .with_second(0)

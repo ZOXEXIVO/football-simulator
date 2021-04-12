@@ -4,7 +4,7 @@ use crate::league::League;
 use crate::transfers::TransferPool;
 use crate::utils::Logging;
 use crate::{Club, Country, Player, Team};
-use chrono::{Duration, NaiveDateTime};
+use chrono::{Duration, NaiveDateTime, Timelike};
 use std::collections::HashMap;
 
 pub struct FootballSimulator;
@@ -13,24 +13,26 @@ impl FootballSimulator {
     pub fn simulate(data: &mut SimulatorData) {
         let message = &format!("simulate date {}", data.date);
 
-        Logging::estimate(
-            || {
-                let ctx = GlobalContext::new(SimulationContext::new(data.date));
+        for _ in 0..24 * 7 {
+            Logging::estimate(
+                || {
+                    let ctx = GlobalContext::new(SimulationContext::new(data.date));
 
-                let results: Vec<ContinentResult> = data
-                    .continents
-                    .iter_mut()
-                    .map(|continent| continent.simulate(ctx.with_continent(continent.id)))
-                    .collect();
+                    let results: Vec<ContinentResult> = data
+                        .continents
+                        .iter_mut()
+                        .map(|continent| continent.simulate(ctx.with_continent(continent.id)))
+                        .collect();
 
-                for result in results {
-                    result.process(data);
-                }
+                    for result in results {
+                        result.process(data);
+                    }
 
-                data.next_date();
-            },
-            message,
-        );
+                    data.next_date();
+                },
+                message,
+            );
+        }
     }
 }
 
