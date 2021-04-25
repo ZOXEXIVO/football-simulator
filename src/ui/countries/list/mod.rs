@@ -38,7 +38,7 @@ pub async fn country_list_action(state: Data<GameAppData>) -> Result<HttpRespons
     for continent in &simulator_data.continents {
         let item = ContinentDto {
             name: &continent.name,
-            countries: continent.countries.iter().map(|country|
+            countries: continent.countries.iter().filter(|c| c.leagues.len() > 0).map(|country|
                 CountryDto {
                     id: country.id,
                     code: &country.code,

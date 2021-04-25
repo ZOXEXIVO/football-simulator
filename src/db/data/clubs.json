@@ -55,17 +55,6 @@
           "national": 3000,
           "world": 1500
         }
-      },
-      {
-        "id": 5,
-        "name": "Zenit 2",
-        "team_type": "B",
-        "league_id": 1,
-        "reputation": {
-          "home": 2000,
-          "national": 2000,
-          "world": 100
-        }
       }
     ]
   },
@@ -90,7 +79,7 @@
           "national": 3000,
           "world": 1500
         }
-      }      
+      }
     ]
   },
   {
@@ -173,7 +162,7 @@
           "national": 5000,
           "world": 2500
         }
-      }      
+      }
     ]
   },
   {
@@ -408,6 +397,486 @@
         "name": "Tambov",
         "team_type": "Main",
         "league_id": 0,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "name": "Alania Vladikavkaz",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 25,
+        "name": "Alania Vladikavkaz",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "name": "Akron",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 26,
+        "name": "Akron",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "name": "Baltika",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 27,
+        "name": "Baltika",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "name": "Chayka Peschanokopskoye",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 28,
+        "name": "Chayka Peschanokopskoye",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "name": "Chertanovo",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 29,
+        "name": "Chertanovo",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "name": "Dinamo Bryansk",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 30,
+        "name": "Dinamo Bryansk",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "name": "Fakel",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 31,
+        "name": "Fakel",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "name": "Irtysh",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 32,
+        "name": "Irtysh",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "name": "Krylia Sovetov",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 33,
+        "name": "Krylia Sovetov",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "name": "Neftekhimik",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 34,
+        "name": "Neftekhimik",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "name": "Nizhny Novgorod",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 35,
+        "name": "Nizhny Novgorod",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "name": "Orenburg",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 36,
+        "name": "Orenburg",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "name": "Shinnik",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 38,
+        "name": "Shinnik",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "name": "SKA-Khabarovsk",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 39,
+        "name": "SKA-Khabarovsk",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "name": "Tekstilshchik",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 40,
+        "name": "Tekstilshchik",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "name": "Tom",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 41,
+        "name": "Tom",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "name": "Torpedo Moscow",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 42,
+        "name": "Torpedo Moscow",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "name": "Volgar",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 43,
+        "name": "Volgar",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "name": "Veles",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 44,
+        "name": "Veles",
+        "team_type": "Main",
+        "league_id": 1,
+        "reputation": {
+          "home": 6000,
+          "national": 6000,
+          "world": 1500
+        }
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "name": "Yenisey",
+    "country_id": 791,
+    "location": {
+      "city_id": 0
+    },
+    "finance": {
+      "balance": 4000000
+    },
+    "teams": [
+      {
+        "id": 45,
+        "name": "Yenisey",
+        "team_type": "Main",
+        "league_id": 1,
         "reputation": {
           "home": 6000,
           "national": 6000,
