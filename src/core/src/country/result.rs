@@ -23,16 +23,16 @@ impl CountryResult {
     }
 
     pub fn process(&self, data: &mut SimulatorData) {
+        for match_result in &self.match_results {
+            Self::process_match_results(match_result, data);
+        }
+        
         for league_result in &self.leagues {
             league_result.process(data);
         }
 
         for club_result in &self.clubs {
             club_result.process(data);
-        }
-
-        for match_result in &self.match_results {
-            Self::process_match_results(match_result, data);
         }
     }
 
@@ -46,7 +46,7 @@ impl CountryResult {
             result.home_goals,
             result.away_goals,
         );
-
+        
         let home_team = data.team_mut(result.home_team_id).unwrap();
         home_team.match_history.push(MatchHistory::new(
             now,

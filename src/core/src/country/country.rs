@@ -1,6 +1,6 @@
 use crate::context::GlobalContext;
 use crate::country::CountryResult;
-use crate::league::{League, LeagueResult};
+use crate::league::{League, LeagueResult, LeagueMatchResultResult};
 use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, ClubResult, Team};
@@ -40,9 +40,9 @@ impl Country {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> CountryResult {
-        let league_results = self.simulate_leagues(&ctx);
+        let mut league_results = self.simulate_leagues(&ctx);
 
-        let match_results = self.process_matches(&league_results);
+        let match_results = self.process_matches(&mut league_results);
 
         let clubs_results: Vec<ClubResult> = self
             .clubs
@@ -86,23 +86,32 @@ impl Country {
             .collect()
     }
 
-    fn process_matches(&mut self, results: &Vec<LeagueResult>) -> Vec<MatchResult> {
-        results
-            .iter()
-            .flat_map(|lr| &lr.scheduled_matches)
-            .map(|m| {
-                Match::make(
-                    m.league_id,
-                    &m.id,
-                    self.get_team(m.home_team_id),
-                    self.get_team(m.away_team_id),
-                )
-            })
-            .map(|m| {
-                let message = &format!("play match: {} - {}", &m.home_team.name, &m.away_team.name);
-                Logging::estimate_result(|| m.play(), message)
-            })
-            .collect()
+    fn process_matches(&mut self, results: &mut Vec<LeagueResult>) -> Vec<MatchResult> {
+        let mut result = Vec::new(); //TODO capacity
+        
+        for league_result in results {
+            for scheduled_match in &mut league_result.scheduled_matches {
+                let match_to_play = Match::make(
+                    scheduled_match.league_id,
+                    &scheduled_match.id,
+                    self.get_team(scheduled_match.home_team_id),
+                    self.get_team(scheduled_match.away_team_id),
+                );
+
+                let message = &format!("play match: {} - {}", &match_to_play.home_team.name, &match_to_play.away_team.name);
+
+                let match_res = Logging::estimate_result(|| match_to_play.play(), message);
+
+                scheduled_match.result = Some(LeagueMatchResultResult {
+                    home_goals: match_res.home_goals,
+                    away_goals: match_res.away_goals
+                });
+                
+                result.push(match_res);
+            }
+        }
+
+        result 
     }
 
     fn get_team(&self, id: u32) -> &Team {

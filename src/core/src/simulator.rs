@@ -59,7 +59,7 @@ impl SimulatorData {
     }
 
     pub fn next_date(&mut self) {
-        self.date += Duration::hours(1);
+        self.date += Duration::days(1);
     }
 
     fn refresh_indexes(&mut self) {

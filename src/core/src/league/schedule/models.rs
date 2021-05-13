@@ -1,4 +1,5 @@
 use chrono::{NaiveDateTime, NaiveDate};
+use log::{debug};
 
 #[derive(Debug)]
 pub struct Schedule {
@@ -48,21 +49,26 @@ impl Schedule {
             .collect()
     }
 
-    pub fn update_match_result(&mut self, id: &str, home_goals: u8, away_goals: u8) {
-        for tour in &mut self.tours {
-            if tour.played {
-                continue;
-            }
+    pub fn update_match_result(&mut self, id: &str, home_goals: u8, away_goals: u8) {        
+        let mut updated = false;
 
-            if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {
+        for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {            
+            if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {                
                 item.result = Some(ScheduleItemResult {
                     home_goals,
                     away_goals
                 });
 
-                if tour.items.iter().all(|i| i.result.is_some()) {
-                    tour.played = true;
-                }
+                updated = true;
+            }
+        }
+
+        match updated {
+            true => {
+                debug!("update match result, schedule_id={}, {}:{}", id, home_goals, away_goals);
+            }
+            _ => {
+                debug!("match result not updated, schedule_id={}, {}:{}", id, home_goals, away_goals);
             }
         }
     }
@@ -95,7 +101,7 @@ pub struct ScheduleItem {
 
 impl ScheduleItem {
     pub fn new(league_id: u32, home_team_id: u32, away_team_id: u32, date: NaiveDateTime) -> Self {
-        let id = format!("{}{}{}", date, home_team_id, away_team_id);
+        let id = format!("{}_{}_{}", date.date(), home_team_id, away_team_id);
 
         ScheduleItem {
             id,
@@ -118,17 +124,19 @@ pub struct ScheduleItemResult{
 #[derive(Debug, Clone)]
 pub struct ScheduleTour {
     pub num: u8,
-    pub items: Vec<ScheduleItem>,
-    pub played: bool,
+    pub items: Vec<ScheduleItem>
 }
 
 impl ScheduleTour {
     pub fn new(num: u8, games_count: usize) -> Self {
         ScheduleTour {
             num,
-            items: Vec::with_capacity(games_count),
-            played: false,
+            items: Vec::with_capacity(games_count)
         }
+    }
+
+    pub fn played(&self) -> bool {
+        self.items.iter().all(|i| i.result.is_some())
     }
 
     pub fn min_date(&self) -> Option<NaiveDate> {
