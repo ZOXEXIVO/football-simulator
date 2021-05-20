@@ -111,7 +111,7 @@ impl SimulatorData {
             .find(|c| c.id == id)
     }
 
-    pub fn countie_mut(&mut self, id: u32) -> Option<&mut Country> {
+    pub fn country_mut(&mut self, id: u32) -> Option<&mut Country> {
         self.continents
             .iter_mut()
             .flat_map(|c| &mut c.countries)

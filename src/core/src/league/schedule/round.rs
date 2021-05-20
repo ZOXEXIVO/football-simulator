@@ -105,12 +105,12 @@ fn generate_tours(
 }
 
 fn generate_game_pairs(teams: &[u32], tours_count: usize) -> Vec<(u32, u32)> {
-    let mut result = Vec::new();
-
-    let mut temp_vec = Vec::new();
+    let mut result = Vec::with_capacity(tours_count);
 
     let team_len = teams.len() as u32;
     let team_len_half = team_len / 2 as u32;
+
+    let mut temp_vec = Vec::with_capacity((team_len_half + 1) as usize);
 
     for team in 0..team_len_half + 1 {
         temp_vec.push((teams[team as usize], teams[(team_len - team - 1) as usize]))
