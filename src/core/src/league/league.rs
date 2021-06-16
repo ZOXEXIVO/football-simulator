@@ -54,7 +54,7 @@ impl League {
 
             match schedule_generator.generate(
                 self.id,
-                Season::OneYear(2021),
+                Season::OneYear(ctx.simulation.date.year() as u16),
                 league_ctx.team_ids,
                 &self.settings,
             ) {

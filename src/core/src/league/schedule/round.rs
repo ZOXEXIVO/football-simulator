@@ -145,3 +145,29 @@ fn rotate(clubs: &mut Vec<(u32, u32)>) {
     clubs[0].0 = right_top;
     clubs[teams_len - 1].1 = left_bottom;
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::league::DayMonthPeriod;
+
+    #[test]
+    fn generate_items() {
+        let schedule = RoundSchedule::new();
+        
+        const LEAGUE_ID: u32 = 1;
+        
+        let teams = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        
+        let league_settings = LeagueSettings{
+            season_starting_half: DayMonthPeriod::new(1, 1, 1, 1),
+            season_ending_half: DayMonthPeriod::new(1, 12, 1, 12),
+        };
+        
+        let schedule = schedule.generate(
+            LEAGUE_ID,Season::OneYear(2020), &teams, &league_settings
+        ).unwrap();
+
+        assert_eq!(18, schedule.tours.len());
+    }
+}

@@ -74,6 +74,7 @@ impl Schedule {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct ScheduleError {
     pub message: String
 }
