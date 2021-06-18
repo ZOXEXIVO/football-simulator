@@ -6,6 +6,7 @@ use chrono::prelude::*;
 use chrono::Duration;
 use chrono::NaiveDate;
 use log::{debug, warn};
+use itertools::Itertools;
 
 // const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
 
@@ -32,13 +33,6 @@ impl ScheduleGenerator for RoundSchedule {
             ScheduleError::from_str("team_len is empty");
         }
 
-        let tours_count = (teams_len * teams_len - teams_len) / (teams_len / 2);
-
-        debug!(
-            "schedule: team_len = {}, tours_count = {}",
-            teams_len, tours_count
-        );
-
         let (season_year_start, season_year_end) = match season {
             Season::OneYear(year) => (year, year),
             Season::TwoYear(start_year, end_year) => (start_year, end_year),
@@ -50,11 +44,11 @@ impl ScheduleGenerator for RoundSchedule {
             league_settings.season_starting_half.from_day as u32,
         ));
 
-        let mut result = Schedule::with_tours_capacity((teams_len / 2) * tours_count);
+        let tours_count = (teams_len * teams_len - teams_len) / (teams_len / 2);
 
-        for item in generate_tours(league_id, teams, current_date) {
-            result.tours.push(item);
-        }
+        let mut result = Schedule::with_tours_capacity(tours_count);
+
+        result.tours.extend(generate_tours(league_id, teams, tours_count, current_date));
 
         Ok(result)
     }
@@ -63,21 +57,20 @@ impl ScheduleGenerator for RoundSchedule {
 fn generate_tours(
     league_id: u32,
     teams: &[u32],
+    tours_count: usize,
     mut current_date: NaiveDateTime,
 ) -> Vec<ScheduleTour> {
     let team_len = teams.len() as u32;
     let games_count = (team_len / 2) as usize;
 
-    let tours_count = ((team_len * team_len - team_len) / (team_len / 2)) as usize;
-
     let mut result = Vec::with_capacity(tours_count);
 
     let mut games_offset = 0;
 
-    let games = generate_game_pairs(teams, tours_count);
+    let games = generate_game_pairs(&teams, tours_count);
 
-    for tour in 1..tours_count {
-        let mut tour = ScheduleTour::new(tour as u8, games_count);
+    for tour in 0..tours_count {
+        let mut tour = ScheduleTour::new((tour + 1) as u8, games_count);
 
         for game_idx in 0..games_count {
             let (home_team_id, away_team_id) = games[games_offset + game_idx as usize];
@@ -88,11 +81,6 @@ fn generate_tours(
                 away_team_id,
                 current_date,
             ));
-
-            debug!(
-                "date = {}, home_team_id = {}, away_team_id = {}",
-                current_date, home_team_id, away_team_id
-            );
         }
 
         games_offset += games_count;
@@ -112,7 +100,7 @@ fn generate_game_pairs(teams: &[u32], tours_count: usize) -> Vec<(u32, u32)> {
 
     let mut temp_vec = Vec::with_capacity((team_len_half + 1) as usize);
 
-    for team in 0..team_len_half + 1 {
+    for team in 0..team_len_half {
         temp_vec.push((teams[team as usize], teams[(team_len - team - 1) as usize]))
     }
 
@@ -152,22 +140,32 @@ mod tests {
     use crate::league::DayMonthPeriod;
 
     #[test]
-    fn generate_items() {
+    fn generate_schedule_is_correct() {
         let schedule = RoundSchedule::new();
         
         const LEAGUE_ID: u32 = 1;
         
-        let teams = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        let teams = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
         
         let league_settings = LeagueSettings{
-            season_starting_half: DayMonthPeriod::new(1, 1, 1, 1),
-            season_ending_half: DayMonthPeriod::new(1, 12, 1, 12),
+            season_starting_half: DayMonthPeriod::new(1, 1, 30, 6),
+            season_ending_half: DayMonthPeriod::new(1, 7, 1, 12),
         };
         
         let schedule = schedule.generate(
-            LEAGUE_ID,Season::OneYear(2020), &teams, &league_settings
+            LEAGUE_ID,Season::TwoYear(2020, 2021), &teams, &league_settings
         ).unwrap();
 
-        assert_eq!(18, schedule.tours.len());
+        assert_eq!(30, schedule.tours.len());
+        
+        for tour in &schedule.tours {
+            for team_id in &teams {
+                let home_team_id = tour.items.iter().map(|t| t.home_team_id).filter(|t| *t == *team_id).count();
+                assert!(home_team_id < 2, "multiple home_team {} in tour {}", team_id, tour.num);
+
+                let away_team_id = tour.items.iter().map(|t| t.away_team_id).filter(|t| *t == *team_id).count();
+                assert!(away_team_id < 2, "multiple away_team {} in tour {}", team_id, tour.num);
+            }            
+        }
     }
 }
