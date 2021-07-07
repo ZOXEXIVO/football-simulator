@@ -31,14 +31,14 @@ impl LeagueTable {
     }
    
     #[inline]
-    fn get_team(&mut self, team_id: u32) -> &mut LeagueTableRow {
+    fn get_team_mut(&mut self, team_id: u32) -> &mut LeagueTableRow {
         self.rows.iter_mut()
             .find(|c| c.team_id == team_id)
             .unwrap()
     }
 
-    fn winner(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut club = self.get_team(team_id);
+    fn winner(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
+        let mut club = self.get_team_mut(team_id);
 
         club.played += 1;
         club.win += 1;
@@ -47,8 +47,8 @@ impl LeagueTable {
         club.points += 3;
     }
 
-    fn looser(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut club = self.get_team(team_id);
+    fn looser(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
+        let mut club = self.get_team_mut(team_id);
 
         club.played += 1;
         club.lost += 1;
@@ -56,8 +56,8 @@ impl LeagueTable {
         club.goal_concerned += goal_concerned;
     }
 
-    fn draft(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut club = self.get_team(team_id);
+    fn draft(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
+        let mut club = self.get_team_mut(team_id);
 
         club.played += 1;
         club.draft += 1;
@@ -84,7 +84,7 @@ impl LeagueTable {
             }
         }
 
-        self.rows.sort_by(|a, b| Ord::cmp(&a.points, &b.points));
+        self.rows.sort_by(|a, b| Ord::cmp(&b.points, &a.points));
     }
 
     pub fn get(&self) -> &[LeagueTableRow] {
@@ -99,8 +99,8 @@ pub struct LeagueTableRow {
     pub win: u8,
     pub draft: u8,
     pub lost: u8,
-    pub goal_scored: u8,
-    pub goal_concerned: u8,
+    pub goal_scored: i32,
+    pub goal_concerned: i32,
     pub points: u8,
 }
 

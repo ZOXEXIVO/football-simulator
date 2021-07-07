@@ -49,7 +49,7 @@ impl Schedule {
             .collect()
     }
 
-    pub fn update_match_result(&mut self, id: &str, home_goals: u8, away_goals: u8) {        
+    pub fn update_match_result(&mut self, id: &str, home_goals: i32, away_goals: i32) {        
         let mut updated = false;
 
         for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {            
@@ -118,8 +118,8 @@ impl ScheduleItem {
 
 #[derive(Debug, Clone)]
 pub struct ScheduleItemResult{
-    pub home_goals: u8,
-    pub away_goals: u8,
+    pub home_goals: i32,
+    pub away_goals: i32,
 }
 
 #[derive(Debug, Clone)]

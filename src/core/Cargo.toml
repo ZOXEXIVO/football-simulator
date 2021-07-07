@@ -6,9 +6,9 @@ edition = "2018"
 
 [dependencies]
 chrono = "0.4.19"
-rand = "0.8.3"
+rand = "0.8.4"
 rayon = "1.5.1"
-rand_distr = "0.4.0"
+rand_distr = "0.4.1"
 serde = "1.0.126"
 serde_json = "1.0.64"
 log = { version = "0.4.14", features = ["release_max_level_debug"] }

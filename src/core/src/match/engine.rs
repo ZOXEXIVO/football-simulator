@@ -1,11 +1,14 @@
 use crate::Squad;
 use std::mem;
 use crate::club::PlayerPositionType;
-use super::distributions::random_gamma;
+use super::distributions::{random};
+use std::fmt::{Display, Formatter};
+use rand_distr::Gamma;
+use rand::prelude::Distribution;
 
 pub struct FootballEngine<'s> {
-    home_squad: Squad<'s>,
-    away_squad: Squad<'s>,
+    pub home_squad: Squad<'s>,
+    pub away_squad: Squad<'s>,
 }
 
 const MATCH_ACTIONS: u16 = 100;
@@ -35,24 +38,29 @@ impl<'s> FootballEngine<'s> {
         for _ in 0..MATCH_ACTIONS {
             let winner_team = self.get_battle_winner(&attacking_team, &defending_team, &field_zone);
 
-            if winner_team.id == attacking_team.id {
+            println!("field_zone: {:?}", field_zone);
+         
+            if winner_team.id == attacking_team.id {                
                 if attacking_team.id == home_team.id {
                     if field_zone == MatchFieldZone::BGoal {
                         result.score.home += 1;
+                        
                         field_zone = MatchFieldZone::Midfield;
-
                         mem::swap(&mut attacking_team, &mut defending_team);
                     } else {
                         field_zone = Self::up_field(&field_zone);
                     }
-                } else if field_zone == MatchFieldZone::AGoal {
-                    result.score.away += 1;
-                    field_zone = MatchFieldZone::Midfield;
-                    mem::swap(&mut attacking_team, &mut defending_team);
                 } else {
-                    field_zone = Self::down_field(&field_zone);
+                    if field_zone == MatchFieldZone::AGoal {
+                        result.score.away += 1;
+                        
+                        field_zone = MatchFieldZone::Midfield;
+                        mem::swap(&mut attacking_team, &mut defending_team);
+                    } else {
+                        field_zone = Self::down_field(&field_zone);
+                    }
                 }
-            } else {
+            } else {                
                 field_zone = MatchFieldZone::Midfield;
                 mem::swap(&mut attacking_team, &mut defending_team);
             }
@@ -63,7 +71,7 @@ impl<'s> FootballEngine<'s> {
 
     fn up_field(field: &MatchFieldZone) -> MatchFieldZone {
         match field {
-            MatchFieldZone::AGoal => MatchFieldZone::AField,
+            MatchFieldZone::AGoal => MatchFieldZone::Midfield,
             MatchFieldZone::AField => MatchFieldZone::Midfield,
             MatchFieldZone::Midfield => MatchFieldZone::BField,
             MatchFieldZone::BField => MatchFieldZone::BGoal,
@@ -74,7 +82,7 @@ impl<'s> FootballEngine<'s> {
 
     fn down_field(field: &MatchFieldZone) -> MatchFieldZone {
         match field {
-            MatchFieldZone::BGoal => MatchFieldZone::BField,
+            MatchFieldZone::BGoal => MatchFieldZone::Midfield,
             MatchFieldZone::BField => MatchFieldZone::Midfield,
             MatchFieldZone::Midfield => MatchFieldZone::AField,
             MatchFieldZone::AField => MatchFieldZone::AGoal,
@@ -108,9 +116,9 @@ impl<'s> FootballEngine<'s> {
             _ => {}
         }
 
-        let random_a = random_gamma(attacking_team_skill as f64, 0.5);
-        let random_d = random_gamma(defending_team_skill as f64, 0.5);
-
+        let random_a = random(0.0, attacking_team_skill as f64);
+        let random_d = random(0.0, defending_team_skill as f64);
+        
         if random_a > random_d {
             attacking_team
         } else {
@@ -172,8 +180,8 @@ pub struct FootballMatchDetails {
 }
 
 pub struct Score {
-    pub home: u8,
-    pub away: u8,
+    pub home: i32,
+    pub away: i32,
 }
 
 #[derive(Debug, PartialEq)]

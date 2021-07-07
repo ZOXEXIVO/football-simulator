@@ -51,7 +51,7 @@ pub struct MatchResult  {
     pub schedule_id: String,
     pub player_changes: Vec<PlayerChanges>,
     pub home_team_id: u32,
-    pub home_goals: u8,
+    pub home_goals: i32,
     pub away_team_id: u32,
-    pub away_goals: u8,
+    pub away_goals: i32,
 }
