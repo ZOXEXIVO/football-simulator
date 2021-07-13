@@ -216,7 +216,7 @@ table.squad-table {
 }
 
 table.squad-table td, th {
- padding-top: 5px;
+ padding-top: 13px;
  padding-bottom: 5px;
 }
 
@@ -393,7 +393,7 @@ p {
 }
 
 .status-badge{
- margin-top: 10px;
+ margin-top: -6px; 
  position: relative;
  width: 37px;
  height: 27px;

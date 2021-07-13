@@ -38,8 +38,6 @@ impl<'s> FootballEngine<'s> {
         for _ in 0..MATCH_ACTIONS {
             let winner_team = self.get_battle_winner(&attacking_team, &defending_team, &field_zone);
 
-            println!("field_zone: {:?}", field_zone);
-         
             if winner_team.id == attacking_team.id {                
                 if attacking_team.id == home_team.id {
                     if field_zone == MatchFieldZone::BGoal {

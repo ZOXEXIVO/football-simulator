@@ -113,7 +113,11 @@
                 {%- endif %}
             </td>
             <td style="text-align: center">
+                {% if item.result.is_some() %}
+                    {{ item.result.as_ref().unwrap().home_goals }} -  {{ item.result.as_ref().unwrap().away_goals }}
+                {%- else %}
                 -
+                {%- endif %}
             </td>
             <td>
                 <a href="/leagues/{{ item.competition_id }}">{{ item.competition_name }}</a>

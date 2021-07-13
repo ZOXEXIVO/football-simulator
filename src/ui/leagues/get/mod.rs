@@ -5,6 +5,8 @@ use askama::Template;
 use core::league::ScheduleTour;
 use itertools::*;
 use serde::Deserialize;
+use chrono::{Duration, Timelike};
+use core::NaiveDate;
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
@@ -96,47 +98,49 @@ pub async fn league_get_action(
         current_tour_schedule: Vec::new(),
     };
 
-    let now = simulator_data.date.date();
+    let now = simulator_data.date.date() + Duration::days(3);
 
+    let mut current_tour: Option<&ScheduleTour> = Option::None;
+    
     if let Some(schedule) = &league.schedule {
-        let actual_tour: Vec<&ScheduleTour> = schedule
-            .tours
-            .iter()
-            .map(|t| (t, t.min_date()))
-            .filter_map(|(tour, min_date)| {
-                if !tour.played() && min_date.is_some() && min_date.unwrap() > now {
-                    return Some(tour);
+        for tour in schedule.tours.iter() {
+            if now >= tour.start_date() && now <= tour.end_date() {
+                current_tour = Some(tour);
+            }
+        }
+        
+        if current_tour.is_none() {
+            for tour in schedule.tours.iter() {
+                if now >= tour.end_date() {
+                    current_tour = Some(tour);
                 }
-
-                None
-            })
-            .take(1)
-            .collect();
-
-        if let Some(tour) = actual_tour.first() {
-            for (key, group) in &tour.items.iter().group_by(|t| t.date.date()) {
-                let tour_schedule = TourSchedule {
-                    date: key.format("%d.%m.%Y").to_string(),
-                    matches: group
-                        .map(|item| LeagueScheduleItem {
-                            result: item.result.as_ref().map(|res| LeagueScheduleItemResult {
-                                home_goals: res.home_goals,
-                                away_goals: res.away_goals,
-                            }),
-
-                            home_team_id: item.home_team_id,
-                            home_team_name: simulator_data.team_name(item.home_team_id).unwrap(),
-
-                            away_team_id: item.away_team_id,
-                            away_team_name: simulator_data.team_name(item.away_team_id).unwrap(),
-                        })
-                        .collect(),
-                };
-
-                model.current_tour_schedule.push(tour_schedule)
             }
         }
     }
+
+    if current_tour.is_some() {
+        for (key, group) in &current_tour.as_ref().unwrap().items.iter().group_by(|t| t.date.date()) {
+            let tour_schedule = TourSchedule {
+                date: key.format("%d.%m.%Y").to_string(),
+                matches: group
+                    .map(|item| LeagueScheduleItem {
+                        result: item.result.as_ref().map(|res| LeagueScheduleItemResult {
+                            home_goals: res.home_goals,
+                            away_goals: res.away_goals,
+                        }),
+
+                        home_team_id: item.home_team_id,
+                        home_team_name: simulator_data.team_name(item.home_team_id).unwrap(),
+
+                        away_team_id: item.away_team_id,
+                        away_team_name: simulator_data.team_name(item.away_team_id).unwrap(),
+                    })
+                    .collect(),
+            };
+
+            model.current_tour_schedule.push(tour_schedule)
+        }
+    }    
 
     let html = LeagueGetViewModel::render(&model).unwrap();
 

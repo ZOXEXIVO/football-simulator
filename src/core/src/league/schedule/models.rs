@@ -28,7 +28,8 @@ impl Schedule {
                     s.league_id,
                     s.home_team_id,
                     s.away_team_id,
-                    s.date
+                    s.date,
+                    None
                 )
             })
             .collect()
@@ -39,11 +40,20 @@ impl Schedule {
             .flat_map(|t| &t.items)
             .filter(|s| s.home_team_id == team_id || s.away_team_id == team_id)
             .map(|s| {
+                let res = match &s.result {
+                    Some(result) => Some(ScheduleItemResult {
+                        home_goals: result.home_goals,
+                        away_goals: result.away_goals
+                    }),
+                    None => None
+                };
+                
                 ScheduleItem::new(
                     s.league_id,
                     s.home_team_id,
                     s.away_team_id,
-                    s.date
+                    s.date,
+                    res
                 )
             })
             .collect()
@@ -101,7 +111,7 @@ pub struct ScheduleItem {
 }
 
 impl ScheduleItem {
-    pub fn new(league_id: u32, home_team_id: u32, away_team_id: u32, date: NaiveDateTime) -> Self {
+    pub fn new(league_id: u32, home_team_id: u32, away_team_id: u32, date: NaiveDateTime, result: Option<ScheduleItemResult>) -> Self {
         let id = format!("{}_{}_{}", date.date(), home_team_id, away_team_id);
 
         ScheduleItem {
@@ -111,7 +121,7 @@ impl ScheduleItem {
             home_team_id,
             away_team_id,
 
-            result: None
+            result
         }
     }
 }
@@ -140,14 +150,11 @@ impl ScheduleTour {
         self.items.iter().all(|i| i.result.is_some())
     }
 
-    pub fn min_date(&self) -> Option<NaiveDate> {
-        match self.items.iter().min_by_key(|t| t.date) {
-            Some(item) => {
-                Some(item.date.date())
-            },
-            None => None
-        }
+    pub fn start_date(&self) -> NaiveDate {
+        self.items.iter().min_by_key(|t| t.date).unwrap().date.date()
+    }
+
+    pub fn end_date(&self) -> NaiveDate {
+        self.items.iter().max_by_key(|t| t.date).unwrap().date.date()
     }
 }
-
-
