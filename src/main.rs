@@ -31,7 +31,7 @@ impl Clone for GameAppData {
 async fn main() {
     env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
 
-    let (database, estimated) = TimeEstimation::estimate(|| DatabaseLoader::load());
+    let (database, estimated) = TimeEstimation::estimate(DatabaseLoader::load);
     
     info!("database loaded: {} ms", estimated);
 

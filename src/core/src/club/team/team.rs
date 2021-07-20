@@ -110,9 +110,11 @@ impl Team {
             self.tactics = Some(TacticsSelector::select(self, self.staffs.head_coach()));
         }
 
-        if self.training_schedule.is_time(ctx.simulation.date) {
-            Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
-        }
+        Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
+        
+        // if self.training_schedule.is_time(ctx.simulation.date) {
+        //     Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
+        // }
  
         result
     }
