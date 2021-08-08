@@ -11,7 +11,7 @@ pub struct FootballEngine<'s> {
     pub away_squad: Squad<'s>,
 }
 
-const MATCH_ACTIONS: u16 = 100;
+const MATCH_ACTIONS: u16 = 50;
 
 impl<'s> FootballEngine<'s> {
     pub fn new(home_squad: Squad<'s>, away_squad: Squad<'s>) -> Self {

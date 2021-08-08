@@ -1,5 +1,5 @@
-pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 use crate::context::SimulationContext;
+pub use chrono::prelude::{DateTime, Datelike, NaiveDate, Utc};
 
 #[derive(Debug, PartialEq)]
 pub enum StaffPosition {
@@ -24,7 +24,7 @@ pub enum StaffPosition {
     U19Manager,
     FirstTeamCoach,
     HeadOfYouthDevelopment,
-    CaretakerManager
+    CaretakerManager,
 }
 
 #[derive(Debug, PartialEq)]
@@ -42,7 +42,12 @@ pub struct StaffClubContract {
 }
 
 impl StaffClubContract {
-    pub fn new(salary: f64, expired: NaiveDate, position: StaffPosition, status: StaffStatus) -> Self {
+    pub fn new(
+        salary: f64,
+        expired: NaiveDate,
+        position: StaffPosition,
+        status: StaffStatus,
+    ) -> Self {
         StaffClubContract {
             salary,
             expired,

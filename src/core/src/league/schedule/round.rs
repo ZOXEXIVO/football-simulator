@@ -38,7 +38,7 @@ impl ScheduleGenerator for RoundSchedule {
             Season::TwoYear(start_year, end_year) => (start_year, end_year),
         };
 
-        let current_date = DateUtils::get_next_saturday(NaiveDate::from_ymd(
+        let current_date = DateUtils::next_saturday(NaiveDate::from_ymd(
             season_year_start as i32,
             league_settings.season_starting_half.from_month as u32,
             league_settings.season_starting_half.from_day as u32,

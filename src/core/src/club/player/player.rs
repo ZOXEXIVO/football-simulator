@@ -5,8 +5,12 @@ use crate::club::{
 };
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
-use crate::utils::{DateUtils, Logging, FormattingUtils};
-use crate::{ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerTransferStatus, Relations, PlayerValueCalculator, PlayerHappiness};
+use crate::utils::{DateUtils, FormattingUtils, Logging};
+use crate::{
+    ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerHappiness,
+    PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData,
+    PlayerTransferStatus, PlayerValueCalculator, Relations,
+};
 use chrono::{Duration, NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, Index};
@@ -157,7 +161,7 @@ impl Player {
     }
 
     pub fn value(&self, date: NaiveDate) -> f64 {
-       PlayerValueCalculator::calculate_value(self, date)      
+        PlayerValueCalculator::calculate_value(self, date)
     }
 
     #[inline]

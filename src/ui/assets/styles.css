@@ -172,6 +172,7 @@ table.week-results td {
 
 td.score {
  font-size: 21px;
+ width: 100px;
 }
 
 .rating {

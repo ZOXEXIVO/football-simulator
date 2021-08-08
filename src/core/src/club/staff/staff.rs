@@ -5,8 +5,9 @@ use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
-    Person, PersonAttributes, Relations, StaffAttributes, StaffCollectionResult, StaffDataAnalysis,
-    StaffGoalkeeperCoaching, StaffKnowledge, StaffMedical, StaffMental, TeamType, StaffCoaching
+    Person, PersonAttributes, Relations, StaffAttributes, StaffCoaching, StaffCollectionResult,
+    StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge, StaffMedical, StaffMental,
+    TeamType,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
@@ -134,9 +135,7 @@ impl Staff {
         result
     }
 
-    fn process_contract(&mut self, result: &mut StaffResult, now: NaiveDateTime) {
-        
-    }
+    fn process_contract(&mut self, result: &mut StaffResult, now: NaiveDateTime) {}
 }
 
 //DISPLAY

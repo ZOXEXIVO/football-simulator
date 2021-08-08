@@ -8,7 +8,7 @@ impl DateUtils {
         birth_date.month() == current_date.month() && birth_date.day() == current_date.day()
     }
 
-    pub fn get_next_saturday(date: NaiveDate) -> NaiveDateTime {
+    pub fn next_saturday(date: NaiveDate) -> NaiveDateTime {
         let mut current_date = NaiveDateTime::new(
             NaiveDate::from_ymd(date.year(), date.month() as u32, date.day() as u32),
             NaiveTime::from_hms(0, 0, 0),

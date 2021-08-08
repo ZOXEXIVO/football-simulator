@@ -36,8 +36,6 @@ impl PlayerTraining {
     }
 
     pub fn train(player: &mut Player, coach: &Staff) {
-        let mut rng = rand::thread_rng();
-        
         match coach.behaviour.state {
             PersonBehaviourState::Good => {
                 player.skills.mental.train(IntegerUtils::random(-1, 1) as i8);

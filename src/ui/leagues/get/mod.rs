@@ -5,8 +5,7 @@ use askama::Template;
 use core::league::ScheduleTour;
 use itertools::*;
 use serde::Deserialize;
-use chrono::{Duration, Timelike};
-use core::NaiveDate;
+use chrono::{Duration};
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
