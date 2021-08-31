@@ -44,7 +44,7 @@ impl StaffGenerator {
             NaiveDate::from_ymd(year as i32, month, day),
             Self::generate_staff_attributes(),
             Some(StaffClubContract::new(
-                IntegerUtils::random(1000, 200000) as f64,
+                IntegerUtils::random(1000, 200000) as u32,
                 NaiveDate::from_ymd(now.year() + IntegerUtils::random(1, 5), 3, 14),
                 position,
                 StaffStatus::Active,

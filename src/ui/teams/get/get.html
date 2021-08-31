@@ -110,10 +110,17 @@
         {% for player in players %}
         <tr>
             <td style="width: 50px">
+                {% if player.injured -%}
+                    <div class="status-badge injured">
+                    </div>
+                {% endif -%}
+                
                 <div class="status-badge wanted">
                 </div>
             </td>
             <td>
+                <div class="player-info-logo">
+                </div>
                 <a href="/teams/{{ id }}/players/{{ player.id }}">
                     {{ player.last_name }}&nbsp;{{ player.first_name }}
                 </a>

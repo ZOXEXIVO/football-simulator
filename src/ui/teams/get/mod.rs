@@ -47,6 +47,8 @@ pub struct TeamPlayer<'cp>{
     
     pub value: String,
     
+    pub injured: bool,
+    
     pub country_id: u32,
     pub country_code: &'cp str,
     pub country_name: &'cp str,
@@ -78,6 +80,7 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
             position_sort: p.positions.position(),
             position,
             behaviour: p.behaviour.as_str(),
+            injured: p.player_attributes.is_injured,
             country_id: country.id,
             country_code: &country.code,
             country_name: &country.name,

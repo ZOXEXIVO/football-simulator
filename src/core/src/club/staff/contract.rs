@@ -36,14 +36,14 @@ pub enum StaffStatus {
 #[derive(Debug)]
 pub struct StaffClubContract {
     expired: NaiveDate,
-    pub salary: f64,
+    pub salary: u32,
     pub position: StaffPosition,
     pub status: StaffStatus,
 }
 
 impl StaffClubContract {
     pub fn new(
-        salary: f64,
+        salary: u32,
         expired: NaiveDate,
         position: StaffPosition,
         status: StaffStatus,

@@ -10,3 +10,18 @@
     background-repeat: no-repeat;
     padding: 20px;
 }
+
+.player-info-logo {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABK0lEQVQ4jaXTsUokQRSF4W/aiXwCQSMRM0HBWSNBxFQw3sBERAoDQUFYDcXA0Og6GhuI7Bss8wAyoWgmy2JgaGBgIIOB3WvbdIPoHxV177l1ilPVUiGlNIl1LGE83/6HHroRcVPub5WEbRxiG+3q4JwBTrATEc//B+TiS6w0CKv8wXJEPGf5xkGN+AnzmMJ9pbaEY2illCZwW2P7KiLmcofn+FlznZk21mrEMJtS2sNjjTvIkNpYqCkWJ2yWmutYzLxHVeUuIkYjYtRbhHWMNU3+NBn+fkN/n2m29xl6Gc7w8gXxAN3iJR5ht9LwgK18/QvTlfppRGwU+e9j0se8R3DRZL0YPgT9fn/Q6XR+Yxg/NOc+QBerHz5Tmfw7b2DR2xspkurhLCKuy/2v0aRM5uT00V0AAAAASUVORK5CYII=');
+    
+    background-size: cover;
+    width: 10px;
+    height: 10px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    padding: 6px;
+}
+
+
+
+
