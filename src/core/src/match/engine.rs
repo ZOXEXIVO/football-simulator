@@ -4,7 +4,6 @@ use crate::club::PlayerPositionType;
 use super::distributions::{random};
 use std::fmt::{Display, Formatter};
 use rand_distr::Gamma;
-use rand::prelude::Distribution;
 
 pub struct FootballEngine<'s> {
     pub home_squad: Squad<'s>,

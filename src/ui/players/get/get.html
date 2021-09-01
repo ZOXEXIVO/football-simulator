@@ -56,6 +56,24 @@
 
 {% block game_content %}
 
+<div class="header_row" style="height: 55px;margin-left: 0">
+    <div class="header_bottom">
+        <ul class="nav navbar-left">
+            <li><a href="/#">Overview</a></li>
+            <li><a href="/#">Contract</a></li>
+            <li><a href="/#">Transfer</a></li>
+            <li><a href="/#">Development</a></li>
+            <li><a href="/#">Reports</a></li>
+            <li><a href="/#">Interaction</a></li>
+            <li><a href="/#">Comprarision</a></li>
+            <li><a href="/#">History</a></li>
+        </ul>
+        <ul class="nav navbar-right" style="margin-right: 0">
+            <li class="item-user"><a href=""><i class="fas fa-user-friends"></i></a></li>
+        </ul>
+    </div>
+</div>
+
 <div class="player-content">
     <div class="row player-header">
         <div class="col-xs-3">
@@ -74,7 +92,7 @@
                     <p>{{ player_attributes.international_apps}} caps / {{ player_attributes.international_goals }} goals</p>
 
                     {% if player_attributes.under_21_international_apps > 0 %}
-                        <p>{{ player_attributes.under_21_international_apps}} U21 caps / {{ player_attributes.under_21_international_goals }} U21 goals</p>
+                        <p>{{ player_attributes.under_21_international_apps}} U21 caps / {{ player_attributes.under_21_international_goals }} U21 goal</p>
                     {%- else %}
                     <p>No youth caps</p>
                     {%- endif %}
@@ -83,11 +101,11 @@
         </div>
         <div class="col-xs-3 delim">
             <div class="row">
-                <div class="col-xs-1">
+                <div class="col-xs-2">
                     <div class="status-badge wanted">
                     </div>
                 </div>
-                <div class="col-xs-11 contract-info">
+                <div class="col-xs-10 contract-info">
                     <p class="contracted">Contracted to <a href="/teams/{{ team_id }}" style="color: #787B7A;">{{ team_name }}</a></p>
                     <p>Valued at ${{value}}</p>
 

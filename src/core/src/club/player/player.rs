@@ -275,15 +275,7 @@ impl PlayerCollection {
     }
 
     pub fn get_week_salary(&self) -> u32 {
-        let mut result: u32 = 0;
-
-        for player in &self.players {
-            if let Some(contract) = &player.contract {
-                result += contract.salary as u32
-            }
-        }
-
-        result
+        self.players.iter().filter_map(|p| p.contract.as_ref()).map(|c| c.salary).sum::<u32>()
     }
 
     pub fn players(&self) -> Vec<&Player> {
