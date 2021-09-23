@@ -93,7 +93,8 @@ impl Team {
         Squad {
             team_id: self.id,
             tactics: TacticsSelector::select(self, head_coach),
-            players: PlayerSelector::select(self, head_coach),
+            main_squad: PlayerSelector::select(self, head_coach),
+            substitutes: vec![]
         }
     }
 

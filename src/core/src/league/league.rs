@@ -35,19 +35,17 @@ impl League {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
-        let league_ctx = ctx.league.as_ref().unwrap();
-
-        if self.table.is_none() {
-            self.table = Some(LeagueTable::with_clubs(&league_ctx.team_ids));
-        }
-
         let scheduled_matches = self.simulate_schedule(&ctx);
 
         LeagueResult::new(self.id, scheduled_matches)
     }
 
     fn simulate_schedule(&mut self, ctx: &GlobalContext<'_>) -> Vec<LeagueMatch> {
-        if self.schedule.is_none() || self.settings.is_time_for_new_schedule(&ctx.simulation) {
+        if self.settings.is_time_for_new_schedule(&ctx.simulation) || self.schedule.is_none() {
+            let league_ctx = ctx.league.as_ref().unwrap();
+
+            self.table = Some(LeagueTable::with_clubs(&league_ctx.team_ids));
+
             let schedule_generator = self.get_schedule_generator();
 
             let league_ctx = ctx.league.as_ref().unwrap();

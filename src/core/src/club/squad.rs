@@ -5,7 +5,8 @@ use crate::Tactics;
 pub struct Squad<'s> {
     pub team_id: u32,
     pub tactics: Tactics,
-    pub players: Vec<SquadPlayer<'s>>,
+    pub main_squad: Vec<SquadPlayer<'s>>,
+    pub substitutes: Vec<SquadPlayer<'s>>
 }
 
 impl<'s> Squad<'s> {}

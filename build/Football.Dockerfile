@@ -1,4 +1,4 @@
-FROM rust:1.54 as build
+FROM rust:1.55 as build
 WORKDIR /src
 
 COPY ./ ./
@@ -7,7 +7,7 @@ RUN cargo test -p core
 
 RUN cargo build --release
 
-FROM rust:1.54-slim
+FROM rust:1.55-slim
 WORKDIR /app
 
 COPY --from=build /src/target/release/football_simulator .

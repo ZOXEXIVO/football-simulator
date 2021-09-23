@@ -11,6 +11,7 @@ pub struct FootballEngine<'s> {
 }
 
 const MATCH_ACTIONS: u16 = 50;
+const DEFAULT_MATCH_EVENTS: usize = 100;
 
 impl<'s> FootballEngine<'s> {
     pub fn new(home_squad: Squad<'s>, away_squad: Squad<'s>) -> Self {
@@ -25,7 +26,8 @@ impl<'s> FootballEngine<'s> {
 
         let mut result = FootballMatchDetails {
             score: Score { home: 0, away: 0 },
-            player_changes: vec![],
+            events: Vec::with_capacity(DEFAULT_MATCH_EVENTS),
+            player_changes: Vec::new()
         };
 
         let home_team = self.get_team_for_squad(&self.home_squad);
@@ -126,7 +128,7 @@ impl<'s> FootballEngine<'s> {
     fn get_team_for_squad(&self, squad: &Squad) -> MatchTeam {
         let mut team = MatchTeam::new(squad.team_id);
 
-        for player in squad.players.iter().map(|p| &p.player) {
+        for player in squad.main_squad.iter().map(|p| &p.player) {
             match &player.position() {
                 PlayerPositionType::Goalkeeper => {
                     team.goalkeeping_skill += player.get_skill() as f32;
@@ -173,6 +175,7 @@ impl MatchTeam {
 
 pub struct FootballMatchDetails {
     pub score: Score,
+    pub events: Vec<MatchEvents>,
     pub player_changes: Vec<PlayerChanges>,
 }
 
@@ -191,3 +194,9 @@ pub enum MatchFieldZone {
 }
 
 pub struct PlayerChanges {}
+
+pub enum MatchEvents {
+    Goal(u32),
+    Injury(u32),
+    
+ }
