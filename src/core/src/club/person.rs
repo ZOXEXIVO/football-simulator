@@ -8,10 +8,12 @@ pub trait Person {
     fn birthday(&self) -> NaiveDate;
     
     fn age(&self, now: NaiveDate) -> u8 { 
-        let mut age = now.year() - self.birthday().year();
+        let birthday = self.birthday();
+        
+        let mut age = now.year() - birthday.year();
  
-        if now.month() < self.birthday().month() || 
-            (now.month() == self.birthday().month() && now.day() < self.birthday().day()) {
+        if now.month() < birthday.month() || 
+            (now.month() == birthday.month() && now.day() < birthday.day()) {
             age -= 1;
         }
         

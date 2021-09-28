@@ -5,8 +5,7 @@ use crate::shared::SimulatorDataIndexes;
 use crate::transfers::TransferPool;
 use crate::utils::Logging;
 use crate::{Club, Country, Player, Team};
-use chrono::{Duration, NaiveDateTime, Timelike};
-use std::collections::HashMap;
+use chrono::{Duration, NaiveDateTime};
 
 pub struct FootballSimulator;
 

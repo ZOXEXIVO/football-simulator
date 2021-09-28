@@ -13,10 +13,10 @@ pub enum PlayerPositionType {
     MidfielderRight,
     AttackingMidfielderLeft,
     AttackingMidfielderCenter,
-    AttackingMidfielderRight,
-    Striker,
+    AttackingMidfielderRight,    
     WingbackLeft,
     WingbackRight,
+    Striker,
 }
 
 impl Display for PlayerPositionType {
