@@ -5,15 +5,15 @@ use crate::club::{
 };
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
-use crate::utils::{DateUtils, FormattingUtils, Logging};
+use crate::utils::{DateUtils, Logging};
 use crate::{
     ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerHappiness,
     PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData,
-    PlayerTransferStatus, PlayerValueCalculator, Relations,
+    PlayerValueCalculator, Relations,
 };
-use chrono::{Duration, NaiveDate, NaiveDateTime};
+use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
-use std::ops::{Add, Index};
+use std::ops::{Index};
 
 #[derive(Debug)]
 pub struct Player {
@@ -165,10 +165,15 @@ impl Player {
     }
 
     #[inline]
-    pub fn position(&self) -> PlayerPositionType {
-        self.positions.position()
+    pub fn positions(&self) -> Vec<PlayerPositionType> {
+        self.positions.positions()
     }
-
+    
+    #[inline]
+    pub fn position(&self) -> PlayerPositionType {
+        *self.positions.positions().first().unwrap()
+    }
+    
     pub fn preferred_foot_str(&self) -> &'static str {
         match self.preferred_foot {
             PlayerPreferredFoot::Left => "Left",
@@ -190,7 +195,13 @@ impl Player {
     }
 
     pub fn get_skill(&self) -> u32 {
-        self.skills.get_for_position(self.position())
+        let positions = self.positions();
+        let positions_sum: u32 = positions
+            .iter()
+            .map(|pos| self.skills.get_for_position(*pos))
+            .sum();
+
+        (positions_sum as f32 / positions.len() as f32) as u32  
     }
 }
 

@@ -1,5 +1,6 @@
 use crate::{Player, Person, PlayerPositionType};
 use chrono::{NaiveDate};
+use itertools::Itertools;
 
 pub struct PlayerUtils;
 
@@ -37,7 +38,7 @@ impl PlayerUtils {
 
         if age >= 34 {
             dap = dap - 1.0;
-            if pa <= (ca + 10) as u8 && player.positions.position() == PlayerPositionType::Goalkeeper {
+            if pa <= (ca + 10) as u8 && player.positions().contains(&PlayerPositionType::Goalkeeper) {
                 dap = 0.5;
             }
         }

@@ -29,6 +29,8 @@ impl Clone for GameAppData {
 
 #[actix_web::main]
 async fn main() {
+    color_eyre::install().unwrap();
+    
     env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
 
     let (database, estimated) = TimeEstimation::estimate(DatabaseLoader::load);

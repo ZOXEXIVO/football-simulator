@@ -2,7 +2,7 @@ use crate::club::academy::result::ClubAcademyResult;
 use crate::club::{BoardResult, ClubFinanceResult};
 use crate::simulator::SimulatorData;
 use crate::{
-    Player, PlayerContractProposal, PlayerMessage, PlayerMessageType, PlayerResult, TeamResult,
+    PlayerContractProposal, PlayerMessage, PlayerMessageType, PlayerResult, TeamResult,
 };
 
 pub struct ClubResult {

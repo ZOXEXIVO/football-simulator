@@ -77,7 +77,7 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
         TeamPlayer {
             id: p.id,
             first_name: &p.full_name.first_name,
-            position_sort: p.positions.position(),
+            position_sort: p.position(),
             position,
             behaviour: p.behaviour.as_str(),
             injured: p.player_attributes.is_injured,
@@ -85,10 +85,10 @@ pub async fn team_get_action(state: Data<GameAppData>, route_params: web::Path<T
             country_code: &country.code,
             country_name: &country.name,
             last_name: &p.full_name.last_name,
-            conditions: get_conditions(&p),
+            conditions: get_conditions(p),
             value: FormattingUtils::short_money_str(p.value(now)),
-            current_ability: get_current_ability_stars(&p),
-            potential_ability: get_potential_ability_stars(&p)
+            current_ability: get_current_ability_stars(p),
+            potential_ability: get_potential_ability_stars(p)
         }
     }).collect();
     

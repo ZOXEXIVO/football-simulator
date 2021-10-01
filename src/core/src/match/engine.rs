@@ -2,8 +2,6 @@ use crate::Squad;
 use std::mem;
 use crate::club::PlayerPositionType;
 use super::distributions::{random};
-use std::fmt::{Display, Formatter};
-use rand_distr::Gamma;
 
 pub struct FootballEngine<'s> {
     pub home_squad: Squad<'s>,
@@ -129,23 +127,25 @@ impl<'s> FootballEngine<'s> {
         let mut team = MatchTeam::new(squad.team_id);
 
         for player in squad.main_squad.iter().map(|p| &p.player) {
-            match &player.position() {
-                PlayerPositionType::Goalkeeper => {
-                    team.goalkeeping_skill += player.get_skill() as f32;
+            for position in &player.positions() {
+                match position {
+                    PlayerPositionType::Goalkeeper => {
+                        team.goalkeeping_skill += player.get_skill() as f32;
+                    }
+                    PlayerPositionType::Sweeper | PlayerPositionType::DefenderLeft | PlayerPositionType::DefenderCenter | PlayerPositionType::DefenderRight => {
+                        team.defender_skill += player.get_skill() as f32;
+                    }
+                    PlayerPositionType::MidfielderLeft | PlayerPositionType::MidfielderCenter | PlayerPositionType::MidfielderRight => {
+                        team.defender_skill += 0.5 * player.get_skill() as f32;
+                        team.midfielder_skill += player.get_skill() as f32;
+                        team.striker_skill += 0.5 * player.get_skill() as f32;
+                    }
+                    PlayerPositionType::WingbackLeft | PlayerPositionType::Striker | PlayerPositionType::WingbackRight  => {
+                        team.striker_skill += player.get_skill() as f32;
+                    }
+                    _ => {}
                 }
-                PlayerPositionType::Sweeper | PlayerPositionType::DefenderLeft | PlayerPositionType::DefenderCenter | PlayerPositionType::DefenderRight => {
-                    team.defender_skill += player.get_skill() as f32;
-                }
-                PlayerPositionType::MidfielderLeft | PlayerPositionType::MidfielderCenter | PlayerPositionType::MidfielderRight => {
-                    team.defender_skill += 0.5 * player.get_skill() as f32;
-                    team.midfielder_skill += player.get_skill() as f32;
-                    team.striker_skill += 0.5 * player.get_skill() as f32;
-                }
-                PlayerPositionType::WingbackLeft | PlayerPositionType::Striker | PlayerPositionType::WingbackRight  => {
-                    team.striker_skill += player.get_skill() as f32;
-                }
-                _ => {}
-            }
+            }            
         }
 
         team

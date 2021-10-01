@@ -5,8 +5,7 @@ use crate::utils::DateUtils;
 use chrono::prelude::*;
 use chrono::Duration;
 use chrono::NaiveDate;
-use log::{debug, warn};
-use itertools::Itertools;
+use log::{warn};
 
 // const DAY_PLAYING_TIMES: [(u8, u8); 4] = [(13, 0), (14, 0), (16, 0), (18, 0)];
 

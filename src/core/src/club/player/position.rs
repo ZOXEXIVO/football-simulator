@@ -53,14 +53,11 @@ pub struct PlayerPositions {
 }
 
 impl PlayerPositions {
-    pub fn position(&self) -> PlayerPositionType {
-        let max_position = self
-            .positions
-            .iter()
-            .max_by(|a, b| a.level.cmp(&b.level))
-            .unwrap();
-
-        max_position.position
+    pub fn positions(&self) -> Vec<PlayerPositionType> {
+        self.positions
+           .iter().filter(|p| p.level >= 15)
+           .map(|p| p.position)
+           .collect()
     }
 
     pub fn display_positions(&self) -> Vec<&str> {
