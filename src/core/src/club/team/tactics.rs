@@ -1,5 +1,4 @@
-use crate::club::{Staff, PlayerPositionType, PersonBehaviourState};
-use std::collections::HashMap;
+use crate::club::{PersonBehaviourState, PlayerPositionType, Staff};
 use crate::Team;
 
 #[derive(Debug)]
@@ -11,25 +10,51 @@ impl Tactics {
     pub fn new(positioning: TacticsPositioning) -> Self {
         Tactics { positioning }
     }
+
+    pub fn positions(&self) -> &[PlayerPositionType; 11] {
+        let (_, positions) = TACTICS_POSITIONS
+            .iter()
+            .find(|(positioning, _)| *positioning == self.positioning)
+            .unwrap();
+
+        positions
+    }
 }
 
-#[derive(Debug)]
+const TACTICS_POSITIONS: &[(TacticsPositioning, [PlayerPositionType; 11])] = &[(
+    TacticsPositioning::T442,
+    [
+        PlayerPositionType::Goalkeeper,
+        PlayerPositionType::DefenderLeft,
+        PlayerPositionType::DefenderCenter,
+        PlayerPositionType::DefenderCenter,
+        PlayerPositionType::DefenderRight,
+        PlayerPositionType::MidfielderLeft,
+        PlayerPositionType::MidfielderCenter,
+        PlayerPositionType::MidfielderCenter,
+        PlayerPositionType::MidfielderRight,
+        PlayerPositionType::Striker,
+        PlayerPositionType::Striker,
+    ],
+)];
+
+#[derive(Debug, Eq, PartialEq, PartialOrd)]
 pub enum TacticsPositioning {
-    T235,
     T442,
-    T451,
-    T433,
-    T442Diamond,
-    T442DiamondWide,
-    T442Narrow,
-    T352,
-    T4231,
-    T4141,
-    T4411,
-    T343,
-    T1333,
-    T4312,
-    T4222,
+    // T235,
+    // T451,
+    // T433,
+    // T442Diamond,
+    // T442DiamondWide,
+    // T442Narrow,
+    // T352,
+    // T4231,
+    // T4141,
+    // T4411,
+    // T343,
+    // T1333,
+    // T4312,
+    // T4222,
 }
 
 pub struct TacticsSelector;
@@ -37,84 +62,9 @@ pub struct TacticsSelector;
 impl TacticsSelector {
     pub fn select(team: &Team, coach: &Staff) -> Tactics {
         match coach.behaviour.state {
-            PersonBehaviourState::Poor => Tactics::new(TacticsPositioning::T451),
-            PersonBehaviourState::Normal => Tactics::new(Self::team_players(team)),
-            PersonBehaviourState::Good => Tactics::new(Self::team_players(team)),
+            PersonBehaviourState::Poor => Tactics::new(TacticsPositioning::T442),
+            PersonBehaviourState::Normal => Tactics::new(TacticsPositioning::T442),
+            PersonBehaviourState::Good => Tactics::new(TacticsPositioning::T442),
         }
-    }
-
-    fn team_players(team: &Team) -> TacticsPositioning {
-        let player_stats = Self::players_by_position(team);
-
-        let scores = {
-            let mut defending_score: i8 = 0;
-
-            //TODO FIX
-            if let Some(defenders) = player_stats.get(&PlayerPositionType::DefenderCenter) {
-                match defenders {
-                    1..=2 => defending_score += 1,
-                    3..=6 => defending_score += 2,
-                    _ => defending_score += 3,
-                }
-            }
-
-            let mut midfielder_score: i8 = 0;
-
-            if let Some(midfielders) = player_stats.get(&PlayerPositionType::MidfielderCenter) {
-                match midfielders {
-                    1..=2 => midfielder_score += 1,
-                    3..=6 => midfielder_score += 2,
-                    _ => midfielder_score += 3,
-                }
-            }
-
-            let mut forward_score: i8 = 0;
-
-            if let Some(forwards) = player_stats.get(&PlayerPositionType::Striker) {
-                match forwards {
-                    1..=2 => forward_score += 1,
-                    3..=6 => forward_score += 2,
-                    _ => forward_score += 3,
-                }
-            }
-
-            (defending_score, midfielder_score, forward_score)
-        };
-
-        let defending = scores.0;
-        let midfielders = scores.1;
-        let forwarding = scores.2;
-
-        if defending > midfielders && defending > forwarding {
-            return TacticsPositioning::T442;
-        }
-
-        if midfielders > defending && midfielders > forwarding {
-            return TacticsPositioning::T451;
-        }
-
-        if forwarding > defending && forwarding > midfielders {
-            return TacticsPositioning::T235;
-        }
-
-        TacticsPositioning::T442
-    }
-
-    fn players_by_position(team: &Team) -> HashMap<PlayerPositionType, i16> {
-        let mut player_positions = HashMap::<PlayerPositionType, i16>::new();
-
-        let team_players = team.players();
-
-        let ready_for_match_players = team_players.iter().filter(|p| p.is_ready_for_match());
-
-        for player in ready_for_match_players {
-            let position = player.position();
-
-            let entry = player_positions.entry(position).or_insert(0);
-
-            *entry += 1;
-        }
-
-        player_positions
-    }
+    }    
 }

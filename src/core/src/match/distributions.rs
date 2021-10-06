@@ -1,4 +1,4 @@
-use rand_distr::{Distribution, Gamma, Normal, Uniform};
+use rand_distr::{Distribution, Normal, Uniform};
 
 #[inline]
 #[allow(dead_code)]

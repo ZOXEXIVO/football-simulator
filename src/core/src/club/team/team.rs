@@ -1,8 +1,8 @@
 use crate::context::GlobalContext;
-use crate::{MatchHistory, Player, PlayerCollection, PlayerSelector, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
+use crate::{MatchHistory, Player, PlayerCollection, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
 use std::str::FromStr;
 use crate::shared::CurrencyValue;
-use std::ops::Index;
+use crate::club::team::selection::PlayerSelector;
 
 #[derive(Debug, PartialEq)]
 pub enum TeamType {
@@ -90,11 +90,13 @@ impl Team {
     pub fn get_match_squad(&self) -> Squad {
         let head_coach = self.staffs.head_coach();
 
+        let squad = PlayerSelector::select(self, head_coach);
+        
         Squad {
             team_id: self.id,
             tactics: TacticsSelector::select(self, head_coach),
-            main_squad: PlayerSelector::select(self, head_coach),
-            substitutes: vec![]
+            main_squad: squad.main_squad,
+            substitutes: squad.substitutes
         }
     }
 

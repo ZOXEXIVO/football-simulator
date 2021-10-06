@@ -1,10 +1,6 @@
 use crate::shared::FullName;
 use crate::utils::IntegerUtils;
-use crate::{
-    Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player,
-    PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPositions, PlayerPreferredFoot,
-    PlayerSkills, PlayerStatusData, PlayerTraining, Relations, Technical,
-};
+use crate::{Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player, PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPositions, PlayerPreferredFoot, PlayerSkills, PlayerStatusData, PlayerTraining, Relations, Technical, PlayerStatistics, PlayerStatisticsHistory};
 use chrono::{Datelike, NaiveDate};
 
 pub struct PlayerGenerator;
@@ -109,6 +105,8 @@ impl PlayerGenerator {
             mailbox: PlayerMailbox::new(),
             training: PlayerTraining::new(),
             relations: Relations::new(),
+            statistics: PlayerStatistics::new(),
+            statistics_history: PlayerStatisticsHistory::new()
         }
     }
 }

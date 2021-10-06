@@ -100,14 +100,14 @@ impl Country {
 
                 let message = &format!("play match: {} - {}", &match_to_play.home_team.name, &match_to_play.away_team.name);
 
-                let match_res = Logging::estimate_result(|| match_to_play.play(), message);
+                let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
                 scheduled_match.result = Some(LeagueMatchResultResult {
-                    home_goals: match_res.home_goals,
-                    away_goals: match_res.away_goals
+                    home_goals: match_result.home_goals,
+                    away_goals: match_result.away_goals
                 });
                 
-                result.push(match_res);
+                result.push(match_result);
             }
         }
 
