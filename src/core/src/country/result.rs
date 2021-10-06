@@ -1,5 +1,5 @@
 use crate::league::LeagueResult;
-use crate::r#match::MatchResult;
+use crate::r#match::{MatchResult, MatchEvent};
 use crate::simulator::SimulatorData;
 use crate::{ClubResult, MatchHistory};
 
@@ -60,5 +60,39 @@ impl CountryResult {
             result.home_team_id,
             (result.away_goals, result.home_goals),
         ));
+
+        process_match_events(result, data);
+
+        fn process_match_events(result: &MatchResult, data: &mut SimulatorData) {
+            for match_event in &result.details.as_ref().unwrap().events {
+                match match_event {
+                    MatchEvent::MatchPlayed(player_id, is_start_squad, minutes_played) => {
+                        let mut player = data.player_mut(*player_id).unwrap();
+                        
+                        if *is_start_squad {
+                            player.statistics.played += 1;
+                        }else {
+                            player.statistics.played_subs += 1;
+                        }
+                        
+                        player.statistics.goals += 1;
+
+                    },
+                    MatchEvent::Goal(player_id) => {
+                        let mut player = data.player_mut(*player_id).unwrap();
+                        player.statistics.goals += 1;
+
+                    },
+                    MatchEvent::Assist(player_id) => {
+                        let mut player = data.player_mut(*player_id).unwrap();
+                        player.statistics.assists += 1;
+
+                    },
+                    MatchEvent::Injury(player_id) => {
+
+                    }
+                }
+            }
+        }
     }
 }

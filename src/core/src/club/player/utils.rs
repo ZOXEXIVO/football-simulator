@@ -1,6 +1,5 @@
 use crate::{Player, Person, PlayerPositionType};
 use chrono::{NaiveDate};
-use itertools::Itertools;
 
 pub struct PlayerUtils;
 

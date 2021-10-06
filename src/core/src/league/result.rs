@@ -1,5 +1,6 @@
 use crate::league::ScheduleItem;
 use crate::r#match::game::MatchResult;
+use crate::r#match::FootballMatchDetails;
 use crate::simulator::SimulatorData;
 use chrono::NaiveDateTime;
 
@@ -22,15 +23,7 @@ impl LeagueResult {
         let matches = self
             .scheduled_matches
             .iter()           
-            .map(|m| MatchResult {
-                league_id: m.league_id,
-                schedule_id: m.id.clone(),
-                player_changes: vec![],
-                home_team_id: m.home_team_id,
-                home_goals: m.result.as_ref().unwrap().home_goals,
-                away_team_id: m.away_team_id,
-                away_goals: m.result.as_ref().unwrap().away_goals,
-            })
+            .map(|lm| MatchResult::from(lm))
             .collect();
 
         league.table.as_mut().unwrap().update(&matches)
@@ -68,7 +61,7 @@ impl From<ScheduleItem> for LeagueMatch {
         if let Some(res) = item.result {
             result.result = Some(LeagueMatchResultResult {
                 home_goals: res.home_goals,
-                away_goals: res.away_goals,
+                away_goals: res.away_goals
             });
         }
 
