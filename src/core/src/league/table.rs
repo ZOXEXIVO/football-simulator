@@ -130,7 +130,7 @@ mod tests {
                 away_team_id: 2,
                 home_goals: 3,
                 away_goals: 3,
-                player_changes: Vec::new()
+                details: None
             },
         ];
         
@@ -182,7 +182,7 @@ mod tests {
                 away_team_id,
                 home_goals: 3,
                 away_goals: 0,
-                player_changes: Vec::new()
+                details: None
             },
         ];
 
@@ -240,7 +240,7 @@ mod tests {
                 away_team_id,
                 home_goals: 0,
                 away_goals: 3,
-                player_changes: Vec::new()
+                details: None
             },
         ];
 
