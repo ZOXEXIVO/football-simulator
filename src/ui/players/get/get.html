@@ -614,6 +614,206 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-3 delim">
+                <label>Form (Last 5 matches) ></label>
+            </div>
+            <div class="col-xs-9 delim">
+                <div class="row">
+                    <div class="col-xs-10 no-padding">
+                        <label>Season stats</label>
+                       <table class="player-statistics">
+                           <tr>
+                               <th style="width: 150px"></th>
+                               <th style="width: 40px">Apps</th>
+                               <th style="width: 40px">Gls</th>
+                               <th style="width: 40px">Asts</th>
+                               <th style="width: 40px">Pens</th>
+                               <th style="width: 40px">POM</th>
+                               <th style="width: 40px">Yel</th>
+                               <th style="width: 40px">Red</th>
+                               <th style="width: 50px">DRBPG</th>
+                               <th style="width: 50px">SH TAR</th>
+                               <th style="width: 40px">PAS%</th>
+                               <th style="width: 50px">TCK W</th>
+                               <th style="width: 50px">AV RAT</th>
+                           </tr>
+                           <tr>
+                               <td>
+                                   Russian Premier League
+                               </td>
+                               <td>
+                                   {{ statistics.played }}
+
+                                   {% if statistics.played_subs > 0 %} 
+                                      (statistics.played_subs)
+                                   {%- endif %}
+                               </td>
+                               <td>
+                                   {{ statistics.goals }}
+                               </td>
+                               <td>
+                                   {{ statistics.assists }}
+                               </td>
+                               <td>
+                                   {{ statistics.penalties }}
+                               </td>
+                               <td>
+                                   {{ statistics.player_of_the_match }}
+                               </td>
+                               <td>
+                                   {{ statistics.yellow_cards }}
+                               </td>
+                               <td>
+                                   {{ statistics.red_cards }}
+                               </td>
+                               <td>
+                                   {{ statistics.shots_on_target }}
+                               </td>
+                               <td>
+                                   {{ statistics.tackling }}
+                               </td>
+                               <td>
+                                   {{ statistics.passes }}
+                               </td>
+                               <td>
+                                   {{ statistics.passes }}
+                               </td>
+                               <td>
+                                   {{ statistics.average_rating }}
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   Russian Cup
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   European Champions Cup
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   Russian Under 18s
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                               <td>
+                                   0
+                               </td>
+                           </tr>
+                       </table>
+                    </div>
+                    <div class="col-xs-2">
+                    </div>
+                </div>
+            </div>
+           
+        </div>
     </div>
 </div>
 

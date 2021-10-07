@@ -601,3 +601,8 @@ a.sub-title-link {
  height: 20px;
  display: inline-block;
 }
+
+table.player-statistics td {
+  font-size: 14px;
+ opacity: 0.6;
+}

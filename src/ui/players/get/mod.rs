@@ -40,6 +40,26 @@ pub struct PlayerGetViewModel<'p> {
     pub player_attributes: PlayerAttributesDto,
     
     pub neighbor_teams: Vec<ClubTeam<'p>>,
+    
+    pub statistics: PlayerStatistics,
+}
+
+pub struct PlayerStatistics {
+    pub played: u16,
+    pub played_subs: u16,
+
+    pub goals: u16,
+    pub assists: u16,
+    pub penalties: u16,
+    pub player_of_the_match: u8,
+    pub yellow_cards: u8,
+    pub red_cards: u8,
+
+    pub shots_on_target: f32,
+    pub tackling: f32,
+    pub passes: u8,
+
+    pub average_rating: f32,
 }
 
 pub struct ClubTeam<'c> {
@@ -158,6 +178,7 @@ pub async fn player_get_action(
         preferred_foot: player.preferred_foot_str(),
         player_attributes: get_attributes(player),
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
+        statistics: get_statistics(player)
     };
 
     if let Some(contract) = &player.contract {
@@ -246,6 +267,23 @@ fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
     teams.sort_by(|a, b| b.reputation.cmp(&a.reputation));
 
     teams
+}
+
+fn get_statistics(player: &Player) -> PlayerStatistics {
+    PlayerStatistics {
+        played: player.statistics.played,
+        played_subs: player.statistics.played_subs,
+        goals: player.statistics.goals,
+        assists: player.statistics.assists,
+        penalties: player.statistics.penalties,
+        player_of_the_match: player.statistics.player_of_the_match,
+        yellow_cards: player.statistics.yellow_cards,
+        red_cards: player.statistics.red_cards,
+        shots_on_target: player.statistics.shots_on_target,
+        tackling: player.statistics.tackling,
+        passes: player.statistics.passes,
+        average_rating: player.statistics.average_rating
+    }
 }
 
 pub fn get_conditions(player: &Player) -> u8 {

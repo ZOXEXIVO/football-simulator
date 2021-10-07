@@ -74,9 +74,6 @@ impl CountryResult {
                         }else {
                             player.statistics.played_subs += 1;
                         }
-                        
-                        player.statistics.goals += 1;
-
                     },
                     MatchEvent::Goal(player_id) => {
                         let mut player = data.player_mut(*player_id).unwrap();
