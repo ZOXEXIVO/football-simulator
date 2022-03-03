@@ -224,7 +224,7 @@ impl SimulatorData {
 
         self.continent(player_continent_id)
             .unwrap()
-            .countries            
+            .countries
             .iter()
             .find(|country| country.id == player_country_id)
             .unwrap()

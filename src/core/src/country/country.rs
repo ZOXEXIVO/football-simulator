@@ -1,6 +1,6 @@
 use crate::context::GlobalContext;
 use crate::country::CountryResult;
-use crate::league::{League, LeagueResult, LeagueMatchResultResult};
+use crate::league::{League, LeagueMatchResultResult, LeagueResult};
 use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, ClubResult, Team};
@@ -88,7 +88,7 @@ impl Country {
 
     fn process_matches(&mut self, results: &mut Vec<LeagueResult>) -> Vec<MatchResult> {
         let mut result = Vec::new(); //TODO capacity
-        
+
         for league_result in results {
             for scheduled_match in &mut league_result.scheduled_matches {
                 let match_to_play = Match::make(
@@ -98,20 +98,23 @@ impl Country {
                     self.get_team(scheduled_match.away_team_id),
                 );
 
-                let message = &format!("play match: {} - {}", &match_to_play.home_team.name, &match_to_play.away_team.name);
+                let message = &format!(
+                    "play match: {} - {}",
+                    &match_to_play.home_team.name, &match_to_play.away_team.name
+                );
 
                 let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
                 scheduled_match.result = Some(LeagueMatchResultResult {
                     home_goals: match_result.home_goals,
-                    away_goals: match_result.away_goals
+                    away_goals: match_result.away_goals,
                 });
-                
+
                 result.push(match_result);
             }
         }
 
-        result 
+        result
     }
 
     fn get_team(&self, id: u32) -> &Team {
