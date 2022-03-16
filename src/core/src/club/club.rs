@@ -57,7 +57,7 @@ impl Club {
             .map(|team| {
                 let message = &format!("simulate team: {}", &team.name);
                 Logging::estimate_result(
-                    || team.simulate(ctx.with_team(team.id, &team.name.clone())),
+                    || team.simulate(ctx.with_team(team.id)),
                     message,
                 )
             })

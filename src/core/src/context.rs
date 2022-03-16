@@ -13,7 +13,7 @@ pub struct GlobalContext<'gc>{
     pub country: Option<CountryContext>,
     pub league: Option<LeagueContext<'gc>>,
     pub club: Option<ClubContext<'gc>>,
-    pub team: Option<TeamContext<'gc>>,    
+    pub team: Option<TeamContext>,    
     pub finance: Option<ClubFinanceContext>,
     pub board: Option<BoardContext>,
     pub player: Option<PlayerContext>,
@@ -61,9 +61,9 @@ impl<'gc> GlobalContext<'gc> {
         ctx
     }
 
-    pub fn with_team(&self, team_id: u32, team_name: &'gc str) -> Self {
+    pub fn with_team(&self, team_id: u32) -> Self {
         let mut ctx = self.clone();
-        ctx.team = Some(TeamContext::new(team_id, team_name));
+        ctx.team = Some(TeamContext::new(team_id));
         ctx
     }    
     

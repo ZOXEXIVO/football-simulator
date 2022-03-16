@@ -1,14 +1,12 @@
 #[derive(Clone)]
-pub struct TeamContext<'c> {
-    pub id: u32,
-    pub name: &'c str
+pub struct TeamContext {
+    pub id: u32
 }
 
-impl<'c> TeamContext<'c> {
-    pub fn new(id: u32, name: &'c str) -> Self {
+impl<'c> TeamContext {
+    pub fn new(id: u32) -> Self {
         TeamContext {
-            id,
-            name
+            id
         }
     }
 }
