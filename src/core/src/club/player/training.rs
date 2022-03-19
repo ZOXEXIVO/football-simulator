@@ -39,13 +39,13 @@ impl PlayerTraining {
                 player
                     .skills
                     .mental
-                    .train(IntegerUtils::random(-1, 2) as i8);
+                    .train(IntegerUtils::random(-1, 1) as i8);
                 player
                     .skills
                     .technical
-                    .train(IntegerUtils::random(-1, 2) as i8)
+                    .train(IntegerUtils::random(-1, 1) as i8)
             }
-            PersonBehaviourState::Normal => player.skills.train(IntegerUtils::random(-1, 2) as i8),
+            PersonBehaviourState::Normal => player.skills.train(IntegerUtils::random(-1, 1) as i8),
             PersonBehaviourState::Poor => player
                 .skills
                 .physical

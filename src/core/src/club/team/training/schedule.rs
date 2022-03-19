@@ -1,4 +1,4 @@
-use chrono::{NaiveTime, NaiveDateTime};
+use chrono::{NaiveDateTime, NaiveTime};
 
 #[derive(Debug)]
 pub struct TrainingSchedule {
@@ -6,11 +6,11 @@ pub struct TrainingSchedule {
     pub evening_time: NaiveTime,
 }
 
-impl TrainingSchedule{
+impl TrainingSchedule {
     pub fn new(morning_time: NaiveTime, evening_time: NaiveTime) -> Self {
-        TrainingSchedule{
+        TrainingSchedule {
             morning_time,
-            evening_time
+            evening_time,
         }
     }
 

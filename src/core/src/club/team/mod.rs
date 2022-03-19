@@ -1,12 +1,15 @@
-mod team;
-mod result;
+mod behaviour;
 mod context;
-mod tactics;
 mod reputation;
+mod result;
 mod selection;
+mod tactics;
+mod team;
+mod training;
 
-pub use team::*;
-pub use result::*;
 pub use context::*;
-pub use tactics::*;
 pub use reputation::*;
+pub use result::*;
+pub use tactics::*;
+pub use team::*;
+pub use training::*;

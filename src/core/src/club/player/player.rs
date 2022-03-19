@@ -6,10 +6,14 @@ use crate::club::{
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
-use crate::{ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerHappiness, PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatusData, PlayerValueCalculator, Relations, PlayerStatisticsHistory, PlayerStatistics};
+use crate::{
+    ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerHappiness,
+    PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatistics,
+    PlayerStatisticsHistory, PlayerStatusData, PlayerValueCalculator, Relations,
+};
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
-use std::ops::{Index};
+use std::ops::Index;
 
 #[derive(Debug)]
 pub struct Player {
@@ -34,7 +38,7 @@ pub struct Player {
     pub relations: Relations,
 
     pub statistics: PlayerStatistics,
-    pub statistics_history: PlayerStatisticsHistory
+    pub statistics_history: PlayerStatisticsHistory,
 }
 
 impl Player {
@@ -67,7 +71,7 @@ impl Player {
             mailbox: PlayerMailbox::new(),
             relations: Relations::new(),
             statistics: PlayerStatistics::new(),
-            statistics_history: PlayerStatisticsHistory::new()
+            statistics_history: PlayerStatisticsHistory::new(),
         }
     }
 
@@ -169,12 +173,12 @@ impl Player {
     pub fn positions(&self) -> Vec<PlayerPositionType> {
         self.positions.positions()
     }
-    
+
     #[inline]
     pub fn position(&self) -> PlayerPositionType {
         *self.positions.positions().first().unwrap()
     }
-    
+
     pub fn preferred_foot_str(&self) -> &'static str {
         match self.preferred_foot {
             PlayerPreferredFoot::Left => "Left",
@@ -202,7 +206,7 @@ impl Player {
             .map(|pos| self.skills.get_for_position(*pos))
             .sum();
 
-        (positions_sum as f32 / positions.len() as f32) as u32  
+        (positions_sum as f32 / positions.len() as f32) as u32
     }
 }
 
@@ -287,7 +291,11 @@ impl PlayerCollection {
     }
 
     pub fn get_week_salary(&self) -> u32 {
-        self.players.iter().filter_map(|p| p.contract.as_ref()).map(|c| c.salary).sum::<u32>()
+        self.players
+            .iter()
+            .filter_map(|p| p.contract.as_ref())
+            .map(|c| c.salary)
+            .sum::<u32>()
     }
 
     pub fn players(&self) -> Vec<&Player> {

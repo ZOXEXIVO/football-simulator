@@ -1,12 +1,15 @@
+use crate::club::team::behaviour::TeamBehaviourResult;
 use crate::club::PlayerCollectionResult;
 use crate::shared::{Currency, CurrencyValue};
 use crate::simulator::SimulatorData;
-use crate::StaffCollectionResult;
+use crate::{StaffCollectionResult, TeamTrainingResult};
 
 pub struct TeamResult {
     pub team_id: u32,
     pub players: PlayerCollectionResult,
     pub staffs: StaffCollectionResult,
+    pub behaviour: TeamBehaviourResult,
+    pub training: TeamTrainingResult,
 }
 
 impl TeamResult {
@@ -14,11 +17,15 @@ impl TeamResult {
         team_id: u32,
         players: PlayerCollectionResult,
         staffs: StaffCollectionResult,
+        behaviour: TeamBehaviourResult,
+        training: TeamTrainingResult,
     ) -> Self {
         TeamResult {
             team_id,
             players,
             staffs,
+            behaviour,
+            training,
         }
     }
 

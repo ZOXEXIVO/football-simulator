@@ -1,8 +1,12 @@
-use crate::context::GlobalContext;
-use crate::{MatchHistory, Player, PlayerCollection, Squad, StaffCollection, Tactics, TacticsSelector, TeamResult, Training, TrainingSchedule, TransferItem, TeamReputation};
-use std::str::FromStr;
-use crate::shared::CurrencyValue;
+use crate::club::team::behaviour::{TeamBehaviour, TeamBehaviourResult};
 use crate::club::team::selection::PlayerSelector;
+use crate::context::GlobalContext;
+use crate::shared::CurrencyValue;
+use crate::{
+    MatchHistory, Player, PlayerCollection, Squad, StaffCollection, Tactics, TacticsSelector,
+    TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
+};
+use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
 pub enum TeamType {
@@ -11,7 +15,7 @@ pub enum TeamType {
     U18 = 2,
     U19 = 3,
     U21 = 4,
-    U23 = 5
+    U23 = 5,
 }
 
 #[derive(Debug)]
@@ -19,8 +23,8 @@ pub struct Team {
     pub id: u32,
     pub league_id: u32,
     pub club_id: u32,
-    pub name: String,    
-    pub team_type: TeamType,    
+    pub name: String,
+    pub team_type: TeamType,
     pub tactics: Option<Tactics>,
 
     pub players: PlayerCollection,
@@ -29,7 +33,7 @@ pub struct Team {
     pub reputation: TeamReputation,
     pub training_schedule: TrainingSchedule,
     pub transfer_list: Vec<TransferItem>,
-    pub match_history: Vec<MatchHistory>
+    pub match_history: Vec<MatchHistory>,
 }
 
 impl Team {
@@ -64,22 +68,28 @@ impl Team {
         self.players.players()
     }
 
-    pub fn add_player_to_transfer_list(&mut self, player_id: u32, value: CurrencyValue){
-        self.transfer_list.push(TransferItem{
+    pub fn add_player_to_transfer_list(&mut self, player_id: u32, value: CurrencyValue) {
+        self.transfer_list.push(TransferItem {
             player_id,
-            amount: value
+            amount: value,
         })
     }
-    
+
     pub fn get_week_salary(&self) -> u32 {
         let mut result: u32 = 0;
 
-        result += &self.players.players.iter()
+        result += &self
+            .players
+            .players
+            .iter()
             .filter_map(|p| p.contract.as_ref())
             .map(|c| c.salary)
             .sum::<u32>();
 
-        result += &self.staffs.staffs.iter()
+        result += &self
+            .staffs
+            .staffs
+            .iter()
             .filter_map(|p| p.contract.as_ref())
             .map(|c| c.salary)
             .sum::<u32>();
@@ -91,32 +101,37 @@ impl Team {
         let head_coach = self.staffs.head_coach();
 
         let squad = PlayerSelector::select(self, head_coach);
-        
+
         Squad {
             team_id: self.id,
             tactics: TacticsSelector::select(self, head_coach),
             main_squad: squad.main_squad,
-            substitutes: squad.substitutes
+            substitutes: squad.substitutes,
         }
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> TeamResult {
+        let training_result = TeamTraining::train_players(
+            &mut self.players.players,
+            self.staffs.training_coach(&self.team_type),
+        );
+
         let result = TeamResult::new(
             self.id,
             self.players.simulate(ctx.with_player(None)),
             self.staffs.simulate(ctx.with_staff(None)),
+            TeamBehaviour::simulate(&self.players, &self.staffs),
+            training_result,
         );
 
         if self.tactics.is_none() {
             self.tactics = Some(TacticsSelector::select(self, self.staffs.head_coach()));
-        }
+        };
 
-        Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
-        
         // if self.training_schedule.is_time(ctx.simulation.date) {
         //     Training::train_players(&mut self.players.players, self.staffs.training_coach(&self.team_type));
         // }
- 
+
         result
     }
 }
