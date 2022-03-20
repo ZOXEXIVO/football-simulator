@@ -1,9 +1,9 @@
-use crate::r#match::engine::{FootballMatchDetails};
 use super::engine::FootballEngine;
-use crate::Team;
+use crate::r#match::engine::FootballMatchDetails;
 
-use log::{debug};
 use crate::league::LeagueMatch;
+use crate::Team;
+use log::debug;
 
 #[derive(Clone)]
 pub struct Match<'m> {
@@ -14,7 +14,12 @@ pub struct Match<'m> {
 }
 
 impl<'m> Match<'m> {
-    pub fn make(league_id: u32, schedule_id: &'m str, home_team: &'m Team, away_team: &'m Team) -> Self {
+    pub fn make(
+        league_id: u32,
+        schedule_id: &'m str,
+        home_team: &'m Team,
+        away_team: &'m Team,
+    ) -> Self {
         Match {
             league_id,
             schedule_id,
@@ -31,13 +36,17 @@ impl<'m> Match<'m> {
 
         let match_details = engine.play();
 
-        debug!("match played: {} {}:{} {}", 
-               &self.home_team.name, match_details.score.home,
-               &self.away_team.name, match_details.score.away);
-        
+        debug!(
+            "match played: {} {}:{} {}",
+            &self.home_team.name,
+            match_details.score.home,
+            &self.away_team.name,
+            match_details.score.away
+        );
+
         MatchResult {
             league_id: self.league_id,
-            schedule_id: String::from(self.schedule_id),            
+            schedule_id: String::from(self.schedule_id),
             home_team_id: self.home_team.id,
             home_goals: match_details.score.home,
             away_team_id: self.away_team.id,
@@ -47,7 +56,7 @@ impl<'m> Match<'m> {
     }
 }
 
-pub struct MatchResult  {
+pub struct MatchResult {
     pub league_id: u32,
     pub schedule_id: String,
     pub details: Option<FootballMatchDetails>,

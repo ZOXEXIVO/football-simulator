@@ -1,6 +1,5 @@
 use crate::league::ScheduleItem;
 use crate::r#match::game::MatchResult;
-use crate::r#match::FootballMatchDetails;
 use crate::simulator::SimulatorData;
 use chrono::NaiveDateTime;
 
@@ -22,7 +21,7 @@ impl LeagueResult {
 
         let matches = self
             .scheduled_matches
-            .iter()           
+            .iter()
             .map(|lm| MatchResult::from(lm))
             .collect();
 
@@ -44,7 +43,7 @@ pub struct LeagueMatch {
 
 pub struct LeagueMatchResultResult {
     pub home_goals: i32,
-    pub away_goals: i32
+    pub away_goals: i32,
 }
 
 impl From<ScheduleItem> for LeagueMatch {
@@ -61,7 +60,7 @@ impl From<ScheduleItem> for LeagueMatch {
         if let Some(res) = item.result {
             result.result = Some(LeagueMatchResultResult {
                 home_goals: res.home_goals,
-                away_goals: res.away_goals
+                away_goals: res.away_goals,
             });
         }
 

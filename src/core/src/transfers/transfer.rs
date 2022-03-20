@@ -1,4 +1,4 @@
-use crate::club::Player;
+use crate::Player;
 
 pub struct PlayerTransfer {
     pub player: Player,

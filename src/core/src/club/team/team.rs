@@ -1,10 +1,9 @@
-use crate::club::team::behaviour::{TeamBehaviour, TeamBehaviourResult};
-use crate::club::team::selection::PlayerSelector;
+use crate::club::team::behaviour::TeamBehaviour;
 use crate::context::GlobalContext;
 use crate::shared::CurrencyValue;
 use crate::{
-    MatchHistory, Player, PlayerCollection, Squad, StaffCollection, Tactics, TacticsSelector,
-    TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
+    MatchHistory, Player, PlayerCollection, Squad, SquadSelector, StaffCollection, Tactics,
+    TacticsSelector, TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
 };
 use std::str::FromStr;
 
@@ -100,7 +99,7 @@ impl Team {
     pub fn get_match_squad(&self) -> Squad {
         let head_coach = self.staffs.head_coach();
 
-        let squad = PlayerSelector::select(self, head_coach);
+        let squad = SquadSelector::select(self, head_coach);
 
         Squad {
             team_id: self.id,

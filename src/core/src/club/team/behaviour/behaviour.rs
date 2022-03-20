@@ -1,5 +1,5 @@
 use crate::club::team::behaviour::TeamBehaviourResult;
-use crate::{PlayerCollection, StaffCollection, Team};
+use crate::{PlayerCollection, StaffCollection};
 
 pub struct TeamBehaviour {}
 
