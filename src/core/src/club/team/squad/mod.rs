@@ -1,5 +1,5 @@
-mod selection;
+mod selector;
 mod squad;
 
-pub use selection::*;
+pub use selector::*;
 pub use squad::*;

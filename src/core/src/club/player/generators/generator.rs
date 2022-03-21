@@ -1,12 +1,17 @@
 use crate::shared::FullName;
 use crate::utils::IntegerUtils;
-use crate::{Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player, PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPositions, PlayerPreferredFoot, PlayerSkills, PlayerStatusData, PlayerTraining, Relations, Technical, PlayerStatistics, PlayerStatisticsHistory};
+use crate::{
+    Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player,
+    PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPositions, PlayerPreferredFoot,
+    PlayerSkills, PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTraining,
+    Relations, Technical,
+};
 use chrono::{Datelike, NaiveDate};
 
 pub struct PlayerGenerator;
 
 impl PlayerGenerator {
-    pub fn generate_young_player(country_id: u32, now: NaiveDate) -> Player {
+    pub fn generate(country_id: u32, now: NaiveDate) -> Player {
         let year = IntegerUtils::random(now.year() - 14, now.year() - 16) as u32;
         let month = IntegerUtils::random(1, 12) as u32;
         let day = IntegerUtils::random(1, 29) as u32;
@@ -106,7 +111,7 @@ impl PlayerGenerator {
             training: PlayerTraining::new(),
             relations: Relations::new(),
             statistics: PlayerStatistics::new(),
-            statistics_history: PlayerStatisticsHistory::new()
+            statistics_history: PlayerStatisticsHistory::new(),
         }
     }
 }

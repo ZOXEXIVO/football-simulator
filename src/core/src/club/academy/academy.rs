@@ -35,7 +35,7 @@ impl ClubAcademy {
         let country_id = 0;
 
         for _ in 0..IntegerUtils::random(5, 15) {
-            self.players.push(PlayerGenerator::generate_young_player(
+            self.players.push(PlayerGenerator::generate(
                 country_id,
                 ctx.simulation.date.date(),
             ))

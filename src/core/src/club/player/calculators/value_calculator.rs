@@ -4,7 +4,7 @@ use chrono::NaiveDate;
 pub struct PlayerValueCalculator;
 
 impl PlayerValueCalculator {
-    pub fn calculate_value(player: &Player, date: NaiveDate) -> f64 {
+    pub fn calculate(player: &Player, date: NaiveDate) -> f64 {
         if player.contract.is_none() {
             return 0.0;
         }

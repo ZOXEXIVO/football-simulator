@@ -166,7 +166,7 @@ impl Player {
     }
 
     pub fn value(&self, date: NaiveDate) -> f64 {
-        PlayerValueCalculator::calculate_value(self, date)
+        PlayerValueCalculator::calculate(self, date)
     }
 
     #[inline]
