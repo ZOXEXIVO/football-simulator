@@ -109,6 +109,7 @@ table.league-table {
 table.league-table td, th {
  padding-top: 5px;
  padding-bottom: 5px;
+ min-width: 20px;
 }
 
 table.league-table td.idx {
