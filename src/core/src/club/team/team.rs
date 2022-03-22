@@ -110,17 +110,12 @@ impl Team {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> TeamResult {
-        let training_result = TeamTraining::train_players(
-            &mut self.players.players,
-            self.staffs.training_coach(&self.team_type),
-        );
-
         let result = TeamResult::new(
             self.id,
             self.players.simulate(ctx.with_player(None)),
             self.staffs.simulate(ctx.with_staff(None)),
             TeamBehaviour::simulate(&self.players, &self.staffs),
-            training_result,
+            TeamTraining::train(self),
         );
 
         if self.tactics.is_none() {
