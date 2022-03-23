@@ -8,7 +8,7 @@ use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
     ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerHappiness,
-    PlayerMessageType, PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatistics,
+    PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatistics,
     PlayerStatisticsHistory, PlayerStatusData, PlayerValueCalculator, Relations,
 };
 use chrono::{NaiveDate, NaiveDateTime};
@@ -107,58 +107,7 @@ impl Player {
     }
 
     fn process_mailbox(&mut self, now: NaiveDate, result: &mut PlayerResult) {
-        for message in self.mailbox.get() {
-            match message.message_type {
-                PlayerMessageType::Greeting => {}
-                PlayerMessageType::ContractProposal(proposal) => {
-                    process_contract_proposal(self, proposal, now, result);
-                }
-            }
-        }
-
-        fn process_contract_proposal(
-            player: &mut Player,
-            proposal: PlayerContractProposal,
-            now: NaiveDate,
-            result: &mut PlayerResult,
-        ) {
-            match &player.contract {
-                Some(player_contract) => {
-                    if proposal.salary > player_contract.salary {
-                        accept_contract_proposal(player, proposal, now);
-                    } else {
-                        result.contract.contract_rejected = true;
-                    }
-                }
-                None => match player.behaviour.state {
-                    PersonBehaviourState::Poor => {
-                        result.contract.contract_rejected = true;
-                    }
-                    PersonBehaviourState::Normal => {}
-                    PersonBehaviourState::Good => {
-                        accept_contract_proposal(player, proposal, now);
-                    }
-                },
-            }
-        }
-
-        fn accept_contract_proposal(
-            player: &mut Player,
-            proposal: PlayerContractProposal,
-            now: NaiveDate,
-        ) {
-            player.contract = Some(PlayerClubContract {
-                salary: proposal.salary,
-                contract_type: ContractType::FullTime,
-                squad_status: PlayerSquadStatus::FirstTeamRegular,
-                is_transfer_listed: false,
-                transfer_status: Option::None,
-                started: Option::None,
-                expiration: now, //TODO ADD YEARS
-                bonuses: vec![],
-                clauses: vec![],
-            })
-        }
+        PlayerMailbox::process(now, self, result);
     }
 
     pub fn personal_training(&mut self, coach: &Staff) {
