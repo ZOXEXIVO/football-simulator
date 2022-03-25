@@ -32,7 +32,7 @@ impl SquadSelector {
         let mut selected_players = HashSet::new();
 
         for player_position in current_tactics.positions() {
-            for position_player in Self::select_by_type(team, player_position) {
+            for position_player in select_by_type(team, player_position) {
                 if staff
                     .relations
                     .is_favorite_player(position_player.player.id)
@@ -49,32 +49,33 @@ impl SquadSelector {
 
         let mut substitutes: Vec<SquadPlayer<'c>> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
 
-        PlayerSelectionResult {
+        return PlayerSelectionResult {
             main_squad,
             substitutes,
+        };
+        
+        // helpers
+        fn select_by_type<'c>(team: &'c Team, position: &PlayerPositionType) -> Vec<SquadPlayer<'c>> {
+            let mut result: Vec<SquadPlayer<'c>> = Vec::with_capacity(5);
+
+            let mut players_on_position: Vec<&Player> = team
+                .players
+                .players
+                .iter()
+                .filter(|p| p.positions().contains(position))
+                .collect();
+
+            players_on_position.sort_by(|a, b| {
+                a.player_attributes
+                    .condition
+                    .cmp(&b.player_attributes.condition)
+            });
+
+            for player in players_on_position.iter().take(5) {
+                result.push(SquadPlayer::new(player, *position));
+            }
+
+            result
         }
-    }
-
-    fn select_by_type<'c>(team: &'c Team, position: &PlayerPositionType) -> Vec<SquadPlayer<'c>> {
-        let mut result: Vec<SquadPlayer<'c>> = Vec::with_capacity(5);
-
-        let mut players_on_position: Vec<&Player> = team
-            .players
-            .players
-            .iter()
-            .filter(|p| p.positions().contains(position))
-            .collect();
-
-        players_on_position.sort_by(|a, b| {
-            a.player_attributes
-                .condition
-                .cmp(&b.player_attributes.condition)
-        });
-
-        for player in players_on_position.iter().take(5) {
-            result.push(SquadPlayer::new(player, *position));
-        }
-
-        result
-    }
+    }    
 }

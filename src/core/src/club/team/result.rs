@@ -44,5 +44,7 @@ impl TeamResult {
 
         self.players.process(data);
         self.staffs.process(data);
+
+        self.training.process(data);
     }
 }

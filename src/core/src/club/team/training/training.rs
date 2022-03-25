@@ -1,3 +1,4 @@
+use chrono::NaiveDateTime;
 use crate::club::{Player, Staff};
 use crate::{PlayerTraining, Team, TeamTrainingResult};
 
@@ -5,17 +6,17 @@ use crate::{PlayerTraining, Team, TeamTrainingResult};
 pub struct TeamTraining {}
 
 impl TeamTraining {
-    pub fn train(team: &mut Team) -> TeamTrainingResult {
+    pub fn train(team: &mut Team, datetime: NaiveDateTime) -> TeamTrainingResult {
+        if team.training_schedule.is_time(datetime) {
+            return TeamTrainingResult::empty();
+        }
+        
         let result = TeamTrainingResult::new();
-
+        
         let coach = team.staffs.training_coach(&team.team_type);
 
         for player in team.players.players.iter_mut() {
             PlayerTraining::train(player, coach);
-
-            if player.training.has_individual_training {
-                PlayerTraining::personal_training(player, coach);
-            }
         }
 
         result

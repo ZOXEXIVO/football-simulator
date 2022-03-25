@@ -1,5 +1,7 @@
 #[derive(Debug)]
-pub struct PlayerTrainingHistoryItem {}
+pub struct PlayerTrainingHistoryItem {
+    
+}
 
 #[derive(Debug)]
 pub struct PlayerTrainingHistory {
