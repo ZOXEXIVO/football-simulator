@@ -1,3 +1,4 @@
+use crate::training::history::PlayerTrainingHistory;
 use crate::utils::IntegerUtils;
 use crate::{PersonBehaviourState, Player, Staff};
 
@@ -6,9 +7,6 @@ pub struct PlayerTraining {
     pub has_individual_training: bool,
     pub history: PlayerTrainingHistory,
 }
-
-#[derive(Debug)]
-pub struct PlayerTrainingHistory {}
 
 impl PlayerTraining {
     pub fn new() -> Self {
@@ -51,11 +49,5 @@ impl PlayerTraining {
                 .physical
                 .train(IntegerUtils::random(-1, 1) as i8),
         }
-    }
-}
-
-impl PlayerTrainingHistory {
-    pub fn new() -> Self {
-        PlayerTrainingHistory {}
     }
 }

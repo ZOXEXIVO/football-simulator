@@ -1,3 +1,3 @@
-mod value_calculator;
+mod calculator;
 
-pub use value_calculator::*;
+pub use calculator::*;

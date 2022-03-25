@@ -110,10 +110,6 @@ impl Player {
         PlayerMailbox::process(now, self, result);
     }
 
-    pub fn personal_training(&mut self, coach: &Staff) {
-        PlayerTraining::personal_training(self, coach);
-    }
-
     pub fn value(&self, date: NaiveDate) -> f64 {
         PlayerValueCalculator::calculate(self, date)
     }
