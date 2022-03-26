@@ -1,6 +1,7 @@
 use crate::training::history::PlayerTrainingHistory;
 use crate::utils::IntegerUtils;
-use crate::{PersonBehaviourState, Player, Staff};
+use crate::{PersonBehaviourState, Player, PlayerTeamTrainingResult, Staff};
+use chrono::NaiveDateTime;
 
 #[derive(Debug)]
 pub struct PlayerTraining {
@@ -14,7 +15,13 @@ impl PlayerTraining {
         }
     }
 
-    pub fn train(player: &mut Player, coach: &Staff) {
+    pub fn train(
+        player: &mut Player,
+        coach: &Staff,
+        date: NaiveDateTime,
+    ) -> PlayerTeamTrainingResult {
+        let result = PlayerTeamTrainingResult::new();
+
         match coach.behaviour.state {
             PersonBehaviourState::Good => {
                 player
@@ -32,5 +39,7 @@ impl PlayerTraining {
                 .physical
                 .train(IntegerUtils::random(-1, 1) as i8),
         }
+
+        result
     }
 }

@@ -4,6 +4,7 @@ use chrono::{NaiveDateTime, NaiveTime};
 pub struct TrainingSchedule {
     pub morning_time: NaiveTime,
     pub evening_time: NaiveTime,
+    pub is_default: bool,
 }
 
 impl TrainingSchedule {
@@ -11,6 +12,7 @@ impl TrainingSchedule {
         TrainingSchedule {
             morning_time,
             evening_time,
+            is_default: true,
         }
     }
 

@@ -13,7 +13,7 @@ pub enum PlayerPositionType {
     MidfielderRight,
     AttackingMidfielderLeft,
     AttackingMidfielderCenter,
-    AttackingMidfielderRight,    
+    AttackingMidfielderRight,
     WingbackLeft,
     WingbackRight,
     Striker,
@@ -52,19 +52,21 @@ pub struct PlayerPositions {
     pub positions: Vec<PlayerPosition>,
 }
 
+const REQUIRED_POSITION_LEVEL: u8 = 15;
+
 impl PlayerPositions {
     pub fn positions(&self) -> Vec<PlayerPositionType> {
         self.positions
-           .iter().filter(|p| p.level >= 15)
-           .map(|p| p.position)
-           .collect()
+            .iter()
+            .filter(|p| p.level >= REQUIRED_POSITION_LEVEL)
+            .map(|p| p.position)
+            .collect()
     }
 
     pub fn display_positions(&self) -> Vec<&str> {
-        self.positions
+        self.positions()
             .iter()
-            .filter(|p| p.level >= 15)
-            .map(|p| p.position.get_short_name())
+            .map(|p| p.get_short_name())
             .collect()
     }
 }
@@ -138,7 +140,7 @@ mod tests {
         };
 
         let display_positions = positions.display_positions().join(",");
-        
+
         assert_eq!("WL,WR", display_positions);
     }
 }

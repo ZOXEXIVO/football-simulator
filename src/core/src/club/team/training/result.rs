@@ -1,25 +1,35 @@
 use crate::SimulatorData;
 
 pub struct TeamTrainingResult {
-    trained: bool
+    pub player_results: Vec<PlayerTeamTrainingResult>,
 }
 
 impl TeamTrainingResult {
     pub fn new() -> Self {
         TeamTrainingResult {
-            trained: true
+            player_results: Vec::new(),
         }
     }
 
     pub fn empty() -> Self {
         TeamTrainingResult {
-            trained: false
+            player_results: Vec::new(),
         }
     }
 
     pub fn process(&self, data: &mut SimulatorData) {
-        if !self.trained {
-            
+        for player_result in &self.player_results {
+            player_result.process(data);
         }
     }
+}
+
+pub struct PlayerTeamTrainingResult {}
+
+impl PlayerTeamTrainingResult {
+    pub fn new() -> Self {
+        PlayerTeamTrainingResult {}
+    }
+
+    pub fn process(&self, data: &mut SimulatorData) {}
 }
