@@ -34,9 +34,9 @@ impl PlayerMailbox {
     }
 
     pub fn process(
-        now: NaiveDate,
         player: &mut Player,
         player_result: &mut PlayerResult,
+        now: NaiveDate,
     ) -> PlayerMailboxResult {
         let result = PlayerMailboxResult::new();
 

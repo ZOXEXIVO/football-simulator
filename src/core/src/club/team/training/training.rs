@@ -16,9 +16,8 @@ impl TeamTraining {
         let coach = team.staffs.training_coach(&team.team_type);
 
         for player in team.players.players.iter_mut() {
-            result
-                .player_results
-                .push(PlayerTraining::train(player, coach, date));
+            let training_result = player.train(coach, date);
+            result.player_results.push(training_result);
         }
 
         result

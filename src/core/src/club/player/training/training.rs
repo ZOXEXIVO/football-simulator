@@ -4,23 +4,21 @@ use crate::{PersonBehaviourState, Player, PlayerTeamTrainingResult, Staff};
 use chrono::NaiveDateTime;
 
 #[derive(Debug)]
-pub struct PlayerTraining {
-    pub history: PlayerTrainingHistory,
-}
+pub struct PlayerTraining {}
 
 impl PlayerTraining {
     pub fn new() -> Self {
-        PlayerTraining {
-            history: PlayerTrainingHistory::new(),
-        }
+        PlayerTraining {}
     }
 
     pub fn train(
         player: &mut Player,
         coach: &Staff,
-        date: NaiveDateTime,
+        now: NaiveDateTime,
     ) -> PlayerTeamTrainingResult {
         let result = PlayerTeamTrainingResult::new();
+
+        let training_history = &mut player.training_history;
 
         match coach.behaviour.state {
             PersonBehaviourState::Good => {

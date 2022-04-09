@@ -9,7 +9,8 @@ use crate::utils::{DateUtils, Logging};
 use crate::{
     ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerHappiness,
     PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatistics,
-    PlayerStatisticsHistory, PlayerStatusData, PlayerValueCalculator, Relations,
+    PlayerStatisticsHistory, PlayerStatusData, PlayerTeamTrainingResult, PlayerTrainingHistory,
+    PlayerValueCalculator, Relations,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
@@ -35,6 +36,7 @@ pub struct Player {
     pub player_attributes: PlayerAttributes,
     pub mailbox: PlayerMailbox,
     pub training: PlayerTraining,
+    pub training_history: PlayerTrainingHistory,
     pub relations: Relations,
 
     pub statistics: PlayerStatistics,
@@ -68,6 +70,7 @@ impl Player {
             player_attributes,
             contract,
             training: PlayerTraining::new(),
+            training_history: PlayerTrainingHistory::new(),
             mailbox: PlayerMailbox::new(),
             relations: Relations::new(),
             statistics: PlayerStatistics::new(),
@@ -85,7 +88,7 @@ impl Player {
         }
 
         self.process_contract(&mut result, now.clone());
-        self.process_mailbox(now.date(), &mut result);
+        self.process_mailbox(&mut result, now.date());
 
         if self.behaviour.state == PersonBehaviourState::Poor {
             result.request_transfer(self.id);
@@ -106,8 +109,12 @@ impl Player {
         }
     }
 
-    fn process_mailbox(&mut self, now: NaiveDate, result: &mut PlayerResult) {
-        PlayerMailbox::process(now, self, result);
+    pub fn train(&mut self, coach: &Staff, now: NaiveDateTime) -> PlayerTeamTrainingResult {
+        PlayerTraining::train(self, coach, now)
+    }
+
+    fn process_mailbox(&mut self, result: &mut PlayerResult, now: NaiveDate) {
+        PlayerMailbox::process(self, result, now);
     }
 
     pub fn value(&self, date: NaiveDate) -> f64 {

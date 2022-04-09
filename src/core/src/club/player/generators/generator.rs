@@ -4,7 +4,7 @@ use crate::{
     Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player,
     PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPositions, PlayerPreferredFoot,
     PlayerSkills, PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTraining,
-    Relations, Technical,
+    PlayerTrainingHistory, Relations, Technical,
 };
 use chrono::{Datelike, NaiveDate};
 
@@ -109,6 +109,7 @@ impl PlayerGenerator {
             },
             mailbox: PlayerMailbox::new(),
             training: PlayerTraining::new(),
+            training_history: PlayerTrainingHistory::new(),
             relations: Relations::new(),
             statistics: PlayerStatistics::new(),
             statistics_history: PlayerStatisticsHistory::new(),
