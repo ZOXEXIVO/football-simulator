@@ -13,12 +13,8 @@ impl DateUtils {
             NaiveDate::from_ymd(date.year(), date.month() as u32, date.day() as u32),
             NaiveTime::from_hms(0, 0, 0),
         );
-        
-        loop {
-            if current_date.weekday() == Weekday::Sat {
-                break;
-            }
 
+        while current_date.weekday() != Weekday::Sat {
             current_date += Duration::days(1)
         }
 
