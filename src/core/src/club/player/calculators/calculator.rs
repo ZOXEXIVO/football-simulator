@@ -35,3 +35,11 @@ impl PlayerValueCalculator {
         base_price * age_rate
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calculate_is_correct() {}
+}

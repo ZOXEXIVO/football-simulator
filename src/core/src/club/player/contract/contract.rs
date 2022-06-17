@@ -64,16 +64,11 @@ impl PlayerClubContract {
     }
 
     pub fn is_expired(&self, now: NaiveDateTime) -> bool {
-        let naive_now = NaiveDate::from_ymd(now.year(), now.month(), now.day());
-
-        self.expiration >= naive_now
+        self.expiration >= now.date()
     }
 
     pub fn days_to_expiration(&self, now: NaiveDateTime) -> i64 {
-        let naive_now = NaiveDate::from_ymd(now.year(), now.month(), now.day());
-
-        let diff = self.expiration - naive_now;
-
+        let diff = self.expiration - now.date();
         diff.num_days().abs()
     }
 

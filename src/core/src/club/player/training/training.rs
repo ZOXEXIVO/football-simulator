@@ -20,6 +20,8 @@ impl PlayerTraining {
 
         let training_history = &mut player.training_history;
 
+        //training_history
+
         match coach.behaviour.state {
             PersonBehaviourState::Good => {
                 player
