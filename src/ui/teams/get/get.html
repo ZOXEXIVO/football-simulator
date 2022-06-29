@@ -114,9 +114,14 @@
                     <div class="status-badge injured">
                     </div>
                 {% endif -%}
-                
+
+                {% if player.status.is_wanted() %}
+
                 <div class="status-badge wanted">
                 </div>
+
+                {%- endif %}
+                
             </td>
             <td>
                 <div class="player-info-logo">

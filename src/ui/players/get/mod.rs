@@ -2,9 +2,11 @@
 use actix_web::web::Data;
 use actix_web::{web, HttpResponse, Result};
 use askama::Template;
-use core::{Person, Player, SimulatorData, Team};
-use serde::Deserialize;
 use core::utils::FormattingUtils;
+use core::PlayerStatus;
+use core::{Person, Player, SimulatorData, Team};
+use itertools::Itertools;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct PlayerGetRequest {
@@ -34,14 +36,16 @@ pub struct PlayerGetViewModel<'p> {
     pub potential_ability: u8,
 
     pub value: &'p str,
-    
+
     pub preferred_foot: &'p str,
-    
+
     pub player_attributes: PlayerAttributesDto,
-    
+
     pub neighbor_teams: Vec<ClubTeam<'p>>,
-    
+
     pub statistics: PlayerStatistics,
+
+    pub status: PlayerStatusDto,
 }
 
 pub struct PlayerStatistics {
@@ -135,6 +139,20 @@ pub struct PlayerAttributesDto {
     pub under_21_international_goals: u16,
 }
 
+pub struct PlayerStatusDto {
+    pub statuses: Vec<PlayerStatus>,
+}
+
+impl PlayerStatusDto {
+    pub fn new(statuses: Vec<PlayerStatus>) -> Self {
+        PlayerStatusDto { statuses }
+    }
+
+    pub fn is_wanted(&self) -> bool {
+        self.statuses.iter().contains(&PlayerStatus::Wnt)
+    }
+}
+
 pub async fn player_get_action(
     state: Data<GameAppData>,
     route_params: web::Path<PlayerGetRequest>,
@@ -155,7 +173,7 @@ pub async fn player_get_action(
     let country = simulator_data.country(player.country_id).unwrap();
 
     let now = simulator_data.date.date();
-    
+
     let mut model = PlayerGetViewModel {
         id: player.id,
         first_name: &player.full_name.first_name,
@@ -178,7 +196,8 @@ pub async fn player_get_action(
         preferred_foot: player.preferred_foot_str(),
         player_attributes: get_attributes(player),
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
-        statistics: get_statistics(player)
+        statistics: get_statistics(player),
+        status: PlayerStatusDto::new(player.statuses.get()),
     };
 
     if let Some(contract) = &player.contract {
@@ -199,7 +218,7 @@ fn get_attributes(player: &Player) -> PlayerAttributesDto {
         international_apps: player.player_attributes.international_apps,
         international_goals: player.player_attributes.international_goals,
         under_21_international_apps: player.player_attributes.under_21_international_apps,
-        under_21_international_goals: player.player_attributes.under_21_international_goals
+        under_21_international_goals: player.player_attributes.under_21_international_goals,
     }
 }
 
@@ -282,7 +301,7 @@ fn get_statistics(player: &Player) -> PlayerStatistics {
         shots_on_target: player.statistics.shots_on_target,
         tackling: player.statistics.tackling,
         passes: player.statistics.passes,
-        average_rating: player.statistics.average_rating
+        average_rating: player.statistics.average_rating,
     }
 }
 

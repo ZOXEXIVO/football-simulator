@@ -1,30 +1,26 @@
-
 use chrono::NaiveDate;
 
 #[derive(Debug)]
-pub struct StatusData{
+pub struct StatusData {
     pub start_date: NaiveDate,
-    pub status: PlayerStatus
+    pub status: PlayerStatus,
 }
 
-impl StatusData{
+impl StatusData {
     pub fn new(start_date: NaiveDate, status: PlayerStatus) -> Self {
-        StatusData{
-            start_date,
-            status
-        }
+        StatusData { start_date, status }
     }
 }
 
 #[derive(Debug)]
-pub struct PlayerStatusData{
-    pub statuses: Vec<StatusData>
+pub struct PlayerStatusData {
+    pub statuses: Vec<StatusData>,
 }
 
-impl PlayerStatusData{
+impl PlayerStatusData {
     pub fn new() -> Self {
-        PlayerStatusData{
-            statuses: Vec::new()
+        PlayerStatusData {
+            statuses: Vec::new(),
         }
     }
 
@@ -32,12 +28,12 @@ impl PlayerStatusData{
         self.statuses.push(StatusData::new(start_date, status));
     }
 
-    pub fn remove(&mut self, status: PlayerStatus){
+    pub fn remove(&mut self, status: PlayerStatus) {
         if let Some(idx) = self.statuses.iter().position(|s| s.status == status) {
             self.statuses.remove(idx);
         }
     }
-    
+
     pub fn get(&self) -> Vec<PlayerStatus> {
         self.statuses.iter().map(|s| s.status).collect()
     }
@@ -122,5 +118,5 @@ pub enum PlayerStatus {
     //The player is an MLS Youth International - a non domestic player aged 24 or under.
     YI,
     //The player is on a youth contract and is not yet on professional terms
-    Yth
+    Yth,
 }
