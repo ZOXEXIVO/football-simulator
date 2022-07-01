@@ -6,10 +6,11 @@ use core::continent::Continent;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable};
 use core::shared::Location;
 use core::utils::IntegerUtils;
+use core::ClubStatus;
 use core::{
     Club, ClubBoard, ClubFinances, ClubMood, Country, CountryGeneratorData, Player,
-    PlayerCollection, SimulatorData, Staff, StaffCollection,
-    StaffPosition, Team, TeamReputation, TeamType, TrainingSchedule, Utc,
+    PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, Team, TeamReputation,
+    TeamType, TrainingSchedule, Utc,
 };
 use std::str::FromStr;
 
@@ -61,7 +62,7 @@ impl Generator {
 
                 let mut player_generator =
                     PlayerGenerator::with_people_names(&generator_data.people_names);
-                
+
                 let mut staff_generator =
                     StaffGenerator::with_people_names(&generator_data.people_names);
 
@@ -146,6 +147,7 @@ impl Generator {
                 },
                 mood: ClubMood::default(),
                 board: ClubBoard::new(),
+                status: ClubStatus::Professional,
                 finance: ClubFinances::new(club.finance.balance, Vec::new()),
                 academy: ClubAcademy::new(100),
                 teams: club

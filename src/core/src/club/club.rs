@@ -1,5 +1,6 @@
 use crate::club::academy::ClubAcademy;
 use crate::club::board::ClubBoard;
+use crate::club::status::ClubStatus;
 use crate::club::{ClubFinances, ClubMood, ClubResult};
 use crate::context::GlobalContext;
 use crate::shared::Location;
@@ -18,6 +19,8 @@ pub struct Club {
 
     pub finance: ClubFinances,
 
+    pub status: ClubStatus,
+
     pub academy: ClubAcademy,
 
     pub teams: Vec<Team>,
@@ -29,6 +32,7 @@ impl Club {
         name: String,
         location: Location,
         finance: ClubFinances,
+        status: ClubStatus,
         teams: Vec<Team>,
     ) -> Self {
         Club {
@@ -36,6 +40,7 @@ impl Club {
             name,
             location,
             finance,
+            status,
             academy: ClubAcademy::new(10),
             mood: ClubMood::default(),
             board: ClubBoard::new(),
@@ -56,10 +61,7 @@ impl Club {
             .iter_mut()
             .map(|team| {
                 let message = &format!("simulate team: {}", &team.name);
-                Logging::estimate_result(
-                    || team.simulate(ctx.with_team(team.id)),
-                    message,
-                )
+                Logging::estimate_result(|| team.simulate(ctx.with_team(team.id)), message)
             })
             .collect();
 

@@ -10,6 +10,7 @@ mod player;
 mod relations;
 mod result;
 mod staff;
+pub mod status;
 mod team;
 mod transfers;
 
@@ -24,5 +25,6 @@ pub use player::*;
 pub use relations::*;
 pub use result::*;
 pub use staff::*;
+pub use status::*;
 pub use team::*;
 pub use transfers::*;
