@@ -9,7 +9,7 @@ pub async fn game_create_action(state: Data<GameAppData>) -> Result<HttpResponse
     let mut state_data = state.data.lock().await;
 
     let cloned_state = Data::clone(&state);
-    
+
     let generation_result: Result<(SimulatorData, u32), BlockingError> =
         actix_web::web::block(move || {
             let (generated_data, estimated) =
