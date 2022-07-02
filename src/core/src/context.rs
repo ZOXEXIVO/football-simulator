@@ -4,20 +4,20 @@ use crate::club::{BoardContext, ClubContext, ClubFinanceContext, PlayerContext, 
 use crate::continent::ContinentContext;
 use crate::country::CountryContext;
 use crate::league::LeagueContext;
-use crate::{TeamContext};
+use crate::TeamContext;
 
 #[derive(Clone)]
-pub struct GlobalContext<'gc>{
+pub struct GlobalContext<'gc> {
     pub simulation: SimulationContext,
     pub continent: Option<ContinentContext>,
     pub country: Option<CountryContext>,
     pub league: Option<LeagueContext<'gc>>,
     pub club: Option<ClubContext<'gc>>,
-    pub team: Option<TeamContext>,    
+    pub team: Option<TeamContext>,
     pub finance: Option<ClubFinanceContext>,
     pub board: Option<BoardContext>,
     pub player: Option<PlayerContext>,
-    pub staff: Option<StaffContext>
+    pub staff: Option<StaffContext>,
 }
 
 impl<'gc> GlobalContext<'gc> {
@@ -37,56 +37,56 @@ impl<'gc> GlobalContext<'gc> {
     }
 
     pub fn with_continent(&self, continent_id: u32) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
         ctx.continent = Some(ContinentContext::new(continent_id));
         ctx
     }
 
     pub fn with_country(&self, country_id: u32) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
 
         ctx.country = Some(CountryContext::new(country_id));
         ctx
     }
 
-    pub fn with_league(&self, league_id: u32, team_ids: &'gc[u32]) -> Self {
-        let mut ctx = self.clone();
+    pub fn with_league(&self, league_id: u32, team_ids: &'gc [u32]) -> Self {
+        let mut ctx = GlobalContext::clone(self);
         ctx.league = Some(LeagueContext::new(league_id, team_ids));
         ctx
     }
 
     pub fn with_club(&self, club_id: u32, club_name: &'gc str) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
         ctx.club = Some(ClubContext::new(club_id, club_name));
         ctx
     }
 
     pub fn with_team(&self, team_id: u32) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
         ctx.team = Some(TeamContext::new(team_id));
         ctx
-    }    
-    
+    }
+
     pub fn with_board(&self) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
         ctx.board = Some(BoardContext::new());
         ctx
     }
 
     pub fn with_player(&self, player_id: Option<u32>) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
         ctx.player = Some(PlayerContext::new(player_id));
         ctx
     }
 
     pub fn with_staff(&self, staff_id: Option<u32>) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
         ctx.staff = Some(StaffContext::new(staff_id));
         ctx
     }
 
     pub fn with_finance(&self) -> Self {
-        let mut ctx = self.clone();
+        let mut ctx = GlobalContext::clone(self);
         ctx.finance = Some(ClubFinanceContext::new());
         ctx
     }
@@ -109,9 +109,9 @@ impl SimulationContext {
     }
 
     pub fn is_week_beginning(&self) -> bool {
-        self.date.weekday() == Weekday::Mon && self.date.hour() == 0 && self.date.minute() == 0
-    }    
-    
+        self.date.weekday() == Weekday::Mon && self.date.hour() == 0
+    }
+
     pub fn is_month_beginning(&self) -> bool {
         self.day == 1u8
     }

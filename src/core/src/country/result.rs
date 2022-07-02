@@ -1,7 +1,7 @@
 use crate::league::LeagueResult;
-use crate::r#match::{MatchResult, MatchEvent};
+use crate::r#match::{MatchEvent, MatchResult};
 use crate::simulator::SimulatorData;
-use crate::{ClubResult, MatchHistory};
+use crate::{ClubResult, MatchHistory, MatchHistoryItem};
 
 pub struct CountryResult {
     pub leagues: Vec<LeagueResult>,
@@ -26,7 +26,7 @@ impl CountryResult {
         for match_result in &self.match_results {
             Self::process_match_results(match_result, data);
         }
-        
+
         for league_result in &self.leagues {
             league_result.process(data);
         }
@@ -46,16 +46,16 @@ impl CountryResult {
             result.home_goals,
             result.away_goals,
         );
-        
+
         let home_team = data.team_mut(result.home_team_id).unwrap();
-        home_team.match_history.push(MatchHistory::new(
+        home_team.match_history.add(MatchHistoryItem::new(
             now,
             result.away_team_id,
             (result.home_goals, result.away_goals),
         ));
 
         let away_team = data.team_mut(result.away_team_id).unwrap();
-        away_team.match_history.push(MatchHistory::new(
+        away_team.match_history.add(MatchHistoryItem::new(
             now,
             result.home_team_id,
             (result.away_goals, result.home_goals),
@@ -68,26 +68,22 @@ impl CountryResult {
                 match match_event {
                     MatchEvent::MatchPlayed(player_id, is_start_squad, minutes_played) => {
                         let mut player = data.player_mut(*player_id).unwrap();
-                        
+
                         if *is_start_squad {
                             player.statistics.played += 1;
-                        }else {
+                        } else {
                             player.statistics.played_subs += 1;
                         }
-                    },
+                    }
                     MatchEvent::Goal(player_id) => {
                         let mut player = data.player_mut(*player_id).unwrap();
                         player.statistics.goals += 1;
-
-                    },
+                    }
                     MatchEvent::Assist(player_id) => {
                         let mut player = data.player_mut(*player_id).unwrap();
                         player.statistics.assists += 1;
-
-                    },
-                    MatchEvent::Injury(player_id) => {
-
                     }
+                    MatchEvent::Injury(player_id) => {}
                 }
             }
         }

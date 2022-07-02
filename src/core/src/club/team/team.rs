@@ -4,6 +4,7 @@ use crate::shared::CurrencyValue;
 use crate::{
     MatchHistory, Player, PlayerCollection, Squad, SquadSelector, StaffCollection, Tactics,
     TacticsSelector, TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
+    Transfers,
 };
 use std::str::FromStr;
 
@@ -31,8 +32,8 @@ pub struct Team {
 
     pub reputation: TeamReputation,
     pub training_schedule: TrainingSchedule,
-    pub transfer_list: Vec<TransferItem>,
-    pub match_history: Vec<MatchHistory>,
+    pub transfer_list: Transfers,
+    pub match_history: MatchHistory,
 }
 
 impl Team {
@@ -58,8 +59,8 @@ impl Team {
             reputation,
             tactics: None,
             training_schedule,
-            transfer_list: Vec::new(),
-            match_history: Vec::new(),
+            transfer_list: Transfers::new(),
+            match_history: MatchHistory::new(),
         }
     }
 
@@ -68,7 +69,7 @@ impl Team {
     }
 
     pub fn add_player_to_transfer_list(&mut self, player_id: u32, value: CurrencyValue) {
-        self.transfer_list.push(TransferItem {
+        self.transfer_list.add(TransferItem {
             player_id,
             amount: value,
         })

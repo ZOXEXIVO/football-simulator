@@ -1,16 +1,20 @@
 mod behaviour;
 mod context;
+mod matches;
 mod reputation;
 mod result;
 mod squad;
 mod tactics;
 mod team;
 mod training;
+mod transfers;
 
 pub use context::*;
+pub use matches::*;
 pub use reputation::*;
 pub use result::*;
 pub use squad::*;
 pub use tactics::*;
 pub use team::*;
 pub use training::*;
+pub use transfers::*;
