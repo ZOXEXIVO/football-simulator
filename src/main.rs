@@ -10,8 +10,8 @@ use core::utils::TimeEstimation;
 use core::SimulatorData;
 use env_logger::Env;
 use log::info;
-use parking_lot::Mutex;
 use std::sync::Arc;
+use tokio::sync::Mutex;
 use ui::*;
 
 pub struct GameAppData {

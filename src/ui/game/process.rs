@@ -5,13 +5,15 @@ use actix_web::web::{block, Data};
 use actix_web::{HttpRequest, HttpResponse, Result};
 use core::utils::TimeEstimation;
 use core::FootballSimulator;
+use std::sync::Arc;
 
 pub async fn game_process_action(
     request: HttpRequest,
     state: Data<GameAppData>,
 ) -> Result<HttpResponse> {
+    let mut data = state.data.lock().await;
+
     let process_result: Result<u32, BlockingError> = block(move || {
-        let mut data = state.data.lock();
         let simulator_data = data.as_mut().unwrap();
 
         let (_, estimated) =

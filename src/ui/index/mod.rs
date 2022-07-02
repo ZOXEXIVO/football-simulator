@@ -14,7 +14,7 @@ pub fn index_routes(cfg: &mut ServiceConfig) {
 pub struct IndexViewModel {}
 
 pub async fn index_action(state: Data<GameAppData>) -> Result<HttpResponse> {
-    let data = state.data.lock();
+    let data = state.data.lock().await;
 
     if data.is_some() {
         Ok(HttpResponse::Found()
@@ -34,7 +34,7 @@ pub struct CurrentDateModel {
 }
 
 pub async fn current_date_action(state: Data<GameAppData>) -> Result<HttpResponse> {
-    let data = state.data.lock();
+    let data = state.data.lock().await;
 
     if data.is_none() {
         Ok(HttpResponse::Ok().finish())

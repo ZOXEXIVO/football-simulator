@@ -2,10 +2,10 @@
 use actix_web::web::Data;
 use actix_web::{web, HttpResponse, Result};
 use askama::Template;
+use chrono::Duration;
 use core::league::ScheduleTour;
 use itertools::*;
 use serde::Deserialize;
-use chrono::{Duration};
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
@@ -63,7 +63,7 @@ pub async fn league_get_action(
     state: Data<GameAppData>,
     route_params: web::Path<LeagueGetRequest>,
 ) -> Result<HttpResponse> {
-    let guard = state.data.lock();
+    let guard = state.data.lock().await;
 
     let simulator_data = guard.as_ref().unwrap();
 
@@ -100,14 +100,14 @@ pub async fn league_get_action(
     let now = simulator_data.date.date() + Duration::days(3);
 
     let mut current_tour: Option<&ScheduleTour> = Option::None;
-    
+
     if let Some(schedule) = &league.schedule {
         for tour in schedule.tours.iter() {
             if now >= tour.start_date() && now <= tour.end_date() {
                 current_tour = Some(tour);
             }
         }
-        
+
         if current_tour.is_none() {
             for tour in schedule.tours.iter() {
                 if now >= tour.end_date() {
@@ -118,7 +118,13 @@ pub async fn league_get_action(
     }
 
     if current_tour.is_some() {
-        for (key, group) in &current_tour.as_ref().unwrap().items.iter().group_by(|t| t.date.date()) {
+        for (key, group) in &current_tour
+            .as_ref()
+            .unwrap()
+            .items
+            .iter()
+            .group_by(|t| t.date.date())
+        {
             let tour_schedule = TourSchedule {
                 date: key.format("%d.%m.%Y").to_string(),
                 matches: group
@@ -139,7 +145,7 @@ pub async fn league_get_action(
 
             model.current_tour_schedule.push(tour_schedule)
         }
-    }    
+    }
 
     let html = LeagueGetViewModel::render(&model).unwrap();
 

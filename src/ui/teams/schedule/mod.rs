@@ -47,7 +47,7 @@ pub async fn team_schedule_get_action(
     state: Data<GameAppData>,
     route_params: web::Path<TeamScheduleGetRequest>,
 ) -> Result<HttpResponse> {
-    let guard = state.data.lock();
+    let guard = state.data.lock().await;
 
     let simulator_data = guard.as_ref().unwrap();
 
@@ -92,7 +92,9 @@ pub async fn team_schedule_get_action(
                             home_goals: schedule.result.as_ref().unwrap().home_goals,
                             away_goals: schedule.result.as_ref().unwrap().away_goals,
                         })
-                    } else { None },
+                    } else {
+                        None
+                    },
                 }
             })
             .collect(),

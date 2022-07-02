@@ -64,7 +64,7 @@ pub async fn team_get_action(
     state: Data<GameAppData>,
     route_params: web::Path<TeamGetRequest>,
 ) -> Result<HttpResponse> {
-    let guard = state.data.lock();
+    let guard = state.data.lock().await;
 
     let simulator_data = guard.as_ref().unwrap();
 
