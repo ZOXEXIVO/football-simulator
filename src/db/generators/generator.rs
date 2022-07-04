@@ -1,7 +1,8 @@
 use crate::db::loaders::ContinentEntity;
 use crate::db::{DatabaseEntity, PlayerGenerator, PositionType, StaffGenerator};
+use chrono::NaiveDateTime;
 use core::club::academy::ClubAcademy;
-use core::context::{NaiveTime, Timelike};
+use core::context::NaiveTime;
 use core::continent::Continent;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable};
 use core::shared::Location;
@@ -18,17 +19,6 @@ pub struct Generator;
 
 impl Generator {
     pub fn generate(data: &DatabaseEntity) -> SimulatorData {
-        let current_date = Utc::now()
-            .naive_utc()
-            .with_hour(0)
-            .unwrap()
-            .with_minute(0)
-            .unwrap()
-            .with_second(0)
-            .unwrap()
-            .with_nanosecond(0)
-            .unwrap();
-
         let continents = data
             .continents
             .iter()
@@ -39,7 +29,11 @@ impl Generator {
             })
             .collect();
 
-        SimulatorData::new(current_date, continents)
+        let current_date = Utc::now().naive_utc().date();
+
+        let current_date_time = NaiveDateTime::new(current_date, NaiveTime::from_hms(0, 0, 0));
+
+        SimulatorData::new(current_date_time, continents)
     }
 
     fn generate_countries(continent: &ContinentEntity, data: &DatabaseEntity) -> Vec<Country> {

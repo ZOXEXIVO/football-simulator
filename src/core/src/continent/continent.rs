@@ -1,7 +1,7 @@
 use crate::context::GlobalContext;
-use crate::continent::ContinentResult;
+use crate::continent::{ContinentCountryProcessor, ContinentResult};
 use crate::country::CountryResult;
-use crate::utils::{Logging};
+use crate::utils::Logging;
 use crate::Country;
 pub use rayon::prelude::*;
 
@@ -13,15 +13,7 @@ pub struct Continent {
 
 impl Continent {
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ContinentResult {
-        let country_results: Vec<CountryResult> = self
-            .countries
-            .iter_mut()
-            .map(|country| {
-                let message = &format!("simulate country: {}", &country.name);
-                Logging::estimate_result(|| country.simulate(ctx.with_country(country.id)), message)
-            })
-            .collect();
-
-        ContinentResult::new(country_results)
+        let country_result = ContinentCountryProcessor::process(self, &ctx);
+        ContinentResult::new(country_result)
     }
 }
