@@ -1,5 +1,5 @@
 use crate::academy::AcademyPlayer;
-use crate::{Player, SimulatorData};
+use crate::{SimulatorData};
 
 pub struct ClubAcademyResult {
     pub players: Vec<AcademyPlayer>,
@@ -12,5 +12,5 @@ impl ClubAcademyResult {
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {}
+    pub fn process(&self, _: &mut SimulatorData) {}
 }

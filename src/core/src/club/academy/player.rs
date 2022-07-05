@@ -1,5 +1,4 @@
 use crate::Player;
-use std::thread::AccessError;
 
 #[derive(Debug)]
 pub struct AcademyPlayer {

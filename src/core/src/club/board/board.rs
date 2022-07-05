@@ -44,7 +44,7 @@ impl ClubBoard {
         }
     }
 
-    fn run_director_election(&mut self, simulation_ctx: &SimulationContext) {}
+    fn run_director_election(&mut self, _: &SimulationContext) {}
 
     fn is_sport_director_contract_expiring(&self, simulation_ctx: &SimulationContext) -> bool {
         match &self.director {
@@ -53,5 +53,5 @@ impl ClubBoard {
         }
     }
 
-    fn run_sport_director_election(&mut self, context: &SimulationContext) {}
+    fn run_sport_director_election(&mut self, _: &SimulationContext) {}
 }

@@ -60,7 +60,7 @@ pub enum TacticsPositioning {
 pub struct TacticsSelector;
 
 impl TacticsSelector {
-    pub fn select(team: &Team, coach: &Staff) -> Tactics {
+    pub fn select(_: &Team, coach: &Staff) -> Tactics {
         match coach.behaviour.state {
             PersonBehaviourState::Poor => Tactics::new(TacticsPositioning::T442),
             PersonBehaviourState::Normal => Tactics::new(TacticsPositioning::T442),

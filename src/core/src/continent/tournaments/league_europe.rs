@@ -6,6 +6,6 @@ pub struct LeagueEurope {}
 impl LeagueEurope {}
 
 impl Tournament for LeagueEurope {
-    fn simulate(&mut self, tournament_ctx: &mut TournamentContext, ctx: GlobalContext<'_>) {
+    fn simulate(&mut self, _: &mut TournamentContext, _: GlobalContext<'_>) {
     }
 }

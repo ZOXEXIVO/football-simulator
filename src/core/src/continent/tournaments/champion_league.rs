@@ -6,5 +6,5 @@ pub struct ChampionLeague {}
 impl ChampionLeague {}
 
 impl Tournament for ChampionLeague {
-    fn simulate(&mut self, tournament_ctx: &mut TournamentContext, ctx: GlobalContext<'_>) {}
+    fn simulate(&mut self, _: &mut TournamentContext, _: GlobalContext<'_>) {}
 }

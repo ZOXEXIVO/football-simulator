@@ -1,5 +1,4 @@
-use crate::club::{Player, Staff};
-use crate::{PlayerTraining, Team, TeamTrainingResult};
+use crate::{Team, TeamTrainingResult};
 use chrono::NaiveDateTime;
 
 #[derive(Debug)]

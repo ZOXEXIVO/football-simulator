@@ -1,4 +1,3 @@
-use crate::training::history::PlayerTrainingHistory;
 use crate::utils::IntegerUtils;
 use crate::{PersonBehaviourState, Player, PlayerTeamTrainingResult, Staff};
 use chrono::NaiveDateTime;
@@ -14,11 +13,11 @@ impl PlayerTraining {
     pub fn train(
         player: &mut Player,
         coach: &Staff,
-        now: NaiveDateTime,
+        _: NaiveDateTime,
     ) -> PlayerTeamTrainingResult {
         let result = PlayerTeamTrainingResult::new();
 
-        let training_history = &mut player.training_history;
+        //let training_history = &mut player.training_history;
 
         //training_history
 

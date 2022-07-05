@@ -1,7 +1,7 @@
 use crate::league::LeagueResult;
 use crate::r#match::{MatchEvent, MatchResult};
 use crate::simulator::SimulatorData;
-use crate::{ClubResult, MatchHistory, MatchHistoryItem};
+use crate::{ClubResult, MatchHistoryItem};
 
 pub struct CountryResult {
     pub leagues: Vec<LeagueResult>,

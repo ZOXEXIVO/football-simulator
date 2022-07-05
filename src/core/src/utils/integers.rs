@@ -4,6 +4,7 @@ use rand::*;
 pub struct IntegerUtils;
 
 impl IntegerUtils {
+    #[inline]
     pub fn random(min: i32, max: i32) -> i32 {
         let random_val: f64 = rand::thread_rng().gen();
 

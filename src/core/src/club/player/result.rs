@@ -50,7 +50,7 @@ impl PlayerResult {
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {}
+    pub fn process(&self, _: &mut SimulatorData) {}
 
     pub fn request_transfer(&mut self, player_id: u32) {
         self.transfer_requests.push(player_id);

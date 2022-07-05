@@ -135,7 +135,7 @@ impl Staff {
         result
     }
 
-    fn process_contract(&mut self, result: &mut StaffResult, now: NaiveDateTime) {}
+    fn process_contract(&mut self, _: &mut StaffResult, now: NaiveDateTime) {}
 }
 
 //DISPLAY
@@ -186,7 +186,7 @@ impl StaffCollection {
         };
 
         match responsibility_coach {
-            Some(rc) => self.get_by_id(responsibility_coach.unwrap()),
+            Some(_) => self.get_by_id(responsibility_coach.unwrap()),
             None => self.get_by_position(StaffPosition::Coach),
         }
     }

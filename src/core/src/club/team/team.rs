@@ -124,7 +124,7 @@ impl Team {
         };
 
         if self.training_schedule.is_default {
-            let coach = self.staffs.head_coach();
+            //let coach = self.staffs.head_coach();
         }
 
         result

@@ -4,7 +4,6 @@ use crate::club::academy::settings::AcademySettings;
 use crate::context::GlobalContext;
 use crate::utils::IntegerUtils;
 use crate::PlayerGenerator;
-use serde_json::ser::CharEscape::Backspace;
 
 #[derive(Debug)]
 pub struct ClubAcademy {
@@ -23,18 +22,18 @@ impl ClubAcademy {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubAcademyResult {
-        let mut result = ClubAcademyResult::new();
+        let result = ClubAcademyResult::new();
 
         if self.players.len() < self.settings.players_count_range.start as usize {
             self.produce_youth_players(ctx);
         }
 
-        let completed_player_ids: Vec<u32> = self
-            .players
-            .iter()
-            .filter(|p| p.completed)
-            .map(|p| p.player.id)
-            .collect();
+        // let completed_player_ids: Vec<u32> = self
+        //     .players
+        //     .iter()
+        //     .filter(|p| p.completed)
+        //     .map(|p| p.player.id)
+        //     .collect();
 
         // TODO Filter
 

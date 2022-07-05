@@ -31,5 +31,5 @@ impl PlayerTeamTrainingResult {
         PlayerTeamTrainingResult {}
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {}
+    pub fn process(&self, _: &mut SimulatorData) {}
 }

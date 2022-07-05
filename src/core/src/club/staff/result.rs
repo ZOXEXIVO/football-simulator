@@ -11,7 +11,7 @@ impl StaffCollectionResult{
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData){
+    pub fn process(&self, _: &mut SimulatorData){
 
     }
 }
@@ -31,7 +31,7 @@ impl StaffResult{
         self.transfer_requests.push(player_id);
     }
 
-    pub fn process(&self, data: &mut SimulatorData){
+    pub fn process(&self, _: &mut SimulatorData){
 
     }
 }

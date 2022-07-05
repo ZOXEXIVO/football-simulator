@@ -7,8 +7,8 @@ use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
-    ContractType, Person, PersonAttributes, PlayerContractProposal, PlayerHappiness,
-    PlayerPositionType, PlayerPositions, PlayerSquadStatus, PlayerStatistics,
+    Person, PersonAttributes, PlayerHappiness,
+    PlayerPositionType, PlayerPositions, PlayerStatistics,
     PlayerStatisticsHistory, PlayerStatusData, PlayerTeamTrainingResult, PlayerTrainingHistory,
     PlayerValueCalculator, Relations,
 };
