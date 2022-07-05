@@ -1,5 +1,4 @@
 use crate::context::{GlobalContext, SimulationContext};
-use crate::league::processors::LeagueScheduleProcessor;
 use crate::league::schedule::round::RoundSchedule;
 use crate::league::{LeagueMatch, LeagueResult, LeagueTable, Schedule, ScheduleGenerator, Season};
 use chrono::Datelike;
@@ -36,9 +35,57 @@ impl League {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
-        let scheduled_matches = LeagueScheduleProcessor::process(self, &ctx);
+        let scheduled_matches = self.simulate_schedule(&ctx);
 
         LeagueResult::new(self.id, scheduled_matches)
+    }
+
+    fn simulate_schedule(&mut self, ctx: &GlobalContext<'_>) -> Vec<LeagueMatch> {
+        if self.settings.is_time_for_new_schedule(&ctx.simulation) || self.schedule.is_none() {
+            let league_ctx = ctx.league.as_ref().unwrap();
+
+            self.table = Some(LeagueTable::with_clubs(&league_ctx.team_ids));
+
+            let schedule_generator = self.get_schedule_generator();
+
+            let league_ctx = ctx.league.as_ref().unwrap();
+
+            match schedule_generator.generate(
+                self.id,
+                Season::OneYear(ctx.simulation.date.year() as u16),
+                league_ctx.team_ids,
+                &self.settings,
+            ) {
+                Ok(generated_schedule) => {
+                    self.schedule = Some(generated_schedule);
+                }
+                Err(error) => {
+                    error!("Generating schedule error: {}", error.message);
+                }
+            }
+        }
+
+        let scheduled_matches = self
+            .schedule
+            .as_ref()
+            .unwrap()
+            .get_matches(ctx.simulation.date)
+            .iter()
+            .map(|sm| LeagueMatch {
+                id: sm.id.clone(),
+                league_id: sm.league_id,
+                date: sm.date,
+                home_team_id: sm.home_team_id,
+                away_team_id: sm.away_team_id,
+                result: None,
+            })
+            .collect();
+
+        scheduled_matches
+    }
+
+    fn get_schedule_generator(&self) -> impl ScheduleGenerator {
+        RoundSchedule::new()
     }
 }
 

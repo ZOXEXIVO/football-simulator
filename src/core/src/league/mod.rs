@@ -1,15 +1,13 @@
 mod context;
 mod league;
-mod processors;
-mod result;
 mod schedule;
-mod season;
+mod result;
 mod table;
+mod season;
 
 pub use context::*;
 pub use league::*;
+pub use schedule::*;
 pub use result::*;
-pub use schedule::*;
-pub use schedule::*;
-pub use season::*;
 pub use table::*;
+pub use season::*;

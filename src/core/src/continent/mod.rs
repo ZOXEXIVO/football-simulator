@@ -1,11 +1,9 @@
 pub mod context;
 mod continent;
-mod processors;
-mod result;
 mod tournaments;
+mod result;
 
 pub use context::*;
 pub use continent::*;
-pub use processors::*;
-pub use result::*;
 pub use tournaments::*;
+pub use result::*;

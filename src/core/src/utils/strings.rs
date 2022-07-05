@@ -5,7 +5,6 @@ use rand::*;
 pub struct StringUtils;
 
 impl StringUtils {
-    #[inline]
     pub fn random_string(n: i32) -> String {
         (0..n)
             .map(|i| {

@@ -64,26 +64,6 @@ impl Team {
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> TeamResult {
-        let result = TeamResult::new(
-            self.id,
-            self.players.simulate(ctx.with_player(None)),
-            self.staffs.simulate(ctx.with_staff(None)),
-            TeamBehaviour::simulate(&self.players, &self.staffs),
-            TeamTraining::train(self, ctx.simulation.date),
-        );
-
-        if self.tactics.is_none() {
-            self.tactics = Some(TacticsSelector::select(self, self.staffs.head_coach()));
-        };
-
-        if self.training_schedule.is_default {
-            let coach = self.staffs.head_coach();
-        }
-
-        result
-    }
-
     pub fn players(&self) -> Vec<&Player> {
         self.players.players()
     }
@@ -128,6 +108,26 @@ impl Team {
             main_squad: squad.main_squad,
             substitutes: squad.substitutes,
         }
+    }
+
+    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> TeamResult {
+        let result = TeamResult::new(
+            self.id,
+            self.players.simulate(ctx.with_player(None)),
+            self.staffs.simulate(ctx.with_staff(None)),
+            TeamBehaviour::simulate(&self.players, &self.staffs),
+            TeamTraining::train(self, ctx.simulation.date),
+        );
+
+        if self.tactics.is_none() {
+            self.tactics = Some(TacticsSelector::select(self, self.staffs.head_coach()));
+        };
+
+        if self.training_schedule.is_default {
+            let coach = self.staffs.head_coach();
+        }
+
+        result
     }
 }
 
