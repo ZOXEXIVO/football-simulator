@@ -62,10 +62,7 @@ pub async fn team_schedule_get_action(
         league_name: &league.name,
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
 
-        items: league
-            .schedule
-            .as_ref()
-            .unwrap_or(&Schedule::stub())
+        items: league.schedule
             .get_matches_for_team(team.id)
             .iter()
             .map(|schedule| {
@@ -109,6 +106,7 @@ fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
     let club = data.club(club_id).unwrap();
 
     let mut teams: Vec<ClubTeam> = club
+        .teams
         .teams
         .iter()
         .map(|team| ClubTeam {

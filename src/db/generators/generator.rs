@@ -7,12 +7,15 @@ use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable};
 use core::shared::Location;
 use core::utils::IntegerUtils;
 use core::ClubStatus;
+use core::TeamCollection;
 use core::{
     Club, ClubBoard, ClubFinances, ClubMood, Country, CountryGeneratorData, Player,
     PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, Team, TeamReputation,
     TeamType, TrainingSchedule, Utc,
 };
 use std::str::FromStr;
+use core::league::LeagueCollection;
+use core::league::Schedule;
 
 pub struct Generator;
 
@@ -78,7 +81,7 @@ impl Generator {
                     code: country.code.clone(),
                     name: country.name.clone(),
                     continent_id: continent.id,
-                    leagues: Generator::generate_leagues(country.id, data),
+                    leagues: LeagueCollection::new(Generator::generate_leagues(country.id, data)),
                     clubs,
                     reputation: country.reputation,
                     generator_data,
@@ -107,7 +110,7 @@ impl Generator {
                     id: league.id,
                     name: league.name.clone(),
                     country_id: league.country_id,
-                    schedule: Option::None,
+                    schedule: Schedule::new(),
                     settings: LeagueSettings {
                         season_starting_half: DayMonthPeriod {
                             from_day: league.settings.season_starting_half.from_day,
@@ -122,7 +125,7 @@ impl Generator {
                             to_month: league.settings.season_ending_half.to_month,
                         },
                     },
-                    table: Some(LeagueTable::with_clubs(&league_clubs)),
+                    table: LeagueTable::new(&league_clubs),
                     reputation: 0,
                 }
             })
@@ -150,36 +153,37 @@ impl Generator {
                 status: ClubStatus::Professional,
                 finance: ClubFinances::new(club.finance.balance, Vec::new()),
                 academy: ClubAcademy::new(100),
-                teams: club
-                    .teams
-                    .iter()
-                    .map(|t| {
-                        Team::new(
-                            t.id,
-                            t.league_id,
-                            club.id,
-                            t.name.clone(),
-                            TeamType::from_str(&t.team_type).unwrap(),
-                            TrainingSchedule::new(
-                                NaiveTime::from_hms(10, 0, 0),
-                                NaiveTime::from_hms(17, 0, 0),
-                            ),
-                            TeamReputation::new(
-                                t.reputation.home,
-                                t.reputation.national,
-                                t.reputation.world,
-                            ),
-                            PlayerCollection::new(Self::generate_players(
-                                player_generator,
-                                country_id,
-                            )),
-                            StaffCollection::new(
-                                Self::generate_staffs(staff_generator, country_id),
-                                Some(Staff::stub()),
-                            ),
-                        )
-                    })
-                    .collect(),
+                teams: TeamCollection::new(
+                    club.teams
+                        .iter()
+                        .map(|t| {
+                            Team::new(
+                                t.id,
+                                t.league_id,
+                                club.id,
+                                t.name.clone(),
+                                TeamType::from_str(&t.team_type).unwrap(),
+                                TrainingSchedule::new(
+                                    NaiveTime::from_hms(10, 0, 0),
+                                    NaiveTime::from_hms(17, 0, 0),
+                                ),
+                                TeamReputation::new(
+                                    t.reputation.home,
+                                    t.reputation.national,
+                                    t.reputation.world,
+                                ),
+                                PlayerCollection::new(Self::generate_players(
+                                    player_generator,
+                                    country_id,
+                                )),
+                                StaffCollection::new(
+                                    Self::generate_staffs(staff_generator, country_id),
+                                    Some(Staff::stub()),
+                                ),
+                            )
+                        })
+                        .collect(),
+                ),
             })
             .collect();
     }

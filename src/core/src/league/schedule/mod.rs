@@ -1,9 +1,17 @@
-pub mod models;
+pub mod schedule;
 pub mod round;
+pub mod result;
 
-pub use models::*;
-use crate::league::{Season, LeagueSettings};
+use crate::league::{LeagueSettings, Season};
+pub use schedule::*;
+pub use result::*;
 
 pub trait ScheduleGenerator {
-    fn generate(&self, league_id: u32, season: Season, teams: &[u32], league_settings: &LeagueSettings) -> Result<Schedule, ScheduleError>;
+    fn generate(
+        &self,
+        league_id: u32,
+        season: Season,
+        teams: &[u32],
+        league_settings: &LeagueSettings,
+    ) -> Result<Vec<ScheduleTour>, ScheduleError>;
 }

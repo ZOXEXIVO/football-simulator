@@ -1,13 +1,15 @@
+mod collection;
 mod context;
 mod league;
-mod schedule;
 mod result;
-mod table;
+mod schedule;
 mod season;
+mod table;
 
+pub use collection::*;
 pub use context::*;
 pub use league::*;
-pub use schedule::*;
 pub use result::*;
-pub use table::*;
+pub use schedule::*;
 pub use season::*;
+pub use table::*;

@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::SimulatorData;
+use std::collections::HashMap;
 
 pub struct SimulatorDataIndexes {
     league_indexes: HashMap<u32, (u32, u32)>,
@@ -24,14 +24,15 @@ impl SimulatorDataIndexes {
         for continent in &data.continents {
             for country in &continent.countries {
                 //fill leagues
-                for league in &country.leagues { self.add_league_location(league.id, continent.id, country.id);
+                for league in &country.leagues.leagues {
+                    self.add_league_location(league.id, continent.id, country.id);
                 }
 
                 //fill teams
                 for club in &country.clubs {
                     self.add_club_location(club.id, continent.id, country.id);
 
-                    for team in &club.teams {
+                    for team in &club.teams.teams {
                         self.add_team_name(team.id, team.name.clone());
                         self.add_team_location(team.id, continent.id, country.id, club.id);
 

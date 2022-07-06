@@ -1,16 +1,17 @@
 use crate::context::{GlobalContext, SimulationContext};
-use crate::league::schedule::round::RoundSchedule;
-use crate::league::{LeagueMatch, LeagueResult, LeagueTable, Schedule, ScheduleGenerator, Season};
-use chrono::Datelike;
-use log::error;
+use crate::league::{LeagueMatch, LeagueMatchResultResult, LeagueResult, LeagueTable, Schedule};
+use crate::r#match::{Match, MatchResult};
+use crate::utils::Logging;
+use crate::{Club, Team};
+use chrono::{Datelike, NaiveDate};
 
 #[derive(Debug)]
 pub struct League {
     pub id: u32,
     pub name: String,
     pub country_id: u32,
-    pub schedule: Option<Schedule>,
-    pub table: Option<LeagueTable>,
+    pub schedule: Schedule,
+    pub table: LeagueTable,
     pub settings: LeagueSettings,
     pub reputation: u16,
 }
@@ -27,65 +28,74 @@ impl League {
             id,
             name,
             country_id,
-            schedule: None,
-            table: Option::None,
+            schedule: Schedule::default(),
+            table: LeagueTable::default(),
             settings,
             reputation,
         }
     }
 
-    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueResult {
-        let scheduled_matches = self.simulate_schedule(&ctx);
+    pub fn simulate(&mut self, clubs: &[Club], ctx: GlobalContext<'_>) -> LeagueResult {
+        let table_result = self.table.simulate(&ctx);
+        
+        let league_teams: Vec<u32> = clubs.iter().flat_map(|c| &c.teams.teams)
+            .filter(|t| t.league_id == self.id)
+            .map(|t| t.id)
+            .collect();
+        
+        let mut schedule_result = self
+            .schedule
+            .simulate(&self.settings, ctx.with_league(self.id, &league_teams));
 
-        LeagueResult::new(self.id, scheduled_matches)
-    }
+        if schedule_result.is_match_scheduled() {
+            let played_matches = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
+            self.table.update(&played_matches);
 
-    fn simulate_schedule(&mut self, ctx: &GlobalContext<'_>) -> Vec<LeagueMatch> {
-        if self.settings.is_time_for_new_schedule(&ctx.simulation) || self.schedule.is_none() {
-            let league_ctx = ctx.league.as_ref().unwrap();
-
-            self.table = Some(LeagueTable::with_clubs(&league_ctx.team_ids));
-
-            let schedule_generator = self.get_schedule_generator();
-
-            let league_ctx = ctx.league.as_ref().unwrap();
-
-            match schedule_generator.generate(
-                self.id,
-                Season::OneYear(ctx.simulation.date.year() as u16),
-                league_ctx.team_ids,
-                &self.settings,
-            ) {
-                Ok(generated_schedule) => {
-                    self.schedule = Some(generated_schedule);
-                }
-                Err(error) => {
-                    error!("Generating schedule error: {}", error.message);
-                }
-            }
+            return LeagueResult::with_match_result(self.id, table_result, played_matches)
         }
 
-        let scheduled_matches = self
-            .schedule
-            .as_ref()
-            .unwrap()
-            .get_matches(ctx.simulation.date)
-            .iter()
-            .map(|sm| LeagueMatch {
-                id: sm.id.clone(),
-                league_id: sm.league_id,
-                date: sm.date,
-                home_team_id: sm.home_team_id,
-                away_team_id: sm.away_team_id,
-                result: None,
-            })
-            .collect();
-
-        scheduled_matches
+        LeagueResult::new(self.id, table_result)
     }
 
-    fn get_schedule_generator(&self) -> impl ScheduleGenerator {
-        RoundSchedule::new()
+    fn play_matches(
+        &mut self,
+        scheduled_matches: &mut Vec<LeagueMatch>,
+        clubs: &[Club],
+    ) -> Vec<MatchResult> {
+        let mut result = Vec::new(); //TODO capacity
+
+        for scheduled_match in scheduled_matches {
+            let match_to_play = Match::make(
+                scheduled_match.league_id,
+                &scheduled_match.id,
+                self.get_team(clubs, scheduled_match.home_team_id),
+                self.get_team(clubs, scheduled_match.away_team_id),
+            );
+
+            let message = &format!(
+                "play match: {} - {}",
+                &match_to_play.home_team.name, &match_to_play.away_team.name
+            );
+
+            let match_result = Logging::estimate_result(|| match_to_play.play(), message);
+
+            scheduled_match.result = Some(LeagueMatchResultResult {
+                home_goals: match_result.home_goals,
+                away_goals: match_result.away_goals,
+            });
+
+            result.push(match_result);
+        }
+
+        result
+    }
+
+    fn get_team<'c>(&self, clubs: &'c [Club], id: u32) -> &'c Team {
+        clubs
+            .iter()
+            .flat_map(|c| &c.teams.teams)
+            .find(|team| team.id == id)
+            .unwrap()
     }
 }
 
@@ -121,7 +131,7 @@ impl LeagueSettings {
 
         let date = context.date.date();
 
-        (date.day() as u8) == season_starting_date.from_day
+        (NaiveDate::day(&date) as u8) == season_starting_date.from_day
             && (date.month() as u8) == season_starting_date.from_month
     }
 }

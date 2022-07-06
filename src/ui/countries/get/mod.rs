@@ -49,6 +49,7 @@ pub async fn country_get_action(
         continent_name: &continent.name,
         leagues: country
             .leagues
+            .leagues
             .iter()
             .map(|l| LeagueDto {
                 id: l.id,

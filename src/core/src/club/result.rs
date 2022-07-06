@@ -59,8 +59,8 @@ impl ClubResult {
         fn get_contract_salary(player_growth_potential: f32) -> u32 {
             match player_growth_potential as u32 {
                 0..=3 => 1000u32,
-                3..=4 => 2000u32,
-                4..=5 => 3000u32,
+                4 => 2000u32,
+                5 => 3000u32,
                 _ => 1000u32,
             }
         }

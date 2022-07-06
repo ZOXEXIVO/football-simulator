@@ -41,12 +41,13 @@ pub async fn country_list_action(state: Data<GameAppData>) -> Result<HttpRespons
             countries: continent
                 .countries
                 .iter()
-                .filter(|c| c.leagues.len() > 0)
+                .filter(|c| c.leagues.leagues.len() > 0)
                 .map(|country| CountryDto {
                     id: country.id,
                     code: &country.code,
                     name: &country.name,
                     leagues: country
+                        .leagues
                         .leagues
                         .iter()
                         .map(|l| LeagueDto {

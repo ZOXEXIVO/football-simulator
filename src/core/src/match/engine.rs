@@ -106,7 +106,6 @@ impl<'s> FootballEngine<'s> {
             MatchFieldZone::Midfield => MatchFieldZone::BField,
             MatchFieldZone::BField => MatchFieldZone::BGoal,
             MatchFieldZone::BGoal => MatchFieldZone::BField,
-            _ => MatchFieldZone::Midfield,
         }
     }
 
@@ -117,7 +116,6 @@ impl<'s> FootballEngine<'s> {
             MatchFieldZone::Midfield => MatchFieldZone::AField,
             MatchFieldZone::AField => MatchFieldZone::AGoal,
             MatchFieldZone::AGoal => MatchFieldZone::AField,
-            _ => MatchFieldZone::Midfield,
         }
     }
 
@@ -143,7 +141,6 @@ impl<'s> FootballEngine<'s> {
                 attacking_team_skill = attacking_team.midfielder_skill;
                 defending_team_skill = defending_team.midfielder_skill;
             }
-            _ => {}
         }
 
         let random_a = random(0.0, attacking_team_skill as f64);
