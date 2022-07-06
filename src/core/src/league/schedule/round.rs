@@ -152,7 +152,7 @@ mod tests {
             season_ending_half: DayMonthPeriod::new(1, 7, 1, 12),
         };
 
-        let schedule = schedule
+        let schedule_tours = schedule
             .generate(
                 LEAGUE_ID,
                 Season::TwoYear(2020, 2021),
@@ -161,9 +161,9 @@ mod tests {
             )
             .unwrap();
 
-        assert_eq!(30, schedule.tours.len());
+        assert_eq!(30, schedule_tours.len());
 
-        for tour in &schedule.tours {
+        for tour in &schedule_tours {
             for team_id in &teams {
                 let home_team_id = tour
                     .items

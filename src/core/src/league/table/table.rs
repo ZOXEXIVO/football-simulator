@@ -136,9 +136,9 @@ mod tests {
         let first_team_id = 1;
         let second_team_id = 2;
 
-        let clubs = vec![first_team_id, second_team_id];
+        let teams = vec![first_team_id, second_team_id];
 
-        let mut table = LeagueTable::with_clubs(&clubs);
+        let mut table = LeagueTable::new(&teams);
 
         let match_results = vec![MatchResult {
             league_id: 0,
@@ -180,9 +180,9 @@ mod tests {
         let first_team_id = 1;
         let second_team_id = 2;
 
-        let clubs = vec![first_team_id, second_team_id];
+        let teams = vec![first_team_id, second_team_id];
 
-        let mut table = LeagueTable::with_clubs(&clubs);
+        let mut table = LeagueTable::new(&teams);
 
         let home_team_id = 1;
         let away_team_id = 2;
@@ -235,9 +235,9 @@ mod tests {
         let first_team_id = 1;
         let second_team_id = 2;
 
-        let clubs = vec![first_team_id, second_team_id];
+        let teams = vec![first_team_id, second_team_id];
 
-        let mut table = LeagueTable::with_clubs(&clubs);
+        let mut table = LeagueTable::new(&teams);
 
         let home_team_id = 1;
         let away_team_id = 2;

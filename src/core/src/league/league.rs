@@ -140,7 +140,6 @@ impl LeagueSettings {
 mod tests {
     use super::*;
     use chrono::prelude::*;
-    use chrono::prelude::{NaiveDateTime, NaiveTime};
 
     #[test]
     fn is_time_for_new_schedule_is_correct() {
