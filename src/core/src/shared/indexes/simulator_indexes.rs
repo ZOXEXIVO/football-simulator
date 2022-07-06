@@ -24,7 +24,7 @@ impl SimulatorDataIndexes {
         for continent in &data.continents {
             for country in &continent.countries {
                 //fill leagues
-                for league in &country.leagues {
+                for league in &country.leagues.leagues {
                     self.add_league_location(league.id, continent.id, country.id);
                 }
 

@@ -8,25 +8,42 @@ use chrono::NaiveDateTime;
 pub struct LeagueResult {
     pub league_id: u32,
     pub table_result: LeagueTableResult,
-    pub match_results: Vec<MatchResult>,
+    pub match_results: Option<Vec<MatchResult>>
 }
 
 impl LeagueResult {
     pub fn new(
         league_id: u32,
-        table_result: LeagueTableResult,
-        match_results: Vec<MatchResult>,
+        table_result: LeagueTableResult        
     ) -> Self {
         LeagueResult {
             league_id,
             table_result,
-            match_results,
+            match_results: None
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {}
+    pub fn with_match_result(
+        league_id: u32,
+        table_result: LeagueTableResult,
+        match_results: Vec<MatchResult>
+    ) -> Self {
+        LeagueResult {
+            league_id,
+            table_result,
+            match_results: Some(match_results),
+        }
+    }
 
-    fn process_match_results(result: &MatchResult, data: &mut SimulatorData) {
+    pub fn process(&self, data: &mut SimulatorData) {
+        if let Some(match_results) = &self.match_results {
+            for match_result in match_results {
+                self.process_match_results(match_result, data);
+            }
+        }              
+    }
+
+    fn process_match_results(&self, result: &MatchResult, data: &mut SimulatorData) {
         let now = data.date;
 
         let league = data.league_mut(result.league_id).unwrap();

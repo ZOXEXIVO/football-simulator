@@ -1,29 +1,29 @@
 use crate::context::GlobalContext;
 use crate::league::round::RoundSchedule;
-use crate::league::{LeagueMatch, LeagueSettings, ScheduleGenerator, Season};
+use crate::league::{LeagueMatch, LeagueSettings, ScheduleGenerator, ScheduleResult, Season};
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use log::{debug, error};
 
 #[derive(Debug)]
 pub struct Schedule {
-    pub generated: bool,
     pub tours: Vec<ScheduleTour>,
 }
 
 impl Schedule {
-    pub fn stub() -> Self {
+    pub fn new() -> Self {
         Schedule {
-            generated: false,
-            tours: Vec::new(),
+            tours: Vec::new()
         }
     }
-
+    
     pub fn simulate(
         &mut self,
         league_settings: &LeagueSettings,
         ctx: GlobalContext<'_>,
-    ) -> Vec<LeagueMatch> {
-        if !self.generated && league_settings.is_time_for_new_schedule(&ctx.simulation) {
+    ) -> ScheduleResult {
+        let mut result = ScheduleResult::new();
+        
+        if self.tours.is_empty() || league_settings.is_time_for_new_schedule(&ctx.simulation) {
             let league_ctx = ctx.league.as_ref().unwrap();
 
             let generator = RoundSchedule::new();
@@ -36,6 +36,7 @@ impl Schedule {
             ) {
                 Ok(generated_schedule) => {
                     self.tours = generated_schedule;
+                    result.generated = true;
                 }
                 Err(error) => {
                     error!("Generating schedule error: {}", error.message);
@@ -43,7 +44,7 @@ impl Schedule {
             }
         }
 
-        let scheduled_matches = self
+        result.scheduled_matches = self
             .get_matches(ctx.simulation.date)
             .iter()
             .map(|sm| LeagueMatch {
@@ -55,8 +56,8 @@ impl Schedule {
                 result: None,
             })
             .collect();
-
-        scheduled_matches
+        
+        result
     }
 
     pub fn get_matches(&self, date: NaiveDateTime) -> Vec<ScheduleItem> {
@@ -121,7 +122,6 @@ impl Schedule {
 impl Default for Schedule {
     fn default() -> Self {
         Schedule {
-            generated: false,
             tours: Vec::new(),
         }
     }

@@ -5,21 +5,26 @@ use std::cmp::Ordering;
 
 #[derive(Debug)]
 pub struct LeagueTable {
-    pub generated: bool,
     pub rows: Vec<LeagueTableRow>,
 }
 
 impl LeagueTable {
-    pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> LeagueTableResult {
-        let league_ctx = ctx.league.as_ref().unwrap();
-
-        self.rows = Self::generate_for_teams(league_ctx.team_ids);
-        self.generated = true;
-
+    pub fn new(teams: &[u32]) -> Self {
+        LeagueTable {
+            rows: Self::generate_for_teams(teams)
+        }
+    }
+    
+    pub fn simulate(&mut self, ctx: &GlobalContext<'_>) -> LeagueTableResult {
+        if self.rows.is_empty() {
+            let league_ctx = ctx.league.as_ref().unwrap();
+            self.rows = Self::generate_for_teams(league_ctx.team_ids);
+        }
+        
         LeagueTableResult {}
     }
 
-    pub fn generate_for_teams(teams: &[u32]) -> Vec<LeagueTableRow> {
+    fn generate_for_teams(teams: &[u32]) -> Vec<LeagueTableRow> {
         let mut rows = Vec::with_capacity(teams.len());
 
         for team_id in teams {
@@ -46,32 +51,32 @@ impl LeagueTable {
     }
 
     fn winner(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
-        let mut club = self.get_team_mut(team_id);
+        let mut team = self.get_team_mut(team_id);
 
-        club.played += 1;
-        club.win += 1;
-        club.goal_scored += goal_scored;
-        club.goal_concerned += goal_concerned;
-        club.points += 3;
+        team.played += 1;
+        team.win += 1;
+        team.goal_scored += goal_scored;
+        team.goal_concerned += goal_concerned;
+        team.points += 3;
     }
 
     fn looser(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
-        let mut club = self.get_team_mut(team_id);
+        let mut team = self.get_team_mut(team_id);
 
-        club.played += 1;
-        club.lost += 1;
-        club.goal_scored += goal_scored;
-        club.goal_concerned += goal_concerned;
+        team.played += 1;
+        team.lost += 1;
+        team.goal_scored += goal_scored;
+        team.goal_concerned += goal_concerned;
     }
 
     fn draft(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
-        let mut club = self.get_team_mut(team_id);
+        let mut team = self.get_team_mut(team_id);
 
-        club.played += 1;
-        club.draft += 1;
-        club.goal_scored += goal_scored;
-        club.goal_concerned += goal_concerned;
-        club.points += 1;
+        team.played += 1;
+        team.draft += 1;
+        team.goal_scored += goal_scored;
+        team.goal_concerned += goal_concerned;
+        team.points += 1;
     }
 
     pub fn update(&mut self, match_result: &Vec<MatchResult>) {
@@ -117,7 +122,6 @@ impl LeagueTableRow {}
 impl Default for LeagueTable {
     fn default() -> Self {
         LeagueTable {
-            generated: false,
             rows: Vec::new(),
         }
     }

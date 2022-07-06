@@ -62,10 +62,7 @@ pub async fn team_schedule_get_action(
         league_name: &league.name,
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
 
-        items: league
-            .schedule
-            .as_ref()
-            .unwrap_or(&Schedule::stub())
+        items: league.schedule
             .get_matches_for_team(team.id)
             .iter()
             .map(|schedule| {

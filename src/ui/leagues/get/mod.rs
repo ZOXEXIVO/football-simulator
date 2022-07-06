@@ -71,7 +71,7 @@ pub async fn league_get_action(
 
     let country = simulator_data.country(league.country_id).unwrap();
 
-    let league_table = league.table.as_ref().unwrap().get();
+    let league_table = league.table.get();
 
     let mut model = LeagueGetViewModel {
         id: league.id,
@@ -101,18 +101,16 @@ pub async fn league_get_action(
 
     let mut current_tour: Option<&ScheduleTour> = Option::None;
 
-    if let Some(schedule) = &league.schedule {
-        for tour in schedule.tours.iter() {
-            if now >= tour.start_date() && now <= tour.end_date() {
-                current_tour = Some(tour);
-            }
+    for tour in league.schedule.tours.iter() {
+        if now >= tour.start_date() && now <= tour.end_date() {
+            current_tour = Some(tour);
         }
+    }
 
-        if current_tour.is_none() {
-            for tour in schedule.tours.iter() {
-                if now >= tour.end_date() {
-                    current_tour = Some(tour);
-                }
+    if current_tour.is_none() {
+        for tour in league.schedule.tours.iter() {
+            if now >= tour.end_date() {
+                current_tour = Some(tour);
             }
         }
     }

@@ -36,29 +36,28 @@ impl League {
     }
 
     pub fn simulate(&mut self, clubs: &[Club], ctx: GlobalContext<'_>) -> LeagueResult {
-        let mut scheduled_matches = self
-            .schedule
-            .simulate(&self.settings, ctx.with_league(self.id, &[]));
-
-        let played_matches = self.process_matches(&mut scheduled_matches, clubs);
-
-        let table_result = self.table.simulate(ctx);
-
-        let matches = scheduled_matches
-            .iter()
-            .map(|lm| MatchResult::from(lm))
+        let table_result = self.table.simulate(&ctx);
+        
+        let league_teams: Vec<u32> = clubs.iter().flat_map(|c| &c.teams.teams)
+            .filter(|t| t.league_id == self.id)
+            .map(|t| t.id)
             .collect();
+        
+        let mut schedule_result = self
+            .schedule
+            .simulate(&self.settings, ctx.with_league(self.id, &league_teams));
 
-        league.table.as_mut().unwrap().update(&matches);
+        if schedule_result.is_match_scheduled() {
+            let played_matches = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
+            self.table.update(&played_matches);
 
-        for match_result in &self.match_results {
-            Self::process_match_results(match_result, data);
+            return LeagueResult::with_match_result(self.id, table_result, played_matches)
         }
 
-        LeagueResult::new(self.id, table_result, played_matches)
+        LeagueResult::new(self.id, table_result)
     }
 
-    fn process_matches(
+    fn play_matches(
         &mut self,
         scheduled_matches: &mut Vec<LeagueMatch>,
         clubs: &[Club],

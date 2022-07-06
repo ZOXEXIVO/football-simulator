@@ -14,6 +14,8 @@ use core::{
     TeamType, TrainingSchedule, Utc,
 };
 use std::str::FromStr;
+use core::league::LeagueCollection;
+use core::league::Schedule;
 
 pub struct Generator;
 
@@ -79,7 +81,7 @@ impl Generator {
                     code: country.code.clone(),
                     name: country.name.clone(),
                     continent_id: continent.id,
-                    leagues: Generator::generate_leagues(country.id, data),
+                    leagues: LeagueCollection::new(Generator::generate_leagues(country.id, data)),
                     clubs,
                     reputation: country.reputation,
                     generator_data,
@@ -108,7 +110,7 @@ impl Generator {
                     id: league.id,
                     name: league.name.clone(),
                     country_id: league.country_id,
-                    schedule: Option::None,
+                    schedule: Schedule::new(),
                     settings: LeagueSettings {
                         season_starting_half: DayMonthPeriod {
                             from_day: league.settings.season_starting_half.from_day,
@@ -123,7 +125,7 @@ impl Generator {
                             to_month: league.settings.season_ending_half.to_month,
                         },
                     },
-                    table: Some(LeagueTable::with_clubs(&league_clubs)),
+                    table: LeagueTable::new(&league_clubs),
                     reputation: 0,
                 }
             })
