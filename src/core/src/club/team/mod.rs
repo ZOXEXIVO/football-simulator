@@ -1,4 +1,5 @@
 mod behaviour;
+pub mod collection;
 mod context;
 mod matches;
 mod reputation;
@@ -9,6 +10,7 @@ mod team;
 mod training;
 mod transfers;
 
+pub use collection::*;
 pub use context::*;
 pub use matches::*;
 pub use reputation::*;

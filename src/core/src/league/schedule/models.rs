@@ -1,72 +1,100 @@
-use chrono::{NaiveDateTime, NaiveDate};
-use log::{debug};
+use crate::context::GlobalContext;
+use crate::league::round::RoundSchedule;
+use crate::league::{LeagueMatch, LeagueSettings, ScheduleGenerator, Season};
+use chrono::{Datelike, NaiveDate, NaiveDateTime};
+use log::{debug, error};
 
 #[derive(Debug)]
 pub struct Schedule {
-    pub tours: Vec<ScheduleTour>
+    pub generated: bool,
+    pub tours: Vec<ScheduleTour>,
 }
 
 impl Schedule {
-    pub fn with_tours_capacity(capacity: usize) -> Self {
-        Schedule {
-            tours: Vec::with_capacity(capacity)
-        }
-    }
-    
     pub fn stub() -> Self {
         Schedule {
-            tours: Vec::new()
+            generated: false,
+            tours: Vec::new(),
         }
     }
 
+    pub fn simulate(
+        &mut self,
+        league_settings: &LeagueSettings,
+        ctx: GlobalContext<'_>,
+    ) -> Vec<LeagueMatch> {
+        if !self.generated && league_settings.is_time_for_new_schedule(&ctx.simulation) {
+            let league_ctx = ctx.league.as_ref().unwrap();
+
+            let generator = RoundSchedule::new();
+
+            match generator.generate(
+                league_ctx.id,
+                Season::OneYear(ctx.simulation.date.year() as u16),
+                league_ctx.team_ids,
+                league_settings,
+            ) {
+                Ok(generated_schedule) => {
+                    self.tours = generated_schedule;
+                }
+                Err(error) => {
+                    error!("Generating schedule error: {}", error.message);
+                }
+            }
+        }
+
+        let scheduled_matches = self
+            .get_matches(ctx.simulation.date)
+            .iter()
+            .map(|sm| LeagueMatch {
+                id: sm.id.clone(),
+                league_id: sm.league_id,
+                date: sm.date,
+                home_team_id: sm.home_team_id,
+                away_team_id: sm.away_team_id,
+                result: None,
+            })
+            .collect();
+
+        scheduled_matches
+    }
+
     pub fn get_matches(&self, date: NaiveDateTime) -> Vec<ScheduleItem> {
-        self.tours.iter()
+        self.tours
+            .iter()
             .flat_map(|t| &t.items)
             .filter(|s| s.date == date)
-            .map(|s| {
-                ScheduleItem::new(
-                    s.league_id,
-                    s.home_team_id,
-                    s.away_team_id,
-                    s.date,
-                    None
-                )
-            })
+            .map(|s| ScheduleItem::new(s.league_id, s.home_team_id, s.away_team_id, s.date, None))
             .collect()
     }
 
     pub fn get_matches_for_team(&self, team_id: u32) -> Vec<ScheduleItem> {
-        self.tours.iter()
+        self.tours
+            .iter()
             .flat_map(|t| &t.items)
             .filter(|s| s.home_team_id == team_id || s.away_team_id == team_id)
             .map(|s| {
                 let res = match &s.result {
                     Some(result) => Some(ScheduleItemResult {
                         home_goals: result.home_goals,
-                        away_goals: result.away_goals
+                        away_goals: result.away_goals,
                     }),
-                    None => None
+                    None => None,
                 };
-                
-                ScheduleItem::new(
-                    s.league_id,
-                    s.home_team_id,
-                    s.away_team_id,
-                    s.date,
-                    res
-                )
+
+                ScheduleItem::new(s.league_id, s.home_team_id, s.away_team_id, s.date, res)
             })
             .collect()
     }
 
-    pub fn update_match_result(&mut self, id: &str, home_goals: i32, away_goals: i32) {        
+    pub fn update_match_result(&mut self, id: &str, home_goals: i32, away_goals: i32) {
         let mut updated = false;
 
-        for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {            
-            if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {                
+        for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {
+            if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {
                 item.result = Some(ScheduleItemResult {
                     home_goals,
-                    away_goals
+                    away_goals,
                 });
 
                 updated = true;
@@ -75,24 +103,39 @@ impl Schedule {
 
         match updated {
             true => {
-                debug!("update match result, schedule_id={}, {}:{}", id, home_goals, away_goals);
+                debug!(
+                    "update match result, schedule_id={}, {}:{}",
+                    id, home_goals, away_goals
+                );
             }
             _ => {
-                debug!("match result not updated, schedule_id={}, {}:{}", id, home_goals, away_goals);
+                debug!(
+                    "match result not updated, schedule_id={}, {}:{}",
+                    id, home_goals, away_goals
+                );
             }
+        }
+    }
+}
+
+impl Default for Schedule {
+    fn default() -> Self {
+        Schedule {
+            generated: false,
+            tours: Vec::new(),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct ScheduleError {
-    pub message: String
+    pub message: String,
 }
 
 impl ScheduleError {
     pub fn from_str(str: &'static str) -> Self {
         ScheduleError {
-            message: str.to_owned()
+            message: str.to_owned(),
         }
     }
 }
@@ -107,11 +150,17 @@ pub struct ScheduleItem {
     pub home_team_id: u32,
     pub away_team_id: u32,
 
-    pub result: Option<ScheduleItemResult>
+    pub result: Option<ScheduleItemResult>,
 }
 
 impl ScheduleItem {
-    pub fn new(league_id: u32, home_team_id: u32, away_team_id: u32, date: NaiveDateTime, result: Option<ScheduleItemResult>) -> Self {
+    pub fn new(
+        league_id: u32,
+        home_team_id: u32,
+        away_team_id: u32,
+        date: NaiveDateTime,
+        result: Option<ScheduleItemResult>,
+    ) -> Self {
         let id = format!("{}_{}_{}", date.date(), home_team_id, away_team_id);
 
         ScheduleItem {
@@ -121,13 +170,13 @@ impl ScheduleItem {
             home_team_id,
             away_team_id,
 
-            result
+            result,
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ScheduleItemResult{
+pub struct ScheduleItemResult {
     pub home_goals: i32,
     pub away_goals: i32,
 }
@@ -135,14 +184,14 @@ pub struct ScheduleItemResult{
 #[derive(Debug, Clone)]
 pub struct ScheduleTour {
     pub num: u8,
-    pub items: Vec<ScheduleItem>
+    pub items: Vec<ScheduleItem>,
 }
 
 impl ScheduleTour {
     pub fn new(num: u8, games_count: usize) -> Self {
         ScheduleTour {
             num,
-            items: Vec::with_capacity(games_count)
+            items: Vec::with_capacity(games_count),
         }
     }
 
@@ -151,10 +200,20 @@ impl ScheduleTour {
     }
 
     pub fn start_date(&self) -> NaiveDate {
-        self.items.iter().min_by_key(|t| t.date).unwrap().date.date()
+        self.items
+            .iter()
+            .min_by_key(|t| t.date)
+            .unwrap()
+            .date
+            .date()
     }
 
     pub fn end_date(&self) -> NaiveDate {
-        self.items.iter().max_by_key(|t| t.date).unwrap().date.date()
+        self.items
+            .iter()
+            .max_by_key(|t| t.date)
+            .unwrap()
+            .date
+            .date()
     }
 }

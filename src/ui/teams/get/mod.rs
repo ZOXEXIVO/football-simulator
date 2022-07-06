@@ -128,6 +128,7 @@ fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
 
     let mut teams: Vec<ClubTeam> = club
         .teams
+        .teams
         .iter()
         .map(|team| ClubTeam {
             id: team.id,

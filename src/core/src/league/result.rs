@@ -1,31 +1,82 @@
-use crate::league::ScheduleItem;
+use crate::league::{LeagueTableResult, ScheduleItem};
 use crate::r#match::game::MatchResult;
+use crate::r#match::MatchEvent;
 use crate::simulator::SimulatorData;
+use crate::MatchHistoryItem;
 use chrono::NaiveDateTime;
 
 pub struct LeagueResult {
     pub league_id: u32,
-    pub scheduled_matches: Vec<LeagueMatch>,
+    pub table_result: LeagueTableResult,
+    pub match_results: Vec<MatchResult>,
 }
 
 impl LeagueResult {
-    pub fn new(league_id: u32, scheduled_matches: Vec<LeagueMatch>) -> Self {
+    pub fn new(
+        league_id: u32,
+        table_result: LeagueTableResult,
+        match_results: Vec<MatchResult>,
+    ) -> Self {
         LeagueResult {
             league_id,
-            scheduled_matches,
+            table_result,
+            match_results,
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {
-        let league = data.league_mut(self.league_id).unwrap();
+    pub fn process(&self, data: &mut SimulatorData) {}
 
-        let matches = self
-            .scheduled_matches
-            .iter()
-            .map(|lm| MatchResult::from(lm))
-            .collect();
+    fn process_match_results(result: &MatchResult, data: &mut SimulatorData) {
+        let now = data.date;
 
-        league.table.as_mut().unwrap().update(&matches)
+        let league = data.league_mut(result.league_id).unwrap();
+
+        league.schedule.update_match_result(
+            &result.schedule_id,
+            result.home_goals,
+            result.away_goals,
+        );
+
+        let home_team = data.team_mut(result.home_team_id).unwrap();
+        home_team.match_history.add(MatchHistoryItem::new(
+            now,
+            result.away_team_id,
+            (result.home_goals, result.away_goals),
+        ));
+
+        let away_team = data.team_mut(result.away_team_id).unwrap();
+        away_team.match_history.add(MatchHistoryItem::new(
+            now,
+            result.home_team_id,
+            (result.away_goals, result.home_goals),
+        ));
+
+        process_match_events(result, data);
+
+        fn process_match_events(result: &MatchResult, data: &mut SimulatorData) {
+            for match_event in &result.details.as_ref().unwrap().events {
+                match match_event {
+                    MatchEvent::MatchPlayed(player_id, is_start_squad, minutes_played) => {
+                        let mut player = data.player_mut(*player_id).unwrap();
+
+                        if *is_start_squad {
+                            player.statistics.played += 1;
+                        } else {
+                            player.statistics.played_subs += 1;
+                        }
+                    }
+                    MatchEvent::Goal(player_id) => {
+                        let mut player = data.player_mut(*player_id).unwrap();
+                        player.statistics.goals += 1;
+                    }
+                    MatchEvent::Assist(player_id) => {
+                        let mut player = data.player_mut(*player_id).unwrap();
+                        player.statistics.assists += 1;
+                    }
+                    MatchEvent::Injury(player_id) => {}
+                }
+            }
+        }
     }
 }
 

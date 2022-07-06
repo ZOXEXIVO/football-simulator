@@ -7,10 +7,9 @@ use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
-    Person, PersonAttributes, PlayerHappiness,
-    PlayerPositionType, PlayerPositions, PlayerStatistics,
-    PlayerStatisticsHistory, PlayerStatusData, PlayerTeamTrainingResult, PlayerTrainingHistory,
-    PlayerValueCalculator, Relations,
+    Person, PersonAttributes, PlayerHappiness, PlayerPositionType, PlayerPositions,
+    PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTeamTrainingResult,
+    PlayerTrainingHistory, PlayerValueCalculator, Relations,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
@@ -142,7 +141,7 @@ impl Player {
     pub fn is_ready_for_match(&self) -> bool {
         match self.skills.physical.match_readiness {
             0..=10 => false,
-            10..=20 => true,
+            11..=20 => true,
             _ => false,
         }
     }

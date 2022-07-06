@@ -103,6 +103,7 @@ impl SimulatorData {
             .find(|country| country.id == league_country_id)
             .unwrap()
             .leagues
+            .leagues
             .iter()
             .find(|c| c.id == id)
     }
@@ -121,6 +122,7 @@ impl SimulatorData {
             .iter_mut()
             .find(|country| country.id == league_country_id)
             .unwrap()
+            .leagues
             .leagues
             .iter_mut()
             .find(|c| c.id == id)
@@ -187,6 +189,7 @@ impl SimulatorData {
             .find(|club| club.id == team_club_id)
             .unwrap()
             .teams
+            .teams
             .iter()
             .find(|c| c.id == id)
     }
@@ -210,6 +213,7 @@ impl SimulatorData {
             .find(|club| club.id == team_club_id)
             .unwrap()
             .teams
+            .teams
             .iter_mut()
             .find(|c| c.id == id)
     }
@@ -232,6 +236,7 @@ impl SimulatorData {
             .iter()
             .find(|club| club.id == player_club_id)
             .unwrap()
+            .teams
             .teams
             .iter()
             .find(|team| team.id == player_team_id)
@@ -260,6 +265,7 @@ impl SimulatorData {
             .iter_mut()
             .find(|club| club.id == player_club_id)
             .unwrap()
+            .teams
             .teams
             .iter_mut()
             .find(|team| team.id == player_team_id)

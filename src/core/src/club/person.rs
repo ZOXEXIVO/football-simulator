@@ -1,33 +1,25 @@
-use chrono::{NaiveDate, Datelike};
 use crate::shared::FullName;
+use crate::utils::DateUtils;
 use crate::Relations;
+use chrono::NaiveDate;
 
 pub trait Person {
     fn id(&self) -> u32;
     fn fullname(&self) -> &FullName;
     fn birthday(&self) -> NaiveDate;
-    
-    fn age(&self, now: NaiveDate) -> u8 { 
-        let birthday = self.birthday();
-        
-        let mut age = now.year() - birthday.year();
- 
-        if now.month() < birthday.month() || 
-            (now.month() == birthday.month() && now.day() < birthday.day()) {
-            age -= 1;
-        }
-        
-        age as u8
+
+    fn age(&self, now: NaiveDate) -> u8 {
+        DateUtils::age(self.birthday(), now)
     }
-    
+
     fn behaviour(&self) -> &PersonBehaviour;
     fn attributes(&self) -> &PersonAttributes;
-    
+
     fn relations(&self) -> &Relations;
 }
 
 #[derive(Debug)]
-pub struct PersonAttributes{
+pub struct PersonAttributes {
     pub adaptability: u8,
     pub ambition: u8,
     pub controversy: u8,
@@ -35,7 +27,7 @@ pub struct PersonAttributes{
     pub pressure: u8,
     pub professionalism: u8,
     pub sportsmanship: u8,
-    pub temperament: u8
+    pub temperament: u8,
 }
 
 #[derive(Debug)]
@@ -61,7 +53,7 @@ impl PersonBehaviour {
             _ => {}
         }
     }
-    
+
     pub fn as_str(&self) -> &'static str {
         self.state.as_str()
     }
@@ -74,12 +66,12 @@ pub enum PersonBehaviourState {
     Good,
 }
 
-impl PersonBehaviourState{
+impl PersonBehaviourState {
     pub fn as_str(&self) -> &'static str {
         match self {
             PersonBehaviourState::Poor => "Poor",
             PersonBehaviourState::Normal => "Normal",
-            PersonBehaviourState::Good => "Good"
+            PersonBehaviourState::Good => "Good",
         }
     }
 }
