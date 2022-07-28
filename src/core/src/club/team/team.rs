@@ -115,7 +115,7 @@ impl Team {
             self.id,
             self.players.simulate(ctx.with_player(None)),
             self.staffs.simulate(ctx.with_staff(None)),
-            TeamBehaviour::simulate(&self.players, &self.staffs),
+            TeamBehaviour::simulate(&mut self.players, &mut self.staffs),
             TeamTraining::train(self, ctx.simulation.date),
         );
 

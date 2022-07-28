@@ -4,7 +4,10 @@ use crate::{PlayerCollection, StaffCollection};
 pub struct TeamBehaviour {}
 
 impl TeamBehaviour {
-    pub fn simulate(_: &PlayerCollection, _: &StaffCollection) -> TeamBehaviourResult {
+    pub fn simulate(
+        players: &mut PlayerCollection,
+        staffs: &mut StaffCollection,
+    ) -> TeamBehaviourResult {
         let result = TeamBehaviourResult::new();
 
         result
