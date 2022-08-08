@@ -176,8 +176,9 @@ td.score {
  width: 100px;
 }
 
-.rating {
+.rating { 
  float:left;
+ min-width: 80px;
 }
 
 .rating:not(:checked) > input {
@@ -263,6 +264,10 @@ img.country-logo {
  height: 29px;
  padding-top: 7px;
  text-align: center;
+}
+
+table.skills {
+ max-width: 500px;
 }
 
 table.skills td:nth-child(even) {
@@ -437,7 +442,7 @@ p {
 
 .player-content .player-header {
  background-color: #262A30;
- height: 110px;
+ height: auto;
 }
 
 .player-content .player-photo {
@@ -559,7 +564,7 @@ p {
 
 .player-content table.skills  td:nth-child(even) {
  color: #688B5C;
- width: 30px;
+ width: 40px;
 }
 
 .player-content table.skills td:nth-child(odd) {

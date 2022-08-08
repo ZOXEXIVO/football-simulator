@@ -1,7 +1,7 @@
 mod db;
 mod ui;
 
-use crate::db::{DatabaseEntity, DatabaseLoader};
+use crate::db::{DatabaseEntity, DatabaseLoader, Generator};
 use crate::ui::assets::static_routes;
 use actix_files::Files;
 use actix_web::web::Data;
@@ -38,9 +38,11 @@ async fn main() {
 
     info!("database loaded: {} ms", estimated);
 
+    let game_data = Generator::generate(&database);
+    
     let data = GameAppData {
         database: Arc::new(database),
-        data: Arc::new(Mutex::new(None)),
+        data: Arc::new(Mutex::new(Some(game_data))),
     };
 
     info!("listen at: http://localhost:18000");
