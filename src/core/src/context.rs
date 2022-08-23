@@ -108,18 +108,22 @@ impl SimulationContext {
         }
     }
 
+    #[inline]
     pub fn is_week_beginning(&self) -> bool {
         self.date.weekday() == Weekday::Mon && self.date.hour() == 0
     }
 
+    #[inline]
     pub fn is_month_beginning(&self) -> bool {
         self.day == 1u8
     }
 
+    #[inline]
     pub fn is_year_beginning(&self) -> bool {
         self.day == 1u8 && self.date.month() == 1
     }
 
+    #[inline]
     pub fn check_contract_expiration(&self) -> bool {
         self.hour == 0
     }
