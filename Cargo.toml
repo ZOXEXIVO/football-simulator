@@ -16,4 +16,4 @@ env_logger = "0.9.1"
 itertools = "0.10.5"
 chrono = "0.4.22"
 color-eyre = "0.6.2"
-tokio = { version = "1.21.1", features = ["parking_lot"] }
+tokio = { version = "1.21.2", features = ["parking_lot"] }
