@@ -10,8 +10,8 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct PlayerGetRequest {
-    team_id: u32,
-    player_id: u32,
+    pub team_slug: String,
+    pub player_id: u32,
 }
 
 #[derive(Template)]
@@ -25,7 +25,7 @@ pub struct PlayerGetViewModel<'p> {
     pub contract: Option<PlayerContractDto>,
     pub birth_date: String,
     pub age: u8,
-    pub team_id: u32,
+    pub team_slug: &'p str,
     pub team_name: &'p str,
     pub country_id: u32,
     pub country_code: &'p str,
@@ -67,8 +67,8 @@ pub struct PlayerStatistics {
 }
 
 pub struct ClubTeam<'c> {
-    pub id: u32,
     pub name: &'c str,
+    pub slug: &'c str,
     pub reputation: u16,
 }
 
@@ -161,7 +161,11 @@ pub async fn player_get_action(
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let team: &Team = simulator_data.team(route_params.team_id).unwrap();
+    let team_id = simulator_data
+        .team_id_by_slug(&route_params.team_slug)
+        .unwrap();
+
+    let team: &Team = simulator_data.team(team_id).unwrap();
 
     let player: &Player = team
         .players
@@ -180,10 +184,10 @@ pub async fn player_get_action(
         last_name: &player.full_name.last_name,
         middle_name: &player.full_name.middle_name,
         position: player.position().get_short_name(),
-        contract: Option::None,
+        contract: None,
         birth_date: player.birth_date.format("%d.%m.%Y").to_string(),
         age: player.age(simulator_data.date.date()) as u8,
-        team_id: team.id,
+        team_slug: &team.slug,
         team_name: &team.name,
         country_id: country.id,
         country_code: &country.code,
@@ -278,8 +282,8 @@ fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
         .teams
         .iter()
         .map(|team| ClubTeam {
-            id: team.id,
             name: &team.name,
+            slug: &team.slug,
             reputation: team.reputation.world,
         })
         .collect();

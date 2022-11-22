@@ -7,6 +7,8 @@ pub struct SimulatorDataIndexes {
     team_indexes: HashMap<u32, (u32, u32, u32)>,
     player_indexes: HashMap<u32, (u32, u32, u32, u32)>,
     team_name_index: HashMap<u32, String>,
+    team_slug_index: HashMap<u32, String>,
+    team_id_slug_index: HashMap<String, u32>,
 }
 
 impl SimulatorDataIndexes {
@@ -17,6 +19,8 @@ impl SimulatorDataIndexes {
             team_indexes: HashMap::new(),
             player_indexes: HashMap::new(),
             team_name_index: HashMap::new(),
+            team_slug_index: HashMap::new(),
+            team_id_slug_index: HashMap::new(),
         }
     }
 
@@ -34,6 +38,9 @@ impl SimulatorDataIndexes {
 
                     for team in &club.teams.teams {
                         self.add_team_name(team.id, team.name.clone());
+                        self.add_team_slug(team.id, team.slug.clone());
+                        self.add_team_slug_id(team.slug.clone(), team.id);
+
                         self.add_team_location(team.id, continent.id, country.id, club.id);
 
                         for player in &team.players.players {
@@ -89,6 +96,28 @@ impl SimulatorDataIndexes {
     pub fn get_team_name(&self, team_id: u32) -> Option<&str> {
         match self.team_name_index.get(&team_id) {
             Some(team_name) => Some(team_name),
+            None => None,
+        }
+    }
+
+    //team slug indexes
+    pub fn add_team_slug(&mut self, team_id: u32, name: String) {
+        self.team_slug_index.insert(team_id, name);
+    }
+    pub fn get_team_slug(&self, team_id: u32) -> Option<&str> {
+        match self.team_slug_index.get(&team_id) {
+            Some(team_slug) => Some(team_slug),
+            None => None,
+        }
+    }
+
+    // team id slug index
+    pub fn add_team_slug_id(&mut self, slug: String, team_id: u32) {
+        self.team_id_slug_index.insert(slug, team_id);
+    }
+    pub fn get_team_id_by_slug(&self, slug: &str) -> Option<u32> {
+        match self.team_id_slug_index.get(slug) {
+            Some(team_id) => Some(*team_id),
             None => None,
         }
     }

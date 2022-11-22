@@ -37,13 +37,13 @@
         <div class="menu_section">
             <ul class="nav">
                 {% for team in neighbor_teams %}
-                <li><a href="/teams/{{ team.id }}"><i class="fas fa-user-friends"></i>{{ team.name }}</a></li>
+                <li><a href="/teams/{{ team.slug }}"><i class="fas fa-user-friends"></i>{{ team.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
         <div class="menu_section">
             <ul class="nav">
-                <li><a href="/teams/{{ id }}/schedule"><i class="fas fa-user-friends"></i>Schedule</a></li>
+                <li><a href="/teams/{{ slug }}/schedule"><i class="fas fa-user-friends"></i>Schedule</a></li>
                 <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>
             </ul>
         </div>
@@ -126,7 +126,7 @@
             <td style="min-width: 200px;">
                 <div class="player-info-logo">
                 </div>
-                <a href="/teams/{{ id }}/players/{{ player.id }}">
+                <a href="/teams/{{ slug }}/players/{{ player.id }}">
                     {{ player.last_name }}&nbsp;{{ player.first_name }}
                 </a>
             </td>

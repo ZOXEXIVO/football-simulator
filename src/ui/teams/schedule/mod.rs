@@ -8,7 +8,7 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct TeamScheduleGetRequest {
-    team_id: u32,
+    team_slug: String,
 }
 
 #[derive(Template)]
@@ -24,7 +24,7 @@ pub struct TeamScheduleViewModel<'t> {
 pub struct TeamScheduleItem<'t> {
     pub date: String,
     pub time: String,
-    pub opponent_id: u32,
+    pub opponent_slug: &'t str,
     pub opponent_name: &'t str,
     pub is_home: bool,
     pub competition_id: u32,
@@ -38,7 +38,7 @@ pub struct TeamScheduleItemResult {
 }
 
 pub struct ClubTeam<'c> {
-    pub id: u32,
+    pub slug: &'c str,
     pub name: &'c str,
     pub reputation: u16,
 }
@@ -51,7 +51,11 @@ pub async fn team_schedule_get_action(
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let team: &Team = simulator_data.team(route_params.team_id).unwrap();
+    let team_id = simulator_data
+        .team_id_by_slug(&route_params.team_slug)
+        .unwrap();
+
+    let team: &Team = simulator_data.team(team_id).unwrap();
 
     let league = simulator_data.league(team.league_id).unwrap();
 
@@ -62,7 +66,8 @@ pub async fn team_schedule_get_action(
         league_name: &league.name,
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
 
-        items: league.schedule
+        items: league
+            .schedule
             .get_matches_for_team(team.id)
             .iter()
             .map(|schedule| {
@@ -71,10 +76,10 @@ pub async fn team_schedule_get_action(
                 TeamScheduleItem {
                     date: schedule.date.format("%d.%m.%Y").to_string(),
                     time: schedule.date.format("%H:%M").to_string(),
-                    opponent_id: if is_home {
-                        schedule.away_team_id
+                    opponent_slug: if is_home {
+                        simulator_data.team_slug(schedule.away_team_id).unwrap()
                     } else {
-                        schedule.home_team_id
+                        simulator_data.team_slug(schedule.home_team_id).unwrap()
                     },
                     opponent_name: if is_home {
                         &simulator_data.team(schedule.away_team_id).unwrap().name
@@ -110,7 +115,7 @@ fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
         .teams
         .iter()
         .map(|team| ClubTeam {
-            id: team.id,
+            slug: &team.slug,
             name: &team.name,
             reputation: team.reputation.world,
         })

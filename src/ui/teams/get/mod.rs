@@ -8,13 +8,13 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct TeamGetRequest {
-    team_id: u32,
+    pub team_slug: String,
 }
 
 #[derive(Template)]
 #[template(path = "teams/get/get.html")]
 pub struct TeamGetViewModel<'c> {
-    pub id: u32,
+    pub slug: &'c str,
     pub name: &'c str,
     pub league_id: u32,
     pub league_name: &'c str,
@@ -24,7 +24,7 @@ pub struct TeamGetViewModel<'c> {
 }
 
 pub struct ClubTeam<'c> {
-    pub id: u32,
+    pub slug: &'c str,
     pub name: &'c str,
     pub reputation: u16,
 }
@@ -68,7 +68,11 @@ pub async fn team_get_action(
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let team: &Team = simulator_data.team(route_params.team_id).unwrap();
+    let team_id = simulator_data
+        .team_id_by_slug(&route_params.team_slug)
+        .unwrap();
+
+    let team: &Team = simulator_data.team(team_id).unwrap();
 
     let league = simulator_data.league(team.league_id).unwrap();
 
@@ -105,7 +109,7 @@ pub async fn team_get_action(
     players.sort_by(|a, b| a.position_sort.partial_cmp(&b.position_sort).unwrap());
 
     let model = TeamGetViewModel {
-        id: team.id,
+        slug: &team.slug,
         name: &team.name,
         league_id: league.id,
         league_name: &league.name,
@@ -131,7 +135,7 @@ fn get_neighbor_teams(club_id: u32, data: &SimulatorData) -> Vec<ClubTeam> {
         .teams
         .iter()
         .map(|team| ClubTeam {
-            id: team.id,
+            slug: &team.slug,
             name: &team.name,
             reputation: team.reputation.world,
         })

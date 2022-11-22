@@ -3,6 +3,8 @@ use crate::db::{DatabaseEntity, PlayerGenerator, PositionType, StaffGenerator};
 use core::club::academy::ClubAcademy;
 use core::context::{NaiveTime, Timelike};
 use core::continent::Continent;
+use core::league::LeagueCollection;
+use core::league::Schedule;
 use core::league::{DayMonthPeriod, League, LeagueSettings, LeagueTable};
 use core::shared::Location;
 use core::utils::IntegerUtils;
@@ -14,8 +16,6 @@ use core::{
     TeamType, TrainingSchedule, Utc,
 };
 use std::str::FromStr;
-use core::league::LeagueCollection;
-use core::league::Schedule;
 
 pub struct Generator;
 
@@ -162,6 +162,7 @@ impl Generator {
                                 t.league_id,
                                 club.id,
                                 t.name.clone(),
+                                t.slug.clone(),
                                 TeamType::from_str(&t.team_type).unwrap(),
                                 TrainingSchedule::new(
                                     NaiveTime::from_hms(10, 0, 0),

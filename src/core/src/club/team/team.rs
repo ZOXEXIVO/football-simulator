@@ -24,6 +24,8 @@ pub struct Team {
     pub league_id: u32,
     pub club_id: u32,
     pub name: String,
+    pub slug: String,
+
     pub team_type: TeamType,
     pub tactics: Option<Tactics>,
 
@@ -42,6 +44,7 @@ impl Team {
         league_id: u32,
         club_id: u32,
         name: String,
+        slug: String,
         team_type: TeamType,
         training_schedule: TrainingSchedule,
         reputation: TeamReputation,
@@ -53,6 +56,7 @@ impl Team {
             league_id,
             club_id,
             name,
+            slug,
             team_type,
             players,
             staffs,

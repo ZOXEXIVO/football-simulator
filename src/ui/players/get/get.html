@@ -12,7 +12,7 @@
     <div class="header-title-block">
         <div class="page-title">{{ last_name }} {{ first_name }}</div>
         <div>
-            <a href="/teams/{{ team_id }}" class="sub-title-link">
+            <a href="/teams/{{ team_slug }}" class="sub-title-link">
                 {{ team_name }}
             </a>
         </div>
@@ -36,13 +36,13 @@
         <div class="menu_section">
             <ul class="nav">
                 {% for team in neighbor_teams %}
-                <li><a href="/teams/{{ team.id }}"><i class="fas fa-user-friends"></i>{{ team.name }}</a></li>
+                <li><a href="/teams/{{ team.slug }}"><i class="fas fa-user-friends"></i>{{ team.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
         <div class="menu_section">
             <ul class="nav">
-                <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>
+                <li><a href="/teams/{{ team_slug }}/schedule"><i class="fas fa-user-friends"></i>Schedule</a></li>
             </ul>
         </div>
     </div>
@@ -105,7 +105,7 @@
                     {%- endif %}
                 </div>
                 <div class="col-xs-10 contract-info pull-left">
-                    <p class="contracted">Contracted to <a href="/teams/{{ team_id }}" style="color: #787B7A;">{{ team_name }}</a></p>
+                    <p class="contracted">Contracted to <a href="/teams/{{ team_slug }}" style="color: #787B7A;">{{ team_name }}</a></p>
                     <p>Valued at ${{value}}</p>
 
                     {% if contract.is_some() %}

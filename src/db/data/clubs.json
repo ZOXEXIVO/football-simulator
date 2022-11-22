@@ -1,7 +1,7 @@
 [
   {
     "id": 0,
-    "name": "Spartak Moscow",
+    "name": "Spartak Moscow",    
     "country_id": 791,
     "location": {
       "city_id": 0
@@ -13,6 +13,7 @@
       {
         "id": 1,
         "name": "Spartak Moscow",
+        "slug": "spartak-moscow",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -24,6 +25,7 @@
       {
         "id": 2,
         "name": "Spartak Moscow 2",
+        "slug": "spartak-moscow-2",
         "team_type": "B",
         "league_id": 1,
         "reputation": {
@@ -48,6 +50,7 @@
       {
         "id": 4,
         "name": "Zenit",
+        "slug": "zenit-st-peterburg",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -72,6 +75,7 @@
       {
         "id": 7,
         "name": "CSKA Moscow",
+        "slug": "cska-moscow",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -96,6 +100,7 @@
       {
         "id": 9,
         "name": "Dinamo Moscow",
+        "slug": "dinamo-moscow",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -120,6 +125,7 @@
       {
         "id": 11,
         "name": "Kranodar",
+        "slug": "krasnodar",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -131,6 +137,7 @@
       {
         "id": 12,
         "name": "Kranodar 2",
+        "slug": "krasnodar-2",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -155,6 +162,7 @@
       {
         "id": 14,
         "name": "Rostov",
+        "slug": "rostov",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -179,6 +187,7 @@
       {
         "id": 15,
         "name": "Sochi",
+        "slug": "sochi",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -203,6 +212,7 @@
       {
         "id": 16,
         "name": "Lokomotiv Moscow",
+        "slug": "lokomotiv-moscow",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -227,6 +237,7 @@
       {
         "id": 17,
         "name": "Rubin",
+        "slug": "rubin",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -251,6 +262,7 @@
       {
         "id": 18,
         "name": "Akhmat",
+        "slug": "akhmat",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -275,6 +287,7 @@
       {
         "id": 19,
         "name": "Khimki",
+        "slug": "khimki",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -299,6 +312,7 @@
       {
         "id": 20,
         "name": "Ural",
+        "slug": "ural",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -323,6 +337,7 @@
       {
         "id": 21,
         "name": "Rotor",
+        "slug": "rotor",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -347,6 +362,7 @@
       {
         "id": 22,
         "name": "Arsenal Tula",
+        "slug": "arsenal-tula",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -371,6 +387,7 @@
       {
         "id": 23,
         "name": "Ufa",
+        "slug": "ufa",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -395,6 +412,7 @@
       {
         "id": 24,
         "name": "Tambov",
+        "slug": "tambov",
         "team_type": "Main",
         "league_id": 0,
         "reputation": {
@@ -419,6 +437,7 @@
       {
         "id": 25,
         "name": "Alania Vladikavkaz",
+        "slug": "alaniya-vladikavkaz",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -443,6 +462,7 @@
       {
         "id": 26,
         "name": "Akron",
+        "slug": "akron",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -467,6 +487,7 @@
       {
         "id": 27,
         "name": "Baltika",
+        "slug": "baltika",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -491,6 +512,7 @@
       {
         "id": 28,
         "name": "Chayka Peschanokopskoye",
+        "slug": "chayka-peschanokopskoye",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -515,6 +537,7 @@
       {
         "id": 29,
         "name": "Chertanovo",
+        "slug": "chertanovo",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -539,6 +562,7 @@
       {
         "id": 30,
         "name": "Dinamo Bryansk",
+        "slug": "dinamo-bryansk",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -563,6 +587,7 @@
       {
         "id": 31,
         "name": "Fakel",
+        "slug": "fakel",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -587,6 +612,7 @@
       {
         "id": 32,
         "name": "Irtysh",
+        "slug": "irtysh",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -611,6 +637,7 @@
       {
         "id": 33,
         "name": "Krylia Sovetov",
+        "slug": "krylia-sovetov",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -635,6 +662,7 @@
       {
         "id": 34,
         "name": "Neftekhimik",
+        "slug": "neftekhimik",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -659,6 +687,7 @@
       {
         "id": 35,
         "name": "Nizhny Novgorod",
+        "slug": "nizhny-novgorod",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -683,6 +712,7 @@
       {
         "id": 36,
         "name": "Orenburg",
+        "slug": "orenburg",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -707,6 +737,7 @@
       {
         "id": 38,
         "name": "Shinnik",
+        "slug": "shinnik",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -731,6 +762,7 @@
       {
         "id": 39,
         "name": "SKA-Khabarovsk",
+        "slug": "ska-khabarovsk",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -755,6 +787,7 @@
       {
         "id": 40,
         "name": "Tekstilshchik",
+        "slug": "tekstilshchik",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -779,6 +812,7 @@
       {
         "id": 41,
         "name": "Tom",
+        "slug": "tom",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -803,6 +837,7 @@
       {
         "id": 42,
         "name": "Torpedo Moscow",
+        "slug": "torpedo-moscow",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -827,6 +862,7 @@
       {
         "id": 43,
         "name": "Volgar",
+        "slug": "volgar",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -851,6 +887,7 @@
       {
         "id": 44,
         "name": "Veles",
+        "slug": "veles",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {
@@ -875,6 +912,7 @@
       {
         "id": 45,
         "name": "Yenisey",
+        "slug": "yenisey",
         "team_type": "Main",
         "league_id": 1,
         "reputation": {

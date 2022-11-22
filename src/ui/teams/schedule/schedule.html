@@ -36,7 +36,7 @@
         <div class="menu_section">
             <ul class="nav">
                 {% for team in neighbor_teams %}
-                    <li><a href="/teams/{{ team.id }}"><i class="fas fa-user-friends"></i>{{ team.name }}</a></li>
+                    <li><a href="/teams/{{ team.slug }}"><i class="fas fa-user-friends"></i>{{ team.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -103,7 +103,7 @@
                 {{ item.time }}
             </td>
             <td>
-                <a href="/teams/{{ item.opponent_id }}">{{ item.opponent_name }}</a>
+                <a href="/teams/{{ item.opponent_slug }}">{{ item.opponent_name }}</a>
             </td>
             <td style="text-align: center">
                 {% if item.is_home %}

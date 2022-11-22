@@ -132,6 +132,14 @@ impl SimulatorData {
         self.indexes.as_ref().unwrap().get_team_name(id)
     }
 
+    pub fn team_slug(&self, id: u32) -> Option<&str> {
+        self.indexes.as_ref().unwrap().get_team_slug(id)
+    }
+
+    pub fn team_id_by_slug(&self, slug: &str) -> Option<u32> {
+        self.indexes.as_ref().unwrap().get_team_id_by_slug(slug)
+    }
+
     pub fn club(&self, id: u32) -> Option<&Club> {
         let (club_continent_id, club_country_id) = self
             .indexes

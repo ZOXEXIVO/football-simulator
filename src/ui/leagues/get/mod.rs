@@ -50,6 +50,7 @@ pub struct LeagueTableDto<'l> {
 pub struct LeagueTableRow<'l> {
     pub team_id: u32,
     pub team_name: &'l str,
+    pub team_slug: &'l str,
     pub played: u8,
     pub win: u8,
     pub draft: u8,
@@ -84,6 +85,7 @@ pub async fn league_get_action(
                 .map(|t| LeagueTableRow {
                     team_id: t.team_id,
                     team_name: simulator_data.team_name(t.team_id).unwrap(),
+                    team_slug: simulator_data.team_slug(t.team_id).unwrap(),
                     played: t.played,
                     win: t.win,
                     draft: t.draft,
