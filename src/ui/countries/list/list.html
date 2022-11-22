@@ -39,7 +39,7 @@ Countries
                     {% for country in continent.countries %}
                                        
                     <li>                        
-                        <a href="/countries/{{ country.id }}">
+                        <a href="/countries/{{ country.slug }}">
                             <div class="flag flag-{{country.code}}"></div>&nbsp;&nbsp; {{ country.name }}
                         </a>
                     </li>

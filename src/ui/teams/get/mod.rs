@@ -69,7 +69,11 @@ pub async fn team_get_action(
     let simulator_data = guard.as_ref().unwrap();
 
     let team_id = simulator_data
-        .team_id_by_slug(&route_params.team_slug)
+        .indexes
+        .as_ref()
+        .unwrap()
+        .slug_indexes
+        .get_team_by_slug(&route_params.team_slug)
         .unwrap();
 
     let team: &Team = simulator_data.team(team_id).unwrap();

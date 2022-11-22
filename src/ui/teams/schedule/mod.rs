@@ -2,7 +2,6 @@
 use actix_web::web::Data;
 use actix_web::{web, HttpResponse, Result};
 use askama::Template;
-use core::league::Schedule;
 use core::{SimulatorData, Team};
 use serde::Deserialize;
 
@@ -52,7 +51,11 @@ pub async fn team_schedule_get_action(
     let simulator_data = guard.as_ref().unwrap();
 
     let team_id = simulator_data
-        .team_id_by_slug(&route_params.team_slug)
+        .indexes
+        .as_ref()
+        .unwrap()
+        .slug_indexes
+        .get_team_by_slug(&route_params.team_slug)
         .unwrap();
 
     let team: &Team = simulator_data.team(team_id).unwrap();
@@ -73,18 +76,21 @@ pub async fn team_schedule_get_action(
             .map(|schedule| {
                 let is_home = schedule.home_team_id == team.id;
 
+                let home_team_data = simulator_data.team_data(schedule.home_team_id).unwrap();
+                let away_team_data = simulator_data.team_data(schedule.away_team_id).unwrap();
+
                 TeamScheduleItem {
                     date: schedule.date.format("%d.%m.%Y").to_string(),
                     time: schedule.date.format("%H:%M").to_string(),
                     opponent_slug: if is_home {
-                        simulator_data.team_slug(schedule.away_team_id).unwrap()
+                        &away_team_data.slug
                     } else {
-                        simulator_data.team_slug(schedule.home_team_id).unwrap()
+                        &home_team_data.slug
                     },
                     opponent_name: if is_home {
-                        &simulator_data.team(schedule.away_team_id).unwrap().name
+                        &away_team_data.name
                     } else {
-                        &simulator_data.team(schedule.home_team_id).unwrap().name
+                        &home_team_data.name
                     },
                     is_home,
                     competition_id: league.id,

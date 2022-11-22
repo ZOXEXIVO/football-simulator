@@ -9,7 +9,7 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct LeagueGetRequest {
-    league_id: u32,
+    pub league_slug: String,
 }
 
 #[derive(Template)]
@@ -17,7 +17,7 @@ pub struct LeagueGetRequest {
 pub struct LeagueGetViewModel<'l> {
     pub id: u32,
     pub name: &'l str,
-    pub country_id: u32,
+    pub country_slug: &'l str,
     pub country_name: &'l str,
     pub table: LeagueTableDto<'l>,
     pub current_tour_schedule: Vec<TourSchedule<'l>>,
@@ -68,7 +68,15 @@ pub async fn league_get_action(
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let league = simulator_data.league(route_params.league_id).unwrap();
+    let league_id = simulator_data
+        .indexes
+        .as_ref()
+        .unwrap()
+        .slug_indexes
+        .get_league_by_slug(&route_params.league_slug)
+        .unwrap();
+
+    let league = simulator_data.league(league_id).unwrap();
 
     let country = simulator_data.country(league.country_id).unwrap();
 
@@ -77,22 +85,25 @@ pub async fn league_get_action(
     let mut model = LeagueGetViewModel {
         id: league.id,
         name: &league.name,
-        country_id: country.id,
+        country_slug: &country.slug,
         country_name: &country.name,
         table: LeagueTableDto {
             rows: league_table
                 .iter()
-                .map(|t| LeagueTableRow {
-                    team_id: t.team_id,
-                    team_name: simulator_data.team_name(t.team_id).unwrap(),
-                    team_slug: simulator_data.team_slug(t.team_id).unwrap(),
-                    played: t.played,
-                    win: t.win,
-                    draft: t.draft,
-                    lost: t.lost,
-                    goal_scored: t.goal_scored,
-                    goal_concerned: t.goal_concerned,
-                    points: t.points,
+                .map(|t| {
+                    let team_data = simulator_data.team_data(t.team_id).unwrap();
+                    return LeagueTableRow {
+                        team_id: t.team_id,
+                        team_name: &team_data.name,
+                        team_slug: &team_data.slug,
+                        played: t.played,
+                        win: t.win,
+                        draft: t.draft,
+                        lost: t.lost,
+                        goal_scored: t.goal_scored,
+                        goal_concerned: t.goal_concerned,
+                        points: t.points,
+                    };
                 })
                 .collect(),
         },
@@ -135,10 +146,10 @@ pub async fn league_get_action(
                         }),
 
                         home_team_id: item.home_team_id,
-                        home_team_name: simulator_data.team_name(item.home_team_id).unwrap(),
+                        home_team_name: &simulator_data.team_data(item.home_team_id).unwrap().name,
 
                         away_team_id: item.away_team_id,
-                        away_team_name: simulator_data.team_name(item.away_team_id).unwrap(),
+                        away_team_name: &simulator_data.team_data(item.away_team_id).unwrap().name,
                     })
                     .collect(),
             };

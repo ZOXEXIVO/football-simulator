@@ -2,6 +2,7 @@
   {
     "id": 106,
     "code": "af",
+    "slug": "afghanistan",
     "name": "Afghanistan",
     "continent_id": 4,
     "reputation": 0
@@ -9,6 +10,7 @@
   {
     "id": 752,
     "code": "al",
+    "slug": "albania",
     "name": "Albania",
     "continent_id": 1,
     "reputation": 0
@@ -16,6 +18,7 @@
   {
     "id": 5,
     "code": "dz",
+    "slug": "algeria",
     "name": "Algeria",
     "continent_id": 0,
     "reputation": 0
@@ -23,6 +26,7 @@
   {
     "id": 129504,
     "code": "as",
+    "slug": "american samoa",
     "name": "American Samoa",
     "continent_id": 5,
     "reputation": 0
@@ -30,6 +34,7 @@
   {
     "id": 753,
     "code": "ad",
+    "slug": "andorra",
     "name": "Andorra",
     "continent_id": 1,
     "reputation": 0
@@ -37,6 +42,7 @@
   {
     "id": 6,
     "code": "ao",
+    "slug": "angola",
     "name": "Angola",
     "continent_id": 0,
     "reputation": 0
@@ -44,6 +50,7 @@
   {
     "id": 129514,
     "code": "ai",
+    "slug": "anguilla",
     "name": "Anguilla",
     "continent_id": 2,
     "reputation": 0
@@ -51,6 +58,7 @@
   {
     "id": 359,
     "code": "ag",
+    "slug": "antigua and barbuda",
     "name": "Antigua and Barbuda",
     "continent_id": 2,
     "reputation": 0
@@ -58,6 +66,7 @@
   {
     "id": 1649,
     "code": "ar",
+    "slug": "argentina",
     "name": "Argentina",
     "continent_id": 3,
     "reputation": 0
@@ -65,13 +74,15 @@
   {
     "id": 754,
     "code": "am",
-      "name": "Armenia",
+    "slug": "armenia",
+    "name": "Armenia",
     "continent_id": 1,
     "reputation": 0
   },
   {
     "id": 360,
     "code": "aw",
+    "slug": "aruba",
     "name": "Aruba",
     "continent_id": 2,
     "reputation": 0
@@ -79,6 +90,7 @@
   {
     "id": 1435,
     "code": "au",
+    "slug": "australia",
     "name": "Australia",
     "continent_id": 5,
     "reputation": 0
@@ -86,6 +98,7 @@
   {
     "id": 755,
     "code": "at",
+    "slug": "austria",
     "name": "Austria",
     "continent_id": 1,
     "reputation": 0
@@ -93,6 +106,7 @@
   {
     "id": 756,
     "code": "az",
+    "slug": "azerbaijan",
     "name": "Azerbaijan",
     "continent_id": 1,
     "reputation": 0
@@ -100,6 +114,7 @@
   {
     "id": 388,
     "code": "bs",
+    "slug": "bahamas",
     "name": "Bahamas",
     "continent_id": 2,
     "reputation": 0
@@ -107,6 +122,7 @@
   {
     "id": 107,
     "code": "bh",
+    "slug": "bahrain",
     "name": "Bahrain",
     "continent_id": 4,
     "reputation": 0
@@ -114,6 +130,7 @@
   {
     "id": 108,
     "code": "bd",
+    "slug": "bangladesh",
     "name": "Bangladesh",
     "continent_id": 4,
     "reputation": 0
@@ -121,6 +138,7 @@
   {
     "id": 361,
     "code": "bb",
+    "slug": "barbados",
     "name": "Barbados",
     "continent_id": 2,
     "reputation": 0
@@ -128,6 +146,7 @@
   {
     "id": 758,
     "code": "by",
+    "slug": "belarus",
     "name": "Belarus",
     "continent_id": 1,
     "reputation": 0
@@ -135,6 +154,7 @@
   {
     "id": 757,
     "code": "be",
+    "slug": "belgium",
     "name": "Belgium",
     "continent_id": 1,
     "reputation": 0
@@ -142,6 +162,7 @@
   {
     "id": 362,
     "code": "bz",
+    "slug": "belize",
     "name": "Belize",
     "continent_id": 2,
     "reputation": 0
@@ -149,6 +170,7 @@
   {
     "id": 7,
     "code": "bj",
+    "slug": "benin",
     "name": "Benin",
     "continent_id": 0,
     "reputation": 0
@@ -156,6 +178,7 @@
   {
     "id": 363,
     "code": "bm",
+    "slug": "bermuda",
     "name": "Bermuda",
     "continent_id": 2,
     "reputation": 0
@@ -163,6 +186,7 @@
   {
     "id": 131012,
     "code": "bt",
+    "slug": "bhutan",
     "name": "Bhutan",
     "continent_id": 4,
     "reputation": 0
@@ -170,6 +194,7 @@
   {
     "id": 1650,
     "code": "bo",
+    "slug": "bolivia",
     "name": "Bolivia",
     "continent_id": 3,
     "reputation": 0
@@ -177,6 +202,7 @@
   {
     "id": 759,
     "code": "ba",
+    "slug": "bosnia-herzegovina",
     "name": "Bosnia-Herzegovina",
     "continent_id": 1,
     "reputation": 0
@@ -184,6 +210,7 @@
   {
     "id": 8,
     "code": "bw",
+    "slug": "botswana",
     "name": "Botswana",
     "continent_id": 0,
     "reputation": 0
@@ -191,6 +218,7 @@
   {
     "id": 1651,
     "code": "br",
+    "slug": "brazil",
     "name": "Brazil",
     "continent_id": 3,
     "reputation": 0
@@ -198,6 +226,7 @@
   {
     "id": 129517,
     "code": "vg",
+    "slug": "british virgin islands",
     "name": "British Virgin Islands",
     "continent_id": 2,
     "reputation": 0
@@ -205,6 +234,7 @@
   {
     "id": 109,
     "code": "bn",
+    "slug": "brunei",
     "name": "Brunei",
     "continent_id": 4,
     "reputation": 0
@@ -212,6 +242,7 @@
   {
     "id": 760,
     "code": "bg",
+    "slug": "bulgaria",
     "name": "Bulgaria",
     "continent_id": 1,
     "reputation": 0
@@ -219,6 +250,7 @@
   {
     "id": 9,
     "code": "bf",
+    "slug": "burkina faso",
     "name": "Burkina Faso",
     "continent_id": 0,
     "reputation": 0
@@ -226,6 +258,7 @@
   {
     "id": 10,
     "code": "bi",
+    "slug": "burundi",
     "name": "Burundi",
     "continent_id": 0,
     "reputation": 0
@@ -233,6 +266,7 @@
   {
     "id": 118,
     "code": "kh",
+    "slug": "cambodia",
     "name": "Cambodia",
     "continent_id": 4,
     "reputation": 0
@@ -240,6 +274,7 @@
   {
     "id": 11,
     "code": "cm",
+    "slug": "cameroon",
     "name": "Cameroon",
     "continent_id": 0,
     "reputation": 0
@@ -247,6 +282,7 @@
   {
     "id": 364,
     "code": "ca",
+    "slug": "canada",
     "name": "Canada",
     "continent_id": 2,
     "reputation": 0
@@ -254,6 +290,7 @@
   {
     "id": 12,
     "code": "cv",
+    "slug": "cape verde islands",
     "name": "Cape Verde Islands",
     "continent_id": 0,
     "reputation": 0
@@ -261,6 +298,7 @@
   {
     "id": 365,
     "code": "ky",
+    "slug": "cayman islands",
     "name": "Cayman Islands",
     "continent_id": 2,
     "reputation": 0
@@ -268,6 +306,7 @@
   {
     "id": 13,
     "code": "cf",
+    "slug": "central african republic",
     "name": "Central African Republic",
     "continent_id": 0,
     "reputation": 0
@@ -275,6 +314,7 @@
   {
     "id": 14,
     "code": "td",
+    "slug": "chad",
     "name": "Chad",
     "continent_id": 0,
     "reputation": 0
@@ -282,6 +322,7 @@
   {
     "id": 1652,
     "code": "cl",
+    "slug": "chile",
     "name": "Chile",
     "continent_id": 3,
     "reputation": 0
@@ -289,6 +330,7 @@
   {
     "id": 110,
     "code": "cn",
+    "slug": "china",
     "name": "China",
     "continent_id": 4,
     "reputation": 0
@@ -296,6 +338,7 @@
   {
     "id": 138,
     "code": "tw",
+    "slug": "taiwan",
     "name": "Taiwan",
     "continent_id": 4,
     "reputation": 0
@@ -303,6 +346,7 @@
   {
     "id": 1653,
     "code": "co",
+    "slug": "colombia",
     "name": "Colombia",
     "continent_id": 3,
     "reputation": 0
@@ -310,6 +354,7 @@
   {
     "id": 919586,
     "code": "km",
+    "slug": "comoros",
     "name": "Comoros",
     "continent_id": 0,
     "reputation": 0
@@ -317,6 +362,7 @@
   {
     "id": 49,
     "code": "cg",
+    "slug": "congo",
     "name": "Congo",
     "continent_id": 0,
     "reputation": 0
@@ -324,6 +370,7 @@
   {
     "id": 53,
     "code": "cg",
+    "slug": "congo dr",
     "name": "Congo DR",
     "continent_id": 1,
     "reputation": 0
@@ -331,6 +378,7 @@
   {
     "id": 1436,
     "code": "ck",
+    "slug": "cook islands",
     "name": "Cook Islands",
     "continent_id": 5,
     "reputation": 0
@@ -338,6 +386,7 @@
   {
     "id": 366,
     "code": "cr",
+    "slug": "costa rica",
     "name": "Costa Rica",
     "continent_id": 2,
     "reputation": 0
@@ -345,13 +394,15 @@
   {
     "id": 24,
     "code": "ci",
-    "name": "Côte d'Ivoire",
+    "slug": "c\u00F4te d\u0027ivoire",
+    "name": "C\u00F4te d\u0027Ivoire",
     "continent_id": 0,
     "reputation": 0
   },
   {
     "id": 761,
     "code": "hr",
+    "slug": "croatia",
     "name": "Croatia",
     "continent_id": 1,
     "reputation": 0
@@ -359,6 +410,7 @@
   {
     "id": 367,
     "code": "cu",
+    "slug": "cuba",
     "name": "Cuba",
     "continent_id": 2,
     "reputation": 0
@@ -366,6 +418,7 @@
   {
     "id": 762,
     "code": "cy",
+    "slug": "cyprus",
     "name": "Cyprus",
     "continent_id": 1,
     "reputation": 0
@@ -373,6 +426,7 @@
   {
     "id": 763,
     "code": "cz",
+    "slug": "czech republic",
     "name": "Czech Republic",
     "continent_id": 1,
     "reputation": 0
@@ -380,6 +434,7 @@
   {
     "id": 764,
     "code": "dk",
+    "slug": "denmark",
     "name": "Denmark",
     "continent_id": 1,
     "reputation": 0
@@ -387,6 +442,7 @@
   {
     "id": 15,
     "code": "dj",
+    "slug": "djibouti",
     "name": "Djibouti",
     "continent_id": 0,
     "reputation": 0
@@ -394,6 +450,7 @@
   {
     "id": 368,
     "code": "dm",
+    "slug": "dominica",
     "name": "Dominica",
     "continent_id": 2,
     "reputation": 0
@@ -401,6 +458,7 @@
   {
     "id": 142527,
     "code": "do",
+    "slug": "dominican republic",
     "name": "Dominican Republic",
     "continent_id": 2,
     "reputation": 0
@@ -408,6 +466,7 @@
   {
     "id": 1654,
     "code": "ec",
+    "slug": "ecuador",
     "name": "Ecuador",
     "continent_id": 3,
     "reputation": 0
@@ -415,13 +474,15 @@
   {
     "id": 16,
     "code": "eg",
-      "name": "Egypt",
+    "slug": "egypt",
+    "name": "Egypt",
     "continent_id": 0,
     "reputation": 0
   },
   {
     "id": 370,
     "code": "sv",
+    "slug": "salvador",
     "name": "Salvador",
     "continent_id": 2,
     "reputation": 0
@@ -429,6 +490,7 @@
   {
     "id": 765,
     "code": "gb",
+    "slug": "england",
     "name": "England",
     "continent_id": 1,
     "reputation": 0
@@ -436,6 +498,7 @@
   {
     "id": 17,
     "code": "gq",
+    "slug": "equatorial guinea",
     "name": "Equatorial Guinea",
     "continent_id": 0,
     "reputation": 0
@@ -443,6 +506,7 @@
   {
     "id": 129511,
     "code": "er",
+    "slug": "eritrea",
     "name": "Eritrea",
     "continent_id": 0,
     "reputation": 0
@@ -450,6 +514,7 @@
   {
     "id": 766,
     "code": "ee",
+    "slug": "estonia",
     "name": "Estonia",
     "continent_id": 1,
     "reputation": 0
@@ -457,6 +522,7 @@
   {
     "id": 18,
     "code": "et",
+    "slug": "ethiopia",
     "name": "Ethiopia",
     "continent_id": 0,
     "reputation": 0
@@ -464,6 +530,7 @@
   {
     "id": 767,
     "code": "fo",
+    "slug": "faroe islands",
     "name": "Faroe Islands",
     "continent_id": 1,
     "reputation": 0
@@ -471,6 +538,7 @@
   {
     "id": 1437,
     "code": "fj",
+    "slug": "fiji",
     "name": "Fiji",
     "continent_id": 5,
     "reputation": 0
@@ -478,6 +546,7 @@
   {
     "id": 768,
     "code": "fi",
+    "slug": "finland",
     "name": "Finland",
     "continent_id": 1,
     "reputation": 0
@@ -485,6 +554,7 @@
   {
     "id": 769,
     "code": "fr",
+    "slug": "france",
     "name": "France",
     "continent_id": 1,
     "reputation": 0
@@ -492,6 +562,7 @@
   {
     "id": 917496,
     "code": "gf",
+    "slug": "french guiana",
     "name": "French Guiana",
     "continent_id": 3,
     "reputation": 0
@@ -499,6 +570,7 @@
   {
     "id": 781,
     "code": "mk",
+    "slug": "macedonia",
     "name": "Macedonia",
     "continent_id": 1,
     "reputation": 0
@@ -506,6 +578,7 @@
   {
     "id": 19,
     "code": "ga",
+    "slug": "gabon",
     "name": "Gabon",
     "continent_id": 0,
     "reputation": 0
@@ -513,6 +586,7 @@
   {
     "id": 20,
     "code": "gm",
+    "slug": "gambia",
     "name": "Gambia",
     "continent_id": 0,
     "reputation": 0
@@ -520,6 +594,7 @@
   {
     "id": 770,
     "code": "ge",
+    "slug": "georgia",
     "name": "Georgia",
     "continent_id": 1,
     "reputation": 0
@@ -527,6 +602,7 @@
   {
     "id": 771,
     "code": "de",
+    "slug": "germany",
     "name": "Germany",
     "continent_id": 1,
     "reputation": 0
@@ -534,6 +610,7 @@
   {
     "id": 21,
     "code": "gh",
+    "slug": "ghana",
     "name": "Ghana",
     "continent_id": 0,
     "reputation": 0
@@ -541,13 +618,15 @@
   {
     "id": 214394,
     "code": "gi",
+    "slug": "gibraltar",
     "name": "Gibraltar",
     "continent_id": 1,
     "reputation": 0
-  },  
+  },
   {
     "id": 772,
     "code": "gr",
+    "slug": "greece",
     "name": "Greece",
     "continent_id": 1,
     "reputation": 0
@@ -555,6 +634,7 @@
   {
     "id": 371,
     "code": "gd",
+    "slug": "grenada",
     "name": "Grenada",
     "continent_id": 2,
     "reputation": 0
@@ -562,6 +642,7 @@
   {
     "id": 917498,
     "code": "gp",
+    "slug": "guadeloupe",
     "name": "Guadeloupe",
     "continent_id": 2,
     "reputation": 0
@@ -569,6 +650,7 @@
   {
     "id": 129508,
     "code": "gu",
+    "slug": "guam",
     "name": "Guam",
     "continent_id": 5,
     "reputation": 0
@@ -576,6 +658,7 @@
   {
     "id": 373,
     "code": "gt",
+    "slug": "guatemala",
     "name": "Guatemala",
     "continent_id": 2,
     "reputation": 0
@@ -583,6 +666,7 @@
   {
     "id": 23,
     "code": "gw",
+    "slug": "guinea-bissau",
     "name": "Guinea-Bissau",
     "continent_id": 0,
     "reputation": 0
@@ -590,6 +674,7 @@
   {
     "id": 374,
     "code": "gy",
+    "slug": "guyana",
     "name": "Guyana",
     "continent_id": 3,
     "reputation": 0
@@ -597,6 +682,7 @@
   {
     "id": 375,
     "code": "ht",
+    "slug": "haiti",
     "name": "Haiti",
     "continent_id": 2,
     "reputation": 0
@@ -604,6 +690,7 @@
   {
     "id": 376,
     "code": "hn",
+    "slug": "honduras",
     "name": "Honduras",
     "continent_id": 2,
     "reputation": 0
@@ -611,6 +698,7 @@
   {
     "id": 111,
     "code": "hk",
+    "slug": "hong kong",
     "name": "Hong Kong",
     "continent_id": 4,
     "reputation": 0
@@ -618,6 +706,7 @@
   {
     "id": 773,
     "code": "hu",
+    "slug": "hungary",
     "name": "Hungary",
     "continent_id": 1,
     "reputation": 0
@@ -625,6 +714,7 @@
   {
     "id": 774,
     "code": "is",
+    "slug": "iceland",
     "name": "Iceland",
     "continent_id": 1,
     "reputation": 0
@@ -632,6 +722,7 @@
   {
     "id": 112,
     "code": "in",
+    "slug": "india",
     "name": "India",
     "continent_id": 4,
     "reputation": 0
@@ -639,6 +730,7 @@
   {
     "id": 113,
     "code": "id",
+    "slug": "indonesia",
     "name": "Indonesia",
     "continent_id": 4,
     "reputation": 0
@@ -646,6 +738,7 @@
   {
     "id": 114,
     "code": "ir",
+    "slug": "iran",
     "name": "Iran",
     "continent_id": 4,
     "reputation": 0
@@ -653,6 +746,7 @@
   {
     "id": 115,
     "code": "iq",
+    "slug": "iraq",
     "name": "Iraq",
     "continent_id": 4,
     "reputation": 0
@@ -660,13 +754,15 @@
   {
     "id": 775,
     "code": "il",
-      "name": "Israel",
+    "slug": "israel",
+    "name": "Israel",
     "continent_id": 4,
     "reputation": 0
   },
   {
     "id": 776,
     "code": "it",
+    "slug": "italy",
     "name": "Italy",
     "continent_id": 1,
     "reputation": 0
@@ -674,6 +770,7 @@
   {
     "id": 377,
     "code": "jm",
+    "slug": "jamaica",
     "name": "Jamaica",
     "continent_id": 2,
     "reputation": 0
@@ -681,13 +778,15 @@
   {
     "id": 116,
     "code": "jp",
-      "name": "Japan",
+    "slug": "japan",
+    "name": "Japan",
     "continent_id": 4,
     "reputation": 0
   },
   {
     "id": 117,
     "code": "jo",
+    "slug": "jordan",
     "name": "Jordan",
     "continent_id": 4,
     "reputation": 0
@@ -695,6 +794,7 @@
   {
     "id": 119,
     "code": "kz",
+    "slug": "kazakhstan",
     "name": "Kazakhstan",
     "continent_id": 4,
     "reputation": 0
@@ -702,13 +802,15 @@
   {
     "id": 25,
     "code": "ke",
-      "name": "Kenya",
+    "slug": "kenya",
+    "name": "Kenya",
     "continent_id": 0,
     "reputation": 0
   },
   {
     "id": 209002,
     "code": "ki",
+    "slug": "kiribati",
     "name": "Kiribati",
     "continent_id": 5,
     "reputation": 0
@@ -716,6 +818,7 @@
   {
     "id": 129,
     "code": "kp",
+    "slug": "north korea",
     "name": "North Korea",
     "continent_id": 4,
     "reputation": 0
@@ -723,6 +826,7 @@
   {
     "id": 135,
     "code": "kr",
+    "slug": "south korea",
     "name": "South Korea",
     "continent_id": 4,
     "reputation": 0
@@ -730,6 +834,7 @@
   {
     "id": 120,
     "code": "kw",
+    "slug": "kuwait",
     "name": "Kuwait",
     "continent_id": 4,
     "reputation": 0
@@ -737,6 +842,7 @@
   {
     "id": 121,
     "code": "kg",
+    "slug": "kyrgyzstan",
     "name": "Kyrgyzstan",
     "continent_id": 4,
     "reputation": 0
@@ -744,6 +850,7 @@
   {
     "id": 122,
     "code": "la",
+    "slug": "laos",
     "name": "Laos",
     "continent_id": 4,
     "reputation": 0
@@ -751,6 +858,7 @@
   {
     "id": 777,
     "code": "lv",
+    "slug": "latvia",
     "name": "Latvia",
     "continent_id": 1,
     "reputation": 0
@@ -758,6 +866,7 @@
   {
     "id": 123,
     "code": "lb",
+    "slug": "lebanon",
     "name": "Lebanon",
     "continent_id": 4,
     "reputation": 0
@@ -765,6 +874,7 @@
   {
     "id": 26,
     "code": "ls",
+    "slug": "lesotho",
     "name": "Lesotho",
     "continent_id": 0,
     "reputation": 0
@@ -772,6 +882,7 @@
   {
     "id": 27,
     "code": "lr",
+    "slug": "liberia",
     "name": "Liberia",
     "continent_id": 0,
     "reputation": 0
@@ -779,6 +890,7 @@
   {
     "id": 28,
     "code": "ly",
+    "slug": "libya",
     "name": "Libya",
     "continent_id": 0,
     "reputation": 0
@@ -786,6 +898,7 @@
   {
     "id": 778,
     "code": "li",
+    "slug": "liechtenstein",
     "name": "Liechtenstein",
     "continent_id": 1,
     "reputation": 0
@@ -793,6 +906,7 @@
   {
     "id": 779,
     "code": "lt",
+    "slug": "lithuania",
     "name": "Lithuania",
     "continent_id": 1,
     "reputation": 0
@@ -800,6 +914,7 @@
   {
     "id": 780,
     "code": "lu",
+    "slug": "luxembourg",
     "name": "Luxembourg",
     "continent_id": 1,
     "reputation": 0
@@ -807,13 +922,15 @@
   {
     "id": 124,
     "code": "mo",
-      "name": "Macau",
+    "slug": "macau",
+    "name": "Macau",
     "continent_id": 4,
     "reputation": 0
   },
   {
     "id": 29,
     "code": "mg",
+    "slug": "madagascar",
     "name": "Madagascar",
     "continent_id": 0,
     "reputation": 0
@@ -821,6 +938,7 @@
   {
     "id": 30,
     "code": "mw",
+    "slug": "malawi",
     "name": "Malawi",
     "continent_id": 0,
     "reputation": 0
@@ -828,6 +946,7 @@
   {
     "id": 125,
     "code": "my",
+    "slug": "malaysia",
     "name": "Malaysia",
     "continent_id": 4,
     "reputation": 0
@@ -835,6 +954,7 @@
   {
     "id": 126,
     "code": "mv",
+    "slug": "maldives",
     "name": "Maldives",
     "continent_id": 4,
     "reputation": 0
@@ -842,6 +962,7 @@
   {
     "id": 31,
     "code": "ml",
+    "slug": "mali",
     "name": "Mali",
     "continent_id": 0,
     "reputation": 0
@@ -849,6 +970,7 @@
   {
     "id": 782,
     "code": "mt",
+    "slug": "malta",
     "name": "Malta",
     "continent_id": 1,
     "reputation": 0
@@ -856,6 +978,7 @@
   {
     "id": 917502,
     "code": "mq",
+    "slug": "martinique",
     "name": "Martinique",
     "continent_id": 2,
     "reputation": 0
@@ -863,6 +986,7 @@
   {
     "id": 32,
     "code": "mr",
+    "slug": "mauritania",
     "name": "Mauritania",
     "continent_id": 0,
     "reputation": 0
@@ -870,6 +994,7 @@
   {
     "id": 33,
     "code": "mu",
+    "slug": "mauritius",
     "name": "Mauritius",
     "continent_id": 0,
     "reputation": 0
@@ -877,6 +1002,7 @@
   {
     "id": 918740,
     "code": "yt",
+    "slug": "mayotte",
     "name": "Mayotte",
     "continent_id": 0,
     "reputation": 0
@@ -884,6 +1010,7 @@
   {
     "id": 379,
     "code": "mx",
+    "slug": "mexico",
     "name": "Mexico",
     "continent_id": 2,
     "reputation": 0
@@ -891,6 +1018,7 @@
   {
     "id": 15064643,
     "code": "fm",
+    "slug": "micronesia",
     "name": "Micronesia",
     "continent_id": 5,
     "reputation": 0
@@ -898,6 +1026,7 @@
   {
     "id": 783,
     "code": "md",
+    "slug": "moldova",
     "name": "Moldova",
     "continent_id": 1,
     "reputation": 0
@@ -905,6 +1034,7 @@
   {
     "id": 8162661,
     "code": "mc",
+    "slug": "monaco",
     "name": "Monaco",
     "continent_id": 1,
     "reputation": 0
@@ -912,6 +1042,7 @@
   {
     "id": 129505,
     "code": "mn",
+    "slug": "mongolia",
     "name": "Mongolia",
     "continent_id": 4,
     "reputation": 0
@@ -919,6 +1050,7 @@
   {
     "id": 62002127,
     "code": "me",
+    "slug": "montenegro",
     "name": "Montenegro",
     "continent_id": 1,
     "reputation": 0
@@ -926,6 +1058,7 @@
   {
     "id": 129520,
     "code": "ms",
+    "slug": "montserrat",
     "name": "Montserrat",
     "continent_id": 2,
     "reputation": 0
@@ -933,6 +1066,7 @@
   {
     "id": 34,
     "code": "ma",
+    "slug": "morocco",
     "name": "Morocco",
     "continent_id": 0,
     "reputation": 0
@@ -940,6 +1074,7 @@
   {
     "id": 35,
     "code": "mz",
+    "slug": "mozambique",
     "name": "Mozambique",
     "continent_id": 0,
     "reputation": 0
@@ -947,6 +1082,7 @@
   {
     "id": 127,
     "code": "mm",
+    "slug": "myanmar",
     "name": "Myanmar",
     "continent_id": 4,
     "reputation": 0
@@ -954,6 +1090,7 @@
   {
     "id": 36,
     "code": "na",
+    "slug": "namibia",
     "name": "Namibia",
     "continent_id": 0,
     "reputation": 0
@@ -961,6 +1098,7 @@
   {
     "id": 128,
     "code": "np",
+    "slug": "nepal",
     "name": "Nepal",
     "continent_id": 4,
     "reputation": 0
@@ -968,6 +1106,7 @@
   {
     "id": 784,
     "code": "nl",
+    "slug": "netherlands",
     "name": "Netherlands",
     "continent_id": 1,
     "reputation": 0
@@ -975,6 +1114,7 @@
   {
     "id": 129532,
     "code": "nc",
+    "slug": "new caledonia",
     "name": "New Caledonia",
     "continent_id": 5,
     "reputation": 0
@@ -982,6 +1122,7 @@
   {
     "id": 1438,
     "code": "nz",
+    "slug": "new zealand",
     "name": "New Zealand",
     "continent_id": 5,
     "reputation": 0
@@ -989,13 +1130,15 @@
   {
     "id": 381,
     "code": "ni",
-      "name": "Nicaragua",
+    "slug": "nicaragua",
+    "name": "Nicaragua",
     "continent_id": 2,
     "reputation": 0
   },
   {
     "id": 37,
     "code": "ne",
+    "slug": "niger",
     "name": "Niger",
     "continent_id": 0,
     "reputation": 0
@@ -1003,6 +1146,7 @@
   {
     "id": 38,
     "code": "ng",
+    "slug": "nigeria",
     "name": "Nigeria",
     "continent_id": 0,
     "reputation": 0
@@ -1010,6 +1154,7 @@
   {
     "id": 785,
     "code": "ie",
+    "slug": "northern ireland",
     "name": "Northern Ireland",
     "continent_id": 1,
     "reputation": 0
@@ -1017,6 +1162,7 @@
   {
     "id": 23008660,
     "code": "mp",
+    "slug": "northern mariana islands",
     "name": "Northern Mariana Islands",
     "continent_id": 5,
     "reputation": 0
@@ -1024,6 +1170,7 @@
   {
     "id": 786,
     "code": "no",
+    "slug": "norway",
     "name": "Norway",
     "continent_id": 1,
     "reputation": 0
@@ -1031,6 +1178,7 @@
   {
     "id": 130,
     "code": "om",
+    "slug": "oman",
     "name": "Oman",
     "continent_id": 4,
     "reputation": 0
@@ -1038,6 +1186,7 @@
   {
     "id": 131,
     "code": "pk",
+    "slug": "pakistan",
     "name": "Pakistan",
     "continent_id": 4,
     "reputation": 0
@@ -1045,6 +1194,7 @@
   {
     "id": 1662,
     "code": "ps",
+    "slug": "palestine",
     "name": "Palestine",
     "continent_id": 4,
     "reputation": 0
@@ -1052,6 +1202,7 @@
   {
     "id": 382,
     "code": "pa",
+    "slug": "panama",
     "name": "Panama",
     "continent_id": 2,
     "reputation": 0
@@ -1059,6 +1210,7 @@
   {
     "id": 1439,
     "code": "pg",
+    "slug": "papua new guinea",
     "name": "Papua New Guinea",
     "continent_id": 5,
     "reputation": 0
@@ -1066,6 +1218,7 @@
   {
     "id": 1655,
     "code": "py",
+    "slug": "paraguay",
     "name": "Paraguay",
     "continent_id": 3,
     "reputation": 0
@@ -1073,6 +1226,7 @@
   {
     "id": 1656,
     "code": "pe",
+    "slug": "peru",
     "name": "Peru",
     "continent_id": 3,
     "reputation": 0
@@ -1080,6 +1234,7 @@
   {
     "id": 141,
     "code": "ph",
+    "slug": "philippines",
     "name": "Philippines",
     "continent_id": 4,
     "reputation": 0
@@ -1087,6 +1242,7 @@
   {
     "id": 787,
     "code": "pl",
+    "slug": "poland",
     "name": "Poland",
     "continent_id": 1,
     "reputation": 0
@@ -1094,6 +1250,7 @@
   {
     "id": 788,
     "code": "pt",
+    "slug": "portugal",
     "name": "Portugal",
     "continent_id": 1,
     "reputation": 0
@@ -1101,6 +1258,7 @@
   {
     "id": 383,
     "code": "pr",
+    "slug": "puerto rico",
     "name": "Puerto Rico",
     "continent_id": 2,
     "reputation": 0
@@ -1108,6 +1266,7 @@
   {
     "id": 132,
     "code": "qa",
+    "slug": "qatar",
     "name": "Qatar",
     "continent_id": 4,
     "reputation": 0
@@ -1115,13 +1274,15 @@
   {
     "id": 917510,
     "code": "re",
-    "name": "Réunion",
+    "slug": "r\u00E9union",
+    "name": "R\u00E9union",
     "continent_id": 0,
     "reputation": 0
   },
   {
     "id": 790,
     "code": "ro",
+    "slug": "romania",
     "name": "Romania",
     "continent_id": 1,
     "reputation": 0
@@ -1129,6 +1290,7 @@
   {
     "id": 791,
     "code": "ru",
+    "slug": "russia",
     "name": "Russia",
     "continent_id": 1,
     "reputation": 0
@@ -1136,6 +1298,7 @@
   {
     "id": 39,
     "code": "rw",
+    "slug": "rwanda",
     "name": "Rwanda",
     "continent_id": 0,
     "reputation": 0
@@ -1143,6 +1306,7 @@
   {
     "id": 917508,
     "code": "mf",
+    "slug": "saint martin",
     "name": "Saint Martin",
     "continent_id": 2,
     "reputation": 0
@@ -1150,6 +1314,7 @@
   {
     "id": 1444,
     "code": "ws",
+    "slug": "samoa",
     "name": "Samoa",
     "continent_id": 5,
     "reputation": 0
@@ -1157,6 +1322,7 @@
   {
     "id": 792,
     "code": "sm",
+    "slug": "san marino",
     "name": "San Marino",
     "continent_id": 1,
     "reputation": 0
@@ -1164,6 +1330,7 @@
   {
     "id": 40,
     "code": "st",
+    "slug": "sao tome e principe",
     "name": "Sao Tome e Principe",
     "continent_id": 2,
     "reputation": 0
@@ -1171,6 +1338,7 @@
   {
     "id": 133,
     "code": "sa",
+    "slug": "saudi arabia",
     "name": "Saudi Arabia",
     "continent_id": 4,
     "reputation": 0
@@ -1178,6 +1346,7 @@
   {
     "id": 793,
     "code": "sc",
+    "slug": "scotland",
     "name": "Scotland",
     "continent_id": 1,
     "reputation": 0
@@ -1185,6 +1354,7 @@
   {
     "id": 41,
     "code": "sn",
+    "slug": "senegal",
     "name": "Senegal",
     "continent_id": 0,
     "reputation": 0
@@ -1192,6 +1362,7 @@
   {
     "id": 802,
     "code": "rs",
+    "slug": "serbia",
     "name": "Serbia",
     "continent_id": 1,
     "reputation": 0
@@ -1199,6 +1370,7 @@
   {
     "id": 42,
     "code": "sc",
+    "slug": "seychelles",
     "name": "Seychelles",
     "continent_id": 4,
     "reputation": 0
@@ -1206,6 +1378,7 @@
   {
     "id": 43,
     "code": "sl",
+    "slug": "sierra leone",
     "name": "Sierra Leone",
     "continent_id": 0,
     "reputation": 0
@@ -1213,6 +1386,7 @@
   {
     "id": 134,
     "code": "sg",
+    "slug": "singapore",
     "name": "Singapore",
     "continent_id": 4,
     "reputation": 0
@@ -1220,6 +1394,7 @@
   {
     "id": 794,
     "code": "sk",
+    "slug": "slovakia",
     "name": "Slovakia",
     "continent_id": 1,
     "reputation": 0
@@ -1227,6 +1402,7 @@
   {
     "id": 795,
     "code": "si",
+    "slug": "slovenia",
     "name": "Slovenia",
     "continent_id": 1,
     "reputation": 0
@@ -1234,6 +1410,7 @@
   {
     "id": 1440,
     "code": "sb",
+    "slug": "solomon islands",
     "name": "Solomon Islands",
     "continent_id": 5,
     "reputation": 0
@@ -1241,6 +1418,7 @@
   {
     "id": 44,
     "code": "so",
+    "slug": "somalia",
     "name": "Somalia",
     "continent_id": 0,
     "reputation": 0
@@ -1248,6 +1426,7 @@
   {
     "id": 45,
     "code": "za",
+    "slug": "south africa",
     "name": "South Africa",
     "continent_id": 0,
     "reputation": 0
@@ -1255,6 +1434,7 @@
   {
     "id": 13113220,
     "code": "sd",
+    "slug": "south sudan",
     "name": "South Sudan",
     "continent_id": 0,
     "reputation": 0
@@ -1262,6 +1442,7 @@
   {
     "id": 796,
     "code": "es",
+    "slug": "spain",
     "name": "Spain",
     "continent_id": 1,
     "reputation": 0
@@ -1269,6 +1450,7 @@
   {
     "id": 136,
     "code": "lk",
+    "slug": "sri lanka",
     "name": "Sri Lanka",
     "continent_id": 4,
     "reputation": 0
@@ -1276,6 +1458,7 @@
   {
     "id": 385,
     "code": "kn",
+    "slug": "st. kitts and nevis",
     "name": "St. Kitts and Nevis",
     "continent_id": 2,
     "reputation": 0
@@ -1283,6 +1466,7 @@
   {
     "id": 384,
     "code": "lc",
+    "slug": "st. lucia",
     "name": "St. Lucia",
     "continent_id": 2,
     "reputation": 0
@@ -1290,6 +1474,7 @@
   {
     "id": 386,
     "code": "vc",
+    "slug": "st. vincent / grenadines",
     "name": "St. Vincent / Grenadines",
     "continent_id": 2,
     "reputation": 0
@@ -1297,6 +1482,7 @@
   {
     "id": 46,
     "code": "sd",
+    "slug": "sudan",
     "name": "Sudan",
     "continent_id": 0,
     "reputation": 0
@@ -1304,6 +1490,7 @@
   {
     "id": 387,
     "code": "sr",
+    "slug": "suriname",
     "name": "Suriname",
     "continent_id": 0,
     "reputation": 0
@@ -1311,6 +1498,7 @@
   {
     "id": 47,
     "code": "sz",
+    "slug": "swaziland",
     "name": "Swaziland",
     "continent_id": 0,
     "reputation": 0
@@ -1318,6 +1506,7 @@
   {
     "id": 797,
     "code": "se",
+    "slug": "sweden",
     "name": "Sweden",
     "continent_id": 1,
     "reputation": 0
@@ -1325,6 +1514,7 @@
   {
     "id": 798,
     "code": "ch",
+    "slug": "switzerland",
     "name": "Switzerland",
     "continent_id": 1,
     "reputation": 0
@@ -1332,6 +1522,7 @@
   {
     "id": 1441,
     "code": "th",
+    "slug": "tahiti",
     "name": "Tahiti",
     "continent_id": 5,
     "reputation": 0
@@ -1339,6 +1530,7 @@
   {
     "id": 139,
     "code": "tj",
+    "slug": "tajikistan",
     "name": "Tajikistan",
     "continent_id": 4,
     "reputation": 0
@@ -1346,6 +1538,7 @@
   {
     "id": 48,
     "code": "tz",
+    "slug": "tanzania",
     "name": "Tanzania",
     "continent_id": 0,
     "reputation": 0
@@ -1353,6 +1546,7 @@
   {
     "id": 140,
     "code": "th",
+    "slug": "thailand",
     "name": "Thailand",
     "continent_id": 4,
     "reputation": 0
@@ -1360,6 +1554,7 @@
   {
     "id": 5626837,
     "code": "tm",
+    "slug": "east timor",
     "name": "East Timor",
     "continent_id": 4,
     "reputation": 0
@@ -1367,6 +1562,7 @@
   {
     "id": 50,
     "code": "tg",
+    "slug": "togo",
     "name": "Togo",
     "continent_id": 0,
     "reputation": 0
@@ -1374,6 +1570,7 @@
   {
     "id": 1442,
     "code": "to",
+    "slug": "tonga",
     "name": "Tonga",
     "continent_id": 5,
     "reputation": 0
@@ -1381,6 +1578,7 @@
   {
     "id": 389,
     "code": "tt",
+    "slug": "trinidad and tobago",
     "name": "Trinidad and Tobago",
     "continent_id": 2,
     "reputation": 0
@@ -1388,6 +1586,7 @@
   {
     "id": 51,
     "code": "tn",
+    "slug": "tunisia",
     "name": "Tunisia",
     "continent_id": 0,
     "reputation": 0
@@ -1395,6 +1594,7 @@
   {
     "id": 799,
     "code": "tr",
+    "slug": "turkey",
     "name": "Turkey",
     "continent_id": 1,
     "reputation": 0
@@ -1402,6 +1602,7 @@
   {
     "id": 142,
     "code": "tm",
+    "slug": "turkmenistan",
     "name": "Turkmenistan",
     "continent_id": 4,
     "reputation": 0
@@ -1409,6 +1610,7 @@
   {
     "id": 129526,
     "code": "tc",
+    "slug": "turks and caicos islands",
     "name": "Turks and Caicos Islands",
     "continent_id": 2,
     "reputation": 0
@@ -1416,6 +1618,7 @@
   {
     "id": 23088616,
     "code": "tv",
+    "slug": "tuvalu",
     "name": "Tuvalu",
     "continent_id": 5,
     "reputation": 0
@@ -1423,6 +1626,7 @@
   {
     "id": 52,
     "code": "ug",
+    "slug": "uganda",
     "name": "Uganda",
     "continent_id": 0,
     "reputation": 0
@@ -1430,6 +1634,7 @@
   {
     "id": 800,
     "code": "ua",
+    "slug": "ukraine",
     "name": "Ukraine",
     "continent_id": 1,
     "reputation": 0
@@ -1437,6 +1642,7 @@
   {
     "id": 143,
     "code": "ae",
+    "slug": "united arab emirates",
     "name": "United Arab Emirates",
     "continent_id": 4,
     "reputation": 0
@@ -1444,6 +1650,7 @@
   {
     "id": 1657,
     "code": "uy",
+    "slug": "uruguay",
     "name": "Uruguay",
     "continent_id": 3,
     "reputation": 0
@@ -1451,6 +1658,7 @@
   {
     "id": 129523,
     "code": "vi",
+    "slug": "us virgin islands",
     "name": "US Virgin Islands",
     "continent_id": 2,
     "reputation": 0
@@ -1458,6 +1666,7 @@
   {
     "id": 390,
     "code": "us",
+    "slug": "usa",
     "name": "USA",
     "continent_id": 2,
     "reputation": 0
@@ -1465,6 +1674,7 @@
   {
     "id": 144,
     "code": "uz",
+    "slug": "uzbekistan",
     "name": "Uzbekistan",
     "continent_id": 4,
     "reputation": 0
@@ -1472,6 +1682,7 @@
   {
     "id": 1443,
     "code": "vu",
+    "slug": "vanuatu",
     "name": "Vanuatu",
     "continent_id": 5,
     "reputation": 0
@@ -1479,6 +1690,7 @@
   {
     "id": 1658,
     "code": "ve",
+    "slug": "venezuela",
     "name": "Venezuela",
     "continent_id": 3,
     "reputation": 0
@@ -1486,6 +1698,7 @@
   {
     "id": 145,
     "code": "vn",
+    "slug": "vietnam",
     "name": "Vietnam",
     "continent_id": 1,
     "reputation": 0
@@ -1493,6 +1706,7 @@
   {
     "id": 918745,
     "code": "wf",
+    "slug": "wallis and futuna islands",
     "name": "Wallis and Futuna Islands",
     "continent_id": 5,
     "reputation": 0
@@ -1500,6 +1714,7 @@
   {
     "id": 146,
     "code": "ye",
+    "slug": "yemen",
     "name": "Yemen",
     "continent_id": 4,
     "reputation": 0
@@ -1507,6 +1722,7 @@
   {
     "id": 54,
     "code": "zm",
+    "slug": "zambia",
     "name": "Zambia",
     "continent_id": 0,
     "reputation": 0
@@ -1514,6 +1730,7 @@
   {
     "id": 13100103,
     "code": "tz",
+    "slug": "tanzania",
     "name": "Tanzania",
     "continent_id": 0,
     "reputation": 0
@@ -1521,6 +1738,7 @@
   {
     "id": 55,
     "code": "zw",
+    "slug": "zimbabwe",
     "name": "Zimbabwe",
     "continent_id": 0,
     "reputation": 0

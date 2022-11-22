@@ -15,14 +15,14 @@ pub struct ContinentDto<'c> {
 }
 
 pub struct CountryDto<'c> {
-    pub id: u32,
+    pub slug: &'c str,
     pub code: &'c str,
     pub name: &'c str,
     pub leagues: Vec<LeagueDto<'c>>,
 }
 
 pub struct LeagueDto<'l> {
-    pub id: u32,
+    pub slug: &'l str,
     pub name: &'l str,
 }
 
@@ -43,7 +43,7 @@ pub async fn country_list_action(state: Data<GameAppData>) -> Result<HttpRespons
                 .iter()
                 .filter(|c| c.leagues.leagues.len() > 0)
                 .map(|country| CountryDto {
-                    id: country.id,
+                    slug: &country.slug,
                     code: &country.code,
                     name: &country.name,
                     leagues: country
@@ -51,7 +51,7 @@ pub async fn country_list_action(state: Data<GameAppData>) -> Result<HttpRespons
                         .leagues
                         .iter()
                         .map(|l| LeagueDto {
-                            id: l.id,
+                            slug: &l.slug,
                             name: &l.name,
                         })
                         .collect(),

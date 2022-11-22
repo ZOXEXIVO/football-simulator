@@ -67,7 +67,7 @@ impl Staff {
             contract: None,
             country_id: 0,
             behaviour: PersonBehaviour::default(),
-            birth_date: NaiveDate::from_ymd(2019, 1, 1),
+            birth_date: NaiveDate::from_ymd_opt(2019, 1, 1).unwrap(),
             relations: Relations::new(),
             license: StaffLicenseType::NationalC,
             attributes: PersonAttributes {

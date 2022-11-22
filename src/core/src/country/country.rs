@@ -7,6 +7,7 @@ use crate::{Club, ClubResult};
 pub struct Country {
     pub id: u32,
     pub code: String,
+    pub slug: String,
     pub name: String,
     pub continent_id: u32,
     pub leagues: LeagueCollection,
@@ -19,6 +20,7 @@ impl Country {
     pub fn new(
         id: u32,
         code: String,
+        slug: String,
         name: String,
         continent_id: u32,
         leagues: LeagueCollection,
@@ -29,6 +31,7 @@ impl Country {
         Country {
             id,
             code,
+            slug,
             name,
             continent_id,
             leagues,

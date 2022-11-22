@@ -7,13 +7,13 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct CountryGetRequest {
-    country_id: u32,
+    country_slug: String,
 }
 
 #[derive(Template)]
 #[template(path = "countries/get/get.html")]
 pub struct CountryGetViewModel<'c> {
-    pub id: u32,
+    pub slug: &'c str,
     pub name: &'c str,
     pub code: &'c str,
     pub continent_name: &'c str,
@@ -21,7 +21,7 @@ pub struct CountryGetViewModel<'c> {
 }
 
 pub struct LeagueDto<'l> {
-    pub id: u32,
+    pub slug: &'l str,
     pub name: &'l str,
 }
 
@@ -33,17 +33,25 @@ pub async fn country_get_action(
 
     let simulator_data = guard.as_ref().unwrap();
 
+    let country_id = simulator_data
+        .indexes
+        .as_ref()
+        .unwrap()
+        .slug_indexes
+        .get_country_by_slug(&route_params.country_slug)
+        .unwrap();
+
     let country: &Country = simulator_data
         .continents
         .iter()
         .flat_map(|c| &c.countries)
-        .find(|country| country.id == route_params.country_id)
+        .find(|country| country.id == country_id)
         .unwrap();
 
     let continent = simulator_data.continent(country.continent_id).unwrap();
 
     let model = CountryGetViewModel {
-        id: country.id,
+        slug: &country.slug,
         name: &country.name,
         code: &country.code,
         continent_name: &continent.name,
@@ -52,7 +60,7 @@ pub async fn country_get_action(
             .leagues
             .iter()
             .map(|l| LeagueDto {
-                id: l.id,
+                slug: &l.slug,
                 name: &l.name,
             })
             .collect(),

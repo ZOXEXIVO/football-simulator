@@ -23,7 +23,7 @@ impl DateUtils {
     }
 
     pub fn next_saturday(date: NaiveDate) -> NaiveDateTime {
-        let mut current_date = NaiveDateTime::new(date, NaiveTime::from_hms(0, 0, 0));
+        let mut current_date = NaiveDateTime::new(date, NaiveTime::from_hms_opt(0, 0, 0).unwrap());
 
         while current_date.weekday() != Weekday::Sat {
             current_date += Duration::days(1)

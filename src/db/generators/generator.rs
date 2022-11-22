@@ -79,6 +79,7 @@ impl Generator {
                 let country = Country {
                     id: country.id,
                     code: country.code.clone(),
+                    slug: country.slug.clone(),
                     name: country.name.clone(),
                     continent_id: continent.id,
                     leagues: LeagueCollection::new(Generator::generate_leagues(country.id, data)),
@@ -108,6 +109,7 @@ impl Generator {
 
                 League {
                     id: league.id,
+                    slug: league.slug.clone(),
                     name: league.name.clone(),
                     country_id: league.country_id,
                     schedule: Schedule::new(),
@@ -165,8 +167,8 @@ impl Generator {
                                 t.slug.clone(),
                                 TeamType::from_str(&t.team_type).unwrap(),
                                 TrainingSchedule::new(
-                                    NaiveTime::from_hms(10, 0, 0),
-                                    NaiveTime::from_hms(17, 0, 0),
+                                    NaiveTime::from_hms_opt(10, 0, 0).unwrap(),
+                                    NaiveTime::from_hms_opt(17, 0, 0).unwrap(),
                                 ),
                                 TeamReputation::new(
                                     t.reputation.home,

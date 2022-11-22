@@ -1,6 +1,7 @@
 [
   {
     "id": 0,
+    "slug": "tinkoff-premier_league",
     "name": "Tinkoff Premier league",
     "country_id": 791,
     "reputation": 6000,
@@ -21,6 +22,7 @@
   },
   {
     "id": 1,
+    "slug": "russian-first-division",
     "name": "Russian First Division",
     "country_id": 791,
     "reputation": 2000,

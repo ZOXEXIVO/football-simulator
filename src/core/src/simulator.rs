@@ -1,7 +1,7 @@
 use crate::context::{GlobalContext, SimulationContext};
 use crate::continent::{Continent, ContinentResult};
 use crate::league::League;
-use crate::shared::SimulatorDataIndexes;
+use crate::shared::{SimulatorDataIndexes, TeamData};
 use crate::transfers::TransferPool;
 use crate::utils::Logging;
 use crate::{Club, Country, Player, Team};
@@ -41,7 +41,7 @@ pub struct SimulatorData {
 
     pub transfer_pool: TransferPool<Player>,
 
-    indexes: Option<SimulatorDataIndexes>,
+    pub indexes: Option<SimulatorDataIndexes>,
 }
 
 impl SimulatorData {
@@ -128,16 +128,8 @@ impl SimulatorData {
             .find(|c| c.id == id)
     }
 
-    pub fn team_name(&self, id: u32) -> Option<&str> {
-        self.indexes.as_ref().unwrap().get_team_name(id)
-    }
-
-    pub fn team_slug(&self, id: u32) -> Option<&str> {
-        self.indexes.as_ref().unwrap().get_team_slug(id)
-    }
-
-    pub fn team_id_by_slug(&self, slug: &str) -> Option<u32> {
-        self.indexes.as_ref().unwrap().get_team_id_by_slug(slug)
+    pub fn team_data(&self, id: u32) -> Option<&TeamData> {
+        self.indexes.as_ref().unwrap().get_team_data(id)
     }
 
     pub fn club(&self, id: u32) -> Option<&Club> {

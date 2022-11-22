@@ -23,7 +23,7 @@ impl PlayerGenerator {
                 last_name: "".to_string(),
                 middle_name: "".to_string(),
             },
-            birth_date: NaiveDate::from_ymd(year as i32, month, day),
+            birth_date: NaiveDate::from_ymd_opt(year as i32, month, day).unwrap(),
             country_id,
             behaviour: PersonBehaviour {
                 state: PersonBehaviourState::Poor,

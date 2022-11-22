@@ -2,13 +2,12 @@ use crate::SimulatorData;
 use std::collections::HashMap;
 
 pub struct SimulatorDataIndexes {
-    league_indexes: HashMap<u32, (u32, u32)>,
-    club_indexes: HashMap<u32, (u32, u32)>,
-    team_indexes: HashMap<u32, (u32, u32, u32)>,
-    player_indexes: HashMap<u32, (u32, u32, u32, u32)>,
-    team_name_index: HashMap<u32, String>,
-    team_slug_index: HashMap<u32, String>,
-    team_id_slug_index: HashMap<String, u32>,
+    pub league_indexes: HashMap<u32, (u32, u32)>,
+    pub club_indexes: HashMap<u32, (u32, u32)>,
+    pub team_indexes: HashMap<u32, (u32, u32, u32)>,
+    pub player_indexes: HashMap<u32, (u32, u32, u32, u32)>,
+    pub team_data_index: HashMap<u32, TeamData>,
+    pub slug_indexes: SlugIndexes,
 }
 
 impl SimulatorDataIndexes {
@@ -18,18 +17,22 @@ impl SimulatorDataIndexes {
             club_indexes: HashMap::new(),
             team_indexes: HashMap::new(),
             player_indexes: HashMap::new(),
-            team_name_index: HashMap::new(),
-            team_slug_index: HashMap::new(),
-            team_id_slug_index: HashMap::new(),
+            team_data_index: HashMap::new(),
+            slug_indexes: SlugIndexes::new(),
         }
     }
 
     pub fn refresh(&mut self, data: &SimulatorData) {
         for continent in &data.continents {
             for country in &continent.countries {
+                self.slug_indexes
+                    .add_country_slug(&country.slug, country.id);
+
                 //fill leagues
                 for league in &country.leagues.leagues {
                     self.add_league_location(league.id, continent.id, country.id);
+
+                    self.slug_indexes.add_league_slug(&league.slug, league.id);
                 }
 
                 //fill teams
@@ -37,9 +40,15 @@ impl SimulatorDataIndexes {
                     self.add_club_location(club.id, continent.id, country.id);
 
                     for team in &club.teams.teams {
-                        self.add_team_name(team.id, team.name.clone());
-                        self.add_team_slug(team.id, team.slug.clone());
-                        self.add_team_slug_id(team.slug.clone(), team.id);
+                        self.add_team_data(
+                            team.id,
+                            TeamData {
+                                name: team.name.clone(),
+                                slug: team.slug.clone(),
+                            },
+                        );
+
+                        self.slug_indexes.add_team_slug(&team.slug, team.id);
 
                         self.add_team_location(team.id, continent.id, country.id, club.id);
 
@@ -89,35 +98,13 @@ impl SimulatorDataIndexes {
         }
     }
 
-    //team indexes
-    pub fn add_team_name(&mut self, team_id: u32, name: String) {
-        self.team_name_index.insert(team_id, name);
+    //team data indexes
+    pub fn add_team_data(&mut self, team_id: u32, team_data: TeamData) {
+        self.team_data_index.insert(team_id, team_data);
     }
-    pub fn get_team_name(&self, team_id: u32) -> Option<&str> {
-        match self.team_name_index.get(&team_id) {
-            Some(team_name) => Some(team_name),
-            None => None,
-        }
-    }
-
-    //team slug indexes
-    pub fn add_team_slug(&mut self, team_id: u32, name: String) {
-        self.team_slug_index.insert(team_id, name);
-    }
-    pub fn get_team_slug(&self, team_id: u32) -> Option<&str> {
-        match self.team_slug_index.get(&team_id) {
-            Some(team_slug) => Some(team_slug),
-            None => None,
-        }
-    }
-
-    // team id slug index
-    pub fn add_team_slug_id(&mut self, slug: String, team_id: u32) {
-        self.team_id_slug_index.insert(slug, team_id);
-    }
-    pub fn get_team_id_by_slug(&self, slug: &str) -> Option<u32> {
-        match self.team_id_slug_index.get(slug) {
-            Some(team_id) => Some(*team_id),
+    pub fn get_team_data(&self, team_id: u32) -> Option<&TeamData> {
+        match self.team_data_index.get(&team_id) {
+            Some(team_data) => Some(team_data),
             None => None,
         }
     }
@@ -169,4 +156,58 @@ impl SimulatorDataIndexes {
             None => None,
         }
     }
+}
+
+pub struct SlugIndexes {
+    country_slug_index: HashMap<String, u32>,
+    league_slug_index: HashMap<String, u32>,
+    team_slug_index: HashMap<String, u32>,
+}
+
+impl SlugIndexes {
+    pub fn new() -> Self {
+        SlugIndexes {
+            country_slug_index: HashMap::new(),
+            league_slug_index: HashMap::new(),
+            team_slug_index: HashMap::new(),
+        }
+    }
+
+    // team id slug index
+    pub fn add_country_slug(&mut self, slug: &str, country_id: u32) {
+        self.country_slug_index.insert(slug.into(), country_id);
+    }
+    pub fn get_country_by_slug(&self, slug: &str) -> Option<u32> {
+        match self.country_slug_index.get(slug) {
+            Some(country_id) => Some(*country_id),
+            None => None,
+        }
+    }
+
+    // team id slug index
+    pub fn add_league_slug(&mut self, slug: &str, league_id: u32) {
+        self.league_slug_index.insert(slug.into(), league_id);
+    }
+    pub fn get_league_by_slug(&self, slug: &str) -> Option<u32> {
+        match self.league_slug_index.get(slug) {
+            Some(league_id) => Some(*league_id),
+            None => None,
+        }
+    }
+
+    // team id slug index
+    pub fn add_team_slug(&mut self, slug: &str, team_id: u32) {
+        self.team_slug_index.insert(slug.into(), team_id);
+    }
+    pub fn get_team_by_slug(&self, slug: &str) -> Option<u32> {
+        match self.team_slug_index.get(slug) {
+            Some(team_id) => Some(*team_id),
+            None => None,
+        }
+    }
+}
+
+pub struct TeamData {
+    pub name: String,
+    pub slug: String,
 }

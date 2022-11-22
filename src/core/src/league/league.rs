@@ -9,6 +9,7 @@ use chrono::{Datelike, NaiveDate};
 pub struct League {
     pub id: u32,
     pub name: String,
+    pub slug: String,
     pub country_id: u32,
     pub schedule: Schedule,
     pub table: LeagueTable,
@@ -20,6 +21,7 @@ impl League {
     pub fn new(
         id: u32,
         name: String,
+        slug: String,
         country_id: u32,
         reputation: u16,
         settings: LeagueSettings,
@@ -27,6 +29,7 @@ impl League {
         League {
             id,
             name,
+            slug,
             country_id,
             schedule: Schedule::default(),
             table: LeagueTable::default(),
@@ -37,12 +40,14 @@ impl League {
 
     pub fn simulate(&mut self, clubs: &[Club], ctx: GlobalContext<'_>) -> LeagueResult {
         let table_result = self.table.simulate(&ctx);
-        
-        let league_teams: Vec<u32> = clubs.iter().flat_map(|c| &c.teams.teams)
+
+        let league_teams: Vec<u32> = clubs
+            .iter()
+            .flat_map(|c| &c.teams.teams)
             .filter(|t| t.league_id == self.id)
             .map(|t| t.id)
             .collect();
-        
+
         let mut schedule_result = self
             .schedule
             .simulate(&self.settings, ctx.with_league(self.id, &league_teams));
@@ -51,7 +56,7 @@ impl League {
             let played_matches = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
             self.table.update(&played_matches);
 
-            return LeagueResult::with_match_result(self.id, table_result, played_matches)
+            return LeagueResult::with_match_result(self.id, table_result, played_matches);
         }
 
         LeagueResult::new(self.id, table_result)
