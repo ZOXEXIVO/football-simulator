@@ -92,7 +92,7 @@ pub async fn league_get_action(
                 .iter()
                 .map(|t| {
                     let team_data = simulator_data.team_data(t.team_id).unwrap();
-                    return LeagueTableRow {
+                    LeagueTableRow {
                         team_id: t.team_id,
                         team_name: &team_data.name,
                         team_slug: &team_data.slug,
@@ -103,7 +103,7 @@ pub async fn league_get_action(
                         goal_scored: t.goal_scored,
                         goal_concerned: t.goal_concerned,
                         points: t.points,
-                    };
+                    }
                 })
                 .collect(),
         },

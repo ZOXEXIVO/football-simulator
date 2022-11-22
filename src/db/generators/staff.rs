@@ -41,11 +41,11 @@ impl StaffGenerator {
                 middle_name: StringUtils::random_string(17),
             },
             country_id,
-            NaiveDate::from_ymd(year as i32, month, day),
+            NaiveDate::from_ymd_opt(year as i32, month, day).unwrap(),
             Self::generate_staff_attributes(),
             Some(StaffClubContract::new(
                 IntegerUtils::random(1000, 200000) as u32,
-                NaiveDate::from_ymd(now.year() + IntegerUtils::random(1, 5), 3, 14),
+                NaiveDate::from_ymd_opt(now.year() + IntegerUtils::random(1, 5), 3, 14).unwrap(),
                 position,
                 StaffStatus::Active,
             )),

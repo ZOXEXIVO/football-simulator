@@ -47,14 +47,14 @@ impl PlayerGenerator {
                 last_name: self.generate_last_name(),
                 middle_name: StringUtils::random_string(17),
             },
-            NaiveDate::from_ymd(year as i32, month, day),
+            NaiveDate::from_ymd_opt(year as i32, month, day).unwrap(),
             country_id,
             Self::generate_skills(),
             Self::generate_person_attributes(),
             Self::generate_player_attributes(),
             Some(PlayerClubContract::new(
                 IntegerUtils::random(1000, 200000) as u32,
-                NaiveDate::from_ymd(now.year() + IntegerUtils::random(1, 5), 3, 14),
+                NaiveDate::from_ymd_opt(now.year() + IntegerUtils::random(1, 5), 3, 14).unwrap(),
             )),
             Self::generate_positions(position),
         )

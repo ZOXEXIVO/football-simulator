@@ -1,21 +1,23 @@
-use crate::club::{ClubFinancialBalanceHistory, ClubFinanceResult, ClubSponsorship, ClubSponsorshipContract};
+use crate::club::{
+    ClubFinanceResult, ClubFinancialBalanceHistory, ClubSponsorship, ClubSponsorshipContract,
+};
 use crate::context::GlobalContext;
 use chrono::NaiveDate;
-use log::{debug};
+use log::debug;
 
 #[derive(Debug)]
 pub struct ClubFinances {
     pub balance: ClubFinancialBalance,
     pub history: ClubFinancialBalanceHistory,
-    pub sponsorship: ClubSponsorship
+    pub sponsorship: ClubSponsorship,
 }
 
 impl ClubFinances {
     pub fn new(amount: i32, sponsorship_contract: Vec<ClubSponsorshipContract>) -> Self {
-        ClubFinances{
+        ClubFinances {
             balance: ClubFinancialBalance::new(amount),
             history: ClubFinancialBalanceHistory::new(),
-            sponsorship: ClubSponsorship::new(sponsorship_contract)
+            sponsorship: ClubSponsorship::new(sponsorship_contract),
         }
     }
 
@@ -23,35 +25,45 @@ impl ClubFinances {
         let result = ClubFinanceResult::new();
 
         let club_name = ctx.club.as_ref().unwrap().name;
-        
+
         if ctx.simulation.is_month_beginning() {
             debug!("club: {}, finance: start new month", club_name);
-            
+
             self.start_new_month(club_name, ctx.simulation.date.date())
         }
 
         if ctx.simulation.is_year_beginning() {
-            for sponsorship_contract in self.sponsorship.get_sponsorship_incomes(ctx.simulation.date.date()) {
-                debug!("club: {}, finance: sponsorship push money: {} {}",
-                       club_name, &sponsorship_contract.sponsor_name, sponsorship_contract.wage);
-                
+            for sponsorship_contract in self
+                .sponsorship
+                .get_sponsorship_incomes(ctx.simulation.date.date())
+            {
+                debug!(
+                    "club: {}, finance: sponsorship push money: {} {}",
+                    club_name, &sponsorship_contract.sponsor_name, sponsorship_contract.wage
+                );
+
                 self.balance.push_income(sponsorship_contract.wage)
             }
         }
 
         result
     }
-    
-    pub fn push_salary(&mut self, club_name: &str, amount: i32){
-        debug!("club: {}, finance: push salary, amount = {}", club_name, amount);
-        
+
+    pub fn push_salary(&mut self, club_name: &str, amount: i32) {
+        debug!(
+            "club: {}, finance: push salary, amount = {}",
+            club_name, amount
+        );
+
         self.balance.push_outcome(amount);
     }
-    
-    fn start_new_month(&mut self, club_name: &str, date: NaiveDate){
-        debug!("club: {}, finance: add history, date = {}, balance = {}, income={}, outcome={}",
-               club_name, date, self.balance.balance, self.balance.income, self.balance.outcome);
-        
+
+    fn start_new_month(&mut self, club_name: &str, date: NaiveDate) {
+        debug!(
+            "club: {}, finance: add history, date = {}, balance = {}, income={}, outcome={}",
+            club_name, date, self.balance.balance, self.balance.income, self.balance.outcome
+        );
+
         self.history.add(date, self.balance.clone());
         self.balance.clear();
     }
@@ -74,7 +86,7 @@ pub struct ClubFinancialBalance {
 
 impl ClubFinancialBalance {
     pub fn new(balance: i32) -> Self {
-        ClubFinancialBalance{
+        ClubFinancialBalance {
             balance,
             income: 0,
             outcome: 0,
@@ -85,21 +97,21 @@ impl ClubFinancialBalance {
             transfer_income_percentage: 0,
             weekly_wage_budget: 0,
             highest_wage: 0,
-            youth_grant_income: 0
+            youth_grant_income: 0,
         }
     }
-    
-    pub fn push_income(&mut self, wage: i32){
+
+    pub fn push_income(&mut self, wage: i32) {
         self.balance = self.balance + wage;
         self.income = self.income + wage;
     }
 
-    pub fn push_outcome(&mut self, wage: i32){
+    pub fn push_outcome(&mut self, wage: i32) {
         self.balance = self.balance - wage;
         self.outcome = self.outcome + wage;
     }
-    
-    pub fn clear(&mut self){
+
+    pub fn clear(&mut self) {
         self.income = 0;
         self.outcome = 0;
     }
@@ -112,14 +124,14 @@ mod tests {
     #[test]
     fn start_new_month_is_correct() {
         let mut finances = ClubFinances::new(123, Vec::new());
-        
+
         finances.balance.income = 1;
         finances.balance.outcome = 2;
 
-        let date = NaiveDate::from_ymd(2020, 2, 1);
+        let date = NaiveDate::from_ymd_opt(2020, 2, 1);
 
         finances.start_new_month("club_name", date);
-        
+
         let history_result = finances.history.get(date);
 
         assert!(history_result.is_some());

@@ -154,7 +154,7 @@ mod tests {
         //        };
         //
         //        let mut context = SimulationContext::new(
-        //            date: NaiveDate::from_ymd(2020, 3, 1)
+        //            date: NaiveDate::from_ymd_opt(2020, 3, 1)
         //        );
         //
         //        let result = settings.is_time_for_new_schedule(&mut context);
