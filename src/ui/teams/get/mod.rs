@@ -16,7 +16,7 @@ pub struct TeamGetRequest {
 pub struct TeamGetViewModel<'c> {
     pub slug: &'c str,
     pub name: &'c str,
-    pub league_id: u32,
+    pub league_slug: &'c str,
     pub league_name: &'c str,
     pub balance: TeamBalance,
     pub players: Vec<TeamPlayer<'c>>,
@@ -115,7 +115,7 @@ pub async fn team_get_action(
     let model = TeamGetViewModel {
         slug: &team.slug,
         name: &team.name,
-        league_id: league.id,
+        league_slug: &league.slug,
         league_name: &league.name,
         balance: TeamBalance {
             amount: 0,
