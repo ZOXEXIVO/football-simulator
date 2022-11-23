@@ -37,7 +37,7 @@ mod tests {
     fn get_date_not_found_none() {
         let history = ClubFinancialBalanceHistory::new();
 
-        let date = NaiveDate::from_ymd_opt(2020, 2, 1);
+        let date = NaiveDate::from_ymd_opt(2020, 2, 1).unwrap();
 
         let result = history.get(date);
 
@@ -49,7 +49,7 @@ mod tests {
         let mut history = ClubFinancialBalanceHistory::new();
 
         let balance = ClubFinancialBalance::new(123);
-        let date = NaiveDate::from_ymd_opt(2020, 2, 1);
+        let date = NaiveDate::from_ymd_opt(2020, 2, 1).unwrap();
 
         history.add(date, balance);
 

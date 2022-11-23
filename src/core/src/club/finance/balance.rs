@@ -128,7 +128,7 @@ mod tests {
         finances.balance.income = 1;
         finances.balance.outcome = 2;
 
-        let date = NaiveDate::from_ymd_opt(2020, 2, 1);
+        let date = NaiveDate::from_ymd_opt(2020, 2, 1).unwrap();
 
         finances.start_new_month("club_name", date);
 
