@@ -1,5 +1,5 @@
 use crate::utils::IntegerUtils;
-use crate::{PersonBehaviourState, Player, PlayerTeamTrainingResult, Staff};
+use crate::{PersonBehaviourState, Player, PlayerTrainingResult, Staff};
 use chrono::NaiveDateTime;
 
 #[derive(Debug)]
@@ -10,33 +10,19 @@ impl PlayerTraining {
         PlayerTraining {}
     }
 
-    pub fn train(
-        player: &mut Player,
-        coach: &Staff,
-        _: NaiveDateTime,
-    ) -> PlayerTeamTrainingResult {
-        let result = PlayerTeamTrainingResult::new();
+    pub fn train(player: &Player, coach: &Staff, now: NaiveDateTime) -> PlayerTrainingResult {
+        let mut result = PlayerTrainingResult::new();
 
-        //let training_history = &mut player.training_history;
+        let training_history = &player.training_history;
 
-        //training_history
+        result.set_mental(player.skills.mental.train(&player, training_history));
+        result.set_technical(player.skills.technical.train(&player, training_history));
+        result.set_physical(player.skills.physical.train(&player, training_history));
 
         match coach.behaviour.state {
-            PersonBehaviourState::Good => {
-                player
-                    .skills
-                    .mental
-                    .train(IntegerUtils::random(-1, 1) as i8);
-                player
-                    .skills
-                    .technical
-                    .train(IntegerUtils::random(-1, 1) as i8)
-            }
-            PersonBehaviourState::Normal => player.skills.train(IntegerUtils::random(-1, 1) as i8),
-            PersonBehaviourState::Poor => player
-                .skills
-                .physical
-                .train(IntegerUtils::random(-1, 1) as i8),
+            PersonBehaviourState::Good => {}
+            PersonBehaviourState::Normal => {}
+            PersonBehaviourState::Poor => {}
         }
 
         result

@@ -8,8 +8,8 @@ use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
     Person, PersonAttributes, PlayerHappiness, PlayerPositionType, PlayerPositions,
-    PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTeamTrainingResult,
-    PlayerTrainingHistory, PlayerValueCalculator, Relations,
+    PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTrainingHistory,
+    PlayerTrainingResult, PlayerValueCalculator, Relations,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
@@ -108,7 +108,7 @@ impl Player {
         }
     }
 
-    pub fn train(&mut self, coach: &Staff, now: NaiveDateTime) -> PlayerTeamTrainingResult {
+    pub fn train(&self, coach: &Staff, now: NaiveDateTime) -> PlayerTrainingResult {
         PlayerTraining::train(self, coach, now)
     }
 
