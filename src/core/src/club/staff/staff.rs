@@ -226,7 +226,7 @@ mod tests {
     };
 
     fn create_staff_collection(id: u32) -> StaffCollection {
-        let mut staff = Staff::stub();
+        let mut staff = StaffStub::default();
 
         staff.id = id;
 
@@ -246,7 +246,7 @@ mod tests {
                 training: TrainingResponsibility::default(),
             },
             staffs: vec![staff],
-            stub: Staff::stub(),
+            stub: StaffStub::default(),
             manager: Option::None,
         }
     }
