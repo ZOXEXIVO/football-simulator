@@ -16,7 +16,9 @@ impl PlayerTraining {
         let training_history = &player.training_history;
 
         result.set_mental(player.skills.mental.train(&player, training_history));
+
         result.set_technical(player.skills.technical.train(&player, training_history));
+
         result.set_physical(player.skills.physical.train(&player, training_history));
 
         match coach.behaviour.state {

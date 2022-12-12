@@ -22,10 +22,22 @@ impl TeamCollection {
             .collect()
     }
 
+    pub fn by_id(&self, id: u32) -> &Team {
+        self.teams.iter().find(|t| t.id == id).map(|t| t).unwrap()
+    }
+
     pub fn main_team_id(&self) -> Option<u32> {
         self.teams
             .iter()
             .find(|t| t.team_type == TeamType::Main)
             .map(|t| t.id)
+    }
+
+    pub fn with_league(&self, league_id: u32) -> Vec<u32> {
+        self.teams
+            .iter()
+            .filter(|t| t.league_id == league_id)
+            .map(|t| t.id)
+            .collect()
     }
 }

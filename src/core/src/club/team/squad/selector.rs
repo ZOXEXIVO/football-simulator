@@ -53,17 +53,15 @@ impl SquadSelector {
             main_squad,
             substitutes,
         };
-        
+
         // helpers
-        fn select_by_type<'c>(team: &'c Team, position: &PlayerPositionType) -> Vec<SquadPlayer<'c>> {
+        fn select_by_type<'c>(
+            team: &'c Team,
+            position: &PlayerPositionType,
+        ) -> Vec<SquadPlayer<'c>> {
             let mut result: Vec<SquadPlayer<'c>> = Vec::with_capacity(5);
 
-            let mut players_on_position: Vec<&Player> = team
-                .players
-                .players
-                .iter()
-                .filter(|p| p.positions().contains(position))
-                .collect();
+            let mut players_on_position = team.players.by_position(position);
 
             players_on_position.sort_by(|a, b| {
                 a.player_attributes
@@ -77,5 +75,5 @@ impl SquadSelector {
 
             result
         }
-    }    
+    }
 }

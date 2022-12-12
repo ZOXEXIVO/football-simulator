@@ -35,11 +35,8 @@ impl StaffGenerator {
 
         Staff::new(
             self.sequence.fetch_add(1, Ordering::SeqCst),
-            FullName {
-                first_name: self.generate_first_name(),
-                last_name: self.generate_last_name(),
-                middle_name: StringUtils::random_string(17),
-            },
+            FullName::with_full(
+                self.generate_first_name(), self.generate_last_name(), StringUtils::random_string(17)),
             country_id,
             NaiveDate::from_ymd_opt(year as i32, month, day).unwrap(),
             Self::generate_staff_attributes(),

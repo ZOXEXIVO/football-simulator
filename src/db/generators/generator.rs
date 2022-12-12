@@ -12,8 +12,8 @@ use core::ClubStatus;
 use core::TeamCollection;
 use core::{
     Club, ClubBoard, ClubFinances, ClubMood, Country, CountryGeneratorData, Player,
-    PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, Team, TeamReputation,
-    TeamType, TrainingSchedule, Utc,
+    PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, StaffStub, Team,
+    TeamReputation, TeamType, TrainingSchedule, Utc,
 };
 use std::str::FromStr;
 
@@ -181,7 +181,7 @@ impl Generator {
                                 )),
                                 StaffCollection::new(
                                     Self::generate_staffs(staff_generator, country_id),
-                                    Some(Staff::stub()),
+                                    Some(StaffStub::default()),
                                 ),
                             )
                         })

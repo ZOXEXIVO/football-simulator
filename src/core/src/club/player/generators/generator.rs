@@ -18,11 +18,9 @@ impl PlayerGenerator {
 
         Player {
             id: 0,
-            full_name: FullName {
-                first_name: "".to_string(),
-                last_name: "".to_string(),
-                middle_name: "".to_string(),
-            },
+            full_name: FullName::with_full(
+                "".to_string(), "".to_string(), "".to_string(),
+            ),
             birth_date: NaiveDate::from_ymd_opt(year as i32, month, day).unwrap(),
             country_id,
             behaviour: PersonBehaviour {

@@ -7,7 +7,7 @@ use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
-    Person, PersonAttributes, PlayerHappiness, PlayerPositionType, PlayerPositions,
+    Person, PersonAttributes, PlayerHappiness, PlayerPosition, PlayerPositionType, PlayerPositions,
     PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTrainingHistory,
     PlayerTrainingResult, PlayerValueCalculator, Relations,
 };
@@ -86,7 +86,7 @@ impl Player {
             self.behaviour.try_increase();
         }
 
-        self.process_contract(&mut result, now.clone());
+        self.process_contract(&mut result, now);
         self.process_mailbox(&mut result, now.date());
 
         if self.behaviour.state == PersonBehaviourState::Poor {
@@ -233,6 +233,13 @@ impl PlayerCollection {
         }
 
         PlayerCollectionResult::new(player_results, outgoing_players)
+    }
+
+    pub fn by_position(&self, position: &PlayerPositionType) -> Vec<&Player> {
+        self.players
+            .iter()
+            .filter(|p| p.positions().contains(position))
+            .collect()
     }
 
     pub fn add(&mut self, players: Vec<Player>) {

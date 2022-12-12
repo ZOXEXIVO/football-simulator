@@ -1,3 +1,4 @@
+use crate::club::staff::staff_stub::StaffStub;
 use crate::club::{
     PersonBehaviour, StaffClubContract, StaffPosition, StaffResponsibility, StaffResult,
 };
@@ -56,71 +57,6 @@ impl Staff {
         }
     }
 
-    pub fn stub() -> Self {
-        Staff {
-            id: 0,
-            full_name: FullName {
-                first_name: "stub".to_string(),
-                last_name: "stub".to_string(),
-                middle_name: "stub".to_string(),
-            },
-            contract: None,
-            country_id: 0,
-            behaviour: PersonBehaviour::default(),
-            birth_date: NaiveDate::from_ymd_opt(2019, 1, 1).unwrap(),
-            relations: Relations::new(),
-            license: StaffLicenseType::NationalC,
-            attributes: PersonAttributes {
-                adaptability: 1,
-                ambition: 1,
-                controversy: 1,
-                loyalty: 1,
-                pressure: 1,
-                professionalism: 1,
-                sportsmanship: 1,
-                temperament: 1,
-            },
-            staff_attributes: StaffAttributes {
-                coaching: StaffCoaching {
-                    attacking: 1,
-                    defending: 1,
-                    fitness: 1,
-                    mental: 1,
-                    tactical: 1,
-                    technical: 1,
-                    working_with_youngsters: 1,
-                },
-                goalkeeping: StaffGoalkeeperCoaching {
-                    distribution: 1,
-                    handling: 1,
-                    shot_stopping: 1,
-                },
-                mental: StaffMental {
-                    adaptability: 1,
-                    determination: 1,
-                    discipline: 1,
-                    man_management: 1,
-                    motivating: 1,
-                },
-                knowledge: StaffKnowledge {
-                    judging_player_ability: 1,
-                    judging_player_potential: 1,
-                    tactical_knowledge: 1,
-                },
-                data_analysis: StaffDataAnalysis {
-                    judging_player_data: 1,
-                    judging_team_data: 1,
-                    presenting_data: 1,
-                },
-                medical: StaffMedical {
-                    physiotherapy: 1,
-                    sports_science: 1,
-                    non_player_tendencies: 1,
-                },
-            },
-        }
-    }
-
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> StaffResult {
         let now = ctx.simulation.date;
 
@@ -162,7 +98,7 @@ impl StaffCollection {
             staffs,
             manager,
             responsibility: StaffResponsibility::default(),
-            stub: Staff::stub(),
+            stub: StaffStub::default(),
         }
     }
 

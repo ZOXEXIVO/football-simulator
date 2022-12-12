@@ -43,9 +43,7 @@ impl League {
 
         let league_teams: Vec<u32> = clubs
             .iter()
-            .flat_map(|c| &c.teams.teams)
-            .filter(|t| t.league_id == self.id)
-            .map(|t| t.id)
+            .flat_map(|c| c.teams.with_league(self.id))
             .collect();
 
         let mut schedule_result = self
@@ -53,10 +51,10 @@ impl League {
             .simulate(&self.settings, ctx.with_league(self.id, &league_teams));
 
         if schedule_result.is_match_scheduled() {
-            let played_matches = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
-            self.table.update(&played_matches);
+            let match_results = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
+            self.table.update_from_results(&match_results);
 
-            return LeagueResult::with_match_result(self.id, table_result, played_matches);
+            return LeagueResult::with_match_result(self.id, table_result, match_results);
         }
 
         LeagueResult::new(self.id, table_result)

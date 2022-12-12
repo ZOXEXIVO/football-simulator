@@ -11,16 +11,16 @@ pub struct LeagueTable {
 impl LeagueTable {
     pub fn new(teams: &[u32]) -> Self {
         LeagueTable {
-            rows: Self::generate_for_teams(teams)
+            rows: Self::generate_for_teams(teams),
         }
     }
-    
+
     pub fn simulate(&mut self, ctx: &GlobalContext<'_>) -> LeagueTableResult {
         if self.rows.is_empty() {
             let league_ctx = ctx.league.as_ref().unwrap();
             self.rows = Self::generate_for_teams(league_ctx.team_ids);
         }
-        
+
         LeagueTableResult {}
     }
 
@@ -79,7 +79,7 @@ impl LeagueTable {
         team.points += 1;
     }
 
-    pub fn update(&mut self, match_result: &Vec<MatchResult>) {
+    pub fn update_from_results(&mut self, match_result: &Vec<MatchResult>) {
         for result in match_result {
             match Ord::cmp(&result.home_goals, &result.away_goals) {
                 Ordering::Equal => {
@@ -121,9 +121,7 @@ impl LeagueTableRow {}
 
 impl Default for LeagueTable {
     fn default() -> Self {
-        LeagueTable {
-            rows: Vec::new(),
-        }
+        LeagueTable { rows: Vec::new() }
     }
 }
 
@@ -150,7 +148,7 @@ mod tests {
             details: None,
         }];
 
-        table.update(&match_results);
+        table.update_from_results(&match_results);
 
         let returned_table = table.get();
 
@@ -197,7 +195,7 @@ mod tests {
             details: None,
         }];
 
-        table.update(&match_results);
+        table.update_from_results(&match_results);
 
         let returned_table = table.get();
 
@@ -252,7 +250,7 @@ mod tests {
             details: None,
         }];
 
-        table.update(&match_results);
+        table.update_from_results(&match_results);
 
         let returned_table = table.get();
 

@@ -1,13 +1,15 @@
+pub mod attributes;
 pub mod context;
 pub mod contract;
-pub mod staff;
-pub mod result;
 pub mod responsibility;
-pub mod attributes;
+pub mod result;
+pub mod staff;
+pub mod staff_stub;
 
+pub use attributes::*;
 pub use context::*;
 pub use contract::*;
-pub use staff::*;
-pub use result::*;
 pub use responsibility::*;
-pub use attributes::*;
+pub use result::*;
+pub use staff::*;
+pub use staff_stub::*;
