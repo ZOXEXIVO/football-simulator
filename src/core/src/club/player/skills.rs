@@ -81,7 +81,9 @@ impl Technical {
         player: &Player,
         training_history: &PlayerTrainingHistory,
     ) -> PlayerTrainingTechnicalResult {
-        PlayerTrainingTechnicalResult {}
+        let mut result = PlayerTrainingTechnicalResult::new();
+
+        result
     }
 
     pub fn rest(&mut self) {}
@@ -145,7 +147,9 @@ impl Mental {
         player: &Player,
         training_history: &PlayerTrainingHistory,
     ) -> PlayerTrainingMentalResult {
-        PlayerTrainingMentalResult {}
+         let mut result = PlayerTrainingMentalResult::new();
+        
+         result
     }
 
     pub fn rest(&mut self) {}
@@ -201,7 +205,9 @@ impl Physical {
         player: &Player,
         training_history: &PlayerTrainingHistory,
     ) -> PlayerTrainingPhysicalResult {
-        PlayerTrainingPhysicalResult {}
+        let mut result = PlayerTrainingPhysicalResult::new();
+
+        result
     }
 
     pub fn rest(&mut self) {}
