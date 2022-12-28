@@ -10,7 +10,6 @@ use crate::{
     StaffLicenseType, StaffMedical, StaffMental, TeamType,
 };
 use chrono::{NaiveDate, NaiveDateTime};
-use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug)]
 pub struct StaffStub;

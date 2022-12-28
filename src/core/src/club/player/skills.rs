@@ -8,7 +8,7 @@ const SKILL_MIN_VALUE: u8 = 1;
 const SKILL_MAX_VALUE: u8 = 20;
 
 #[derive(Debug)]
-pub struct PlayerSkills {
+pub struct  PlayerSkills {
     pub technical: Technical,
     pub mental: Mental,
     pub physical: Physical,

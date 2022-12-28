@@ -3,7 +3,7 @@ use crate::utils::IntegerUtils;
 use crate::{
     Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player,
     PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPositions, PlayerPreferredFoot,
-    PlayerSkills, PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTraining,
+    PlayerSkills, PlayerStatistics, PlayerStatisticsHistory, PlayerStatus, PlayerTraining,
     PlayerTrainingHistory, Relations, Technical,
 };
 use chrono::{Datelike, NaiveDate};
@@ -37,7 +37,7 @@ impl PlayerGenerator {
                 temperament: 0,
             },
             happiness: PlayerHappiness::new(),
-            statuses: PlayerStatusData { statuses: vec![] },
+            statuses: PlayerStatus { statuses: vec![] },
             skills: PlayerSkills {
                 technical: Technical {
                     corners: 0,

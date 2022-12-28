@@ -3,7 +3,7 @@ use actix_web::web::Data;
 use actix_web::{web, HttpResponse, Result};
 use askama::Template;
 use core::utils::FormattingUtils;
-use core::PlayerStatus;
+use core::PlayerStatusType;
 use core::{Person, Player, SimulatorData, Team};
 use itertools::Itertools;
 use serde::Deserialize;
@@ -140,16 +140,16 @@ pub struct PlayerAttributesDto {
 }
 
 pub struct PlayerStatusDto {
-    pub statuses: Vec<PlayerStatus>,
+    pub statuses: Vec<PlayerStatusType>,
 }
 
 impl PlayerStatusDto {
-    pub fn new(statuses: Vec<PlayerStatus>) -> Self {
+    pub fn new(statuses: Vec<PlayerStatusType>) -> Self {
         PlayerStatusDto { statuses }
     }
 
     pub fn is_wanted(&self) -> bool {
-        self.statuses.iter().contains(&PlayerStatus::Wnt)
+        self.statuses.iter().contains(&PlayerStatusType::Wnt)
     }
 }
 

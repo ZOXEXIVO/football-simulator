@@ -24,7 +24,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn random_string_length_iscorrect() {
+    fn random_string_length_is_correct() {
         let random_string = StringUtils::random_string(10);
 
         assert_eq!(10, random_string.len());

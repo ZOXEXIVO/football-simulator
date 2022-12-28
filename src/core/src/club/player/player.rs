@@ -8,7 +8,7 @@ use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
     Person, PersonAttributes, PlayerHappiness, PlayerPosition, PlayerPositionType, PlayerPositions,
-    PlayerStatistics, PlayerStatisticsHistory, PlayerStatusData, PlayerTrainingHistory,
+    PlayerStatistics, PlayerStatisticsHistory, PlayerStatus, PlayerTrainingHistory,
     PlayerTrainingResult, PlayerValueCalculator, Relations,
 };
 use chrono::{NaiveDate, NaiveDateTime};
@@ -27,7 +27,7 @@ pub struct Player {
 
     //player data
     pub happiness: PlayerHappiness,
-    pub statuses: PlayerStatusData,
+    pub statuses: PlayerStatus,
     pub skills: PlayerSkills,
     pub contract: Option<PlayerClubContract>,
     pub positions: PlayerPositions,
@@ -61,7 +61,7 @@ impl Player {
             country_id,
             behaviour: PersonBehaviour::default(),
             happiness: PlayerHappiness::new(),
-            statuses: PlayerStatusData::new(),
+            statuses: PlayerStatus::new(),
             skills,
             positions,
             preferred_foot: PlayerPreferredFoot::Right,
@@ -89,7 +89,7 @@ impl Player {
         self.process_contract(&mut result, now);
         self.process_mailbox(&mut result, now.date());
 
-        if self.behaviour.state == PersonBehaviourState::Poor {
+        if self.behaviour.is_poor() {
             result.request_transfer(self.id);
         }
 
@@ -109,7 +109,7 @@ impl Player {
     }
 
     pub fn train(&self, coach: &Staff, now: NaiveDateTime) -> PlayerTrainingResult {
-        PlayerTraining::train(self, coach, now)
+        self.training.train(self, coach, now)
     }
 
     fn process_mailbox(&mut self, result: &mut PlayerResult, now: NaiveDate) {
@@ -281,5 +281,15 @@ impl Index<u32> for PlayerCollection {
 impl PartialEq for Player {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn player_is_correct() {
+        assert_eq!(10, 10);
     }
 }

@@ -3,44 +3,44 @@ use chrono::NaiveDate;
 #[derive(Debug)]
 pub struct StatusData {
     pub start_date: NaiveDate,
-    pub status: PlayerStatus,
+    pub status: PlayerStatusType,
 }
 
 impl StatusData {
-    pub fn new(start_date: NaiveDate, status: PlayerStatus) -> Self {
+    pub fn new(start_date: NaiveDate, status: PlayerStatusType) -> Self {
         StatusData { start_date, status }
     }
 }
 
 #[derive(Debug)]
-pub struct PlayerStatusData {
+pub struct PlayerStatus {
     pub statuses: Vec<StatusData>,
 }
 
-impl PlayerStatusData {
+impl PlayerStatus {
     pub fn new() -> Self {
-        PlayerStatusData {
+        PlayerStatus {
             statuses: Vec::new(),
         }
     }
 
-    pub fn add(&mut self, start_date: NaiveDate, status: PlayerStatus) {
+    pub fn add(&mut self, start_date: NaiveDate, status: PlayerStatusType) {
         self.statuses.push(StatusData::new(start_date, status));
     }
 
-    pub fn remove(&mut self, status: PlayerStatus) {
+    pub fn remove(&mut self, status: PlayerStatusType) {
         if let Some(idx) = self.statuses.iter().position(|s| s.status == status) {
             self.statuses.remove(idx);
         }
     }
 
-    pub fn get(&self) -> Vec<PlayerStatus> {
+    pub fn get(&self) -> Vec<PlayerStatusType> {
         self.statuses.iter().map(|s| s.status).collect()
     }
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub enum PlayerStatus {
+pub enum PlayerStatusType {
     //When a player is absent from the club without permission
     Abs,
     //The player has had a bid from another club accepted
