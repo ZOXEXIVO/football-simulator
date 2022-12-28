@@ -24,7 +24,10 @@ impl TeamTrainingResult {
     }
 }
 
-pub struct PlayerTrainingMentalResult {}
+pub struct PlayerTrainingMentalResult {
+    pub diff: f64,
+}
+
 pub struct PlayerTrainingPhysicalResult {}
 pub struct PlayerTrainingTechnicalResult {}
 
@@ -60,7 +63,7 @@ impl PlayerTrainingResult {
 
 impl PlayerTrainingMentalResult {
     pub fn new() -> Self {
-        PlayerTrainingMentalResult {}
+        PlayerTrainingMentalResult { diff: 0f64 }
     }
 }
 
