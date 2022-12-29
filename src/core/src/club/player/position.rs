@@ -69,6 +69,10 @@ impl PlayerPositions {
             .map(|p| p.get_short_name())
             .collect()
     }
+
+    pub fn is_goalkeeper(&self) -> bool {
+        self.positions().contains(&PlayerPositionType::Goalkeeper)
+    }
 }
 
 #[derive(Debug)]

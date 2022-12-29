@@ -146,7 +146,7 @@ impl Player {
         }
     }
 
-    pub fn growth_potential(&self, now: NaiveDate) -> f32 {
+    pub fn growth_potential(&self, now: NaiveDate) -> u8 {
         PlayerUtils::growth_potential(self, now)
     }
 

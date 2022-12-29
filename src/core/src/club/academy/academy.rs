@@ -28,15 +28,6 @@ impl ClubAcademy {
             self.produce_youth_players(ctx);
         }
 
-        // let completed_player_ids: Vec<u32> = self
-        //     .players
-        //     .iter()
-        //     .filter(|p| p.completed)
-        //     .map(|p| p.player.id)
-        //     .collect();
-
-        // TODO Filter
-
         result
     }
 

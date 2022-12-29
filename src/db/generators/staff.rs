@@ -2,8 +2,9 @@ use core::shared::FullName;
 use core::utils::{IntegerUtils, StringUtils};
 use core::{
     Datelike, NaiveDate, PeopleNameGeneratorData, PersonAttributes, Staff, StaffAttributes,
-    StaffClubContract, StaffCoaching, StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge,
-    StaffLicenseType, StaffMedical, StaffMental, StaffPosition, StaffStatus, Utc,
+    StaffClubContract, StaffCoaching, StaffDataAnalysis, StaffFocus, StaffGoalkeeperCoaching,
+    StaffKnowledge, StaffLicenseType, StaffMedical, StaffMental, StaffPosition,
+    StaffSkillFocusType, StaffStatus, Utc,
 };
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
@@ -36,7 +37,10 @@ impl StaffGenerator {
         Staff::new(
             self.sequence.fetch_add(1, Ordering::SeqCst),
             FullName::with_full(
-                self.generate_first_name(), self.generate_last_name(), StringUtils::random_string(17)),
+                self.generate_first_name(),
+                self.generate_last_name(),
+                StringUtils::random_string(17),
+            ),
             country_id,
             NaiveDate::from_ymd_opt(year as i32, month, day).unwrap(),
             Self::generate_staff_attributes(),
@@ -48,6 +52,7 @@ impl StaffGenerator {
             )),
             Self::generate_person_attributes(),
             Self::generate_staff_license_type(),
+            Some(Self::generate_staff_focus()),
         )
     }
 
@@ -74,6 +79,14 @@ impl StaffGenerator {
             5 => StaffLicenseType::NationalB,
             6 => StaffLicenseType::NationalC,
             _ => StaffLicenseType::NationalC,
+        }
+    }
+
+    fn generate_staff_focus() -> StaffFocus {
+        StaffFocus {
+            technical_focus: vec![StaffSkillFocusType::Dribbling],
+            mental_focus: vec![],
+            physical_focus: vec![StaffSkillFocusType::Crossing, StaffSkillFocusType::WorkRate],
         }
     }
 

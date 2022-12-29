@@ -4,8 +4,8 @@ use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
     Person, PersonAttributes, Relations, Staff, StaffAttributes, StaffCoaching,
-    StaffCollectionResult, StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge,
-    StaffLicenseType, StaffMedical, StaffMental, TeamType,
+    StaffCollectionResult, StaffDataAnalysis, StaffFocus, StaffGoalkeeperCoaching, StaffKnowledge,
+    StaffLicenseType, StaffMedical, StaffMental, StaffSkillFocusType, TeamType,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 
@@ -75,6 +75,11 @@ impl StaffStub {
                     non_player_tendencies: 1,
                 },
             },
+            focus: Some(StaffFocus {
+                technical_focus: vec![StaffSkillFocusType::Dribbling],
+                mental_focus: vec![],
+                physical_focus: vec![StaffSkillFocusType::Crossing, StaffSkillFocusType::WorkRate],
+            }),
         }
     }
 }

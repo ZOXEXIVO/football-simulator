@@ -8,7 +8,7 @@ mod person;
 mod player;
 mod relations;
 mod result;
-mod staff;
+pub mod staff;
 pub mod status;
 mod team;
 
