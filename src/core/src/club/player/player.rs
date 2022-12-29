@@ -109,7 +109,7 @@ impl Player {
     }
 
     pub fn train(&self, coach: &Staff, now: NaiveDateTime) -> PlayerTrainingResult {
-        self.training.train(self, coach, now)
+        PlayerTraining::train(self, coach, now)
     }
 
     fn process_mailbox(&mut self, result: &mut PlayerResult, now: NaiveDate) {

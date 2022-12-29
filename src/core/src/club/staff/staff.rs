@@ -6,9 +6,8 @@ use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
-    Person, PersonAttributes, Relations, StaffAttributes, StaffCoaching, StaffCollectionResult,
-    StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge, StaffMedical, StaffMental,
-    TeamType,
+    Person, PersonAttributes, Relations, StaffAttributes, StaffCollectionResult, StaffDataAnalysis,
+    StaffGoalkeeperCoaching, StaffKnowledge, StaffMedical, StaffMental, TeamType,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};

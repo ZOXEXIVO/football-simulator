@@ -3,24 +3,19 @@ use crate::utils::IntegerUtils;
 use crate::{PersonBehaviourState, Player, PlayerTrainingResult, Staff, TrainingNetLoader};
 use chrono::NaiveDateTime;
 
-#[derive(Debug)]
-pub struct PlayerTraining {
-    training_net: NeuralNetwork,
+lazy_static! {
+    pub static ref TRAINING_NET: NeuralNetwork = TrainingNetLoader::load();
 }
+
+#[derive(Debug)]
+pub struct PlayerTraining;
 
 impl PlayerTraining {
     pub fn new() -> Self {
-        PlayerTraining {
-            training_net: TrainingNetLoader::load(),
-        }
+        PlayerTraining {}
     }
 
-    pub fn train(
-        &self,
-        player: &Player,
-        coach: &Staff,
-        now: NaiveDateTime,
-    ) -> PlayerTrainingResult {
+    pub fn train(player: &Player, coach: &Staff, now: NaiveDateTime) -> PlayerTrainingResult {
         let mut result = PlayerTrainingResult::new();
 
         let training_history = &player.training_history;
@@ -36,9 +31,11 @@ impl PlayerTraining {
             player.skills.mental.decisions as f64,
         ];
 
-        let run_results = self.training_net.run(&vec);
+        let run_results = TRAINING_NET.run(&vec);
 
         result.mental.diff = run_results[0];
+
+        println!("diff = {}", result.mental.diff);
 
         match coach.behaviour.state {
             PersonBehaviourState::Good => {}

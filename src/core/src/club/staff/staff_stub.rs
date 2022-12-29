@@ -1,6 +1,4 @@
-use crate::club::{
-    PersonBehaviour, StaffClubContract, StaffPosition, StaffResponsibility, StaffResult,
-};
+use crate::club::PersonBehaviour;
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
@@ -19,7 +17,9 @@ impl StaffStub {
         Staff {
             id: 0,
             full_name: FullName::with_full(
-                "stub".to_string(), "stub".to_string(), "stub".to_string(),
+                "stub".to_string(),
+                "stub".to_string(),
+                "stub".to_string(),
             ),
             contract: None,
             country_id: 0,
