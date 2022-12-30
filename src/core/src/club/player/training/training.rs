@@ -18,12 +18,7 @@ impl PlayerTraining {
         }
     }
 
-    pub fn train(
-        &self,
-        player: &Player,
-        coach: &Staff,
-        now: NaiveDateTime,
-    ) -> PlayerTrainingResult {
+    pub fn train(player: &Player, coach: &Staff, now: NaiveDateTime) -> PlayerTrainingResult {
         let mut result = PlayerTrainingResult::new();
 
         result
