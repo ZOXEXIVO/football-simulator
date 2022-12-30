@@ -1,18 +1,18 @@
 ﻿#[derive(Debug)]
-pub struct StaffFocus {
-    pub technical_focus: Vec<StaffSkillFocusType>,
-    pub mental_focus: Vec<StaffSkillFocusType>,
-    pub physical_focus: Vec<StaffSkillFocusType>,
+pub struct CoachFocus {
+    pub technical_focus: Vec<TechnicalFocusType>,
+    pub mental_focus: Vec<MentalFocusType>,
+    pub physical_focus: Vec<PhysicalFocusType>,
 }
 
 #[derive(Debug)]
-pub enum StaffSkillFocusType {
+pub enum TechnicalFocusType {
     Corners,
     Crossing,
     Dribbling,
     Finishing,
     FirstTouch,
-    FreeKickTaking,
+    FreeKicks,
     Heading,
     LongShots,
     LongThrows,
@@ -21,6 +21,10 @@ pub enum StaffSkillFocusType {
     PenaltyTaking,
     Tackling,
     Technique,
+}
+
+#[derive(Debug)]
+pub enum MentalFocusType {
     Aggression,
     Anticipation,
     Bravery,
@@ -35,10 +39,14 @@ pub enum StaffSkillFocusType {
     Teamwork,
     Vision,
     WorkRate,
+}
+
+#[derive(Debug)]
+pub enum PhysicalFocusType {
     Acceleration,
     Agility,
     Balance,
-    JumpingReach,
+    Jumping,
     NaturalFitness,
     Pace,
     Stamina,

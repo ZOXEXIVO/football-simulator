@@ -1,14 +1,12 @@
 use crate::club::PlayerPositionType;
-use crate::{
-    Player, PlayerTrainingHistory, PlayerTrainingMentalResult, PlayerTrainingPhysicalResult,
-    PlayerTrainingTechnicalResult,
-};
+use crate::{Player, PlayerTrainingHistory};
+use half::f16;
 
-const SKILL_MIN_VALUE: u8 = 1;
-const SKILL_MAX_VALUE: u8 = 20;
+const SKILL_MIN_VALUE: f32 = 1.0;
+const SKILL_MAX_VALUE: f32 = 20.0;
 
 #[derive(Debug)]
-pub struct  PlayerSkills {
+pub struct PlayerSkills {
     pub technical: Technical,
     pub mental: Mental,
     pub physical: Physical,
@@ -24,27 +22,27 @@ impl PlayerSkills {
 
 #[derive(Debug)]
 pub struct Technical {
-    pub corners: u8,
-    pub crossing: u8,
-    pub dribbling: u8,
-    pub finishing: u8,
-    pub first_touch: u8,
-    pub free_kick_taking: u8,
-    pub heading: u8,
-    pub long_shots: u8,
-    pub long_throws: u8,
-    pub marking: u8,
-    pub passing: u8,
-    pub penalty_taking: u8,
-    pub tackling: u8,
-    pub technique: u8,
+    pub corners: f32,
+    pub crossing: f32,
+    pub dribbling: f32,
+    pub finishing: f32,
+    pub first_touch: f32,
+    pub free_kicks: f32,
+    pub heading: f32,
+    pub long_shots: f32,
+    pub long_throws: f32,
+    pub marking: f32,
+    pub passing: f32,
+    pub penalty_taking: f32,
+    pub tackling: f32,
+    pub technique: f32,
 }
 
 impl Technical {
     pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
         match position {
             PlayerPositionType::Goalkeeper => {
-                (self.penalty_taking + self.first_touch + self.free_kick_taking) as u32
+                (self.penalty_taking + self.first_touch + self.free_kicks) as u32
             }
 
             PlayerPositionType::Sweeper
@@ -76,35 +74,25 @@ impl Technical {
         }
     }
 
-    pub fn train(
-        &self,
-        player: &Player,
-        training_history: &PlayerTrainingHistory,
-    ) -> PlayerTrainingTechnicalResult {
-        let mut result = PlayerTrainingTechnicalResult::new();
-
-        result
-    }
-
     pub fn rest(&mut self) {}
 }
 
 #[derive(Debug)]
 pub struct Mental {
-    pub aggression: u8,
-    pub anticipation: u8,
-    pub bravery: u8,
-    pub composure: u8,
-    pub concentration: u8,
-    pub decisions: u8,
-    pub determination: u8,
-    pub flair: u8,
-    pub leadership: u8,
-    pub off_the_ball: u8,
-    pub positioning: u8,
-    pub teamwork: u8,
-    pub vision: u8,
-    pub work_rate: u8,
+    pub aggression: f32,
+    pub anticipation: f32,
+    pub bravery: f32,
+    pub composure: f32,
+    pub concentration: f32,
+    pub decisions: f32,
+    pub determination: f32,
+    pub flair: f32,
+    pub leadership: f32,
+    pub off_the_ball: f32,
+    pub positioning: f32,
+    pub teamwork: f32,
+    pub vision: f32,
+    pub work_rate: f32,
 }
 
 impl Mental {
@@ -142,38 +130,28 @@ impl Mental {
         }
     }
 
-    pub fn train(
-        &self,
-        player: &Player,
-        training_history: &PlayerTrainingHistory,
-    ) -> PlayerTrainingMentalResult {
-         let mut result = PlayerTrainingMentalResult::new();
-        
-         result
-    }
-
     pub fn rest(&mut self) {}
 }
 
 #[derive(Debug)]
 pub struct Physical {
-    pub acceleration: u8,
-    pub agility: u8,
-    pub balance: u8,
-    pub jumping_reach: u8,
-    pub natural_fitness: u8,
-    pub pace: u8,
-    pub stamina: u8,
-    pub strength: u8,
+    pub acceleration: f32,
+    pub agility: f32,
+    pub balance: f32,
+    pub jumping: f32,
+    pub natural_fitness: f32,
+    pub pace: f32,
+    pub stamina: f32,
+    pub strength: f32,
 
-    pub match_readiness: u8,
+    pub match_readiness: f32,
 }
 
 impl Physical {
     pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
         match position {
             PlayerPositionType::Goalkeeper => {
-                (self.agility + self.balance + self.pace + self.jumping_reach) as u32
+                (self.agility + self.balance + self.pace + self.jumping) as u32
             }
 
             PlayerPositionType::Sweeper
@@ -200,23 +178,13 @@ impl Physical {
         }
     }
 
-    pub fn train(
-        &self,
-        player: &Player,
-        training_history: &PlayerTrainingHistory,
-    ) -> PlayerTrainingPhysicalResult {
-        let mut result = PlayerTrainingPhysicalResult::new();
-
-        result
-    }
-
     pub fn rest(&mut self) {}
 }
 
 #[inline]
-fn safe_modify(skill: &mut u8, val: i8) {
+fn safe_modify(skill: &mut f32, val: i8) {
     if val < 0 {
-        let abs_val = -val as u8;
+        let abs_val = -val as f32;
 
         if *skill <= abs_val {
             *skill = SKILL_MIN_VALUE;
@@ -224,7 +192,7 @@ fn safe_modify(skill: &mut u8, val: i8) {
             *skill -= abs_val;
         }
     } else {
-        let abs_val = val as u8;
+        let abs_val = val as f32;
 
         if *skill + abs_val > SKILL_MAX_VALUE {
             *skill = SKILL_MAX_VALUE;

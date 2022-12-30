@@ -1,20 +1,20 @@
 use crate::club::PersonBehaviour;
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
-use crate::utils::{DateUtils, Logging};
 use crate::{
-    Person, PersonAttributes, Relations, Staff, StaffAttributes, StaffCoaching,
-    StaffCollectionResult, StaffDataAnalysis, StaffFocus, StaffGoalkeeperCoaching, StaffKnowledge,
-    StaffLicenseType, StaffMedical, StaffMental, StaffSkillFocusType, TeamType,
+    CoachFocus, MentalFocusType, Person, PersonAttributes, PhysicalFocusType, Relations, Staff,
+    StaffAttributes, StaffCoaching, StaffCollectionResult, StaffDataAnalysis,
+    StaffGoalkeeperCoaching, StaffKnowledge, StaffLicenseType, StaffMedical, StaffMental, TeamType,
+    TechnicalFocusType,
 };
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::NaiveDate;
 
 #[derive(Debug)]
 pub struct StaffStub;
 
 impl StaffStub {
     pub fn default() -> Staff {
-        Staff {
+        let staff = Staff {
             id: 0,
             full_name: FullName::with_full(
                 "stub".to_string(),
@@ -28,14 +28,14 @@ impl StaffStub {
             relations: Relations::new(),
             license: StaffLicenseType::NationalC,
             attributes: PersonAttributes {
-                adaptability: 1,
-                ambition: 1,
-                controversy: 1,
-                loyalty: 1,
-                pressure: 1,
-                professionalism: 1,
-                sportsmanship: 1,
-                temperament: 1,
+                adaptability: 1.0f32,
+                ambition: 1.0f32,
+                controversy: 1.0f32,
+                loyalty: 1.0f32,
+                pressure: 1.0f32,
+                professionalism: 1.0f32,
+                sportsmanship: 1.0f32,
+                temperament: 1.0f32,
             },
             staff_attributes: StaffAttributes {
                 coaching: StaffCoaching {
@@ -75,11 +75,12 @@ impl StaffStub {
                     non_player_tendencies: 1,
                 },
             },
-            focus: Some(StaffFocus {
-                technical_focus: vec![StaffSkillFocusType::Dribbling],
-                mental_focus: vec![],
-                physical_focus: vec![StaffSkillFocusType::Crossing, StaffSkillFocusType::WorkRate],
+            focus: Some(CoachFocus {
+                technical_focus: vec![TechnicalFocusType::Dribbling, TechnicalFocusType::Finishing],
+                mental_focus: vec![MentalFocusType::Decisions, MentalFocusType::OffTheBall],
+                physical_focus: vec![PhysicalFocusType::NaturalFitness],
             }),
-        }
+        };
+        staff
     }
 }

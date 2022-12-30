@@ -1,10 +1,11 @@
 use core::shared::FullName;
+use core::utils::FloatUtils;
 use core::utils::{IntegerUtils, StringUtils};
 use core::{
-    Datelike, NaiveDate, PeopleNameGeneratorData, PersonAttributes, Staff, StaffAttributes,
-    StaffClubContract, StaffCoaching, StaffDataAnalysis, StaffFocus, StaffGoalkeeperCoaching,
-    StaffKnowledge, StaffLicenseType, StaffMedical, StaffMental, StaffPosition,
-    StaffSkillFocusType, StaffStatus, Utc,
+    CoachFocus, Datelike, MentalFocusType, NaiveDate, PeopleNameGeneratorData, PersonAttributes,
+    PhysicalFocusType, Staff, StaffAttributes, StaffClubContract, StaffCoaching, StaffDataAnalysis,
+    StaffGoalkeeperCoaching, StaffKnowledge, StaffLicenseType, StaffMedical, StaffMental,
+    StaffPosition, StaffStatus, TechnicalFocusType, Utc,
 };
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
@@ -58,14 +59,14 @@ impl StaffGenerator {
 
     fn generate_person_attributes() -> PersonAttributes {
         PersonAttributes {
-            adaptability: IntegerUtils::random(0, 20) as u8,
-            ambition: IntegerUtils::random(0, 20) as u8,
-            controversy: IntegerUtils::random(0, 20) as u8,
-            loyalty: IntegerUtils::random(0, 20) as u8,
-            pressure: IntegerUtils::random(0, 20) as u8,
-            professionalism: IntegerUtils::random(0, 20) as u8,
-            sportsmanship: IntegerUtils::random(0, 20) as u8,
-            temperament: IntegerUtils::random(0, 20) as u8,
+            adaptability: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            ambition: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            controversy: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            loyalty: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            pressure: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            professionalism: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            sportsmanship: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            temperament: FloatUtils::random(0.0f32, 20.0f32) as f32,
         }
     }
 
@@ -82,11 +83,11 @@ impl StaffGenerator {
         }
     }
 
-    fn generate_staff_focus() -> StaffFocus {
-        StaffFocus {
-            technical_focus: vec![StaffSkillFocusType::Dribbling],
-            mental_focus: vec![],
-            physical_focus: vec![StaffSkillFocusType::Crossing, StaffSkillFocusType::WorkRate],
+    fn generate_staff_focus() -> CoachFocus {
+        CoachFocus {
+            technical_focus: vec![TechnicalFocusType::Dribbling, TechnicalFocusType::Finishing],
+            mental_focus: vec![MentalFocusType::Decisions],
+            physical_focus: vec![PhysicalFocusType::NaturalFitness],
         }
     }
 
@@ -132,7 +133,7 @@ impl StaffGenerator {
     }
 
     fn generate_first_name(&self) -> String {
-        if self.people_names_data.first_names.len() > 0 {
+        if !self.people_names_data.first_names.is_empty() {
             let idx =
                 IntegerUtils::random(0, self.people_names_data.first_names.len() as i32) as usize;
 
@@ -143,7 +144,7 @@ impl StaffGenerator {
     }
 
     fn generate_last_name(&self) -> String {
-        if self.people_names_data.first_names.len() > 0 {
+        if !self.people_names_data.first_names.is_empty() {
             let idx =
                 IntegerUtils::random(0, self.people_names_data.last_names.len() as i32) as usize;
             self.people_names_data.last_names[idx].to_owned()

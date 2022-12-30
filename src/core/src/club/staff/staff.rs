@@ -6,9 +6,9 @@ use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
-    Person, PersonAttributes, Relations, StaffAttributes, StaffCoaching, StaffCollectionResult,
-    StaffDataAnalysis, StaffFocus, StaffGoalkeeperCoaching, StaffKnowledge, StaffMedical,
-    StaffMental, TeamType,
+    CoachFocus, Person, PersonAttributes, Relations, StaffAttributes, StaffCollectionResult,
+    StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge, StaffMedical, StaffMental,
+    TeamType,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
@@ -31,7 +31,7 @@ pub struct Staff {
 
     pub license: StaffLicenseType,
 
-    pub focus: Option<StaffFocus>,
+    pub focus: Option<CoachFocus>,
 }
 
 impl Staff {
@@ -44,7 +44,7 @@ impl Staff {
         contract: Option<StaffClubContract>,
         attributes: PersonAttributes,
         license: StaffLicenseType,
-        focus: Option<StaffFocus>,
+        focus: Option<CoachFocus>,
     ) -> Self {
         Staff {
             id,

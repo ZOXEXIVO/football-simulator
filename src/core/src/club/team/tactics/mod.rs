@@ -1,3 +1,4 @@
- pub mod tactics;
- 
- pub use tactics::*;
+pub mod tactics;
+pub mod types;
+
+pub use tactics::*;

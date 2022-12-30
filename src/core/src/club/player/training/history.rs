@@ -20,6 +20,17 @@ impl PlayerTrainingHistory {
     pub fn get_latest_record(&self) -> Option<&TrainingRecord> {
         self.records.last()
     }
+
+    pub fn weeks_since_last_training(&self, now: NaiveDateTime) -> u32 {
+        let mut weeks_since_last_training: u32 = 0;
+
+        if let Some(last_training_record) = self.records.last() {
+            let duration = now.signed_duration_since(last_training_record.date);
+            weeks_since_last_training = duration.num_weeks() as u32;
+        }
+
+        weeks_since_last_training
+    }
 }
 
 #[derive(Debug)]

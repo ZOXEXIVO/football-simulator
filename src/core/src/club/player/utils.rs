@@ -1,4 +1,4 @@
-use crate::{Person, Player, PlayerPositionType};
+use crate::{Person, Player};
 use chrono::NaiveDate;
 
 pub struct PlayerUtils;

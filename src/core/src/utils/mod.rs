@@ -1,13 +1,15 @@
-mod strings;
-mod integers;
 mod date;
 mod estimation;
-mod logging;
+mod floats;
 mod formatting;
+mod integers;
+mod logging;
+mod strings;
 
-pub use strings::*;
-pub use integers::*;
 pub use date::*;
 pub use estimation::*;
-pub use logging::*;
+pub use floats::*;
 pub use formatting::*;
+pub use integers::*;
+pub use logging::*;
+pub use strings::*;

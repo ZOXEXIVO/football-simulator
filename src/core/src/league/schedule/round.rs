@@ -46,11 +46,18 @@ impl ScheduleGenerator for RoundSchedule {
             .unwrap(),
         );
 
+        let current_date_time = NaiveDateTime::new(current_date, NaiveTime::from_hms(0, 0, 0));
+
         let tours_count = (teams_len * teams_len - teams_len) / (teams_len / 2);
 
         let mut result = Vec::with_capacity(tours_count);
 
-        result.extend(generate_tours(league_id, teams, tours_count, current_date));
+        result.extend(generate_tours(
+            league_id,
+            teams,
+            tours_count,
+            current_date_time,
+        ));
 
         Ok(result)
     }

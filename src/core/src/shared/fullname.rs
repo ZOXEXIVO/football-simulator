@@ -27,10 +27,11 @@ impl FullName {
 
 impl Display for FullName {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        if self.middle_name.is_some() {
-            write!(f, "{} {} {}", self.last_name, self.first_name, self.middle_name.as_ref().unwrap())
-        } else {
-            write!(f, "{} {}", self.last_name, self.first_name)
+        let mut name = format!("{} {}", self.last_name, self.first_name);
+        if let Some(middle_name) = self.middle_name.as_ref() {
+            name.push_str(" ");
+            name.push_str(middle_name);
         }
+        write!(f, "{}", name)
     }
 }

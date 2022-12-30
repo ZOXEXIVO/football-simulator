@@ -6,27 +6,20 @@ pub struct DateUtils;
 impl DateUtils {
     #[inline]
     pub fn is_birthday(birth_date: NaiveDate, current_date: NaiveDate) -> bool {
-        birth_date.month() == current_date.month() && birth_date.day() == current_date.day()
+        birth_date.year() == current_date.year() && birth_date.ordinal() == current_date.ordinal()
     }
 
     #[inline]
     pub fn age(birthdate: NaiveDate, now: NaiveDate) -> u8 {
-        let mut age = now.year() - birthdate.year();
-
-        if now.month() < birthdate.month()
-            || (now.month() == birthdate.month() && now.day() < birthdate.day())
-        {
-            age -= 1;
-        }
-
-        age as u8
+        let age_duration = now.signed_duration_since(birthdate);
+        (age_duration.num_days() / 365) as u8
     }
 
-    pub fn next_saturday(date: NaiveDate) -> NaiveDateTime {
-        let mut current_date = NaiveDateTime::new(date, NaiveTime::from_hms_opt(0, 0, 0).unwrap());
+    pub fn next_saturday(date: NaiveDate) -> NaiveDate {
+        let mut current_date = date;
 
         while current_date.weekday() != Weekday::Sat {
-            current_date += Duration::days(1)
+            current_date = current_date.succ();
         }
 
         current_date

@@ -20,14 +20,14 @@ pub trait Person {
 
 #[derive(Debug)]
 pub struct PersonAttributes {
-    pub adaptability: u8,
-    pub ambition: u8,
-    pub controversy: u8,
-    pub loyalty: u8,
-    pub pressure: u8,
-    pub professionalism: u8,
-    pub sportsmanship: u8,
-    pub temperament: u8,
+    pub adaptability: f32,
+    pub ambition: f32,
+    pub controversy: f32,
+    pub loyalty: f32,
+    pub pressure: f32,
+    pub professionalism: f32,
+    pub sportsmanship: f32,
+    pub temperament: f32,
 }
 
 #[derive(Debug)]
@@ -57,7 +57,7 @@ impl PersonBehaviour {
     pub fn is_poor(&self) -> bool {
         self.state == PersonBehaviourState::Poor
     }
-    
+
     pub fn as_str(&self) -> &'static str {
         self.state.as_str()
     }

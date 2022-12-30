@@ -1,15 +1,16 @@
 use crate::club::player::utils::PlayerUtils;
 use crate::club::{
-    PersonBehaviour, PersonBehaviourState, PlayerAttributes, PlayerClubContract,
-    PlayerCollectionResult, PlayerMailbox, PlayerResult, PlayerSkills, PlayerTraining, Staff,
+    PersonBehaviour, PlayerAttributes, PlayerClubContract, PlayerCollectionResult, PlayerMailbox,
+    PlayerResult, PlayerSkills, PlayerTraining, Staff,
 };
 use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
+use crate::training::result::PlayerTrainingResult;
 use crate::utils::{DateUtils, Logging};
 use crate::{
-    Person, PersonAttributes, PlayerHappiness, PlayerPosition, PlayerPositionType, PlayerPositions,
+    Person, PersonAttributes, PlayerHappiness, PlayerPositionType, PlayerPositions,
     PlayerStatistics, PlayerStatisticsHistory, PlayerStatus, PlayerTrainingHistory,
-    PlayerTrainingResult, PlayerValueCalculator, Relations,
+    PlayerValueCalculator, Relations,
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
@@ -139,7 +140,7 @@ impl Player {
     }
 
     pub fn is_ready_for_match(&self) -> bool {
-        match self.skills.physical.match_readiness {
+        match self.skills.physical.match_readiness.floor() as u32 {
             0..=10 => false,
             11..=20 => true,
             _ => false,

@@ -3,9 +3,10 @@ use crate::context::GlobalContext;
 use crate::shared::CurrencyValue;
 use crate::{
     MatchHistory, Player, PlayerCollection, Squad, SquadSelector, StaffCollection, Tactics,
-    TacticsSelector, TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
-    Transfers,
+    TacticsPositioning, TacticsSelector, TeamReputation, TeamResult, TeamTraining,
+    TrainingSchedule, TransferItem, Transfers,
 };
+use std::borrow::Cow;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
@@ -111,6 +112,14 @@ impl Team {
             tactics: TacticsSelector::select(self, head_coach),
             main_squad: squad.main_squad,
             substitutes: squad.substitutes,
+        }
+    }
+
+    pub fn tactics(&self) -> Cow<Tactics> {
+        if let Some(tactics) = &self.tactics {
+            Cow::Borrowed(tactics)
+        } else {
+            Cow::Owned(Tactics::new(TacticsPositioning::T442))
         }
     }
 

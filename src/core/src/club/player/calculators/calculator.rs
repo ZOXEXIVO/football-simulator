@@ -49,7 +49,7 @@ impl PlayerValueCalculator {
             + technical_skills.dribbling
             + technical_skills.finishing
             + technical_skills.first_touch
-            + technical_skills.free_kick_taking
+            + technical_skills.free_kicks
             + technical_skills.heading
             + technical_skills.long_shots
             + technical_skills.long_throws
@@ -77,7 +77,7 @@ impl PlayerValueCalculator {
         let physical_mean = (physical_skills.acceleration
             + physical_skills.agility
             + physical_skills.balance
-            + physical_skills.jumping_reach
+            + physical_skills.jumping
             + physical_skills.natural_fitness
             + physical_skills.pace
             + physical_skills.stamina
@@ -189,7 +189,7 @@ impl PlayerValueCalculator {
             other_factors *= 1.1;
         }
 
-        if player.attributes.loyalty > 8 {
+        if player.attributes.loyalty > 8.0 {
             other_factors *= 1.1;
         }
 

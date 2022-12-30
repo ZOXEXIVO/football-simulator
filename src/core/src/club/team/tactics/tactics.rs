@@ -1,7 +1,7 @@
 use crate::club::{PersonBehaviourState, PlayerPositionType, Staff};
 use crate::Team;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Tactics {
     pub positioning: TacticsPositioning,
 }
@@ -38,7 +38,7 @@ const TACTICS_POSITIONS: &[(TacticsPositioning, [PlayerPositionType; 11])] = &[(
     ],
 )];
 
-#[derive(Debug, Eq, PartialEq, PartialOrd)]
+#[derive(Debug, Eq, PartialEq, PartialOrd, Clone)]
 pub enum TacticsPositioning {
     T442,
     // T235,
@@ -66,5 +66,5 @@ impl TacticsSelector {
             PersonBehaviourState::Normal => Tactics::new(TacticsPositioning::T442),
             PersonBehaviourState::Good => Tactics::new(TacticsPositioning::T442),
         }
-    }    
+    }
 }
