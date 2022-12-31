@@ -31,9 +31,11 @@ pub struct TourSchedule<'s> {
 pub struct LeagueScheduleItem<'si> {
     pub home_team_id: u32,
     pub home_team_name: &'si str,
+    pub home_team_slug: &'si str,
 
     pub away_team_id: u32,
     pub away_team_name: &'si str,
+    pub away_team_slug: &'si str,
 
     pub result: Option<LeagueScheduleItemResult>,
 }
@@ -112,7 +114,7 @@ pub async fn league_get_action(
 
     let now = simulator_data.date.date() + Duration::days(3);
 
-    let mut current_tour: Option<&ScheduleTour> = Option::None;
+    let mut current_tour: Option<&ScheduleTour> = None;
 
     for tour in league.schedule.tours.iter() {
         if now >= tour.start_date() && now <= tour.end_date() {
@@ -139,17 +141,30 @@ pub async fn league_get_action(
             let tour_schedule = TourSchedule {
                 date: key.format("%d.%m.%Y").to_string(),
                 matches: group
-                    .map(|item| LeagueScheduleItem {
-                        result: item.result.as_ref().map(|res| LeagueScheduleItemResult {
-                            home_goals: res.home_goals,
-                            away_goals: res.away_goals,
-                        }),
+                    .map(|item| {
+                        let home_team_data = simulator_data.team_data(item.home_team_id).unwrap();
+                        let away_team_data = simulator_data.team_data(item.away_team_id).unwrap();
 
-                        home_team_id: item.home_team_id,
-                        home_team_name: &simulator_data.team_data(item.home_team_id).unwrap().name,
+                        LeagueScheduleItem {
+                            result: item.result.as_ref().map(|res| LeagueScheduleItemResult {
+                                home_goals: res.home_goals,
+                                away_goals: res.away_goals,
+                            }),
 
-                        away_team_id: item.away_team_id,
-                        away_team_name: &simulator_data.team_data(item.away_team_id).unwrap().name,
+                            home_team_id: item.home_team_id,
+                            home_team_name: &simulator_data
+                                .team_data(item.home_team_id)
+                                .unwrap()
+                                .name,
+                            home_team_slug: &home_team_data.slug,
+
+                            away_team_id: item.away_team_id,
+                            away_team_name: &simulator_data
+                                .team_data(item.away_team_id)
+                                .unwrap()
+                                .name,
+                            away_team_slug: &away_team_data.slug,
+                        }
                     })
                     .collect(),
             };

@@ -134,7 +134,7 @@
                         {% for item in tour_schedule.matches %}
                         <tr>
                             <td>
-                                <a href="/teams/{{ item.home_team_id }}">
+                                <a href="/teams/{{ item.home_team_slug }}">
                                     {{ item.home_team_name }}
                                 </a>
                             </td>
@@ -152,7 +152,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="/teams/{{ item.away_team_id }}">
+                                <a href="/teams/{{ item.away_team_slug }}">
                                     {{ item.away_team_name }}
                                 </a>
                             </td>
