@@ -54,17 +54,26 @@ mod tests {
     use chrono::Utc;
 
     #[test]
-    fn test_age_factor_under_24() {
-        let age = 23;
-        let factor = PlayerUtils::age_factor(age);
-        assert!(factor > 0.9);
+    fn test_age_factor_under_18() {
+        let age_factor = PlayerUtils::age_factor(18);
+
+        assert!(age_factor > 0.0);
+        assert!(age_factor < 1.0);
     }
 
     #[test]
-    fn test_age_factor_24_29() {
-        let age = 24;
-        let factor = PlayerUtils::age_factor(age);
-        assert!(factor > 0.8);
-        assert!(factor < 0.9);
+    fn test_age_factor_under_30() {
+        let age_factor = PlayerUtils::age_factor(30);
+
+        assert!(age_factor > 0.0);
+        assert!(age_factor < 1.0);
+    }
+
+    #[test]
+    fn test_age_factor_under_40() {
+        let age_factor = PlayerUtils::age_factor(40);
+
+        assert!(age_factor > 0.0);
+        assert!(age_factor < 1.0);
     }
 }
