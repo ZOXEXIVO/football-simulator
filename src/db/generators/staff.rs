@@ -59,14 +59,14 @@ impl StaffGenerator {
 
     fn generate_person_attributes() -> PersonAttributes {
         PersonAttributes {
-            adaptability: FloatUtils::random(0.0f32, 20.0f32) as f32,
-            ambition: FloatUtils::random(0.0f32, 20.0f32) as f32,
-            controversy: FloatUtils::random(0.0f32, 20.0f32) as f32,
-            loyalty: FloatUtils::random(0.0f32, 20.0f32) as f32,
-            pressure: FloatUtils::random(0.0f32, 20.0f32) as f32,
-            professionalism: FloatUtils::random(0.0f32, 20.0f32) as f32,
-            sportsmanship: FloatUtils::random(0.0f32, 20.0f32) as f32,
-            temperament: FloatUtils::random(0.0f32, 20.0f32) as f32,
+            adaptability: FloatUtils::random(0.0, 20.0),
+            ambition: FloatUtils::random(0.0, 20.0),
+            controversy: FloatUtils::random(0.0, 20.0),
+            loyalty: FloatUtils::random(0.0, 20.0),
+            pressure: FloatUtils::random(0.0, 20.0),
+            professionalism: FloatUtils::random(0.0, 20.0),
+            sportsmanship: FloatUtils::random(0.0, 20.0),
+            temperament: FloatUtils::random(0.0, 20.0),
         }
     }
 

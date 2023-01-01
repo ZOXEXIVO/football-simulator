@@ -18,8 +18,8 @@ mod tests {
 
     #[test]
     fn random_sequential_returns_different_numbers() {
-        let random_int_1 = FloatUtils::random(0f32, 1000.0f32);
-        let random_int_2 = FloatUtils::random(0f32, 1000.0f32);
+        let random_int_1 = FloatUtils::random(0.0, 1000.0);
+        let random_int_2 = FloatUtils::random(0.0, 1000.0);
 
         assert_ne!(random_int_1, random_int_2);
     }

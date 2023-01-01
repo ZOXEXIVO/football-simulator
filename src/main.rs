@@ -32,14 +32,14 @@ impl Clone for GameAppData {
 async fn main() {
     color_eyre::install().unwrap();
 
-    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let (database, estimated) = TimeEstimation::estimate(DatabaseLoader::load);
 
     info!("database loaded: {} ms", estimated);
 
     let game_data = Generator::generate(&database);
-    
+
     let data = GameAppData {
         database: Arc::new(database),
         data: Arc::new(Mutex::new(Some(game_data))),

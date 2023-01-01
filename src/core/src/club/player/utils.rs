@@ -37,7 +37,7 @@ impl PlayerUtils {
         growth_potential
     }
 
-    fn age_factor(age: u8) -> f32 {
+    pub fn age_factor(age: u8) -> f32 {
         let a = age as f32;
         let factor = 1.0 / (1.0 + (-0.1 * a).exp());
         factor

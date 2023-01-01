@@ -1,5 +1,5 @@
 use crate::training::result::PlayerTrainingResult;
-use crate::{MentalSkill, PhysicalSkill, SimulatorData, TechnicalSkill};
+use crate::SimulatorData;
 
 pub struct TeamTrainingResult {
     pub player_results: Vec<PlayerTrainingResult>,
