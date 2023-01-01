@@ -21,16 +21,7 @@ pub struct Generator;
 
 impl Generator {
     pub fn generate(data: &DatabaseEntity) -> SimulatorData {
-        let current_date = Utc::now()
-            .naive_utc()
-            .with_hour(0)
-            .unwrap()
-            .with_minute(0)
-            .unwrap()
-            .with_second(0)
-            .unwrap()
-            .with_nanosecond(0)
-            .unwrap();
+        let current_date = Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap();
 
         let continents = data
             .continents

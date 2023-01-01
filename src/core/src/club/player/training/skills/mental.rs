@@ -161,8 +161,5 @@ pub fn determine_mental_skills_increase_amount(
     let skill_increase_amount =
         ((player.skills.mental.determination + coaching_skills_average) / 2.0) / 20.0;
 
-    let potential_ability_factor = player.player_attributes.potential_ability as f32 / 200.0;
-    let current_ability_factor = player.player_attributes.current_ability as f32 / 200.0;
-
-    increase_amount + skill_increase_amount * potential_ability_factor * current_ability_factor
+    increase_amount + skill_increase_amount * 0.2
 }

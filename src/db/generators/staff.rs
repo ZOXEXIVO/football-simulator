@@ -7,6 +7,7 @@ use core::{
     StaffGoalkeeperCoaching, StaffKnowledge, StaffLicenseType, StaffMedical, StaffMental,
     StaffPosition, StaffStatus, TechnicalFocusType, Utc,
 };
+use rand::Rng;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
 
@@ -85,9 +86,9 @@ impl StaffGenerator {
 
     fn generate_staff_focus() -> CoachFocus {
         CoachFocus {
-            technical_focus: vec![TechnicalFocusType::Dribbling, TechnicalFocusType::Finishing],
-            mental_focus: vec![MentalFocusType::Decisions],
-            physical_focus: vec![PhysicalFocusType::NaturalFitness],
+            technical_focus: get_random_technical(3),
+            mental_focus: get_random_mental(5),
+            physical_focus: get_random_physical(4),
         }
     }
 
@@ -152,4 +153,101 @@ impl StaffGenerator {
             StringUtils::random_string(12)
         }
     }
+}
+
+const TECHNICAL_FOCUSES: &[TechnicalFocusType] = &[
+    TechnicalFocusType::Corners,
+    TechnicalFocusType::Crossing,
+    TechnicalFocusType::Dribbling,
+    TechnicalFocusType::Finishing,
+    TechnicalFocusType::FirstTouch,
+    TechnicalFocusType::FreeKicks,
+    TechnicalFocusType::Heading,
+    TechnicalFocusType::LongShots,
+    TechnicalFocusType::LongThrows,
+    TechnicalFocusType::Marking,
+    TechnicalFocusType::Passing,
+    TechnicalFocusType::PenaltyTaking,
+    TechnicalFocusType::Tackling,
+    TechnicalFocusType::Technique,
+];
+
+const MENTAL_FOCUSES: &[MentalFocusType] = &[
+    MentalFocusType::Aggression,
+    MentalFocusType::Anticipation,
+    MentalFocusType::Bravery,
+    MentalFocusType::Composure,
+    MentalFocusType::Concentration,
+    MentalFocusType::Decisions,
+    MentalFocusType::Determination,
+    MentalFocusType::Flair,
+    MentalFocusType::Leadership,
+    MentalFocusType::OffTheBall,
+    MentalFocusType::Positioning,
+    MentalFocusType::Teamwork,
+    MentalFocusType::Vision,
+    MentalFocusType::WorkRate,
+];
+
+const PHYSICAL_FOCUSES: &[PhysicalFocusType] = &[
+    PhysicalFocusType::Acceleration,
+    PhysicalFocusType::Agility,
+    PhysicalFocusType::Balance,
+    PhysicalFocusType::Jumping,
+    PhysicalFocusType::NaturalFitness,
+    PhysicalFocusType::Pace,
+    PhysicalFocusType::Stamina,
+    PhysicalFocusType::Strength,
+    PhysicalFocusType::MatchReadiness,
+];
+
+fn get_random_technical(count: usize) -> Vec<TechnicalFocusType> {
+    let mut rng = rand::thread_rng();
+
+    let mut random_values = Vec::with_capacity(count);
+
+    while random_values.len() < count {
+        let random_index = rng.gen_range(0..TECHNICAL_FOCUSES.len());
+        let random_value = TECHNICAL_FOCUSES[random_index];
+
+        if !random_values.contains(&random_value) {
+            random_values.push(random_value);
+        }
+    }
+
+    random_values
+}
+
+fn get_random_mental(count: usize) -> Vec<MentalFocusType> {
+    let mut rng = rand::thread_rng();
+
+    let mut random_values = Vec::with_capacity(count);
+
+    while random_values.len() < count {
+        let random_index = rng.gen_range(0..MENTAL_FOCUSES.len());
+        let random_value = MENTAL_FOCUSES[random_index];
+
+        if !random_values.contains(&random_value) {
+            random_values.push(random_value);
+        }
+    }
+
+    random_values
+}
+
+fn get_random_physical(count: usize) -> Vec<PhysicalFocusType> {
+    let mut rng = rand::thread_rng();
+
+    let mut random_values = Vec::with_capacity(count);
+
+    while random_values.len() < count {
+        let random_index = rng.gen_range(0..PHYSICAL_FOCUSES.len());
+        let random_value = PHYSICAL_FOCUSES[random_index];
+
+        if !random_values.contains(&random_value) {
+            random_values.push(random_value);
+        }
+    }
+
+    random_values
 }

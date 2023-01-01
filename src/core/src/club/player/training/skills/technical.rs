@@ -1,5 +1,6 @@
 ﻿use crate::training::skills::determine_base_value_to_skill_increase;
 use crate::{MentalFocusType, Player, Staff, TechnicalFocusType};
+use log::info;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
@@ -170,6 +171,8 @@ pub fn determine_technical_skills_to_increase(
         }
     }
 
+    info!("SKILL_TO_INCREASE: {:?}", skills_to_increase);
+
     skills_to_increase
 }
 
@@ -198,8 +201,5 @@ pub fn determine_technical_skills_increase_amount(
     let skill_increase_amount =
         ((player.skills.mental.determination + coaching_skills_average) / 2.0) / 20.0;
 
-    let potential_ability_factor = player.player_attributes.potential_ability as f32 / 200.0;
-    let current_ability_factor = player.player_attributes.current_ability as f32 / 200.0;
-
-    increase_amount + skill_increase_amount * potential_ability_factor * current_ability_factor
+    increase_amount + skill_increase_amount * 0.2
 }

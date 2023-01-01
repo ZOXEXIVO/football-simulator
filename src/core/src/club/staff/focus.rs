@@ -5,7 +5,7 @@ pub struct CoachFocus {
     pub physical_focus: Vec<PhysicalFocusType>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum TechnicalFocusType {
     Corners,
     Crossing,
@@ -23,7 +23,7 @@ pub enum TechnicalFocusType {
     Technique,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum MentalFocusType {
     Aggression,
     Anticipation,
@@ -41,7 +41,7 @@ pub enum MentalFocusType {
     WorkRate,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum PhysicalFocusType {
     Acceleration,
     Agility,

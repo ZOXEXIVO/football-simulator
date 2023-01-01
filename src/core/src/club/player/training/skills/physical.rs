@@ -16,11 +16,11 @@ pub enum PhysicalSkill {
 
 lazy_static! {
     pub static ref PHYSICAL_SKILL_INCREASE_SPEED_MAP: HashMap<PhysicalSkill, f32> = vec![
-        (PhysicalSkill::Acceleration, 0.05),
+        (PhysicalSkill::Acceleration, 0.005),
         (PhysicalSkill::Agility, 0.07),
         (PhysicalSkill::Balance, 0.05),
         (PhysicalSkill::Jumping, 0.05),
-        (PhysicalSkill::NaturalFitness, 0.04),
+        (PhysicalSkill::NaturalFitness, 0.004),
         (PhysicalSkill::Pace, 0.06),
         (PhysicalSkill::Stamina, 0.05),
         (PhysicalSkill::Strength, 0.06)
@@ -137,8 +137,5 @@ pub fn determine_physical_skills_increase_amount(
     let skill_increase_amount =
         ((player.skills.mental.determination + coaching_skills_average) / 2.0) / 20.0;
 
-    let potential_ability_factor = player.player_attributes.potential_ability as f32 / 200.0;
-    let current_ability_factor = player.player_attributes.current_ability as f32 / 200.0;
-
-    increase_amount + skill_increase_amount * potential_ability_factor * current_ability_factor
+    increase_amount + skill_increase_amount * 0.1
 }

@@ -15,9 +15,7 @@ fn determine_base_value_to_skill_increase(
     player: &Player,
     coach: &Staff,
 ) -> f32 {
-    let mut value_to_increase = 0.0;
-
-    let base_value = 0.1;
+    let mut base_value = 0.1;
 
     let coach_factor = coach.staff_attributes.mental.determination as f32 / 20.0;
 
@@ -29,12 +27,18 @@ fn determine_base_value_to_skill_increase(
 
     let training_factor = (1.0 + weeks_since_last_training as f32 / 2.0).powf(0.5);
 
-    value_to_increase = base_value
+    let potential_ability_factor = player.player_attributes.potential_ability as f32 / 200.0;
+    let current_ability_factor = player.player_attributes.current_ability as f32 / 200.0;
+
+    let ability_factor = (1.0 - (current_ability_factor / potential_ability_factor)) * 0.3;
+
+    base_value = base_value
+        * ability_factor
         * coach_factor
         * ambition_factor
         * professionalism_factor
         * age_factor
         * training_factor;
 
-    value_to_increase
+    base_value
 }

@@ -8,12 +8,15 @@ use crate::{
     TechnicalFocusType,
 };
 use chrono::NaiveDate;
+use rand::Rng;
 
 #[derive(Debug)]
 pub struct StaffStub;
 
 impl StaffStub {
     pub fn default() -> Staff {
+        let mut rng = rand::thread_rng();
+
         let staff = Staff {
             id: 0,
             full_name: FullName::with_full(
@@ -76,8 +79,11 @@ impl StaffStub {
                 },
             },
             focus: Some(CoachFocus {
-                technical_focus: vec![TechnicalFocusType::Dribbling, TechnicalFocusType::Finishing],
-                mental_focus: vec![MentalFocusType::Decisions, MentalFocusType::OffTheBall],
+                technical_focus: vec![
+                    TechnicalFocusType::FreeKicks,
+                    TechnicalFocusType::LongThrows,
+                ],
+                mental_focus: vec![MentalFocusType::OffTheBall, MentalFocusType::Teamwork],
                 physical_focus: vec![PhysicalFocusType::NaturalFitness],
             }),
         };
