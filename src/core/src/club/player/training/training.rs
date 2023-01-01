@@ -18,6 +18,8 @@ impl PlayerTraining {
     }
 
     pub fn train(player: &Player, coach: &Staff, now: NaiveDateTime) -> PlayerTrainingResult {
+        let now = now.date();
+
         let mut result = PlayerTrainingResult::new(player.id);
 
         let training_history = &player.training_history;
@@ -29,6 +31,7 @@ impl PlayerTraining {
             .technical
             .skill_increase
             .extend(determine_technical_skills_to_increase(
+                now,
                 weeks_since_last_training,
                 coach,
                 player,
@@ -38,6 +41,7 @@ impl PlayerTraining {
             .mental
             .skill_increase
             .extend(determine_mental_skills_to_increase(
+                now,
                 weeks_since_last_training,
                 coach,
                 player,
@@ -47,6 +51,7 @@ impl PlayerTraining {
             .physical
             .skill_increase
             .extend(determine_physical_skills_to_increase(
+                now,
                 weeks_since_last_training,
                 coach,
                 player,

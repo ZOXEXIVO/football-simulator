@@ -46,7 +46,8 @@ impl ScheduleGenerator for RoundSchedule {
             .unwrap(),
         );
 
-        let current_date_time = NaiveDateTime::new(current_date, NaiveTime::from_hms(0, 0, 0));
+        let current_date_time =
+            NaiveDateTime::new(current_date, NaiveTime::from_hms_opt(0, 0, 0).unwrap());
 
         let tours_count = (teams_len * teams_len - teams_len) / (teams_len / 2);
 

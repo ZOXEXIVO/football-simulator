@@ -1,6 +1,5 @@
 use crate::club::PlayerPositionType;
 use crate::{Player, PlayerTrainingHistory};
-use half::f16;
 
 const SKILL_MIN_VALUE: f32 = 1.0;
 const SKILL_MAX_VALUE: f32 = 20.0;
@@ -39,6 +38,24 @@ pub struct Technical {
 }
 
 impl Technical {
+    pub fn average(&self) -> f32 {
+        (self.corners
+            + self.crossing
+            + self.dribbling
+            + self.finishing
+            + self.first_touch
+            + self.free_kicks
+            + self.heading
+            + self.long_shots
+            + self.long_throws
+            + self.marking
+            + self.passing
+            + self.penalty_taking
+            + self.tackling
+            + self.technique) as f32
+            / 14.0
+    }
+
     pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
         match position {
             PlayerPositionType::Goalkeeper => {
@@ -96,6 +113,24 @@ pub struct Mental {
 }
 
 impl Mental {
+    pub fn average(&self) -> f32 {
+        (self.aggression
+            + self.anticipation
+            + self.bravery
+            + self.composure
+            + self.concentration
+            + self.decisions
+            + self.determination
+            + self.flair
+            + self.leadership
+            + self.off_the_ball
+            + self.positioning
+            + self.teamwork
+            + self.vision
+            + self.work_rate) as f32
+            / 14.0
+    }
+
     pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
         match position {
             PlayerPositionType::Goalkeeper => {
@@ -148,6 +183,18 @@ pub struct Physical {
 }
 
 impl Physical {
+    pub fn average(&self) -> f32 {
+        (self.acceleration
+            + self.agility
+            + self.balance
+            + self.jumping
+            + self.natural_fitness
+            + self.pace
+            + self.stamina
+            + self.strength) as f32
+            / 8.0
+    }
+
     pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
         match position {
             PlayerPositionType::Goalkeeper => {

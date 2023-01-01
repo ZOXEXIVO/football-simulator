@@ -1,5 +1,5 @@
 use crate::PlayerSkills;
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 
 #[derive(Debug)]
 pub struct PlayerTrainingHistory {
@@ -21,11 +21,11 @@ impl PlayerTrainingHistory {
         self.records.last()
     }
 
-    pub fn weeks_since_last_training(&self, now: NaiveDateTime) -> u32 {
+    pub fn weeks_since_last_training(&self, now: NaiveDate) -> u32 {
         let mut weeks_since_last_training: u32 = 0;
 
         if let Some(last_training_record) = self.records.last() {
-            let duration = now.signed_duration_since(last_training_record.date);
+            let duration = now.signed_duration_since(last_training_record.date.date());
             weeks_since_last_training = duration.num_weeks() as u32;
         }
 

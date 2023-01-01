@@ -1,7 +1,7 @@
 ﻿use crate::club::utils::PlayerUtils;
 use crate::training::skills::determine_base_value_to_skill_increase;
 use crate::{MentalFocusType, Person, Player, Staff, TechnicalFocusType};
-use chrono::Utc;
+use chrono::NaiveDate;
 use log::info;
 use std::collections::HashMap;
 
@@ -45,14 +45,15 @@ lazy_static! {
 }
 
 pub fn determine_mental_skills_to_increase(
+    now: NaiveDate,
     weeks_since_last_training: u32,
     coach: &Staff,
     player: &Player,
 ) -> Vec<(MentalSkill, f32)> {
-    let mut skills_to_increase = Vec::new();
+    let mut skills_to_increase = Vec::with_capacity(14);
 
     let base_increase_amount =
-        determine_mental_skills_increase_amount(weeks_since_last_training, player, coach);
+        determine_mental_skills_increase_amount(now, weeks_since_last_training, player, coach);
 
     if let Some(focus) = &coach.focus {
         for skill in focus.mental_focus.iter() {
@@ -142,12 +143,13 @@ pub fn determine_mental_skills_to_increase(
 }
 
 pub fn determine_mental_skills_increase_amount(
+    now: NaiveDate,
     weeks_since_last_training: u32,
     player: &Player,
     coach: &Staff,
 ) -> f32 {
     let base_increase =
-        determine_base_value_to_skill_increase(weeks_since_last_training, player, coach);
+        determine_base_value_to_skill_increase(now, weeks_since_last_training, player, coach);
 
     let weeks_since_last_training_factor = weeks_since_last_training as f32 * 0.1;
 

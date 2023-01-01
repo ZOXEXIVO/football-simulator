@@ -1,9 +1,7 @@
 use crate::{Person, Player, PlayerPositions, PlayerStatus, PlayerStatusType};
-use chrono::{Datelike, Local, NaiveDate};
+use chrono::{Datelike, NaiveDate};
 
 pub struct PlayerValueCalculator;
-
-// write calculate function
 
 impl PlayerValueCalculator {
     pub fn calculate(player: &Player, now: NaiveDate) -> f64 {
@@ -40,51 +38,11 @@ impl PlayerValueCalculator {
     fn determine_base_value(player: &Player) -> f64 {
         const BASE_PRICE: f64 = 1_000_000.0;
 
-        let technical_skills = &player.skills.technical;
-        let mental_skills = &player.skills.mental;
-        let physical_skills = &player.skills.physical;
+        let technical_mean = player.skills.technical.average();
+        let mental_mean = &player.skills.mental.average();
+        let physical_mean = &player.skills.physical.average();
 
-        let technical_mean = (technical_skills.corners
-            + technical_skills.crossing
-            + technical_skills.dribbling
-            + technical_skills.finishing
-            + technical_skills.first_touch
-            + technical_skills.free_kicks
-            + technical_skills.heading
-            + technical_skills.long_shots
-            + technical_skills.long_throws
-            + technical_skills.marking
-            + technical_skills.passing
-            + technical_skills.penalty_taking
-            + technical_skills.tackling
-            + technical_skills.technique) as f64
-            / 14.0;
-        let mental_mean = (mental_skills.aggression
-            + mental_skills.anticipation
-            + mental_skills.bravery
-            + mental_skills.composure
-            + mental_skills.concentration
-            + mental_skills.decisions
-            + mental_skills.determination
-            + mental_skills.flair
-            + mental_skills.leadership
-            + mental_skills.off_the_ball
-            + mental_skills.positioning
-            + mental_skills.teamwork
-            + mental_skills.vision
-            + mental_skills.work_rate) as f64
-            / 14.0;
-        let physical_mean = (physical_skills.acceleration
-            + physical_skills.agility
-            + physical_skills.balance
-            + physical_skills.jumping
-            + physical_skills.natural_fitness
-            + physical_skills.pace
-            + physical_skills.stamina
-            + physical_skills.strength) as f64
-            / 8.0;
-
-        let base_value = (technical_mean + mental_mean + physical_mean) / 3.0;
+        let base_value = ((technical_mean + mental_mean + physical_mean) / 3.0) as f64;
 
         BASE_PRICE * base_value
     }

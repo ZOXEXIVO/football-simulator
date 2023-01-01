@@ -1,5 +1,4 @@
 use crate::club::PersonBehaviour;
-use crate::context::GlobalContext;
 use crate::shared::fullname::FullName;
 use crate::{
     CoachFocus, MentalFocusType, Person, PersonAttributes, PhysicalFocusType, Relations, Staff,
@@ -8,15 +7,12 @@ use crate::{
     TechnicalFocusType,
 };
 use chrono::NaiveDate;
-use rand::Rng;
 
 #[derive(Debug)]
 pub struct StaffStub;
 
 impl StaffStub {
     pub fn default() -> Staff {
-        let mut rng = rand::thread_rng();
-
         let staff = Staff {
             id: 0,
             full_name: FullName::with_full(
