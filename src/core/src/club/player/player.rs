@@ -150,16 +150,6 @@ impl Player {
     pub fn growth_potential(&self, now: NaiveDate) -> u8 {
         PlayerUtils::growth_potential(self, now)
     }
-
-    pub fn get_skill(&self) -> u32 {
-        let positions = self.positions();
-        let positions_sum: u32 = positions
-            .iter()
-            .map(|pos| self.skills.get_for_position(*pos))
-            .sum();
-
-        (positions_sum as f32 / positions.len() as f32) as u32
-    }
 }
 
 impl Person for Player {
