@@ -81,25 +81,19 @@ impl Team {
     }
 
     pub fn get_week_salary(&self) -> u32 {
-        let mut result: u32 = 0;
-
-        result += &self
-            .players
+        self.players
             .players
             .iter()
             .filter_map(|p| p.contract.as_ref())
             .map(|c| c.salary)
-            .sum::<u32>();
-
-        result += &self
-            .staffs
-            .staffs
-            .iter()
-            .filter_map(|p| p.contract.as_ref())
-            .map(|c| c.salary)
-            .sum::<u32>();
-
-        result
+            .chain(
+                self.staffs
+                    .staffs
+                    .iter()
+                    .filter_map(|p| p.contract.as_ref())
+                    .map(|c| c.salary),
+            )
+            .sum()
     }
 
     pub fn get_match_squad(&self) -> Squad {
