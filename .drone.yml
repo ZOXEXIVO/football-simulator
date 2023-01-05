@@ -10,7 +10,10 @@ steps:
         path: /var/run/docker.sock
     commands:
       - docker build -t football-simulator:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Football.Dockerfile" .
-    
+    when:
+      branch:
+        - master
+
   - name: clear
     image: docker:dind
     depends_on: [ build ]
@@ -22,6 +25,9 @@ steps:
     commands:
       - docker stop football-simulator || true
       - docker rm football-simulator || true
+    when:
+      branch:
+        - master
 
   - name: deploy
     image: docker:dind
