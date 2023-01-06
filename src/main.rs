@@ -3,6 +3,7 @@ mod ui;
 
 use crate::db::{DatabaseEntity, DatabaseLoader, Generator};
 use crate::ui::assets::static_routes;
+use crate::ui::r#match::routes::match_routes;
 use actix_files::Files;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
@@ -64,6 +65,7 @@ async fn main() {
             .configure(country_routes)
             .configure(league_routes)
             .configure(team_routes)
+            .configure(match_routes)
             .configure(player_routes);
 
         data

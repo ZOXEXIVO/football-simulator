@@ -1,0 +1,99 @@
+﻿{% extends "../../layouts/layout_game.html" %}
+
+{% block pagetitle %}
+ Title
+{% endblock %}
+
+{% block header %}
+
+<script src="/js/graphics"></script>
+
+<div style="float:left;">
+    <div class="club-logo club-default-logo" style="margin-top: 9px;padding: 27px;"></div>
+</div>
+<div style="float:left;">
+    <div class="header-title-block">
+        <div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block leftmenu %}
+<div class="left_col scroll-view">
+    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a><i class="fas fa-inbox"></i>Inbox</a></li>
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+            </ul>
+        </div>
+        <div class="menu_section">
+            <ul class="nav">
+                <li><a href="/teams/schedule"><i class="fas fa-user-friends"></i>Schedule</a></li>
+                <li><a href="/#"><i class="far fa-calendar-alt"></i>Calendar</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block game_content %}
+
+<br/>
+<div class="content">
+    <div class="graphics-js" style="width: 500px;height: 400px">        
+    </div>
+</div>
+
+
+<script>
+    var params = {
+        fullscreen: false
+    };
+    
+    var elem = document.body.getElementsByClassName('graphics-js')[0];
+    
+    debugger;
+    
+    var two = new Two(params).appendTo(elem);
+
+    var circle = two.makeCircle(-70, 0, 50);
+    var rect = two.makeRectangle(70, 0, 100, 100);
+    circle.fill = '#FF8000';
+    rect.fill = 'rgba(0, 200, 255, 0.75)';
+
+    var cx = two.width * 0.5;
+    var cy = two.height * 0.5;
+    var group = two.makeGroup(circle, rect);
+    group.position.set(cx, cy);
+    group.scale = 0;
+    group.noStroke();
+
+    // Bind a function to scale and rotate the group to the animation loop.
+    two.bind('update', update);
+    // Finally, start the animation loop
+    two.play();
+
+    function update(frameCount) {
+        // This code is called every time two.update() is called.
+        if (group.scale > 0.9999) {
+            group.scale = group.rotation = 0;
+        }
+        var t = (1 - group.scale) * 0.125;
+        group.scale += t;
+        group.rotation += t * 4 * Math.PI;
+    }
+    
+</script>
+
+{% endblock %}
