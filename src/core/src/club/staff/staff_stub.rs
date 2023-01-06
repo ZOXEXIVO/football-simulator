@@ -1,10 +1,9 @@
 use crate::club::PersonBehaviour;
 use crate::shared::fullname::FullName;
 use crate::{
-    CoachFocus, MentalFocusType, Person, PersonAttributes, PhysicalFocusType, Relations, Staff,
-    StaffAttributes, StaffCoaching, StaffCollectionResult, StaffDataAnalysis,
-    StaffGoalkeeperCoaching, StaffKnowledge, StaffLicenseType, StaffMedical, StaffMental, TeamType,
-    TechnicalFocusType,
+    CoachFocus, MentalFocusType, PersonAttributes, PhysicalFocusType, Relations, Staff,
+    StaffAttributes, StaffCoaching, StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge,
+    StaffLicenseType, StaffMedical, StaffMental, TechnicalFocusType,
 };
 use chrono::NaiveDate;
 

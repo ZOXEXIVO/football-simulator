@@ -121,7 +121,7 @@ struct Neuron {
 impl Neuron {
     pub fn new(inputs: u32) -> Self {
         Neuron {
-            weights: (0..=inputs).map(|w| random_f64()).collect(),
+            weights: (0..=inputs).map(|_| random_f64()).collect(),
         }
     }
 }

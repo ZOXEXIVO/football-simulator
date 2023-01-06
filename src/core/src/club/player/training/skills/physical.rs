@@ -1,5 +1,5 @@
 ﻿use crate::training::skills::determine_base_value_to_skill_increase;
-use crate::{MentalFocusType, Person, PhysicalFocusType, Player, Staff, TechnicalFocusType};
+use crate::{Person, PhysicalFocusType, Player, Staff};
 use chrono::NaiveDate;
 use std::collections::HashMap;
 

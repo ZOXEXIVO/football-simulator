@@ -7,7 +7,6 @@ use crate::shared::fullname::FullName;
 use crate::utils::{DateUtils, Logging};
 use crate::{
     CoachFocus, Person, PersonAttributes, Relations, StaffAttributes, StaffCollectionResult,
-    StaffDataAnalysis, StaffGoalkeeperCoaching, StaffKnowledge, StaffMedical, StaffMental,
     TeamType,
 };
 use chrono::{NaiveDate, NaiveDateTime};
@@ -75,7 +74,7 @@ impl Staff {
         result
     }
 
-    fn process_contract(&mut self, _: &mut StaffResult, now: NaiveDateTime) {}
+    fn process_contract(&mut self, _: &mut StaffResult, _: NaiveDateTime) {}
 }
 
 //DISPLAY

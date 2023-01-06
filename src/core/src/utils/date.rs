@@ -19,7 +19,7 @@ impl DateUtils {
         let mut current_date = date;
 
         while current_date.weekday() != Weekday::Sat {
-            current_date = current_date.succ();
+            current_date = current_date.succ_opt().unwrap();
         }
 
         current_date

@@ -1,8 +1,6 @@
-﻿use crate::club::utils::PlayerUtils;
-use crate::training::skills::determine_base_value_to_skill_increase;
-use crate::{MentalFocusType, Person, Player, Staff, TechnicalFocusType};
+﻿use crate::training::skills::determine_base_value_to_skill_increase;
+use crate::{MentalFocusType, Player, Staff};
 use chrono::NaiveDate;
-use log::info;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]

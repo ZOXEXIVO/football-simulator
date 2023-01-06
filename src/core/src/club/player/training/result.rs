@@ -1,7 +1,6 @@
 ﻿use crate::training::skills::result::{
     PlayerTrainingMentalResult, PlayerTrainingPhysicalResult, PlayerTrainingTechnicalResult,
 };
-use crate::training::skills::{MentalSkill, PhysicalSkill, TechnicalSkill};
 use crate::SimulatorData;
 
 pub struct PlayerTrainingResult {
