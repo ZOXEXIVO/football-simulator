@@ -1,4 +1,5 @@
-use crate::club::{PlayerPositionType, Player};
+use crate::club::{Player, PlayerPositionType};
+use crate::r#match::FieldPosition;
 use crate::Tactics;
 
 #[derive(Debug)]
@@ -6,10 +7,8 @@ pub struct Squad<'s> {
     pub team_id: u32,
     pub tactics: Tactics,
     pub main_squad: Vec<SquadPlayer<'s>>,
-    pub substitutes: Vec<SquadPlayer<'s>>
+    pub substitutes: Vec<SquadPlayer<'s>>,
 }
-
-impl<'s> Squad<'s> {}
 
 #[derive(Debug)]
 pub struct SquadPlayer<'p> {
