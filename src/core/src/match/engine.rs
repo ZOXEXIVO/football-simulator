@@ -24,10 +24,6 @@ impl<'s> FootballEngine<'s> {
             ball: Ball::new(200, 150),
             players: Vec::new(),
         };
-        
-        let events = Vec::new();
-        
-        events
 
         match_details
     }
@@ -36,46 +32,46 @@ impl<'s> FootballEngine<'s> {
         home_squad: &Squad,
         field: &mut Field,
     ) -> Vec<(SquadPlayer<'s>, FieldPosition)> {
-        let mut players = Vec::with_capacity(home_squad.players.len());
+        let mut players: Vec<(SquadPlayer<'s>, FieldPosition)> = Vec::new();
 
-        let field_width = field.width;
-        let field_height = field.height;
-
-        let defense_count = home_squad
-            .players
-            .iter()
-            .filter(|(_, pos)| *pos == FieldPosition::Defense)
-            .count();
-        let midfield_count = home_squad
-            .players
-            .iter()
-            .filter(|(_, pos)| *pos == FieldPosition::Midfield)
-            .count();
-        let attack_count = home_squad
-            .players
-            .iter()
-            .filter(|(_, pos)| *pos == FieldPosition::Attack)
-            .count();
-
-        let y_step = field_height / (defense_count + midfield_count + attack_count) as u16;
-        let mut current_y = 0;
-
-        for (player, position) in home_squad.players.iter() {
-            match position {
-                FieldPosition::Defense => {
-                    players.push((player, *position));
-                    current_y += y_step;
-                }
-                FieldPosition::Midfield => {
-                    players.push((player, *position));
-                    current_y += y_step;
-                }
-                FieldPosition::Attack => {
-                    players.push((player, *position));
-                    current_y += y_step;
-                }
-            }
-        }
+        // let field_width = field.width;
+        // let field_height = field.height;
+        //
+        // let defense_count = home_squad
+        //     .players
+        //     .iter()
+        //     .filter(|(_, pos)| *pos == FieldPosition::Defense)
+        //     .count();
+        // let midfield_count = home_squad
+        //     .players
+        //     .iter()
+        //     .filter(|(_, pos)| *pos == FieldPosition::Midfield)
+        //     .count();
+        // let attack_count = home_squad
+        //     .players
+        //     .iter()
+        //     .filter(|(_, pos)| *pos == FieldPosition::Attack)
+        //     .count();
+        //
+        // let y_step = field_height / (defense_count + midfield_count + attack_count) as u16;
+        // let mut current_y = 0;
+        //
+        // for (player, position) in home_squad.players.iter() {
+        //     match position {
+        //         FieldPosition::Defense => {
+        //             players.push((player, *position));
+        //             current_y += y_step;
+        //         }
+        //         FieldPosition::Midfield => {
+        //             players.push((player, *position));
+        //             current_y += y_step;
+        //         }
+        //         FieldPosition::Attack => {
+        //             players.push((player, *position));
+        //             current_y += y_step;
+        //         }
+        //     }
+        // }
 
         players
     }

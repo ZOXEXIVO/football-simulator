@@ -11,9 +11,12 @@ pub const IMAGES_CSS: &[u8] = include_bytes!("images.css");
 pub const FLAG_ICONS_GZIPPED_CSS: &[u8] = include_bytes!("flags.css.gz");
 pub const GRAPHICS_JS: &[u8] = include_bytes!("scripts/twojs.js");
 
+pub const IMAGE_POLE_JPEG: &[u8] = include_bytes!("images/pole.jpg");
+
 pub fn static_routes(cfg: &mut ServiceConfig) {
     cfg.service(web::resource("/styles").route(web::get().to(serve_styles)));
     cfg.service(web::resource("/images").route(web::get().to(serve_images)));
+    cfg.service(web::resource("/images/pole").route(web::get().to(serve_pole_image)));
     cfg.service(web::resource("/js/graphics").route(web::get().to(serve_graphics_js)));
     cfg.service(web::resource("/fonts").route(web::get().to(serve_fonts)));
     cfg.service(web::resource("/flags-icons").route(web::get().to(serve_flags_css)));
@@ -31,6 +34,13 @@ pub async fn serve_images() -> Result<HttpResponse> {
         .append_header(("Content-Type", CSS_CONTENT_TYPE))
         .append_header(("Cache-Control", STATIC_FILES_CACHE_CONTROL_HEADER))
         .body(IMAGES_CSS))
+}
+
+pub async fn serve_pole_image() -> Result<HttpResponse> {
+    Ok(HttpResponse::Ok()
+        .append_header(("Content-Type", "image/jpeg"))
+        .append_header(("Cache-Control", STATIC_FILES_CACHE_CONTROL_HEADER))
+        .body(IMAGE_POLE_JPEG))
 }
 
 pub async fn serve_fonts() -> Result<HttpResponse> {

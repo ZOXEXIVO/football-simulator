@@ -1,7 +1,7 @@
 ﻿{% extends "../../layouts/layout_game.html" %}
 
 {% block pagetitle %}
- Title
+Title
 {% endblock %}
 
 {% block header %}
@@ -51,49 +51,47 @@
 
 <br/>
 <div class="content">
-    <div class="graphics-js" style="width: 500px;height: 400px">        
+    <div class="graphics-js" style="width: 100%;height: 100%">
     </div>
 </div>
 
 
 <script>
-    var params = {
+    const params = {
         fullscreen: false
     };
-    
-    var elem = document.body.getElementsByClassName('graphics-js')[0];
-    
-    debugger;
-    
-    var two = new Two(params).appendTo(elem);
 
-    var circle = two.makeCircle(-70, 0, 50);
-    var rect = two.makeRectangle(70, 0, 100, 100);
+    const elem = document.body.getElementsByClassName('graphics-js')[0];
+
+    const two = new Two(params).appendTo(elem);
+
+    
+    //Texture from png
+    const texture = new Two.Texture('/images/pole', function () {
+        const shape = two.makeRectangle(0, 0,texture.image.width , texture.image.height);
+        
+        shape.fill = texture;        
+    });   
+    
+    texture.repeat = 'no-repeat';
+    
+    const circle = two.makeCircle(-70, 0, 50);
     circle.fill = '#FF8000';
-    rect.fill = 'rgba(0, 200, 255, 0.75)';
 
-    var cx = two.width * 0.5;
-    var cy = two.height * 0.5;
-    var group = two.makeGroup(circle, rect);
-    group.position.set(cx, cy);
-    group.scale = 0;
-    group.noStroke();
-
-    // Bind a function to scale and rotate the group to the animation loop.
-    two.bind('update', update);
-    // Finally, start the animation loop
-    two.play();
-
-    function update(frameCount) {
-        // This code is called every time two.update() is called.
-        if (group.scale > 0.9999) {
-            group.scale = group.rotation = 0;
-        }
-        var t = (1 - group.scale) * 0.125;
-        group.scale += t;
-        group.rotation += t * 4 * Math.PI;
-    }
+    two.renderer.setSize(800, 500);
     
+    two.bind('update', update);
+    two.play()
+
+    function update(frameCount) {      
+        // if (group.scale > 0.9999) {
+        //     group.scale = group.rotation = 0;
+        // }
+        // const t = (1 - group.scale) * 0.125;
+        // group.scale += t;
+        // group.rotation += t * 4 * Math.PI;
+    }
+
 </script>
 
 {% endblock %}
