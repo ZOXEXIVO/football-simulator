@@ -7,22 +7,17 @@ use log::debug;
 
 #[derive(Clone)]
 pub struct Match<'m> {
+    id: &'m str,
     league_id: u32,
-    schedule_id: &'m str,
     pub home_team: &'m Team,
     pub away_team: &'m Team,
 }
 
 impl<'m> Match<'m> {
-    pub fn make(
-        league_id: u32,
-        schedule_id: &'m str,
-        home_team: &'m Team,
-        away_team: &'m Team,
-    ) -> Self {
+    pub fn make(id: &'m str, league_id: u32, home_team: &'m Team, away_team: &'m Team) -> Self {
         Match {
+            id,
             league_id,
-            schedule_id,
             home_team,
             away_team,
         }
@@ -45,8 +40,8 @@ impl<'m> Match<'m> {
         );
 
         MatchResult {
+            id: String::from(self.id),
             league_id: self.league_id,
-            schedule_id: String::from(self.schedule_id),
             home_team_id: self.home_team.id,
             home_goals: match_details.score.home,
             away_team_id: self.away_team.id,
@@ -56,9 +51,10 @@ impl<'m> Match<'m> {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct MatchResult {
+    pub id: String,
     pub league_id: u32,
-    pub schedule_id: String,
     pub details: Option<FootballMatchDetails>,
     pub home_team_id: u32,
     pub home_goals: i32,
@@ -69,8 +65,8 @@ pub struct MatchResult {
 impl From<&LeagueMatch> for MatchResult {
     fn from(m: &LeagueMatch) -> Self {
         MatchResult {
+            id: m.id.clone(),
             league_id: m.league_id,
-            schedule_id: m.id.clone(),
             details: None,
             home_team_id: m.home_team_id,
             home_goals: m.result.as_ref().unwrap().home_goals,

@@ -17,15 +17,15 @@ I use only Askama templates to render UI and it was my decision, because i want 
 
 without **npm intstall** and other annoying things :) 
 
-[Player page example](https://football-simulator.org/teams/1/players/1)
+[Player page example](https://football-simulator.org/teams/spartak-moscow/players/0)
 
 ![alt text](docs/images/player.jpg "Player page")
 
-[Club page example](https://football-simulator.org/teams/1)
+[Club page example](https://football-simulator.org/teams/spartak-moscow)
 
 ![alt text](docs/images/club.jpg "Club page")
 
-[League page example](https://football-simulator.org/leagues/0)
+[League page example](https://football-simulator.org/leagues/tinkoff-premier_league)
 
 ![alt text](docs/images/league.jpg "League page")
 

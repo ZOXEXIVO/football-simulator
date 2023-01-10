@@ -29,6 +29,7 @@ pub struct TourSchedule<'s> {
 }
 
 pub struct LeagueScheduleItem<'si> {
+    pub match_id: &'si str,
     pub home_team_id: u32,
     pub home_team_name: &'si str,
     pub home_team_slug: &'si str,
@@ -146,6 +147,8 @@ pub async fn league_get_action(
                         let away_team_data = simulator_data.team_data(item.away_team_id).unwrap();
 
                         LeagueScheduleItem {
+                            match_id: &item.id,
+
                             result: item.result.as_ref().map(|res| LeagueScheduleItemResult {
                                 home_goals: res.home_goals,
                                 away_goals: res.away_goals,

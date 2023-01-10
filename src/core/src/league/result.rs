@@ -45,11 +45,9 @@ impl LeagueResult {
 
         let league = data.league_mut(result.league_id).unwrap();
 
-        league.schedule.update_match_result(
-            &result.schedule_id,
-            result.home_goals,
-            result.away_goals,
-        );
+        league
+            .schedule
+            .update_match_result(&result.id, result.home_goals, result.away_goals);
 
         let home_team = data.team_mut(result.home_team_id).unwrap();
         home_team.match_history.add(MatchHistoryItem::new(

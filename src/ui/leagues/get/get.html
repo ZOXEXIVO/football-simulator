@@ -139,17 +139,19 @@
                                 </a>
                             </td>
                             <td class="score">
-                                {% if item.result.is_some() %}
+                                <a href="/match/{{ id }}/{{ item.match_id }}">
+                                    {% if item.result.is_some() %}
 
-                                {{ item.result.as_ref().unwrap().home_goals }}
-                                -
-                                {{ item.result.as_ref().unwrap().away_goals }}
+                                    {{ item.result.as_ref().unwrap().home_goals }}
+                                    -
+                                    {{ item.result.as_ref().unwrap().away_goals }}
 
-                                {% endif %}
+                                    {% endif %}
 
-                                {% if item.result.is_none() %}
-                                -
-                                {% endif %}
+                                    {% if item.result.is_none() %}
+                                    -
+                                    {% endif %}
+                                </a>                                
                             </td>
                             <td>
                                 <a href="/teams/{{ item.away_team_slug }}">

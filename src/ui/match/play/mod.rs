@@ -7,22 +7,25 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct MatchPlayGetRequest {
+    pub league_id: String,
     pub match_id: String,
 }
 
 #[derive(Template)]
 #[template(path = "match/play/play.html")]
-pub struct MatchPlayGetViewModel {}
+pub struct MatchPlayGetViewModel<'s> {
+    pub league_id: &'s str,
+    pub match_id: &'s str,
+}
 
 pub async fn match_play_get_action(
     state: Data<GameAppData>,
     route_params: web::Path<MatchPlayGetRequest>,
 ) -> Result<HttpResponse> {
-    // let guard = state.data.lock().await;
-    //
-    // let simulator_data = guard.as_ref().unwrap();
-
-    let model = MatchPlayGetViewModel {};
+    let model = MatchPlayGetViewModel {
+        league_id: &route_params.league_id,
+        match_id: &route_params.match_id,
+    };
 
     let html = MatchPlayGetViewModel::render(&model).unwrap();
 

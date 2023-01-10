@@ -1,5 +1,6 @@
 use crate::db::loaders::ContinentEntity;
 use crate::db::{DatabaseEntity, PlayerGenerator, PositionType, StaffGenerator};
+use chrono::{Duration, NaiveDate, NaiveDateTime};
 use core::club::academy::ClubAcademy;
 use core::context::{NaiveTime, Timelike};
 use core::continent::Continent;
@@ -15,13 +16,17 @@ use core::{
     PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, StaffStub, Team,
     TeamReputation, TeamType, TrainingSchedule, Utc,
 };
+use std::ops::Add;
 use std::str::FromStr;
 
 pub struct Generator;
 
 impl Generator {
     pub fn generate(data: &DatabaseEntity) -> SimulatorData {
-        let current_date = Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap();
+        let current_date = NaiveDateTime::new(
+            NaiveDate::from_ymd_opt(2023, 7, 1).unwrap(),
+            NaiveTime::default(),
+        ); // Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap();
 
         let continents = data
             .continents
@@ -118,6 +123,7 @@ impl Generator {
                             to_month: league.settings.season_ending_half.to_month,
                         },
                     },
+                    match_results: Vec::new(),
                     table: LeagueTable::new(&league_clubs),
                     reputation: 0,
                 }

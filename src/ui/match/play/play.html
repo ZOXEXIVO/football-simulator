@@ -57,6 +57,11 @@ Title
 
 
 <script>
+    let matchData = {};
+
+    const leagueId = '{{ league_id }}';
+    const matchId = '{{ match_id }}';
+
     const params = {
         fullscreen: false
     };
@@ -82,18 +87,18 @@ Title
             y: 422
         }
     };
-    
+
     const elem = document.body.getElementsByClassName('graphics-js')[0];
 
     const two = new Two(params).appendTo(elem);
     const group = two.makeGroup();
 
     group.add(createPole());
-    group.add(createBall());   
-    
+    group.add(createBall());
+
     //group.add(poleShape);
     //group.add(ball);
-    
+
     // const texture = new Two.Texture('/images/pole', function () {
     //     const shape = two.makeRectangle(320, 230, 630 , 450);
     //
@@ -118,13 +123,14 @@ Title
     //     group.add(circle3);
     //     group.add(circle4);
     // });
-    
-    
+
+    loadDetails();
+
     two.bind('update', update);
-    two.play()
+
 
     function update(frameCount) {
-        
+
         // if (frameCount % 360 === 0) {
         //     circle.x += 1;
         //     circle.y += 1;
@@ -137,28 +143,68 @@ Title
         //         circle.y = 0;
         //     }
         // }
-        
+
     }
 
     function createPole() {
-        const poleShape = two.makeRectangle(320, 230, 630 , 450);
+        const poleShape = two.makeRectangle(320, 230, 630, 450);
         poleShape.fill = new Two.Texture('/images/pole');
         poleShape.noStroke();
-        
+
         return poleShape;
     }
 
     function createBall() {
         let center_x = pole_coord.tl.x + ((pole_coord.tr.x - pole_coord.tl.x) / 2);
         let center_y = pole_coord.tl.y + ((pole_coord.bl.y - pole_coord.tl.y) / 2);
-      
+
         const ball = two.makeCircle(center_x, center_y, 7);
         ball.noStroke();
 
         ball.fill = new Two.Texture('/images/ball');
-        
+
         return ball;
-    }    
+    }
+
+    function loadDetails() {
+        const url = `/match/${leagueId}/${matchId}/details`;
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(responseJson => {
+                
+                let player_data = responseJson.players_data;
+
+                for (i = 0; i < player_data.length; i++) {
+                    let player = player_data[i];
+
+                    let new_coord = translateXY(player.x, player.y);
+                
+                    const playerModel = two.makeCircle(new_coord.x, new_coord.y, 4);
+                    playerModel.fill = '#289b7c';
+                    group.add(playerModel);
+                }
+
+                two.play();
+            })
+
+            .catch(error => console.log('Error resulting from json(): ' + error))
+    }
+
+    function translateXY(x, y) {
+        let scaleX = 630 / 150;
+        let scaleY = 450 / 100;
+        
+        return {
+            x: (pole_coord.tl.x + x) * scaleX,
+            y: (pole_coord.tl.y + y) * scaleY
+        }
+    }
 </script>
 
 {% endblock %}
