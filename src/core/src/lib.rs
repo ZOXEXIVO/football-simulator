@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
+extern crate core;
 
 mod simulator;
 pub use simulator::*;
