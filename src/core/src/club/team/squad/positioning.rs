@@ -13,8 +13,8 @@ pub const POSITION_POSITIONING: &[(PlayerPositionType, PositionType, PositionTyp
     ),
     (
         PlayerPositionType::DefenderLeft,
-        PositionType::Home(15, 40),
-        PositionType::Away(135, 40),
+        PositionType::Home(25, 20),
+        PositionType::Away(125, 20),
     ),
     (
         PlayerPositionType::DefenderCenter,

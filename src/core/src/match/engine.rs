@@ -51,30 +51,28 @@ fn setup_players<'s>(
 
     // home
     home_squad.main_squad.iter().for_each(|home_player| {
-        let player_positioning = POSITION_POSITIONING
+        POSITION_POSITIONING
             .iter()
-            .find(|(positioning, _, _)| *positioning == home_player.position);
-
-        match player_positioning {
-            Some((_, PositionType::Home(x, y), _)) => {
-                players.push((home_player, FieldPosition::new(*x, *y)));
-            }
-            _ => panic!("Unknown home player position type"),
-        }
+            .filter(|(positioning, _, _)| *positioning == home_player.position)
+            .map(|(_, home_position, _)| home_position)
+            .for_each(|position| {
+                if let PositionType::Home(x, y) = position {
+                    players.push((home_player, FieldPosition::new(*x, *y)));
+                }
+            });
     });
 
     // away
     away_squad.main_squad.iter().for_each(|away_player| {
-        let player_positioning = POSITION_POSITIONING
+        POSITION_POSITIONING
             .iter()
-            .find(|(positioning, _, _)| *positioning == away_player.position);
-
-        match player_positioning {
-            Some((_, _, PositionType::Away(x, y))) => {
-                players.push((away_player, FieldPosition::new(*x, *y)));
-            }
-            _ => panic!("Unknown away player position type"),
-        }
+            .filter(|(positioning, _, _)| *positioning == away_player.position)
+            .map(|(_, _, away_position)| away_position)
+            .for_each(|position| {
+                if let PositionType::Away(x, y) = position {
+                    players.push((away_player, FieldPosition::new(*x, *y)));
+                }
+            });
     });
 
     players
