@@ -184,10 +184,11 @@ Title
                     let player = player_data[i];
 
                     let new_coord = translateXY(player.x, player.y);
-                
+                    
                     const playerModel = two.makeCircle(new_coord.x, new_coord.y, 4);
                     playerModel.fill = '#289b7c';
                     group.add(playerModel);
+                    
                 }
 
                 two.play();
@@ -197,12 +198,12 @@ Title
     }
 
     function translateXY(x, y) {
-        let scaleX = 630 / 150;
-        let scaleY = 450 / 100;
+        let scaleX = 560 / 150;
+        let scaleY = 388 / 100;
         
         return {
-            x: (pole_coord.tl.x + x) * scaleX,
-            y: (pole_coord.tl.y + y) * scaleY
+            x: pole_coord.tl.x + x * scaleX,
+            y: pole_coord.tl.y + y * scaleY
         }
     }
 </script>

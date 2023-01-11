@@ -32,13 +32,13 @@ pub async fn match_details_action(
 
     let league = simulator_data.league(route_params.league_id).unwrap();
 
-    let match_detauls = league
+    let match_details = league
         .match_results
         .iter()
         .find(|m| m.id == route_params.match_id)
         .unwrap();
 
-    let players_data = match_detauls
+    let players_data = match_details
         .details
         .as_ref()
         .unwrap()
