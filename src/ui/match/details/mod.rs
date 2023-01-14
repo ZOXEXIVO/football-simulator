@@ -17,8 +17,8 @@ pub struct MatchDetailsResponse {
 #[derive(Serialize)]
 pub struct PlayerPositionDataDto {
     player_id: u32,
-    x: u16,
-    y: u16,
+    x: i16,
+    y: i16,
     timestamp: u64,
 }
 

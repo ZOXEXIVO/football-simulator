@@ -24,7 +24,7 @@ impl<'m> Match<'m> {
     }
 
     pub fn play(self) -> MatchResult {
-        let mut engine = FootballEngine::new(
+        let engine = FootballEngine::new(
             self.home_team.get_match_squad(),
             self.away_team.get_match_squad(),
         );

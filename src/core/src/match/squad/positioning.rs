@@ -124,6 +124,6 @@ pub const POSITION_POSITIONING: &[(PlayerPositionType, PositionType, PositionTyp
 ];
 
 pub enum PositionType {
-    Home(u16, u16),
-    Away(u16, u16),
+    Home(i16, i16),
+    Away(i16, i16),
 }

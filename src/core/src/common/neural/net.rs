@@ -90,12 +90,9 @@ struct Layer {
 
 impl Layer {
     pub fn new(neurons: u32, inputs: u32) -> Layer {
-        let mut layer = Layer {
-            // neurons
-            neurons: (0..neurons).map(|n| Neuron::new(inputs)).collect(),
-        };
-
-        layer
+        Layer {
+            neurons: (0..neurons).map(|_| Neuron::new(inputs)).collect(),
+        }
     }
 }
 

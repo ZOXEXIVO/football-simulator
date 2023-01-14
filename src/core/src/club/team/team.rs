@@ -1,10 +1,11 @@
 use crate::club::team::behaviour::TeamBehaviour;
 use crate::context::GlobalContext;
+use crate::r#match::{Squad, SquadSelector};
 use crate::shared::CurrencyValue;
 use crate::{
-    MatchHistory, Player, PlayerCollection, Squad, SquadSelector, StaffCollection, Tactics,
-    TacticsPositioning, TacticsSelector, TeamReputation, TeamResult, TeamTraining,
-    TrainingSchedule, TransferItem, Transfers,
+    MatchHistory, Player, PlayerCollection, StaffCollection, Tactics, TacticsPositioning,
+    TacticsSelector, TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
+    Transfers,
 };
 use std::borrow::Cow;
 use std::str::FromStr;

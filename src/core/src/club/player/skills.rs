@@ -1,10 +1,7 @@
-use crate::club::PlayerPositionType;
-use crate::{Player, PlayerTrainingHistory};
-
 const SKILL_MIN_VALUE: f32 = 1.0;
 const SKILL_MAX_VALUE: f32 = 20.0;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PlayerSkills {
     pub technical: Technical,
     pub mental: Mental,
@@ -13,7 +10,7 @@ pub struct PlayerSkills {
 
 impl PlayerSkills {}
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Technical {
     pub corners: f32,
     pub crossing: f32,
@@ -53,7 +50,7 @@ impl Technical {
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Mental {
     pub aggression: f32,
     pub anticipation: f32,
@@ -93,7 +90,7 @@ impl Mental {
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Physical {
     pub acceleration: f32,
     pub agility: f32,

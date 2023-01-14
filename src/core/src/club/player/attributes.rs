@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct PlayerAttributes {
     pub is_banned: bool,
     pub is_injured: bool,
@@ -28,5 +28,3 @@ pub struct PlayerAttributes {
     pub under_21_international_apps: u16,
     pub under_21_international_goals: u16,
 }
-
-impl PlayerAttributes {}

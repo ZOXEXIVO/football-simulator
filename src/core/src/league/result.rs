@@ -1,6 +1,5 @@
 use crate::league::{LeagueTableResult, ScheduleItem};
 use crate::r#match::game::MatchResult;
-use crate::r#match::MatchEvent;
 use crate::simulator::SimulatorData;
 use crate::MatchHistoryItem;
 use chrono::NaiveDateTime;
