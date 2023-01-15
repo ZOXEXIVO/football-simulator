@@ -12,7 +12,8 @@ pub struct MatchDetailsRequest {
 
 #[derive(Serialize)]
 pub struct MatchDetailsResponse {
-    pub position_data: HashMap<u32, Vec<(u64, i16, i16)>>,
+    pub player_data: HashMap<u32, Vec<(u64, i16, i16)>>,
+    pub ball_data: Vec<(u64, i16, i16)>,
 }
 
 pub async fn match_details_action(
@@ -31,11 +32,12 @@ pub async fn match_details_action(
         .find(|m| m.id == route_params.match_id)
         .unwrap();
 
-    let players_data = &match_details.details.as_ref().unwrap().position_data;
+    let match_details = match_details.details.as_ref().unwrap();
 
     Json(MatchDetailsResponse {
-        position_data: players_data
-            .data
+        player_data: match_details
+            .position_data
+            .player_positions
             .iter()
             .map(|(&player_id, data)| {
                 (
@@ -45,6 +47,12 @@ pub async fn match_details_action(
                         .collect(),
                 )
             })
+            .collect(),
+        ball_data: match_details
+            .position_data
+            .ball_positions
+            .iter()
+            .map(|item| (item.timestamp, item.x, item.y))
             .collect(),
     })
 }

@@ -1,7 +1,12 @@
 use crate::r#match::squad::{PositionType, Squad, SquadPlayer, POSITION_POSITIONING};
-use rand::{thread_rng, RngCore};
+use rand::prelude::ThreadRng;
+use rand::{thread_rng, Rng, RngCore};
+use rand_distr::num_traits::real::Real;
 use serde::Serialize;
 use std::collections::HashMap;
+
+const TIME_STEP_MS: u64 = 100;
+const MATCH_TIME: u64 = 45 * 60 * 100;
 
 pub struct FootballEngine {
     pub home_squad: Squad,
@@ -56,52 +61,57 @@ fn setup_players(home_squad: Squad, away_squad: Squad) -> Vec<(SquadPlayer, Fiel
 #[derive(Debug, Clone)]
 pub struct FootballMatchDetails {
     pub score: Score,
-    pub position_data: PlayerPositionData,
+    pub position_data: MatchPositionData,
 }
 
 impl FootballMatchDetails {
     pub fn new(score: Score) -> Self {
         FootballMatchDetails {
             score,
-            position_data: PlayerPositionData::new(),
+            position_data: MatchPositionData::new(),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct PlayerPositionData {
-    pub data: HashMap<u32, Vec<PlayerPositionDataItem>>,
+pub struct MatchPositionData {
+    pub ball_positions: Vec<PositionDataItem>,
+    pub player_positions: HashMap<u32, Vec<PositionDataItem>>,
 }
 
-impl PlayerPositionData {
+impl MatchPositionData {
     pub fn new() -> Self {
-        PlayerPositionData {
-            data: HashMap::new(),
+        MatchPositionData {
+            ball_positions: Vec::new(),
+            player_positions: HashMap::new(),
         }
     }
 
-    pub fn add(&mut self, player_id: u32, timestamp: u64, x: i16, y: i16) {
-        if let Some(player_data) = self.data.get_mut(&player_id) {
-            player_data.push(PlayerPositionDataItem::new(timestamp, x, y));
+    pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, x: i16, y: i16) {
+        if let Some(player_data) = self.player_positions.get_mut(&player_id) {
+            player_data.push(PositionDataItem::new(timestamp, x, y));
         } else {
-            self.data.insert(
-                player_id,
-                vec![PlayerPositionDataItem::new(timestamp, x, y)],
-            );
+            self.player_positions
+                .insert(player_id, vec![PositionDataItem::new(timestamp, x, y)]);
         }
+    }
+
+    pub fn add_ball_positions(&mut self, timestamp: u64, x: i16, y: i16) {
+        self.ball_positions
+            .push(PositionDataItem::new(timestamp, x, y));
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct PlayerPositionDataItem {
+pub struct PositionDataItem {
     pub timestamp: u64,
     pub x: i16,
     pub y: i16,
 }
 
-impl PlayerPositionDataItem {
+impl PositionDataItem {
     pub fn new(timestamp: u64, x: i16, y: i16) -> Self {
-        PlayerPositionDataItem { timestamp, x, y }
+        PositionDataItem { timestamp, x, y }
     }
 }
 
@@ -148,30 +158,37 @@ impl Field {
     }
 
     fn play_first_half(&mut self, match_details: &mut FootballMatchDetails) {
-        let ms_step: i16 = 1;
+        let mut ms_step = 1;
         let mut current_time: u64 = 0;
 
         let mut rnd = thread_rng();
 
-        while current_time <= 45 {
+        while current_time <= MATCH_TIME {
             self.ball.move_ball();
 
             let speed = rnd.next_u32() % 3;
 
+            let mut has_collision = false;
+
             // update player positions and decisions
             for (player, position) in self.players.iter_mut() {
-                player.speed = speed as i16;
-                //player.decision_tree.predict(self.ball, position);
-                position.x += player.speed * ms_step;
-                position.y += player.speed * ms_step;
-            }
-
-            // check for collision with the ball
-            for (player, position) in &mut self.players {
                 if Self::is_collision(&self.ball.position, position) {
+                    has_collision = true;
+
                     player.has_ball = true;
+
+                    self.ball.move_towards_player(position);
                 } else {
                     player.has_ball = false;
+
+                    player.speed = speed as i16;
+                    //player.decision_tree.predict(self.ball, position);
+                    position.x += player.speed * ms_step;
+                    position.y += player.speed * ms_step;
+                }
+
+                if !has_collision {
+                    self.ball.random_movement();
                 }
             }
 
@@ -182,28 +199,42 @@ impl Field {
                 match_details.score.away += 1;
             }
 
-            current_time += ms_step as u64;
+            current_time += TIME_STEP_MS;
 
-            self.write_positions(match_details, current_time);
+            self.write_match_positions(match_details, current_time);
         }
     }
 
     fn is_collision(ball_position: &FieldPosition, player_position: &FieldPosition) -> bool {
-        let threshold = 10;
-        (ball_position.x - player_position.x).abs() <= threshold
-            && (ball_position.y - player_position.y).abs() <= threshold
+        const COLLISION_RADIUS: i16 = 10;
+
+        let x_diff = (ball_position.x - player_position.x).abs();
+        let y_diff = (ball_position.y - player_position.y).abs();
+
+        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
     }
 
     fn play_rest(&mut self, _match_details: &mut FootballMatchDetails) {}
 
     fn play_second_half(&mut self, _match_details: &mut FootballMatchDetails) {}
 
-    pub fn write_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {
+    pub fn write_match_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {
+        // player positions
         self.players.iter().for_each(|(player, position)| {
-            match_details
-                .position_data
-                .add(player.player_id, timestamp, position.x, position.y);
+            match_details.position_data.add_player_positions(
+                player.player_id,
+                timestamp,
+                position.x,
+                position.y,
+            );
         });
+
+        // write positions
+        match_details.position_data.add_ball_positions(
+            timestamp,
+            self.ball.position.x,
+            self.ball.position.y,
+        );
     }
 }
 
@@ -211,6 +242,7 @@ pub struct Ball {
     pub position: FieldPosition,
     pub speed: i16,
     pub direction: FieldPosition,
+    rnd: ThreadRng,
 }
 
 impl Ball {
@@ -219,12 +251,36 @@ impl Ball {
             position: FieldPosition { x, y },
             speed: 0,
             direction: FieldPosition { x: 0, y: 0 },
+            rnd: thread_rng(),
         }
     }
 
     pub fn move_ball(&mut self) {
-        self.position.x += self.speed * self.direction.x;
-        self.position.y += self.speed * self.direction.y;
+        let speed = -2 + (self.rnd.next_u64() % 2) as i16;
+        let speed2 = -2 + (self.rnd.next_u64() % 2) as i16;
+
+        self.position.x += speed * speed2;
+        self.position.y += speed * speed2;
+    }
+
+    fn random_movement(&mut self) {
+        let mut rnd = thread_rng();
+
+        let random_x = rnd.gen_range(-1..2);
+        let random_y = rnd.gen_range(-1..2);
+
+        self.position.x += random_x;
+        self.position.y += random_y;
+    }
+
+    fn move_towards_player(&mut self, player_pos: &FieldPosition) {
+        let dx = (player_pos.x - self.position.x) as f64;
+        let dy = (player_pos.y - self.position.y) as f64;
+
+        let distance = (dx.powi(2) + dy.powi(2)).sqrt();
+
+        self.position.x += ((dx / distance) * self.speed as f64) as i16;
+        self.position.y += ((dy / distance) * self.speed as f64) as i16;
     }
 }
 

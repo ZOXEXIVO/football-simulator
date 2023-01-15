@@ -58,7 +58,15 @@ Title
 
 <script>
     let current_time = 0;
-    let matchData = {};
+    
+    let matchData = {
+        player: {},
+        ball: {
+            ballObject: null,
+            currentCoordIdx: 0,
+            data: []
+        }
+    };
 
     const leagueId = '{{ league_id }}';
     const matchId = '{{ match_id }}';
@@ -95,27 +103,43 @@ Title
     const group = two.makeGroup();
 
     group.add(createPole());
-    group.add(createBall());
-
+    
     loadDetails();
 
     two.bind('update', update);
 
     function update(frameCount) {
-        if (frameCount % 60 === 0) {
-            current_time++;
-            
-            for(let playerKey in Object.keys(matchData)) {
-                let playerData = matchData[playerKey];
-         
+        if (frameCount % 10 === 0) {
+            current_time += 100;
+                        
+            // update players positions
+            for(let playerKey in matchData.player) {
+                let playerData = matchData.player[playerKey];
+                if(!playerData){
+                    continue;
+                }
                 while(playerData.data[playerData.currentCoordIdx].timestamp < current_time) {
                     playerData.currentCoordIdx++;
                 }
 
                 let actualPlayerData = playerData.data[playerData.currentCoordIdx].coord;
-                
+
+                if (!playerData.playerObject || !playerData.playerObject.position){
+                    continue;
+                }
                 playerData.playerObject.position.set(actualPlayerData.x, actualPlayerData.y);
-            }            
+            }      
+            
+            // update ball positions            
+            while(matchData.ball.data[matchData.ball.currentCoordIdx].timestamp < current_time) {
+                matchData.ball.currentCoordIdx++;
+            }
+
+            let actualBallData = matchData.ball.data[matchData.ball.currentCoordIdx].coord;
+            
+            if(matchData.ball.ballObject && actualBallData) {
+                matchData.ball.ballObject.position.set(actualBallData.x, actualBallData.y);
+            }         
         }
     }
 
@@ -151,17 +175,21 @@ Title
         }).then(response => response.json())
             .then(responseJson => {
                 try{
-                    const player_position_data = responseJson.position_data;
-                    for(let playerKey in Object.keys(player_position_data)) {
-                        let playerData = player_position_data[playerKey];
-
+                    const playerPositionData = responseJson.player_data;
+                    for(let playerKey in playerPositionData) {
+                        let playerData = playerPositionData[playerKey];
+                        if(!playerData )
+                        {
+                            continue;
+                        }
+                        
                         let initial_player_data = playerData[0];
 
                         let playerCoord = translateXY(initial_player_data[1], initial_player_data[2]);
 
                         const player_circle = two.makeCircle(playerCoord.x, playerCoord.y, 4);
                         player_circle.fill = '#289b7c';
-
+    
                         group.add(player_circle);
 
                         const playerFullData  = {
@@ -169,27 +197,43 @@ Title
                             currentCoordIdx: 0,
                             data: []
                         };
-
+                      
                         for(let pi = 0;pi < playerData.length;pi++) {
                             let playerRawData = playerData[pi];
 
                             let timestamp = playerRawData[0];
 
-                            let playerCoord = translateXY(playerRawData[1], playerRawData[2]);
-
                             playerFullData.data.push({
                                 timestamp: timestamp,
-                                coord: playerCoord
+                                coord: translateXY(playerRawData[1], playerRawData[2])
                             });
                         }
 
-                        matchData[playerKey] = playerFullData;
+                        matchData.player[playerKey] = playerFullData;
                     }
 
+                    const ballPositionData = responseJson.ball_data;
                     
+                    for(let pi = 0;pi < ballPositionData.length;pi++) {
+                        let ballRawData = ballPositionData[pi];
+
+                        let timestamp = ballRawData[0];
+
+                        let ballCoord = translateXY(ballRawData[1], ballRawData[2]);
+
+                        matchData.ball.data.push({
+                            timestamp: timestamp,
+                            coord: ballCoord
+                        });
+                    }
+                    
+                    const ball = createBall();
+                                        
+                    group.add(ball);
+                    matchData.ball.ballObject = ball;                    
                 } catch (e)
                 {
-
+                    debugger;
                 }
                 
                 two.play();
