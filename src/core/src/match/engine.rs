@@ -1,4 +1,7 @@
 use crate::r#match::squad::{PositionType, Squad, SquadPlayer, POSITION_POSITIONING};
+use rand::{thread_rng, RngCore};
+use serde::Serialize;
+use std::collections::HashMap;
 
 pub struct FootballEngine {
     pub home_squad: Squad,
@@ -53,24 +56,53 @@ fn setup_players(home_squad: Squad, away_squad: Squad) -> Vec<(SquadPlayer, Fiel
 #[derive(Debug, Clone)]
 pub struct FootballMatchDetails {
     pub score: Score,
-    pub players_positions: Vec<PlayerPositionData>,
+    pub position_data: PlayerPositionData,
 }
 
 impl FootballMatchDetails {
-    pub fn new(score: Score, players_positions: Vec<PlayerPositionData>) -> Self {
+    pub fn new(score: Score) -> Self {
         FootballMatchDetails {
             score,
-            players_positions,
+            position_data: PlayerPositionData::new(),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct PlayerPositionData {
-    pub player_id: u32,
+    pub data: HashMap<u32, Vec<PlayerPositionDataItem>>,
+}
+
+impl PlayerPositionData {
+    pub fn new() -> Self {
+        PlayerPositionData {
+            data: HashMap::new(),
+        }
+    }
+
+    pub fn add(&mut self, player_id: u32, timestamp: u64, x: i16, y: i16) {
+        if let Some(player_data) = self.data.get_mut(&player_id) {
+            player_data.push(PlayerPositionDataItem::new(timestamp, x, y));
+        } else {
+            self.data.insert(
+                player_id,
+                vec![PlayerPositionDataItem::new(timestamp, x, y)],
+            );
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct PlayerPositionDataItem {
+    pub timestamp: u64,
     pub x: i16,
     pub y: i16,
-    pub timestamp: u64,
+}
+
+impl PlayerPositionDataItem {
+    pub fn new(timestamp: u64, x: i16, y: i16) -> Self {
+        PlayerPositionDataItem { timestamp, x, y }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -104,10 +136,7 @@ impl Field {
     }
 
     pub fn play(&mut self) -> FootballMatchDetails {
-        let mut match_details = FootballMatchDetails {
-            score: Score { home: 0, away: 0 },
-            players_positions: Vec::new(),
-        };
+        let mut match_details = FootballMatchDetails::new(Score { home: 0, away: 0 });
 
         self.play_first_half(&mut match_details);
 
@@ -119,14 +148,19 @@ impl Field {
     }
 
     fn play_first_half(&mut self, match_details: &mut FootballMatchDetails) {
-        let ms_step: i16 = 100;
-        let mut current_time: u32 = 0;
+        let ms_step: i16 = 1;
+        let mut current_time: u64 = 0;
 
-        while current_time <= 45 * 60 * 1000 {
+        let mut rnd = thread_rng();
+
+        while current_time <= 45 {
             self.ball.move_ball();
+
+            let speed = rnd.next_u32() % 3;
 
             // update player positions and decisions
             for (player, position) in self.players.iter_mut() {
+                player.speed = speed as i16;
                 //player.decision_tree.predict(self.ball, position);
                 position.x += player.speed * ms_step;
                 position.y += player.speed * ms_step;
@@ -148,9 +182,9 @@ impl Field {
                 match_details.score.away += 1;
             }
 
-            current_time += ms_step as u32;
+            current_time += ms_step as u64;
 
-            self.write_positions(match_details);
+            self.write_positions(match_details, current_time);
         }
     }
 
@@ -164,14 +198,11 @@ impl Field {
 
     fn play_second_half(&mut self, _match_details: &mut FootballMatchDetails) {}
 
-    pub fn write_positions(&self, match_details: &mut FootballMatchDetails) {
+    pub fn write_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {
         self.players.iter().for_each(|(player, position)| {
-            match_details.players_positions.push(PlayerPositionData {
-                player_id: player.player_id,
-                x: position.x,
-                y: position.y,
-                timestamp: 0,
-            });
+            match_details
+                .position_data
+                .add(player.player_id, timestamp, position.x, position.y);
         });
     }
 }

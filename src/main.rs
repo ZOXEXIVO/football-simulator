@@ -5,6 +5,7 @@ use crate::db::{DatabaseEntity, DatabaseLoader, Generator};
 use crate::ui::assets::static_routes;
 use crate::ui::r#match::routes::match_routes;
 use actix_files::Files;
+use actix_web::middleware::Compress;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
 use core::utils::TimeEstimation;
@@ -51,7 +52,9 @@ async fn main() {
     const STATIC_ASSETS_DEBUG_FOLDER: &str = "src/ui/assets";
 
     HttpServer::new(move || {
-        let mut data = App::new().app_data(Data::new(data.clone()));
+        let mut data = App::new()
+            .wrap(Compress::default())
+            .app_data(Data::new(data.clone()));
 
         if std::path::Path::new(&STATIC_ASSETS_DEBUG_FOLDER).exists() {
             data = data

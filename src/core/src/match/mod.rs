@@ -1,7 +1,7 @@
 pub mod distributions;
 pub mod engine;
 pub mod game;
-mod squad;
+pub mod squad;
 
 pub use engine::*;
 pub use game::*;

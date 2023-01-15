@@ -57,6 +57,7 @@ Title
 
 
 <script>
+    let current_time = 0;
     let matchData = {};
 
     const leagueId = '{{ league_id }}';
@@ -96,54 +97,26 @@ Title
     group.add(createPole());
     group.add(createBall());
 
-    //group.add(poleShape);
-    //group.add(ball);
-
-    // const texture = new Two.Texture('/images/pole', function () {
-    //     const shape = two.makeRectangle(320, 230, 630 , 450);
-    //
-    //     shape.fill = texture;
-    //
-    //     group.add(shape);
-    //
-    //     const circle = two.makeCircle(603, 38, 4);
-    //     circle.fill = '#289b7c';
-    //
-    //     const circle2 = two.makeCircle(38, 38, 4);
-    //     circle2.fill = '#289b7c';
-    //
-    //     const circle3 = two.makeCircle(603, 422, 4);
-    //     circle3.fill = '#289b7c';
-    //
-    //     const circle4 = two.makeCircle(38, 422, 4);
-    //     circle4.fill = '#289b7c';
-    //
-    //     group.add(circle);
-    //     group.add(circle2);
-    //     group.add(circle3);
-    //     group.add(circle4);
-    // });
-
     loadDetails();
 
     two.bind('update', update);
 
-
     function update(frameCount) {
+        if (frameCount % 60 === 0) {
+            current_time++;
+            
+            for(let playerKey in Object.keys(matchData)) {
+                let playerData = matchData[playerKey];
+         
+                while(playerData.data[playerData.currentCoordIdx].timestamp < current_time) {
+                    playerData.currentCoordIdx++;
+                }
 
-        // if (frameCount % 360 === 0) {
-        //     circle.x += 1;
-        //     circle.y += 1;
-        //
-        //     if(circle.x > 500) {
-        //         circle.x = 0;
-        //     }
-        //
-        //     if (circle.y > 500) {
-        //         circle.y = 0;
-        //     }
-        // }
-
+                let actualPlayerData = playerData.data[playerData.currentCoordIdx].coord;
+                
+                playerData.playerObject.position.set(actualPlayerData.x, actualPlayerData.y);
+            }            
+        }
     }
 
     function createPole() {
@@ -177,20 +150,48 @@ Title
             }
         }).then(response => response.json())
             .then(responseJson => {
-                
-                let player_data = responseJson.players_data;
+                try{
+                    const player_position_data = responseJson.position_data;
+                    for(let playerKey in Object.keys(player_position_data)) {
+                        let playerData = player_position_data[playerKey];
 
-                for (i = 0; i < player_data.length; i++) {
-                    let player = player_data[i];
+                        let initial_player_data = playerData[0];
 
-                    let new_coord = translateXY(player.x, player.y);
+                        let playerCoord = translateXY(initial_player_data[1], initial_player_data[2]);
+
+                        const player_circle = two.makeCircle(playerCoord.x, playerCoord.y, 4);
+                        player_circle.fill = '#289b7c';
+
+                        group.add(player_circle);
+
+                        const playerFullData  = {
+                            playerObject: player_circle,
+                            currentCoordIdx: 0,
+                            data: []
+                        };
+
+                        for(let pi = 0;pi < playerData.length;pi++) {
+                            let playerRawData = playerData[pi];
+
+                            let timestamp = playerRawData[0];
+
+                            let playerCoord = translateXY(playerRawData[1], playerRawData[2]);
+
+                            playerFullData.data.push({
+                                timestamp: timestamp,
+                                coord: playerCoord
+                            });
+                        }
+
+                        matchData[playerKey] = playerFullData;
+                    }
+
                     
-                    const playerModel = two.makeCircle(new_coord.x, new_coord.y, 4);
-                    playerModel.fill = '#289b7c';
-                    group.add(playerModel);
-                    
+                } catch (e)
+                {
+
                 }
-
+                
                 two.play();
             })
 

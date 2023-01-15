@@ -2,6 +2,7 @@
 use actix_web::web;
 use actix_web::web::{Data, Json};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct MatchDetailsRequest {
@@ -11,15 +12,7 @@ pub struct MatchDetailsRequest {
 
 #[derive(Serialize)]
 pub struct MatchDetailsResponse {
-    pub players_data: Vec<PlayerPositionDataDto>,
-}
-
-#[derive(Serialize)]
-pub struct PlayerPositionDataDto {
-    player_id: u32,
-    x: i16,
-    y: i16,
-    timestamp: u64,
+    pub position_data: HashMap<u32, Vec<(u64, i16, i16)>>,
 }
 
 pub async fn match_details_action(
@@ -38,19 +31,20 @@ pub async fn match_details_action(
         .find(|m| m.id == route_params.match_id)
         .unwrap();
 
-    let players_data = match_details
-        .details
-        .as_ref()
-        .unwrap()
-        .players_positions
-        .iter()
-        .map(|p| PlayerPositionDataDto {
-            player_id: 1,
-            x: p.x,
-            y: p.y,
-            timestamp: p.timestamp,
-        })
-        .collect();
+    let players_data = &match_details.details.as_ref().unwrap().position_data;
 
-    Json(MatchDetailsResponse { players_data })
+    Json(MatchDetailsResponse {
+        position_data: players_data
+            .data
+            .iter()
+            .map(|(&player_id, data)| {
+                (
+                    player_id,
+                    data.iter()
+                        .map(|item| (item.timestamp, item.x, item.y))
+                        .collect(),
+                )
+            })
+            .collect(),
+    })
 }
