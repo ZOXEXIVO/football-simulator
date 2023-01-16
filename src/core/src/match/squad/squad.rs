@@ -2,9 +2,10 @@ use crate::club::{Player, PlayerPositionType};
 use crate::r#match::position::FieldPosition;
 use crate::{PersonAttributes, PlayerAttributes, PlayerSkills, Tactics};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Squad {
     pub team_id: u32,
+    pub team_name: String,
     pub tactics: Tactics,
     pub main_squad: Vec<SquadPlayer>,
     pub substitutes: Vec<SquadPlayer>,

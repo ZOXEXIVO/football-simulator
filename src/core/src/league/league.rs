@@ -74,16 +74,19 @@ impl League {
         let mut result = Vec::new(); //TODO capacity
 
         for scheduled_match in scheduled_matches {
+            let home_team = self.get_team(clubs, scheduled_match.home_team_id);
+            let away_team = self.get_team(clubs, scheduled_match.away_team_id);
+
             let match_to_play = Match::make(
-                &scheduled_match.id,
+                scheduled_match.id.clone(),
                 scheduled_match.league_id,
-                self.get_team(clubs, scheduled_match.home_team_id),
-                self.get_team(clubs, scheduled_match.away_team_id),
+                home_team.get_match_squad(),
+                away_team.get_match_squad(),
             );
 
             let message = &format!(
                 "play match: {} - {}",
-                &match_to_play.home_team.name, &match_to_play.away_team.name
+                &match_to_play.home_squad.team_name, &match_to_play.away_squad.team_name
             );
 
             let match_result = Logging::estimate_result(|| match_to_play.play(), message);

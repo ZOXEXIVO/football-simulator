@@ -104,6 +104,7 @@ impl Team {
 
         Squad {
             team_id: self.id,
+            team_name: self.name.clone(),
             tactics: TacticsSelector::select(self, head_coach),
             main_squad: squad.main_squad,
             substitutes: squad.substitutes,
