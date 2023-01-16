@@ -6,21 +6,19 @@ use rand::{thread_rng, RngCore};
 const TIME_STEP_MS: u64 = 100;
 const MATCH_TIME: u64 = 45 * 60 * 100;
 
-pub struct FootballEngine {
-    pub home_squad: Squad,
-    pub away_squad: Squad,
+pub struct FootballEngine<const W: usize, const H: usize> {
+    pub field: Field,
 }
 
-impl FootballEngine {
+impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn new(home_squad: Squad, away_squad: Squad) -> Self {
         FootballEngine {
-            home_squad,
-            away_squad,
+            field: Field::new(W, H, home_squad, away_squad),
         }
     }
 
-    pub fn play(self) -> FootballMatchDetails {
-        Field::new(150, 100, self.home_squad, self.away_squad).play()
+    pub fn play(&mut self) -> FootballMatchDetails {
+        self.field.play()
     }
 }
 
@@ -90,14 +88,14 @@ pub struct Score {
 }
 
 pub struct Field {
-    pub width: u16,
-    pub height: u16,
+    pub width: usize,
+    pub height: usize,
     pub ball: Ball,
     pub players: Vec<SquadPlayer>,
 }
 
 impl Field {
-    pub fn new(width: u16, height: u16, home_squad: Squad, away_squad: Squad) -> Self {
+    pub fn new(width: usize, height: usize, home_squad: Squad, away_squad: Squad) -> Self {
         let mut players_container =
             Vec::with_capacity(home_squad.main_squad.len() + away_squad.main_squad.len());
 
@@ -146,7 +144,7 @@ impl Field {
                     player.has_ball = false;
 
                     player.speed = speed as i16;
-                    //player.decision_tree.predict(self.ball, position);
+
                     player.position.x += player.speed * ms_step;
                     player.position.y += player.speed * ms_step;
                 }
