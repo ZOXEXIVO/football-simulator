@@ -1,6 +1,3 @@
-const SKILL_MIN_VALUE: f32 = 1.0;
-const SKILL_MAX_VALUE: f32 = 20.0;
-
 #[derive(Debug, Copy, Clone)]
 pub struct PlayerSkills {
     pub technical: Technical,

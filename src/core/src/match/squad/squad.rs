@@ -1,4 +1,5 @@
 use crate::club::{Player, PlayerPositionType};
+use crate::r#match::position::FieldPosition;
 use crate::{PersonAttributes, PlayerAttributes, PlayerSkills, Tactics};
 
 #[derive(Debug)]
@@ -12,6 +13,7 @@ pub struct Squad {
 #[derive(Debug, Copy, Clone)]
 pub struct SquadPlayer {
     pub player_id: u32,
+    pub position: FieldPosition,
     pub attributes: PersonAttributes,
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
@@ -24,6 +26,7 @@ impl SquadPlayer {
     pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
         SquadPlayer {
             player_id: player.id,
+            position: FieldPosition::new(0, 0),
             attributes: player.attributes.clone(),
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),

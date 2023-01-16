@@ -42,6 +42,7 @@ impl MatchPositionData {
     }
 }
 
+#[derive(Debug, Copy, Clone)]
 pub struct FieldPosition {
     pub x: i16,
     pub y: i16,

@@ -24,34 +24,46 @@ impl FootballEngine {
     }
 }
 
-fn setup_players(home_squad: Squad, away_squad: Squad) -> Vec<(SquadPlayer, FieldPosition)> {
-    let mut players: Vec<(SquadPlayer, FieldPosition)> = Vec::new();
+fn setup_players(home_squad: Squad, away_squad: Squad) -> Vec<SquadPlayer> {
+    let mut players: Vec<SquadPlayer> = Vec::new();
 
     // home
-    home_squad.main_squad.into_iter().for_each(|home_player| {
-        POSITION_POSITIONING
-            .iter()
-            .filter(|(positioning, _, _)| *positioning == home_player.tactics_position)
-            .map(|(_, home_position, _)| home_position)
-            .for_each(|position| {
-                if let PositionType::Home(x, y) = position {
-                    players.push((home_player, FieldPosition::new(*x, *y)));
-                }
-            });
-    });
+    home_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut home_player| {
+            let tactics_position = home_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, home_position, _)| home_position)
+                .for_each(|position| {
+                    if let PositionType::Home(x, y) = position {
+                        home_player.position = FieldPosition::new(*x, *y);
+                        players.push(home_player);
+                    }
+                });
+        });
 
     // away
-    away_squad.main_squad.into_iter().for_each(|away_player| {
-        POSITION_POSITIONING
-            .iter()
-            .filter(|(positioning, _, _)| *positioning == away_player.tactics_position)
-            .map(|(_, _, away_position)| away_position)
-            .for_each(|position| {
-                if let PositionType::Away(x, y) = position {
-                    players.push((away_player, FieldPosition::new(*x, *y)));
-                }
-            });
-    });
+    away_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut away_player| {
+            let tactics_position = away_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, _, away_position)| away_position)
+                .for_each(|position| {
+                    if let PositionType::Away(x, y) = position {
+                        away_player.position = FieldPosition::new(*x, *y);
+                        players.push(away_player);
+                    }
+                });
+        });
 
     players
 }
@@ -81,7 +93,7 @@ pub struct Field {
     pub width: u16,
     pub height: u16,
     pub ball: Ball,
-    pub players: Vec<(SquadPlayer, FieldPosition)>,
+    pub players: Vec<SquadPlayer>,
 }
 
 impl Field {
@@ -89,8 +101,8 @@ impl Field {
         let mut players_container =
             Vec::with_capacity(home_squad.main_squad.len() + away_squad.main_squad.len());
 
-        for (player, position) in setup_players(home_squad, away_squad) {
-            players_container.push((player, position));
+        for player in setup_players(home_squad, away_squad) {
+            players_container.push(player);
         }
 
         Field {
@@ -114,7 +126,7 @@ impl Field {
     }
 
     fn play_first_half(&mut self, match_details: &mut FootballMatchDetails) {
-        let mut ms_step = 1;
+        let ms_step = 1;
         let mut current_time: u64 = 0;
 
         let mut rnd = thread_rng();
@@ -125,18 +137,18 @@ impl Field {
             let speed = rnd.next_u32() % 3;
 
             // update player positions and decisions
-            for (player, position) in self.players.iter_mut() {
-                if Self::is_collision(&self.ball.position, position) {
+            for player in self.players.iter_mut() {
+                if Self::is_collision(&self.ball.position, &player.position) {
                     player.has_ball = true;
 
-                    self.ball.move_towards_player(position);
+                    self.ball.move_towards_player(&player.position);
                 } else {
                     player.has_ball = false;
 
                     player.speed = speed as i16;
                     //player.decision_tree.predict(self.ball, position);
-                    position.x += player.speed * ms_step;
-                    position.y += player.speed * ms_step;
+                    player.position.x += player.speed * ms_step;
+                    player.position.y += player.speed * ms_step;
                 }
             }
 
@@ -168,12 +180,12 @@ impl Field {
 
     pub fn write_match_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {
         // player positions
-        self.players.iter().for_each(|(player, position)| {
+        self.players.iter().for_each(|player| {
             match_details.position_data.add_player_positions(
                 player.player_id,
                 timestamp,
-                position.x,
-                position.y,
+                player.position.x,
+                player.position.y,
             );
         });
 

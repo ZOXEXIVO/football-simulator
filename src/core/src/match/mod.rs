@@ -1,5 +1,4 @@
 mod ball;
-pub mod distributions;
 pub mod engine;
 pub mod game;
 mod position;

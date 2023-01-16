@@ -45,7 +45,7 @@ impl SquadSelector {
             }
         }
 
-        let mut substitutes: Vec<SquadPlayer> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
+        let substitutes: Vec<SquadPlayer> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
 
         return PlayerSelectionResult {
             main_squad,
