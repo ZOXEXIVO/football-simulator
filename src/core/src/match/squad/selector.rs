@@ -1,5 +1,5 @@
 use crate::club::{PlayerPositionType, Staff};
-use crate::r#match::squad::SquadPlayer;
+use crate::r#match::squad::MatchPlayer;
 use crate::{Player, Team};
 use std::collections::HashSet;
 
@@ -8,44 +8,33 @@ pub struct SquadSelector;
 const DEFAULT_SQUAD_SIZE: usize = 11;
 const DEFAULT_BENCH_SIZE: usize = 6;
 
-const POSITIONS: &[PlayerPositionType; 8] = &[
-    PlayerPositionType::Goalkeeper,
-    PlayerPositionType::DefenderLeft,
-    PlayerPositionType::DefenderCenter,
-    PlayerPositionType::DefenderRight,
-    PlayerPositionType::MidfielderLeft,
-    PlayerPositionType::MidfielderCenter,
-    PlayerPositionType::MidfielderRight,
-    PlayerPositionType::Striker,
-];
-
 pub struct PlayerSelectionResult {
-    pub main_squad: Vec<SquadPlayer>,
-    pub substitutes: Vec<SquadPlayer>,
+    pub main_squad: Vec<MatchPlayer>,
+    pub substitutes: Vec<MatchPlayer>,
 }
 
 impl SquadSelector {
     pub fn select(team: &Team, staff: &Staff) -> PlayerSelectionResult {
         let current_tactics = team.tactics();
 
-        let mut main_squad: Vec<SquadPlayer> = Vec::with_capacity(DEFAULT_SQUAD_SIZE);
+        let mut main_squad: Vec<MatchPlayer> = Vec::with_capacity(DEFAULT_SQUAD_SIZE);
 
         let mut selected_players = HashSet::new();
 
         for player_position in current_tactics.positions() {
             for position_player in select_by_type(team, player_position) {
                 if staff.relations.is_favorite_player(position_player.id) {
-                    main_squad.push(SquadPlayer::from_player(&position_player, *player_position))
+                    main_squad.push(MatchPlayer::from_player(&position_player, *player_position))
                 } else {
                     // TODO
-                    main_squad.push(SquadPlayer::from_player(&position_player, *player_position))
+                    main_squad.push(MatchPlayer::from_player(&position_player, *player_position))
                 }
 
                 selected_players.insert(position_player.id);
             }
         }
 
-        let substitutes: Vec<SquadPlayer> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
+        let substitutes: Vec<MatchPlayer> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
 
         return PlayerSelectionResult {
             main_squad,

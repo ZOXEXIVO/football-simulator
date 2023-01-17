@@ -2,19 +2,19 @@ use super::engine::FootballEngine;
 use crate::r#match::engine::FootballMatchDetails;
 
 use crate::league::LeagueMatch;
-use crate::r#match::Squad;
+use crate::r#match::TeamSquad;
 use log::debug;
 
 #[derive(Debug, Clone)]
 pub struct Match {
     id: String,
     league_id: u32,
-    pub home_squad: Squad,
-    pub away_squad: Squad,
+    pub home_squad: TeamSquad,
+    pub away_squad: TeamSquad,
 }
 
 impl Match {
-    pub fn make(id: String, league_id: u32, home_squad: Squad, away_squad: Squad) -> Self {
+    pub fn make(id: String, league_id: u32, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         Match {
             id,
             league_id,

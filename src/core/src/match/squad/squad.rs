@@ -3,16 +3,16 @@ use crate::r#match::position::FieldPosition;
 use crate::{PersonAttributes, PlayerAttributes, PlayerSkills, Tactics};
 
 #[derive(Debug, Clone)]
-pub struct Squad {
+pub struct TeamSquad {
     pub team_id: u32,
     pub team_name: String,
     pub tactics: Tactics,
-    pub main_squad: Vec<SquadPlayer>,
-    pub substitutes: Vec<SquadPlayer>,
+    pub main_squad: Vec<MatchPlayer>,
+    pub substitutes: Vec<MatchPlayer>,
 }
 
 #[derive(Debug, Copy, Clone)]
-pub struct SquadPlayer {
+pub struct MatchPlayer {
     pub player_id: u32,
     pub position: FieldPosition,
     pub attributes: PersonAttributes,
@@ -23,9 +23,9 @@ pub struct SquadPlayer {
     pub has_ball: bool,
 }
 
-impl SquadPlayer {
+impl MatchPlayer {
     pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
-        SquadPlayer {
+        MatchPlayer {
             player_id: player.id,
             position: FieldPosition::new(0, 0),
             attributes: player.attributes.clone(),

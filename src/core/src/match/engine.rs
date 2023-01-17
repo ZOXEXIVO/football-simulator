@@ -1,6 +1,6 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::position::{FieldPosition, MatchPositionData};
-use crate::r#match::squad::{PositionType, Squad, SquadPlayer, POSITION_POSITIONING};
+use crate::r#match::squad::{MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING};
 use rand::{thread_rng, RngCore};
 
 const TIME_STEP_MS: u64 = 100;
@@ -11,7 +11,7 @@ pub struct FootballEngine<const W: usize, const H: usize> {
 }
 
 impl<const W: usize, const H: usize> FootballEngine<W, H> {
-    pub fn new(home_squad: Squad, away_squad: Squad) -> Self {
+    pub fn new(home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         FootballEngine {
             field: Field::new(W, H, home_squad, away_squad),
         }
@@ -20,50 +20,6 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn play(&mut self) -> FootballMatchDetails {
         self.field.play()
     }
-}
-
-fn setup_players(home_squad: Squad, away_squad: Squad) -> Vec<SquadPlayer> {
-    let mut players: Vec<SquadPlayer> = Vec::new();
-
-    // home
-    home_squad
-        .main_squad
-        .into_iter()
-        .for_each(|mut home_player| {
-            let tactics_position = home_player.tactics_position;
-
-            POSITION_POSITIONING
-                .iter()
-                .filter(|(positioning, _, _)| *positioning == tactics_position)
-                .map(|(_, home_position, _)| home_position)
-                .for_each(|position| {
-                    if let PositionType::Home(x, y) = position {
-                        home_player.position = FieldPosition::new(*x, *y);
-                        players.push(home_player);
-                    }
-                });
-        });
-
-    // away
-    away_squad
-        .main_squad
-        .into_iter()
-        .for_each(|mut away_player| {
-            let tactics_position = away_player.tactics_position;
-
-            POSITION_POSITIONING
-                .iter()
-                .filter(|(positioning, _, _)| *positioning == tactics_position)
-                .map(|(_, _, away_position)| away_position)
-                .for_each(|position| {
-                    if let PositionType::Away(x, y) = position {
-                        away_player.position = FieldPosition::new(*x, *y);
-                        players.push(away_player);
-                    }
-                });
-        });
-
-    players
 }
 
 #[derive(Debug, Clone)]
@@ -91,15 +47,15 @@ pub struct Field {
     pub width: usize,
     pub height: usize,
     pub ball: Ball,
-    pub players: Vec<SquadPlayer>,
+    pub players: Vec<MatchPlayer>,
 }
 
 impl Field {
-    pub fn new(width: usize, height: usize, home_squad: Squad, away_squad: Squad) -> Self {
+    pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         let mut players_container =
             Vec::with_capacity(home_squad.main_squad.len() + away_squad.main_squad.len());
 
-        for player in setup_players(home_squad, away_squad) {
+        for player in setup_player_on_field(home_squad, away_squad) {
             players_container.push(player);
         }
 
@@ -201,4 +157,48 @@ pub enum MatchEvent {
     Goal(u32),
     Assist(u32),
     Injury(u32),
+}
+
+fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<MatchPlayer> {
+    let mut players: Vec<MatchPlayer> = Vec::new();
+
+    // home
+    home_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut home_player| {
+            let tactics_position = home_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, home_position, _)| home_position)
+                .for_each(|position| {
+                    if let PositionType::Home(x, y) = position {
+                        home_player.position = FieldPosition::new(*x, *y);
+                        players.push(home_player);
+                    }
+                });
+        });
+
+    // away
+    away_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut away_player| {
+            let tactics_position = away_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, _, away_position)| away_position)
+                .for_each(|position| {
+                    if let PositionType::Away(x, y) = position {
+                        away_player.position = FieldPosition::new(*x, *y);
+                        players.push(away_player);
+                    }
+                });
+        });
+
+    players
 }

@@ -1,6 +1,6 @@
 use crate::club::team::behaviour::TeamBehaviour;
 use crate::context::GlobalContext;
-use crate::r#match::{Squad, SquadSelector};
+use crate::r#match::{SquadSelector, TeamSquad};
 use crate::shared::CurrencyValue;
 use crate::{
     MatchHistory, Player, PlayerCollection, StaffCollection, Tactics, TacticsPositioning,
@@ -97,12 +97,12 @@ impl Team {
             .sum()
     }
 
-    pub fn get_match_squad(&self) -> Squad {
+    pub fn get_match_squad(&self) -> TeamSquad {
         let head_coach = self.staffs.head_coach();
 
         let squad = SquadSelector::select(self, head_coach);
 
-        Squad {
+        TeamSquad {
             team_id: self.id,
             team_name: self.name.clone(),
             tactics: TacticsSelector::select(self, head_coach),
