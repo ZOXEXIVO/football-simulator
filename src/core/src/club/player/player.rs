@@ -220,7 +220,9 @@ impl PlayerCollection {
         let mut outgoing_players = Vec::with_capacity(DEFAULT_PLAYER_TRANSFER_BUFFER_SIZE);
 
         for transfer_request_player_id in player_results.iter().flat_map(|p| &p.transfer_requests) {
-            outgoing_players.push(self.take(transfer_request_player_id))
+            if let Some(player) = self.take_player(transfer_request_player_id) {
+                outgoing_players.push(player)
+            }
         }
 
         PlayerCollectionResult::new(player_results, outgoing_players)
@@ -251,13 +253,12 @@ impl PlayerCollection {
         self.players.iter().map(|player| player).collect()
     }
 
-    pub fn take(&mut self, player_id: &u32) -> Player {
-        let player_idx = self
-            .players
-            .iter()
-            .position(|p| p.id == *player_id)
-            .unwrap();
-        self.players.remove(player_idx)
+    pub fn take_player(&mut self, player_id: &u32) -> Option<Player> {
+        let player_idx = self.players.iter().position(|p| p.id == *player_id);
+        match player_idx {
+            Some(idx) => Some(self.players.remove(idx)),
+            None => None,
+        }
     }
 }
 
