@@ -68,15 +68,15 @@ impl Field {
     }
 
     pub fn play(&mut self) -> FootballMatchDetails {
-        let mut match_details = FootballMatchDetails::new(Score { home: 0, away: 0 });
+        let mut result = FootballMatchDetails::new(Score { home: 0, away: 0 });
 
-        self.play_first_half(&mut match_details);
+        self.play_first_half(&mut result);
 
-        self.play_rest(&mut match_details);
+        self.play_rest(&mut result);
 
-        self.play_second_half(&mut match_details);
+        self.play_second_half(&mut result);
 
-        match_details
+        result
     }
 
     fn play_first_half(&mut self, match_details: &mut FootballMatchDetails) {
@@ -130,7 +130,9 @@ impl Field {
 
     fn play_rest(&mut self, _match_details: &mut FootballMatchDetails) {}
 
-    fn play_second_half(&mut self, _match_details: &mut FootballMatchDetails) {}
+    fn play_second_half(&mut self, _match_details: &mut FootballMatchDetails) {
+        self.ball.reset();
+    }
 
     pub fn write_match_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {
         // player positions

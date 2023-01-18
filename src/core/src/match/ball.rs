@@ -3,6 +3,7 @@ use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
 
 pub struct Ball {
+    pub start_position: FieldPosition,
     pub position: FieldPosition,
     pub speed: i16,
     pub direction: FieldPosition,
@@ -13,6 +14,7 @@ impl Ball {
     pub fn new(x: i16, y: i16) -> Self {
         Ball {
             position: FieldPosition { x, y },
+            start_position: FieldPosition { x, y },
             speed: 0,
             direction: FieldPosition { x: 0, y: 0 },
             rnd: thread_rng(),
@@ -35,5 +37,10 @@ impl Ball {
 
         self.position.x += ((dx / distance) * self.speed as f64) as i16;
         self.position.y += ((dy / distance) * self.speed as f64) as i16;
+    }
+
+    pub fn reset(&mut self) {
+        self.position.x = self.start_position.x;
+        self.position.y = self.start_position.y;
     }
 }
