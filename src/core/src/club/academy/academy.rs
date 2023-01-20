@@ -9,7 +9,7 @@ use crate::PlayerGenerator;
 pub struct ClubAcademy {
     settings: AcademySettings,
     players: Vec<AcademyPlayer>,
-    level: u8,
+    _level: u8,
 }
 
 impl ClubAcademy {
@@ -17,7 +17,7 @@ impl ClubAcademy {
         ClubAcademy {
             settings: AcademySettings::default(),
             players: Vec::new(),
-            level,
+            _level: level,
         }
     }
 

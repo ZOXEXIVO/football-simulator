@@ -1,6 +1,7 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::position::{FieldPosition, MatchPositionData};
-use crate::r#match::squad::{MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING};
+use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
+use crate::r#match::MatchPlayer;
 use rand::{thread_rng, RngCore};
 
 const TIME_STEP_MS: u64 = 100;

@@ -1,5 +1,5 @@
 use crate::club::{PlayerPositionType, Staff};
-use crate::r#match::squad::MatchPlayer;
+use crate::r#match::player::MatchPlayer;
 use crate::{Player, Team};
 use std::collections::HashSet;
 
