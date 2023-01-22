@@ -9,7 +9,7 @@ pub struct MatchPlayer {
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
-    pub speed: i16,
+    pub velocity: f32,
     pub has_ball: bool,
 }
 
@@ -22,7 +22,7 @@ impl MatchPlayer {
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            speed: 0,
+            velocity: 0.0,
             has_ball: false,
         }
     }

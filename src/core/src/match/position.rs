@@ -1,4 +1,5 @@
 ﻿use std::collections::HashMap;
+use std::ops::{Add, Deref, Mul, Sub};
 
 #[derive(Debug, Clone)]
 pub struct PositionDataItem {
@@ -51,5 +52,76 @@ pub struct FieldPosition {
 impl FieldPosition {
     pub fn new(x: i16, y: i16) -> Self {
         FieldPosition { x, y }
+    }
+
+    pub fn length(&self) -> f32 {
+        (self.x.pow(2) + self.y.pow(2)) as f32
+    }
+
+    pub fn normalize(&self) -> FieldPosition {
+        let len = self.length().sqrt();
+        if len != 0.0 {
+            FieldPosition {
+                x: (self.x as f32 / len) as i16,
+                y: (self.y as f32 / len) as i16,
+            }
+        } else {
+            *self
+        }
+    }
+}
+
+impl Sub for FieldPosition {
+    type Output = FieldPosition;
+
+    fn sub(self, other: FieldPosition) -> FieldPosition {
+        FieldPosition {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+
+impl Sub<f32> for FieldPosition {
+    type Output = FieldPosition;
+
+    fn sub(self, other: f32) -> FieldPosition {
+        FieldPosition {
+            x: (self.x as f32 - other) as i16,
+            y: (self.y as f32 - other) as i16,
+        }
+    }
+}
+
+impl Sub<i16> for FieldPosition {
+    type Output = FieldPosition;
+
+    fn sub(self, other: i16) -> FieldPosition {
+        FieldPosition {
+            x: self.x - other,
+            y: self.y - other,
+        }
+    }
+}
+
+impl Add<f32> for FieldPosition {
+    type Output = FieldPosition;
+
+    fn add(self, other: f32) -> FieldPosition {
+        FieldPosition {
+            x: (self.x as f32 + other) as i16,
+            y: (self.y as f32 + other) as i16,
+        }
+    }
+}
+
+impl Mul<f32> for FieldPosition {
+    type Output = FieldPosition;
+
+    fn mul(self, other: f32) -> FieldPosition {
+        FieldPosition {
+            x: (self.x as f32 * other) as i16,
+            y: (self.y as f32 * other) as i16,
+        }
     }
 }

@@ -5,7 +5,15 @@ pub struct PlayerSkills {
     pub physical: Physical,
 }
 
-impl PlayerSkills {}
+impl PlayerSkills {
+    pub fn max_speed(&self) -> f32 {
+        (self.physical.acceleration
+            + self.physical.agility
+            + self.physical.balance
+            + self.physical.pace)
+            / 4.0
+    }
+}
 
 #[derive(Debug, Copy, Clone)]
 pub struct Technical {

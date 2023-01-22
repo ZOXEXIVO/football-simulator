@@ -81,7 +81,7 @@ impl Field {
     }
 
     fn play_first_half(&mut self, match_details: &mut FootballMatchDetails) {
-        let ms_step = 1;
+        let ms_step: f32 = 1.0;
         let mut current_time: u64 = 0;
 
         let mut rnd = thread_rng();
@@ -100,10 +100,10 @@ impl Field {
                 } else {
                     player.has_ball = false;
 
-                    player.speed = speed as i16;
+                    player.velocity = speed as f32;
 
-                    player.position.x += player.speed * ms_step;
-                    player.position.y += player.speed * ms_step;
+                    player.position.x += (player.velocity * ms_step) as i16;
+                    player.position.y += (player.velocity * ms_step) as i16;
                 }
             }
 
