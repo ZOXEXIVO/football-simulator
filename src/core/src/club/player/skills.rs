@@ -13,6 +13,16 @@ impl PlayerSkills {
             + self.physical.pace)
             / 4.0
     }
+
+    pub fn walking_speed(&self) -> f32 {
+        let walking_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.1;
+        walking_speed
+    }
+
+    pub fn running_speed(&self) -> f32 {
+        let running_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.15;
+        running_speed
+    }
 }
 
 #[derive(Debug, Copy, Clone)]

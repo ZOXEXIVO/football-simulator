@@ -9,12 +9,14 @@ const MATCH_TIME: u64 = 45 * 60 * 100;
 
 pub struct FootballEngine<const W: usize, const H: usize> {
     pub field: Field,
+    pub state: GameState,
 }
 
 impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn new(home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         FootballEngine {
             field: Field::new(W, H, home_squad, away_squad),
+            state: GameState::FirstHalf,
         }
     }
 
@@ -71,27 +73,17 @@ impl Field {
     pub fn play(&mut self) -> FootballMatchDetails {
         let mut result = FootballMatchDetails::new(Score { home: 0, away: 0 });
 
-        self.play_first_half(&mut result);
-
-        self.play_rest(&mut result);
-
-        self.play_second_half(&mut result);
+        self.play_inner(&mut result);
 
         result
     }
 
-    fn play_first_half(&mut self, match_details: &mut FootballMatchDetails) {
-        let ms_step: f32 = 1.0;
+    fn play_inner(&mut self, match_details: &mut FootballMatchDetails) {
         let mut current_time: u64 = 0;
-
-        let mut rnd = thread_rng();
 
         while current_time <= MATCH_TIME {
             self.ball.move_ball();
 
-            let speed = rnd.next_u32() % 3;
-
-            // update player positions and decisions
             for player in self.players.iter_mut() {
                 if Self::is_collision(&self.ball.position, &player.position) {
                     player.has_ball = true;
@@ -100,10 +92,7 @@ impl Field {
                 } else {
                     player.has_ball = false;
 
-                    player.velocity = speed as f32;
-
-                    player.position.x += (player.velocity * ms_step) as i16;
-                    player.position.y += (player.velocity * ms_step) as i16;
+                    player.update();
                 }
             }
 
@@ -127,12 +116,6 @@ impl Field {
         let y_diff = (ball_position.y - player_position.y).abs();
 
         x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
-    }
-
-    fn play_rest(&mut self, _match_details: &mut FootballMatchDetails) {}
-
-    fn play_second_half(&mut self, _match_details: &mut FootballMatchDetails) {
-        self.ball.reset();
     }
 
     pub fn write_match_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {
@@ -204,4 +187,15 @@ fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<Ma
         });
 
     players
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum GameState {
+    FirstHalf,
+    SecondHalf,
+    ExtraTime,
+    PenaltyShootout,
+    Halftime,
+    Fulltime,
+    GameOver,
 }

@@ -1,5 +1,6 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
+use rand::{thread_rng, Rng};
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -11,6 +12,7 @@ pub struct MatchPlayer {
     pub tactics_position: PlayerPositionType,
     pub velocity: f32,
     pub has_ball: bool,
+    pub state: PlayerState,
 }
 
 impl MatchPlayer {
@@ -24,6 +26,120 @@ impl MatchPlayer {
             tactics_position: position,
             velocity: 0.0,
             has_ball: false,
+            state: PlayerState::Standing,
         }
     }
+
+    pub fn update(&mut self) {
+        self.update_state();
+        self.update_condition();
+        self.move_to();
+    }
+
+    fn update_state(&mut self) {
+        match self.state {
+            PlayerState::Standing => {
+                self.velocity = 0.0;
+                // Check for transition to walking or running state
+            }
+            PlayerState::Walking => {
+                self.velocity = self.skills.walking_speed();
+                // Check for transition to standing or running state
+            }
+            PlayerState::Running => {
+                self.velocity = self.skills.running_speed();
+                // Check for transition to standing or walking state
+            }
+            PlayerState::Tackling => {
+                // let tackling_success = self.skills.tackling() * self.player_attributes.condition;
+                // if tackling_success > 50.0 {
+                //     self.has_ball = true;
+                // }
+                // // Check for transition to standing state
+                // if self.player_attributes.condition < 20.0 {
+                //     self.state = PlayerState::Standing;
+                // }
+            }
+            PlayerState::Shooting => {
+                // let distance_to_goal = (self.position.x - self.field.width as i16 / 2).abs();
+                // if distance_to_goal < 50 {
+                //     let mut rng = thread_rng();
+                //     let shot_success = rng.gen_range(0, 100);
+                //
+                //     let shooting_skill = self.skills.technical.finishing;
+                //
+                //     if shot_success < shooting_skill {
+                //         if self.position.x < self.field.width as i16 / 2 {
+                //             self.field.home_goals += 1;
+                //         } else {
+                //             self.field.away_goals += 1;
+                //         }
+                //     }
+                // }
+
+                self.state = PlayerState::Standing;
+            }
+            PlayerState::Passing => {
+                // if self.has_ball {
+                //     // find closest teammate
+                //     let closest_teammate = self.find_closest_teammate();
+                //     // calculate pass vector
+                //     let pass_vector = self.calculate_pass_vector(&closest_teammate);
+                //     // pass the ball to the teammate
+                //     self.pass_ball(pass_vector);
+                //     // transition to standing state
+                //     self.state = PlayerState::Standing;
+                // }
+            }
+        }
+    }
+
+    fn find_closest_teammate(&self) -> Option<MatchPlayer> {
+        None
+        // let mut closest_teammate = None;
+        // let mut closest_distance = std::f32::MAX;
+        //
+        // for teammate in team {
+        //     if player.player_id != teammate.player_id {
+        //         let distance = (teammate.position.x - player.position.x).powi(2)
+        //             + (teammate.position.y - player.position.y).powi(2);
+        //         if distance < closest_distance {
+        //             closest_distance = distance;
+        //             closest_teammate = Some(teammate.clone());
+        //         }
+        //     }
+        // }
+        //
+        // closest_teammate
+    }
+
+    // fn calculate_pass_vector(&self, teammate: &MatchPlayer) -> Vector {
+    //     // code to calculate pass vector
+    // }
+    //
+    // fn pass_ball(&mut self, pass_vector: Vector) {
+    //     // code to pass the ball to the teammate
+    // }
+
+    fn update_condition(&mut self) {
+        let condition = self.player_attributes.condition as f32;
+        let max_speed = self.skills.max_speed();
+
+        self.velocity = max_speed * (condition / 100.0);
+    }
+
+    fn move_to(&mut self) {
+        self.position.x += self.velocity as i16;
+        self.position.y += self.velocity as i16;
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum PlayerState {
+    Standing,
+    Walking,
+    Running,
+    Tackling,
+    Shooting,
+    Passing,
 }
