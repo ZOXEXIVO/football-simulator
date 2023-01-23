@@ -30,13 +30,17 @@ impl MatchPlayer {
         }
     }
 
-    pub fn update(&mut self) {
-        self.update_state();
-        self.update_condition();
-        self.move_to();
+    pub fn update(&mut self) -> Vec<PlayerUpdateEvent> {
+        let mut result = Vec::new();
+
+        self.update_state(&mut result);
+        self.update_condition(&mut result);
+        self.move_to(&mut result);
+
+        result
     }
 
-    fn update_state(&mut self) {
+    fn update_state(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
         match self.state {
             PlayerState::Standing => {
                 self.velocity = 0.0;
@@ -121,14 +125,16 @@ impl MatchPlayer {
     //     // code to pass the ball to the teammate
     // }
 
-    fn update_condition(&mut self) {
+    fn check_ball_collision(&mut self) {}
+
+    fn update_condition(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
         let condition = self.player_attributes.condition as f32;
         let max_speed = self.skills.max_speed();
 
         self.velocity = max_speed * (condition / 100.0);
     }
 
-    fn move_to(&mut self) {
+    fn move_to(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
         self.position.x += self.velocity as i16;
         self.position.y += self.velocity as i16;
     }
@@ -142,4 +148,8 @@ pub enum PlayerState {
     Tackling,
     Shooting,
     Passing,
+}
+
+pub enum PlayerUpdateEvent {
+    Goal(u32),
 }

@@ -21,7 +21,24 @@ impl Ball {
         }
     }
 
-    pub fn move_ball(&mut self) {
+    pub fn update(&mut self) -> Vec<BallUpdateEvent> {
+        let mut result = Vec::new();
+
+        self.move_to(&mut result);
+        self.check_goal(&mut result);
+
+        result
+    }
+
+    fn check_goal(&mut self, result: &mut Vec<BallUpdateEvent>) {
+        // if self.position.x >= self.width as i16 {
+        //     match_details.score.home += 1;
+        // } else if self.position.x <= 0 {
+        //     match_details.score.away += 1;
+        // }
+    }
+
+    fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
         let speed = self.rnd.gen_range(-2..2) as i16;
         let speed2 = self.rnd.gen_range(-2..2) as i16;
 
@@ -43,4 +60,8 @@ impl Ball {
         self.position.x = self.start_position.x;
         self.position.y = self.start_position.y;
     }
+}
+
+pub enum BallUpdateEvent {
+    Goal,
 }

@@ -1,11 +1,11 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::position::{FieldPosition, MatchPositionData};
 use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
-use crate::r#match::MatchPlayer;
+use crate::r#match::{MatchPlayer, PlayerUpdateEvent};
 use rand::{thread_rng, RngCore};
 
-const TIME_STEP_MS: u64 = 100;
-const MATCH_TIME: u64 = 45 * 60 * 100;
+const MATCH_TIME_INCREMENT_MS: u64 = 100;
+const MATCH_TIME_MS: u64 = 45 * 60 * 100;
 
 pub struct FootballEngine<const W: usize, const H: usize> {
     pub field: Field,
@@ -81,29 +81,21 @@ impl Field {
     fn play_inner(&mut self, match_details: &mut FootballMatchDetails) {
         let mut current_time: u64 = 0;
 
-        while current_time <= MATCH_TIME {
-            self.ball.move_ball();
+        while current_time <= MATCH_TIME_MS {
+            let ball_evens = self.ball.update();
 
-            for player in self.players.iter_mut() {
-                if Self::is_collision(&self.ball.position, &player.position) {
-                    player.has_ball = true;
+            let player_events: Vec<PlayerUpdateEvent> =
+                self.players.iter_mut().flat_map(|p| p.update()).collect();
 
-                    self.ball.move_towards_player(&player.position);
-                } else {
-                    player.has_ball = false;
+            let players_len = self.players.len();
 
-                    player.update();
-                }
+            for player_idx in 0..players_len {
+                let player = &mut self.players[player_idx];
+
+                player.update();
             }
 
-            // check for goal
-            if self.ball.position.x >= self.width as i16 {
-                match_details.score.home += 1;
-            } else if self.ball.position.x <= 0 {
-                match_details.score.away += 1;
-            }
-
-            current_time += TIME_STEP_MS;
+            current_time += MATCH_TIME_INCREMENT_MS;
 
             self.write_match_positions(match_details, current_time);
         }
