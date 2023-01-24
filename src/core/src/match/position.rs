@@ -125,3 +125,9 @@ impl Mul<f32> for FieldPosition {
         }
     }
 }
+
+impl PartialEq for FieldPosition {
+    fn eq(&self, other: &FieldPosition) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}

@@ -2,7 +2,6 @@ use crate::r#match::ball::Ball;
 use crate::r#match::position::{FieldPosition, MatchPositionData};
 use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
 use crate::r#match::{MatchPlayer, PlayerUpdateEvent};
-use rand::{thread_rng, RngCore};
 
 const MATCH_TIME_INCREMENT_MS: u64 = 100;
 const MATCH_TIME_MS: u64 = 45 * 60 * 100;
@@ -90,9 +89,20 @@ impl Field {
             let players_len = self.players.len();
 
             for player_idx in 0..players_len {
-                let player = &mut self.players[player_idx];
+                for other_player_idx in 0..players_len {
+                    if player_idx == other_player_idx {
+                        continue;
+                    }
 
-                player.update();
+                    let player = &mut self.players[player_idx];
+                    let other_player = &mut self.players[other_player_idx];
+
+                    player.update();
+
+                    if player.position == other_player.position {
+                        //player.collide_with(other_player);
+                    }
+                }
             }
 
             current_time += MATCH_TIME_INCREMENT_MS;

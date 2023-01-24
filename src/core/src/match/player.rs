@@ -31,7 +31,7 @@ impl MatchPlayer {
     }
 
     pub fn update(&mut self) -> Vec<PlayerUpdateEvent> {
-        let mut result = Vec::new();
+        let mut result = Vec::with_capacity(10);
 
         self.update_state(&mut result);
         self.update_condition(&mut result);
