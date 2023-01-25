@@ -64,7 +64,7 @@ impl Field {
         Field {
             width,
             height,
-            ball: Ball::new(width as i16 / 2, height as i16 / 2),
+            ball: Ball::new(width as f32 / 2.0, height as f32 / 2.0),
             players: players_container,
         }
     }
@@ -90,18 +90,18 @@ impl Field {
 
             for player_idx in 0..players_len {
                 for other_player_idx in 0..players_len {
-                    if player_idx == other_player_idx {
-                        continue;
-                    }
-
-                    let player = &mut self.players[player_idx];
-                    let other_player = &mut self.players[other_player_idx];
-
-                    player.update();
-
-                    if player.position == other_player.position {
-                        //player.collide_with(other_player);
-                    }
+                    // if player_idx == other_player_idx {
+                    //     continue;
+                    // }
+                    //
+                    // let player = &mut self.players[player_idx];
+                    // let other_player = &mut self.players[other_player_idx];
+                    //
+                    // player.update();
+                    //
+                    // if player.position == other_player.position {
+                    //     //player.collide_with(other_player);
+                    // }
                 }
             }
 
@@ -112,7 +112,7 @@ impl Field {
     }
 
     fn is_collision(ball_position: &FieldPosition, player_position: &FieldPosition) -> bool {
-        const COLLISION_RADIUS: i16 = 10;
+        const COLLISION_RADIUS: f32 = 2.0;
 
         let x_diff = (ball_position.x - player_position.x).abs();
         let y_diff = (ball_position.y - player_position.y).abs();
@@ -163,7 +163,7 @@ fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<Ma
                 .map(|(_, home_position, _)| home_position)
                 .for_each(|position| {
                     if let PositionType::Home(x, y) = position {
-                        home_player.position = FieldPosition::new(*x, *y);
+                        home_player.position = FieldPosition::new(*x as f32, *y as f32);
                         players.push(home_player);
                     }
                 });
@@ -182,7 +182,7 @@ fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<Ma
                 .map(|(_, _, away_position)| away_position)
                 .for_each(|position| {
                     if let PositionType::Away(x, y) = position {
-                        away_player.position = FieldPosition::new(*x, *y);
+                        away_player.position = FieldPosition::new(*x as f32, *y as f32);
                         players.push(away_player);
                     }
                 });

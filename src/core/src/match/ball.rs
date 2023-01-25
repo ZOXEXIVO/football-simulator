@@ -1,22 +1,24 @@
 ﻿use crate::r#match::position::FieldPosition;
+use nalgebra::Vector2;
 use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
+use rand_distr::num_traits::Pow;
 
 pub struct Ball {
     pub start_position: FieldPosition,
     pub position: FieldPosition,
-    pub velocity: i16,
+    pub velocity: Vector2<f32>,
     pub direction: FieldPosition,
     rnd: ThreadRng,
 }
 
 impl Ball {
-    pub fn new(x: i16, y: i16) -> Self {
+    pub fn new(x: f32, y: f32) -> Self {
         Ball {
             position: FieldPosition { x, y },
             start_position: FieldPosition { x, y },
-            velocity: 0,
-            direction: FieldPosition { x: 0, y: 0 },
+            velocity: Vector2::new(0.0, 0.0),
+            direction: FieldPosition { x: 0.0, y: 0.0 },
             rnd: thread_rng(),
         }
     }
@@ -39,21 +41,21 @@ impl Ball {
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
-        let speed = self.rnd.gen_range(-2..2) as i16;
-        let speed2 = self.rnd.gen_range(-2..2) as i16;
+        let speed = self.rnd.gen_range(-1..1) as f32;
+        let speed2 = self.rnd.gen_range(-1..1) as f32;
 
         self.position.x += speed * speed2;
         self.position.y += speed * speed2;
     }
 
     pub fn move_towards_player(&mut self, player_pos: &FieldPosition) {
-        let dx = (player_pos.x - self.position.x) as f64;
-        let dy = (player_pos.y - self.position.y) as f64;
+        let dx = (player_pos.x - self.position.x) as f32;
+        let dy = (player_pos.y - self.position.y) as f32;
 
-        let distance = (dx.powi(2) + dy.powi(2)).sqrt();
+        let distance = (dx.pow(2.0) + dy.pow(2.0)).sqrt();
 
-        self.position.x += ((dx / distance) * self.velocity as f64) as i16;
-        self.position.y += ((dy / distance) * self.velocity as f64) as i16;
+        self.position.x += (dx / distance) * self.velocity.x;
+        self.position.y += (dy / distance) * self.velocity.y;
     }
 
     pub fn reset(&mut self) {

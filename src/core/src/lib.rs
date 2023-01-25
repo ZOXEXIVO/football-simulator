@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
 extern crate core;
+extern crate nalgebra;
 
 mod simulator;
 pub use simulator::*;
@@ -19,4 +20,5 @@ pub mod utils;
 
 pub use club::*;
 pub use country::*;
+pub use nalgebra::*;
 pub use neural::*;

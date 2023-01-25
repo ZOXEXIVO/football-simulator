@@ -1,5 +1,6 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
+use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
 
 #[derive(Debug, Copy, Clone)]
@@ -10,7 +11,7 @@ pub struct MatchPlayer {
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
-    pub velocity: f32,
+    pub velocity: Vector2<f32>,
     pub has_ball: bool,
     pub state: PlayerState,
 }
@@ -19,12 +20,12 @@ impl MatchPlayer {
     pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
         MatchPlayer {
             player_id: player.id,
-            position: FieldPosition::new(0, 0),
+            position: FieldPosition::new(0.0, 0.0),
             attributes: player.attributes.clone(),
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            velocity: 0.0,
+            velocity: Vector2::new(0.0, 0.0),
             has_ball: false,
             state: PlayerState::Standing,
         }
@@ -35,6 +36,7 @@ impl MatchPlayer {
 
         self.update_state(&mut result);
         self.update_condition(&mut result);
+        self.update_velocity(&mut result);
         self.move_to(&mut result);
 
         result
@@ -43,7 +45,7 @@ impl MatchPlayer {
     fn update_state(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
         match self.state {
             PlayerState::Standing => {
-                self.velocity = 0.0;
+                self.velocity = Vector2::new(0.0, 0.0);
                 // Check for transition to walking or running state
             }
             PlayerState::Walking => {
@@ -128,15 +130,33 @@ impl MatchPlayer {
     fn check_ball_collision(&mut self) {}
 
     fn update_condition(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
-        let condition = self.player_attributes.condition as f32;
-        let max_speed = self.skills.max_speed();
-
-        self.velocity = max_speed * (condition / 100.0);
+        // self.player_attributes.condition
     }
 
     fn move_to(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
-        self.position.x += self.velocity as i16;
-        self.position.y += self.velocity as i16;
+        self.position.x += self.velocity.x;
+        if self.position.x > 140.0 {
+            self.position.x = 140.0;
+        }
+
+        self.position.y += self.velocity.y;
+        if self.position.y > 90.0 {
+            self.position.y = 90.0;
+        }
+    }
+
+    fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
+        let condition = self.player_attributes.condition as f32;
+        let max_speed = self.skills.max_speed();
+
+        let speed = max_speed * (condition / 100.0);
+
+        let mut rng = thread_rng();
+
+        let random_x_val: f32 = rng.gen_range(-0.05..0.05);
+        let random_y_val: f32 = rng.gen_range(-0.05..0.05);
+
+        self.velocity = Vector2::new(speed * random_x_val, speed * random_y_val);
     }
 }
 

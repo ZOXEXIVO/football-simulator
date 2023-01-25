@@ -43,7 +43,7 @@ pub async fn match_details_action(
                 (
                     player_id,
                     data.iter()
-                        .map(|item| (item.timestamp, item.x, item.y))
+                        .map(|item| (item.timestamp, item.x as i16, item.y as i16))
                         .collect(),
                 )
             })
@@ -52,7 +52,7 @@ pub async fn match_details_action(
             .position_data
             .ball_positions
             .iter()
-            .map(|item| (item.timestamp, item.x, item.y))
+            .map(|item| (item.timestamp, item.x as i16, item.y as i16))
             .collect(),
     })
 }

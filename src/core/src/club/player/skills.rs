@@ -1,3 +1,5 @@
+use nalgebra::Vector2;
+
 #[derive(Debug, Copy, Clone)]
 pub struct PlayerSkills {
     pub technical: Technical,
@@ -11,17 +13,17 @@ impl PlayerSkills {
             + self.physical.agility
             + self.physical.balance
             + self.physical.pace)
-            / 4.0
+            / (4.0 * 20.0)
     }
 
-    pub fn walking_speed(&self) -> f32 {
+    pub fn walking_speed(&self) -> Vector2<f32> {
         let walking_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.1;
-        walking_speed
+        Vector2::new(walking_speed, walking_speed)
     }
 
-    pub fn running_speed(&self) -> f32 {
+    pub fn running_speed(&self) -> Vector2<f32> {
         let running_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.15;
-        running_speed
+        Vector2::new(running_speed, running_speed)
     }
 }
 

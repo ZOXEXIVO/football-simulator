@@ -1,15 +1,17 @@
-﻿use std::collections::HashMap;
-use std::ops::{Add, Deref, Mul, Sub};
+﻿use nalgebra::Vector2;
+use rand_distr::num_traits::Pow;
+use std::collections::HashMap;
+use std::ops::{Add, Mul, Sub};
 
 #[derive(Debug, Clone)]
 pub struct PositionDataItem {
     pub timestamp: u64,
-    pub x: i16,
-    pub y: i16,
+    pub x: f32,
+    pub y: f32,
 }
 
 impl PositionDataItem {
-    pub fn new(timestamp: u64, x: i16, y: i16) -> Self {
+    pub fn new(timestamp: u64, x: f32, y: f32) -> Self {
         PositionDataItem { timestamp, x, y }
     }
 }
@@ -28,7 +30,7 @@ impl MatchPositionData {
         }
     }
 
-    pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, x: i16, y: i16) {
+    pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, x: f32, y: f32) {
         if let Some(player_data) = self.player_positions.get_mut(&player_id) {
             player_data.push(PositionDataItem::new(timestamp, x, y));
         } else {
@@ -37,7 +39,7 @@ impl MatchPositionData {
         }
     }
 
-    pub fn add_ball_positions(&mut self, timestamp: u64, x: i16, y: i16) {
+    pub fn add_ball_positions(&mut self, timestamp: u64, x: f32, y: f32) {
         self.ball_positions
             .push(PositionDataItem::new(timestamp, x, y));
     }
@@ -45,25 +47,25 @@ impl MatchPositionData {
 
 #[derive(Debug, Copy, Clone)]
 pub struct FieldPosition {
-    pub x: i16,
-    pub y: i16,
+    pub x: f32,
+    pub y: f32,
 }
 
 impl FieldPosition {
-    pub fn new(x: i16, y: i16) -> Self {
+    pub fn new(x: f32, y: f32) -> Self {
         FieldPosition { x, y }
     }
 
     pub fn length(&self) -> f32 {
-        (self.x.pow(2) + self.y.pow(2)) as f32
+        (self.x.pow(2.0) + self.y.pow(2.0)) as f32
     }
 
     pub fn normalize(&self) -> FieldPosition {
         let len = self.length().sqrt();
         if len != 0.0 {
             FieldPosition {
-                x: (self.x as f32 / len) as i16,
-                y: (self.y as f32 / len) as i16,
+                x: self.x / len,
+                y: self.y / len,
             }
         } else {
             *self
@@ -87,19 +89,19 @@ impl Sub<f32> for FieldPosition {
 
     fn sub(self, other: f32) -> FieldPosition {
         FieldPosition {
-            x: (self.x as f32 - other) as i16,
-            y: (self.y as f32 - other) as i16,
+            x: self.x - other,
+            y: self.y - other,
         }
     }
 }
 
-impl Sub<i16> for FieldPosition {
+impl Sub<Vector2<f32>> for FieldPosition {
     type Output = FieldPosition;
 
-    fn sub(self, other: i16) -> FieldPosition {
+    fn sub(self, other: Vector2<f32>) -> FieldPosition {
         FieldPosition {
-            x: self.x - other,
-            y: self.y - other,
+            x: self.x - other.x,
+            y: self.y - other.y,
         }
     }
 }
@@ -109,8 +111,19 @@ impl Add<f32> for FieldPosition {
 
     fn add(self, other: f32) -> FieldPosition {
         FieldPosition {
-            x: (self.x as f32 + other) as i16,
-            y: (self.y as f32 + other) as i16,
+            x: self.x + other,
+            y: self.y + other,
+        }
+    }
+}
+
+impl Add<Vector2<f32>> for FieldPosition {
+    type Output = FieldPosition;
+
+    fn add(self, other: Vector2<f32>) -> FieldPosition {
+        FieldPosition {
+            x: self.x + other.x,
+            y: self.y + other.y,
         }
     }
 }
@@ -120,8 +133,8 @@ impl Mul<f32> for FieldPosition {
 
     fn mul(self, other: f32) -> FieldPosition {
         FieldPosition {
-            x: (self.x as f32 * other) as i16,
-            y: (self.y as f32 * other) as i16,
+            x: self.x * other,
+            y: self.y * other,
         }
     }
 }
