@@ -59,12 +59,12 @@ pub async fn match_details_action(
             .position_data
             .player_positions
             .iter()
-            .skip(query_params.offset as usize)
-            .take(query_params.limit as usize)
             .map(|(&player_id, data)| {
                 (
                     player_id,
                     data.iter()
+                        .skip(query_params.offset as usize)
+                        .take(query_params.limit as usize)
                         .map(|item| (item.timestamp, item.x as i16, item.y as i16))
                         .collect(),
                 )
