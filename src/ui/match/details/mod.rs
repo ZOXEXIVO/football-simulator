@@ -6,25 +6,43 @@ use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct MatchDetailsRequest {
-    pub league_id: u32,
+    pub league_slug: String,
     pub match_id: String,
+}
+
+#[derive(Deserialize)]
+pub struct MatchDetailsRequestQuery {
+    pub offset: u32,
+    pub limit: u32,
 }
 
 #[derive(Serialize)]
 pub struct MatchDetailsResponse {
     pub player_data: HashMap<u32, Vec<(u64, i16, i16)>>,
+    pub player_data_len: u32,
     pub ball_data: Vec<(u64, i16, i16)>,
+    pub home_team_players: Vec<u32>,
+    pub away_team_players: Vec<u32>,
 }
 
 pub async fn match_details_action(
     state: Data<GameAppData>,
     route_params: web::Path<MatchDetailsRequest>,
+    query_params: web::Query<MatchDetailsRequestQuery>,
 ) -> Json<MatchDetailsResponse> {
     let guard = state.data.lock().await;
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let league = simulator_data.league(route_params.league_id).unwrap();
+    let league_id = simulator_data
+        .indexes
+        .as_ref()
+        .unwrap()
+        .slug_indexes
+        .get_league_by_slug(&route_params.league_slug)
+        .unwrap();
+
+    let league = simulator_data.league(league_id).unwrap();
 
     let match_details = league
         .match_results
@@ -35,10 +53,14 @@ pub async fn match_details_action(
     let match_details = match_details.details.as_ref().unwrap();
 
     Json(MatchDetailsResponse {
+        home_team_players: match_details.home_team_players.clone(),
+        away_team_players: match_details.away_team_players.clone(),
         player_data: match_details
             .position_data
             .player_positions
             .iter()
+            .skip(query_params.offset as usize)
+            .take(query_params.limit as usize)
             .map(|(&player_id, data)| {
                 (
                     player_id,
@@ -48,10 +70,13 @@ pub async fn match_details_action(
                 )
             })
             .collect(),
+        player_data_len: match_details.position_data.player_positions.len() as u32,
         ball_data: match_details
             .position_data
             .ball_positions
             .iter()
+            .skip(query_params.offset as usize)
+            .take(query_params.limit as usize)
             .map(|item| (item.timestamp, item.x as i16, item.y as i16))
             .collect(),
     })

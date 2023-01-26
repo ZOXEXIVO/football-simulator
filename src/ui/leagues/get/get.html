@@ -139,7 +139,7 @@
                                 </a>
                             </td>
                             <td class="score">
-                                <a href="/match/{{ id }}/{{ item.match_id }}">
+                                <a href="/match/{{ slug }}/{{ item.match_id }}">
                                     {% if item.result.is_some() %}
 
                                     {{ item.result.as_ref().unwrap().home_goals }}

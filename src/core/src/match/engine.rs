@@ -3,7 +3,7 @@ use crate::r#match::position::{FieldPosition, MatchPositionData};
 use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
 use crate::r#match::{MatchPlayer, PlayerUpdateEvent};
 
-const MATCH_TIME_INCREMENT_MS: u64 = 100;
+const MATCH_TIME_INCREMENT_MS: u64 = 10;
 const MATCH_TIME_MS: u64 = 45 * 60 * 100;
 
 pub struct FootballEngine<const W: usize, const H: usize> {
@@ -20,7 +20,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn play(&mut self) -> FootballMatchDetails {
-        self.field.play()
+        let mut details = FootballMatchDetails::new();
+
+        self.field.play(&mut details);
+
+        details
     }
 }
 
@@ -28,13 +32,31 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 pub struct FootballMatchDetails {
     pub score: Score,
     pub position_data: MatchPositionData,
+    pub home_team_players: Vec<u32>,
+    pub away_team_players: Vec<u32>,
 }
 
 impl FootballMatchDetails {
-    pub fn new(score: Score) -> Self {
+    pub fn new() -> Self {
         FootballMatchDetails {
-            score,
+            score: Score::new(),
             position_data: MatchPositionData::new(),
+            home_team_players: Vec::new(),
+            away_team_players: Vec::new(),
+        }
+    }
+
+    pub fn write_team_players(
+        &mut self,
+        home_team_players: &Vec<u32>,
+        away_team_players: &Vec<u32>,
+    ) {
+        for &player_id in home_team_players {
+            self.home_team_players.push(player_id);
+        }
+
+        for &player_id in away_team_players {
+            self.away_team_players.push(player_id);
         }
     }
 }
@@ -45,17 +67,31 @@ pub struct Score {
     pub away: i32,
 }
 
+impl Score {
+    pub fn new() -> Self {
+        Score { home: 0, away: 0 }
+    }
+}
+
 pub struct Field {
     pub width: usize,
     pub height: usize,
     pub ball: Ball,
     pub players: Vec<MatchPlayer>,
+    // Player disposition
+    pub home_team_players: Vec<u32>,
+    pub away_team_players: Vec<u32>,
 }
 
 impl Field {
     pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         let mut players_container =
             Vec::with_capacity(home_squad.main_squad.len() + away_squad.main_squad.len());
+
+        let home_team_players: Vec<u32> =
+            home_squad.main_squad.iter().map(|p| p.player_id).collect();
+        let away_team_players: Vec<u32> =
+            away_squad.main_squad.iter().map(|p| p.player_id).collect();
 
         for player in setup_player_on_field(home_squad, away_squad) {
             players_container.push(player);
@@ -64,17 +100,18 @@ impl Field {
         Field {
             width,
             height,
-            ball: Ball::new(width as f32 / 2.0, height as f32 / 2.0),
+            ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
             players: players_container,
+            home_team_players,
+            away_team_players,
         }
     }
 
-    pub fn play(&mut self) -> FootballMatchDetails {
-        let mut result = FootballMatchDetails::new(Score { home: 0, away: 0 });
+    pub fn play(&mut self, details: &mut FootballMatchDetails) {
+        self.play_inner(details);
 
-        self.play_inner(&mut result);
-
-        result
+        // write player disposition
+        details.write_team_players(&self.home_team_players, &self.away_team_players);
     }
 
     fn play_inner(&mut self, match_details: &mut FootballMatchDetails) {

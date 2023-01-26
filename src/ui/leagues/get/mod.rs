@@ -17,6 +17,7 @@ pub struct LeagueGetRequest {
 pub struct LeagueGetViewModel<'l> {
     pub id: u32,
     pub name: &'l str,
+    pub slug: &'l str,
     pub country_slug: &'l str,
     pub country_name: &'l str,
     pub table: LeagueTableDto<'l>,
@@ -88,6 +89,7 @@ pub async fn league_get_action(
     let mut model = LeagueGetViewModel {
         id: league.id,
         name: &league.name,
+        slug: &route_params.league_slug,
         country_slug: &country.slug,
         country_name: &country.name,
         table: LeagueTableDto {

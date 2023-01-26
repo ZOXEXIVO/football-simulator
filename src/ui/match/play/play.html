@@ -58,6 +58,11 @@ Title
 
 <script>
     let current_time = 0;
+    let last_loaded_time = 0;
+    
+    let player_data_loading_finished = false;
+    let player_data_current_offset = 0;
+    let player_data_current_limit = 500;
     
     let matchData = {
         player: {},
@@ -68,7 +73,10 @@ Title
         }
     };
 
-    const leagueId = '{{ league_id }}';
+    const home_color = '#4967d1';
+    const away_color = '#ed9061';
+    
+    const leagueSlug = '{{ league_slug }}';
     const matchId = '{{ match_id }}';
 
     const params = {
@@ -103,15 +111,19 @@ Title
     const group = two.makeGroup();
 
     group.add(createPole());
-    
-    loadDetails();
+
+    initialDataLoad();
 
     two.bind('update', update);
 
     function update(frameCount) {
-        if (frameCount % 10 === 0) {
-            current_time += 100;
+        if (frameCount % 1 === 0) {
+            current_time += 1;
                         
+            if(current_time > last_loaded_time - 50) {
+                loadData(player_data_current_offset, player_data_current_limit);
+            }
+            
             // update players positions
             for(let playerKey in matchData.player) {
                 let playerData = matchData.player[playerKey];
@@ -163,8 +175,10 @@ Title
         return ball;
     }
 
-    function loadDetails() {
-        const url = `/match/${leagueId}/${matchId}/details`;
+    function initialDataLoad(offset, limit) {
+        current_data_offset = 500;
+        
+        const url = `/match/${leagueSlug}/${matchId}/details?offset=${0}&limit=${500}`;
 
         fetch(url, {
             method: 'GET',
@@ -175,21 +189,27 @@ Title
         }).then(response => response.json())
             .then(responseJson => {
                 try{
+                    player_data_length = responseJson.player_data_len;
+                    
+                    const home_team_players = responseJson.home_team_players;
+                    const away_team_players = responseJson.away_team_players;
+                    
                     const playerPositionData = responseJson.player_data;
+
                     for(let playerKey in playerPositionData) {
                         let playerData = playerPositionData[playerKey];
                         if(!playerData )
                         {
                             continue;
                         }
-                        
+
                         let initial_player_data = playerData[0];
 
                         let playerCoord = translateXY(initial_player_data[1], initial_player_data[2]);
 
                         const player_circle = two.makeCircle(playerCoord.x, playerCoord.y, 4);
                         player_circle.fill = '#289b7c';
-    
+
                         group.add(player_circle);
 
                         const playerFullData  = {
@@ -197,7 +217,7 @@ Title
                             currentCoordIdx: 0,
                             data: []
                         };
-                      
+
                         for(let pi = 0;pi < playerData.length;pi++) {
                             let playerRawData = playerData[pi];
 
@@ -210,10 +230,12 @@ Title
                         }
 
                         matchData.player[playerKey] = playerFullData;
+
+                        last_loaded_time = playerFullData.data[playerFullData.data.length - 1].timestamp;
                     }
 
                     const ballPositionData = responseJson.ball_data;
-                    
+
                     for(let pi = 0;pi < ballPositionData.length;pi++) {
                         let ballRawData = ballPositionData[pi];
 
@@ -226,11 +248,11 @@ Title
                             coord: ballCoord
                         });
                     }
-                    
+
                     const ball = createBall();
-                                        
+
                     group.add(ball);
-                    matchData.ball.ballObject = ball;                    
+                    matchData.ball.ballObject = ball;
                 } catch (e)
                 {
                     debugger;
@@ -242,6 +264,75 @@ Title
             .catch(error => console.log('Error resulting from json(): ' + error))
     }
 
+    function loadData(offset, limit) {
+        if(player_data_loading_finished){ 
+            return;
+        }
+        
+        const url = `/match/${leagueSlug}/${matchId}/details?offset=${offset}&limit=${limit}`;
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(responseJson => {
+                try{
+                    player_data_current_offset += limit;
+                    
+                    const playerPositionData = responseJson.player_data;
+
+                    if (playerPositionData.length === 0) {
+                        player_data_loading_finished = true;
+                    }
+                    
+                    for(let playerKey in playerPositionData) {
+                        let playerData = playerPositionData[playerKey];
+                        if(!playerData )
+                        {
+                            continue;
+                        }
+                       
+                        for(let pi = 0;pi < playerData.length;pi++) {
+                            let playerRawData = playerData[pi];
+                            let timestamp = playerRawData[0];
+
+                            matchData.player[playerKey].data.push({
+                                timestamp: timestamp,
+                                coord: translateXY(playerRawData[1], playerRawData[2])
+                            });
+                        }
+                    }
+
+                    last_loaded_time = playerPositionData[playerPositionData.length - 1][0];
+
+                    const ballPositionData = responseJson.ball_data;
+
+                    for(let pi = 0;pi < ballPositionData.length;pi++) {
+                        let ballRawData = ballPositionData[pi];
+
+                        let timestamp = ballRawData[0];
+
+                        let ballCoord = translateXY(ballRawData[1], ballRawData[2]);
+
+                        matchData.ball.data.push({
+                            timestamp: timestamp,
+                            coord: ballCoord
+                        });
+                    }
+                } catch (e)
+                {
+                    debugger;
+                }
+
+                two.play();
+            })
+
+            .catch(error => console.log('Error resulting from json(): ' + error))
+    }
+    
     function translateXY(x, y) {
         let scaleX = 565 / 150;
         let scaleY = 388 / 100;

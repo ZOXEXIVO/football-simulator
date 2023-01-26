@@ -26,7 +26,7 @@ impl MatchPositionData {
     pub fn new() -> Self {
         MatchPositionData {
             ball_positions: Vec::new(),
-            player_positions: HashMap::new(),
+            player_positions: HashMap::with_capacity(22 * 2 * 9000),
         }
     }
 

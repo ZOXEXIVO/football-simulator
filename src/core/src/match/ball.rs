@@ -13,7 +13,7 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn new(x: f32, y: f32) -> Self {
+    pub fn with_coord(x: f32, y: f32) -> Self {
         Ball {
             position: FieldPosition { x, y },
             start_position: FieldPosition { x, y },
@@ -26,6 +26,7 @@ impl Ball {
     pub fn update(&mut self) -> Vec<BallUpdateEvent> {
         let mut result = Vec::new();
 
+        self.update_velocity(&mut result);
         self.move_to(&mut result);
         self.check_goal(&mut result);
 
@@ -40,12 +41,25 @@ impl Ball {
         // }
     }
 
-    fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
-        let speed = self.rnd.gen_range(-1..1) as f32;
-        let speed2 = self.rnd.gen_range(-1..1) as f32;
+    fn update_velocity(&mut self, result: &mut Vec<BallUpdateEvent>) {
+        let mut rng = thread_rng();
 
-        self.position.x += speed * speed2;
-        self.position.y += speed * speed2;
+        let random_x_val: f32 = rng.gen_range(-0.1..0.1);
+        let random_y_val: f32 = rng.gen_range(-0.1..0.1);
+
+        self.velocity = Vector2::new(random_x_val, random_y_val);
+    }
+
+    fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
+        self.position.x += self.velocity.x;
+        if self.position.x > 140.0 {
+            self.position.x = 140.0;
+        }
+
+        self.position.y += self.velocity.y;
+        if self.position.y > 90.0 {
+            self.position.y = 90.0;
+        }
     }
 
     pub fn move_towards_player(&mut self, player_pos: &FieldPosition) {

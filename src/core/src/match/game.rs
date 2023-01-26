@@ -32,7 +32,7 @@ impl Match {
 
         let mut engine = FootballEngine::<150, 100>::new(self.home_squad, self.away_squad);
 
-        let match_details = engine.play();
+        let mut match_details = engine.play();
 
         debug!(
             "match played: {} {}:{} {}",

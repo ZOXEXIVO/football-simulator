@@ -153,8 +153,8 @@ impl MatchPlayer {
 
         let mut rng = thread_rng();
 
-        let random_x_val: f32 = rng.gen_range(-0.05..0.05);
-        let random_y_val: f32 = rng.gen_range(-0.05..0.05);
+        let random_x_val: f32 = rng.gen_range(-0.1..0.1);
+        let random_y_val: f32 = rng.gen_range(-0.1..0.1);
 
         self.velocity = Vector2::new(speed * random_x_val, speed * random_y_val);
     }
