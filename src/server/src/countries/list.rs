@@ -6,11 +6,6 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct CountryListViewModel<'c> {
-    pub continents: Vec<ContinentDto<'c>>,
-}
-
-#[derive(Serialize)]
-pub struct ContinentDto<'c> {
     pub name: &'c str,
     pub countries: Vec<CountryDto<'c>>,
 }
@@ -34,12 +29,10 @@ pub async fn country_list_action(State(state): State<GameAppData>) -> Response {
 
     let simulator_data = guard.as_ref().unwrap();
 
-    let mut model = CountryListViewModel {
-        continents: Vec::with_capacity(simulator_data.continents.len()),
-    };
+    let mut model = Vec::with_capacity(simulator_data.continents.len());
 
     for continent in &simulator_data.continents {
-        let item = ContinentDto {
+        let item = CountryListViewModel {
             name: &continent.name,
             countries: continent
                 .countries
@@ -62,7 +55,7 @@ pub async fn country_list_action(State(state): State<GameAppData>) -> Response {
                 .collect(),
         };
 
-        model.continents.push(item);
+        model.push(item);
     }
 
     Json(model).into_response()

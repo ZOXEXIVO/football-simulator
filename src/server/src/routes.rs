@@ -11,14 +11,13 @@ pub struct ServerRoutes;
 
 impl ServerRoutes {
     pub fn create() -> Router<GameAppData> {
-        let app = Router::<GameAppData>::new()
+        let routes = Router::<GameAppData>::new()
             .merge(country_routes())
             .merge(game_routes())
             .merge(league_routes())
             .merge(team_routes())
-            .merge(player_routes())
-            .merge(SpaRouter::new("/assets", "assets").index_file("index.html"));
+            .merge(player_routes());
 
-        app
+        routes.merge(SpaRouter::new("/assets", "assets").index_file("index.html"))
     }
 }

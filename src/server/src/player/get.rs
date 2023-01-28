@@ -5,7 +5,6 @@ use axum::Json;
 use core::person::Person;
 use core::player::Player;
 use core::player::PlayerStatusType;
-use core::player::*;
 use core::utils::FormattingUtils;
 use core::SimulatorData;
 use core::Team;

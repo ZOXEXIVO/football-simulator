@@ -5,6 +5,6 @@ use axum::Router;
 
 pub fn game_routes() -> Router<GameAppData> {
     Router::new()
-        .route("/game/create", get(game_create_action))
-        .route("/game/process", get(game_process_action))
+        .route("/api/game/create", get(game_create_action))
+        .route("/api/game/process", get(game_process_action))
 }
