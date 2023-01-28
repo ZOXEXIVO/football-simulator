@@ -1,6 +1,7 @@
+use serde::Serialize;
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, PartialOrd)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, PartialOrd, Serialize)]
 pub enum PlayerPositionType {
     Goalkeeper,
     Sweeper,
