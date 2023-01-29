@@ -1,0 +1,395 @@
+<div *ngIf="league">
+    <div topHeader>
+        <div class="header-block">
+            <div class="header-title-block">
+                <div class="page-title">{{ league.name }}</div>
+                <div>
+                    <div class="flag flag-ru custom-flag">
+                    </div>
+                    <a href="/countries/{{ league.country_slug }}" class="sub-title-link">
+                        {{ league.country_name }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header_row">
+        <div class="header_bottom">
+            <ul class="nav navbar-left">
+                <li><a href="/#">Overview</a></li>
+                <li><a href="/#">Matches</a></li>
+                <li><a href="/#">News</a></li>
+                <li><a href="/#">Stats</a></li>
+                <li><a href="/#">Transfers</a></li>
+                <li><a href="/#">Awards</a></li>
+                <li><a href="/#">History</a></li>
+            </ul>
+        </div>
+    </div>
+    <br />
+    <div>
+        <div class="row">
+            <div class="col-xs-5 col-md-4 col-sm-5 delim">
+                <p class="header">Stages ></p>
+                <div>
+                    <table class="league-table">
+                        <tr>
+                            <th style="width: 50px">
+                                Pos
+                            </th>
+                            <th style="width: 60%; min-width: 180px;">
+                                Team
+                            </th>
+                            <th style="width: 50px;text-align: center;">
+                                P
+                            </th>
+                            <th style="width: 50px;text-align: center;">
+                                W
+                            </th>
+                            <th style="width: 50px;text-align: center;">
+                                D
+                            </th>
+                            <th style="width: 50px;text-align: center;">
+                                L
+                            </th>
+                            <th style="width: 50px;text-align: center;">
+                                GD
+                            </th>
+                            <th style="width: 50px;text-align: center;">
+                                PTS
+                            </th>
+                        </tr>
+                        <tr *ngFor="let row of league.table.rows; let i = index">
+                            <td class="idx">
+                                {{i}}st
+                            </td>
+                            <td>
+                                <a href="/teams/{{ row.team_slug }}">
+                                    {{ row.team_name }}
+                                </a>
+                            </td>
+                            <td style="text-align: center;">
+                                {{ row.played }}
+                            </td>
+                            <td style="text-align: center;">
+                                {{ row.win }}
+                            </td>
+                            <td style="text-align: center;">
+                                {{ row.draft }}
+                            </td>
+                            <td style="text-align: center;">
+                                {{ row.lost }}
+                            </td>
+                            <td style="text-align: center;">
+                                {{ row.goal_scored - row.goal_concerned }}
+                            </td>
+                            <td style="text-align: center;">
+                                {{ row.points }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-xs-7 delim">
+                <div class="row" style="border-bottom: 2px solid #323A41;">
+                    <div class="col-xs-6">
+                        <p class="header">Fixtures/results ></p>
+
+                        <table class="week-results" *ngFor="let tour_schedule of league.current_tour_schedule">
+                            <tr>
+                                <td colspan="3">
+                                    {{ tour_schedule.date }}
+                                </td>
+                            </tr>
+
+                            <tr *ngFor="let item of tour_schedule.matches">
+                                <td>
+                                    <a href="/teams/{{ item.home_team_slug }}">
+                                        {{ item.home_team_name }}
+                                    </a>
+                                </td>
+                                <td class="score">
+                                    <a href="/match/{{ league.slug }}/{{ item.match_id }}">
+
+                                        <span *ngIf="item.result">
+
+                                            {{ item.result.home_goals }}
+                                            -
+                                            {{ item.result.away_goals }}
+
+                                        </span>
+
+                                        <span *ngIf="!item.result">-</span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/teams/{{ item.away_team_slug }}">
+                                        {{ item.away_team_name }}
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-xs-6">
+                        <p class="header">Competition Reputation ></p>
+
+                        <table style="width: 100%">
+                            <tr>
+                                <td style="width: 20px">1</td>
+                                <td>
+                                    <p>Spanish Premier Division</p>
+                                    <p></p>
+                                    <div class="flag flag-es"></div>&nbsp;Spain
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 20px">2</td>
+                                <td>
+                                    <p>German First Division</p>
+                                    <p></p>
+                                    <div class="flag flag-de"></div>&nbsp;&nbsp;Germany
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 20px">2</td>
+                                <td>
+                                    <p>English Premiere Division</p>
+                                    <p></p>
+                                    <div class="flag flag-gb"></div>&nbsp;England
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p class="header">Player stats ></p>
+
+                        <table class="statistics-table">
+                            <tr>
+                                <td>
+                                    <p class="header rating">Goals</p>
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td style="width: 20px">
+                                                1st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Ezequiel Ponce
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 25px">
+                                                14
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 15px">
+                                                2st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Jordan Larsson
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 25px">
+                                                10
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <p class="header rating">Average rating</p>
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td style="width: 20px">
+                                                1st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Guus Til
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                7.33
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 15px">
+                                                2st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                André Schürrle
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                7.01
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <p class="header rating">Assists</p>
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td style="width: 20px">
+                                                1st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Alex Kral
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                14
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 15px">
+                                                2st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Nail Umyarov
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                10
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="header rating">Player of the match</p>
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td style="width: 20px">
+                                                1st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Alex Kral
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                7
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 15px">
+                                                2st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Georgiy Dzhikiya
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                5
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <p class="header rating">Clean sheets</p>
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td style="width: 20px">
+                                                1st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Aleksandr Maksimenko
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                5
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 15px">
+                                                2st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Aleksandr Selikhov
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                3
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <p class="header rating">Ywllow cards</p>
+                                    <table style="width: 100%">
+                                        <tr>
+                                            <td style="width: 20px">
+                                                1st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Reziuan Mirzov
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                8
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 15px">
+                                                2st
+                                            </td>
+                                            <td style="width: 30px">
+                                                <div class="club-logo club-default-logo"></div>
+                                            </td>
+                                            <td>
+                                                Alex Kral
+                                                <p class="club-name">Spartak moscow</p>
+                                            </td>
+                                            <td style="width: 15px">
+                                                4
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div style="clear:both"></div>
+</div>
