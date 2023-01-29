@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { CountryDto } from 'src/client/country.api.client';
-import { LeftMenuService } from '../../menus/left-menu/services/left.menu.service';
+import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { CountryService } from '../services/country.service';
 
 @Component({

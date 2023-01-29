@@ -14,14 +14,14 @@ export class LeftMenuComponent implements OnInit {
   menuSections$: Subject<MenuSection[]> = new Subject<MenuSection[]>();
 
   constructor(
-    private leftMenuService: LeftMenuService, 
-    private changeDetectorRef: ChangeDetectorRef){      
+    private leftMenuService: LeftMenuService,
+    private changeDetectorRef: ChangeDetectorRef) {
   }
 
-  ngOnInit () {
+  ngOnInit() {
     this.leftMenuService.items$.pipe(untilDestroyed(this)).subscribe(menuSections => {
       this.menuSections$.next(menuSections);
       this.changeDetectorRef.markForCheck();
-   });
-}
+    });
+  }
 }
