@@ -17,6 +17,7 @@ pub struct LeagueGetRequest {
 pub struct LeagueGetViewModel<'l> {
     pub id: u32,
     pub name: &'l str,
+    pub slug: &'l str,
     pub country_slug: &'l str,
     pub country_name: &'l str,
     pub table: LeagueTableDto<'l>,
@@ -31,6 +32,8 @@ pub struct TourSchedule<'s> {
 
 #[derive(Serialize)]
 pub struct LeagueScheduleItem<'si> {
+    pub match_id: &'si str,
+
     pub home_team_id: u32,
     pub home_team_name: &'si str,
     pub home_team_slug: &'si str,
@@ -92,6 +95,7 @@ pub async fn league_get_action(
     let mut model = LeagueGetViewModel {
         id: league.id,
         name: &league.name,
+        slug: &league.slug,
         country_slug: &country.slug,
         country_name: &country.name,
         table: LeagueTableDto {
@@ -151,6 +155,8 @@ pub async fn league_get_action(
                         let away_team_data = simulator_data.team_data(item.away_team_id).unwrap();
 
                         LeagueScheduleItem {
+                            match_id: &item.id,
+
                             result: item.result.as_ref().map(|res| LeagueScheduleItemResult {
                                 home_goals: res.home_goals,
                                 away_goals: res.away_goals,

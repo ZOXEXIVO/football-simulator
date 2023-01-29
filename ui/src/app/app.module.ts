@@ -4,10 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app.routing.module';
 import { AppComponent } from './app.component';
 import { CountryModule } from './components/countries/country.module';
-import { LeftMenuComponent } from './components/shared/left-menu/left.menu.component';
 import { SharedModule } from './components/shared/shared.module';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { LeagueModule } from './components/leagues/league.module';
 
 @NgModule({
   declarations: [
@@ -18,6 +18,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     CountryModule,
+    LeagueModule,
     HttpClientModule
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
