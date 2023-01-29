@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
+import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { CountryDto, CountryService } from '../services/country.service';
 
@@ -15,7 +16,8 @@ export class CountryGetComponent {
 
   constructor(private leftMenuService: LeftMenuService,
     private service: CountryService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private titleService: TitleService) {
   }
   ngOnInit(): void {
     this.leftMenuService.setMenu([
@@ -24,7 +26,9 @@ export class CountryGetComponent {
 
     this.route.params.subscribe(params => {
       this.service.get(params["slug"]).pipe(untilDestroyed(this)).subscribe(countryData => {
-        this.country = countryData
+        this.country = countryData;
+
+        this.titleService.setTitle(countryData.name + ', ' + countryData.continent_name);
       });
     });
   }

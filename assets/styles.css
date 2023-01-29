@@ -13077,4 +13077,9 @@ table.player-statistics td {
   height: 15px;
 }
 
+.header-player-logo {
+  margin-top: 9px;
+  padding: 27px;
+}
+
 /*# sourceMappingURL=styles.css.map*/

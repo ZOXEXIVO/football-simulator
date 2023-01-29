@@ -13,7 +13,8 @@ pub struct TeamScheduleGetRequest {
 #[derive(Serialize)]
 pub struct TeamScheduleViewModel<'t> {
     pub team_name: &'t str,
-    pub league_id: u32,
+    pub team_slug: &'t str,
+    pub league_slug: &'t str,
     pub league_name: &'t str,
     pub neighbor_teams: Vec<ClubTeam<'t>>,
     pub items: Vec<TeamScheduleItem<'t>>,
@@ -66,8 +67,9 @@ pub async fn team_schedule_get_action(
 
     let model = TeamScheduleViewModel {
         team_name: &team.name,
+        team_slug: &team.slug,
 
-        league_id: league.id,
+        league_slug: &league.slug,
         league_name: &league.name,
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
 

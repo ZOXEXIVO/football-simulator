@@ -8,6 +8,7 @@ import { SharedModule } from './components/shared/shared.module';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { LeagueModule } from './components/leagues/league.module';
+import { TeamModule } from './components/teams/team.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { LeagueModule } from './components/leagues/league.module';
     AppRoutingModule,
     CountryModule,
     LeagueModule,
+    TeamModule,
     HttpClientModule
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
