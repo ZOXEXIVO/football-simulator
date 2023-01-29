@@ -13062,4 +13062,12 @@ table.player-statistics td {
   opacity: 0.6;
 }
 
+.header-block {
+  float: left;
+}
+
+.header-block .flag {
+  margin-top: 14px;
+}
+
 /*# sourceMappingURL=styles.css.map*/

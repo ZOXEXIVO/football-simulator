@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { CountryDto } from 'src/client/country.api.client';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
-import { CountryService } from '../services/country.service';
+import { CountryListDto, CountryService } from '../services/country.service';
 
 @Component({
   selector: 'country-list',
@@ -10,7 +9,7 @@ import { CountryService } from '../services/country.service';
   styleUrls: ['./country.list.component.scss']
 })
 export class CountryListComponent implements OnInit {
-  countries$: Observable<CountryDto[]> = of([]);
+  countries$: Observable<CountryListDto[]> = of([]);
 
   constructor(private leftMenuService: LeftMenuService, service: CountryService) {
     this.countries$ = service.getList();

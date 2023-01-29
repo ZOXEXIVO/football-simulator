@@ -7,18 +7,15 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[topHeader]',
+  selector: '[topHeader]'
 })
 export class TopHeaderContentComponent implements AfterViewInit {
   constructor(private topHeaderService: TopHeaderService,
-    private elem: ElementRef, private renderer: Renderer2) {
+    private elem: ElementRef) {
   }
 
   ngAfterViewInit(): void {
-  
-    if(this.elem){
-      debugger;
-      //this.topHeaderService.setContent(this.topHeaderContent.nativeElement.textContent);
-    }
+    this.topHeaderService.setContent(this.elem.nativeElement.innerHTML);
+    this.elem.nativeElement.innerHTML = '';
   }
 }

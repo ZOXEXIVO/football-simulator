@@ -183,11 +183,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CountryModule": () => (/* binding */ CountryModule)
 /* harmony export */ });
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ 8987);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /* harmony import */ var _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/shared.module */ 4065);
 /* harmony import */ var _get_country_get_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get/country.get.component */ 7722);
 /* harmony import */ var _list_country_list_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./list/country.list.component */ 8909);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
+
 
 
 
@@ -201,12 +203,12 @@ CountryModule.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["�
   type: CountryModule
 });
 CountryModule.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjector"]({
-  imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule]
+  imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
 });
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsetNgModuleScope"](CountryModule, {
     declarations: [_get_country_get_component__WEBPACK_IMPORTED_MODULE_1__.CountryGetComponent, _list_country_list_component__WEBPACK_IMPORTED_MODULE_2__.CountryListComponent],
-    imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule]
+    imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
   });
 })();
 
@@ -251,20 +253,108 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CountryGetComponent": () => (/* binding */ CountryGetComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var _ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ngneat/until-destroy */ 2777);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _shared_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/left-menu/services/left.menu.service */ 3456);
+/* harmony import */ var _services_country_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/country.service */ 6399);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../shared/top-header/content/top.header.content.component */ 3278);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 4666);
+var _class;
 
-class CountryGetComponent {}
-CountryGetComponent.ɵfac = function CountryGetComponent_Factory(t) {
-  return new (t || CountryGetComponent)();
-};
-CountryGetComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
-  type: CountryGetComponent,
-  selectors: [["left-menu"]],
-  decls: 0,
-  vars: 0,
-  template: function CountryGetComponent_Template(rf, ctx) {},
+
+
+
+
+
+
+
+function CountryGetComponent_div_0_li_13_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "li")(1, "a", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+  }
+  if (rf & 2) {
+    const league_r2 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpropertyInterpolate1"]("href", "/leagues/", league_r2.slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate1"](" ", league_r2.name, " ");
+  }
+}
+function CountryGetComponent_div_0_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div")(1, "div", 1)(2, "div", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "div", 2)(5, "div", 3)(6, "div", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](8, "div")(9, "a", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](11, "div")(12, "ul", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](13, CountryGetComponent_div_0_li_13_Template, 3, 2, "li", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](14, "div", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵclassMapInterpolate1"]("flag flag-", ctx_r0.country.code, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate"](ctx_r0.country.name);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate1"](" ", ctx_r0.country.continent_name, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", ctx_r0.country.leagues);
+  }
+}
+let CountryGetComponent = (_class = class CountryGetComponent {
+  constructor(leftMenuService, service, route) {
+    this.leftMenuService = leftMenuService;
+    this.service = service;
+    this.route = route;
+    this.country = null;
+  }
+  ngOnInit() {
+    this.leftMenuService.setMenu([{
+      items: [{
+        url: '/',
+        title: 'Home',
+        icon: 'fa-home'
+      }]
+    }]);
+    this.route.params.subscribe(params => {
+      this.service.get(params["slug"]).pipe((0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_4__.untilDestroyed)(this)).subscribe(countryData => {
+        this.country = countryData;
+      });
+    });
+  }
+}, _class.ɵfac = function CountryGetComponent_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_shared_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__.LeftMenuService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_services_country_service__WEBPACK_IMPORTED_MODULE_1__.CountryService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__.ActivatedRoute));
+}, _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({
+  type: _class,
+  selectors: [["ng-component"]],
+  decls: 1,
+  vars: 1,
+  consts: [[4, "ngIf"], ["topHeader", ""], [1, "header-block"], [1, "header-title-block"], [1, "page-title"], ["href", "/countries", 1, "sub-title-link"], [1, "countries-list"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], [3, "href"]],
+  template: function CountryGetComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](0, CountryGetComponent_div_0_Template, 15, 6, "div", 0);
+    }
+    if (rf & 2) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngIf", ctx.country);
+    }
+  },
+  dependencies: [_shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_2__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_6__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_6__.NgIf],
   styles: ["\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
+}), _class);
+CountryGetComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_7__.__decorate)([(0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_4__.UntilDestroy)()], CountryGetComponent);
+
 
 /***/ }),
 
@@ -290,9 +380,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function CountryListComponent_div_12_li_6_Template(rf, ctx) {
+function CountryListComponent_div_8_li_6_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "li")(1, "a", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "li")(1, "a", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](2, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
@@ -307,16 +397,16 @@ function CountryListComponent_div_12_li_6_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate1"]("\u00A0\u00A0 ", countryItem_r3.name, " ");
   }
 }
-function CountryListComponent_div_12_Template(rf, ctx) {
+function CountryListComponent_div_8_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 8)(1, "h2");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 5)(1, "h2");
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](3, "hr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "div")(5, "ul", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](6, CountryListComponent_div_12_li_6_Template, 4, 5, "li", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "div")(5, "ul", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](6, CountryListComponent_div_8_li_6_Template, 4, 5, "li", 7);
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](7, "div", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](7, "div", 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -349,28 +439,25 @@ CountryListComponent.ɵfac = function CountryListComponent_Factory(t) {
 CountryListComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({
   type: CountryListComponent,
   selectors: [["country-list"]],
-  decls: 14,
+  decls: 10,
   vars: 3,
-  consts: [["topHeader", ""], [1, "col-md-6", 2, "padding-left", "40px"], [2, "float", "left"], [1, "flag", "flag-ru", 2, "margin-top", "14px"], [1, "header-title-block"], [1, "page-title"], ["href", "/countries", 1, "sub-title-link"], ["class", "country-box", 4, "ngFor", "ngForOf"], [1, "country-box"], [1, "countries-list"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], [3, "href"]],
+  consts: [["topHeader", ""], [2, "float", "left"], [1, "header-title-block"], [1, "page-title"], ["class", "country-box", 4, "ngFor", "ngForOf"], [1, "country-box"], [1, "countries-list"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], [3, "href"]],
   template: function CountryListComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](4, "Select country");
       _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](4, "div", 2)(5, "div", 4)(6, "div", 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](7, "Russia");
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](8, "div")(9, "a", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](10, " Europe ");
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()()()()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](11, "div");
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](12, CountryListComponent_div_12_Template, 8, 3, "div", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpipe"](13, "async");
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "div");
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](6, "Select any country to inspect it all");
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](7, "div");
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](8, CountryListComponent_div_8_Template, 8, 3, "div", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpipe"](9, "async");
       _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpipeBind1"](13, 1, ctx.countries$));
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpipeBind1"](9, 1, ctx.countries$));
     }
   },
   dependencies: [_shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_2__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_5__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_5__.AsyncPipe],
@@ -389,22 +476,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CountryService": () => (/* binding */ CountryService)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var src_client_country_api_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/client/country.api.client */ 3823);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ 8987);
 
 
 class CountryService {
-  constructor(client) {
-    this.client = client;
+  constructor(http) {
+    this.http = http;
   }
   getList() {
-    return this.client.getList();
+    return this.http.get('/api/countries');
+  }
+  get(slug) {
+    return this.http.get('/api/countries/' + slug);
   }
 }
 CountryService.ɵfac = function CountryService_Factory(t) {
-  return new (t || CountryService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](src_client_country_api_client__WEBPACK_IMPORTED_MODULE_0__.CountryApiClient));
+  return new (t || CountryService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpClient));
 };
-CountryService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
+CountryService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
   token: CountryService,
   factory: CountryService.ɵfac,
   providedIn: 'root'
@@ -600,21 +690,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class TopHeaderContentComponent {
-  constructor(topHeaderService, elem, renderer) {
+  constructor(topHeaderService, elem) {
     this.topHeaderService = topHeaderService;
     this.elem = elem;
-    this.renderer = renderer;
   }
   ngAfterViewInit() {
-    if (this.elem) {
-      debugger;
-      //this.topHeaderService.setContent(this.topHeaderContent.nativeElement.textContent);
-    }
+    this.topHeaderService.setContent(this.elem.nativeElement.innerHTML);
+    this.elem.nativeElement.innerHTML = '';
   }
 }
-
 TopHeaderContentComponent.ɵfac = function TopHeaderContentComponent_Factory(t) {
-  return new (t || TopHeaderContentComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_top_header_service__WEBPACK_IMPORTED_MODULE_0__.TopHeaderService), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.ElementRef), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Renderer2));
+  return new (t || TopHeaderContentComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_top_header_service__WEBPACK_IMPORTED_MODULE_0__.TopHeaderService), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.ElementRef));
 };
 TopHeaderContentComponent.ɵdir = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
   type: TopHeaderContentComponent,
@@ -694,7 +780,7 @@ let TopHeaderComponent = (_class = class TopHeaderComponent {
   selectors: [["top-header"]],
   decls: 1,
   vars: 1,
-  consts: [[1, "top-header-container", 2, "display", "inline", 3, "innerHTML"]],
+  consts: [[1, "top-header-container", 3, "innerHTML"]],
   template: function TopHeaderComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](0, "div", 0);
@@ -708,39 +794,6 @@ let TopHeaderComponent = (_class = class TopHeaderComponent {
 }), _class);
 TopHeaderComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_3__.__decorate)([(0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_1__.UntilDestroy)()], TopHeaderComponent);
 
-
-/***/ }),
-
-/***/ 3823:
-/*!******************************************!*\
-  !*** ./src/client/country.api.client.ts ***!
-  \******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "CountryApiClient": () => (/* binding */ CountryApiClient)
-/* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ 8987);
-
-
-class CountryApiClient {
-  constructor(http) {
-    this.http = http;
-  }
-  getList() {
-    return this.http.get('/api/countries');
-  }
-}
-CountryApiClient.ɵfac = function CountryApiClient_Factory(t) {
-  return new (t || CountryApiClient)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpClient));
-};
-CountryApiClient.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
-  token: CountryApiClient,
-  factory: CountryApiClient.ɵfac,
-  providedIn: 'root'
-});
 
 /***/ }),
 
