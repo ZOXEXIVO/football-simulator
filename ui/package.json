@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng build --watch --output-path=../assets",
+    "start": "ng build --watch --output-path=./assets",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
