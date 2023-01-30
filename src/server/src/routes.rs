@@ -2,6 +2,7 @@ use crate::countries::country_routes;
 use crate::game::game_routes;
 use crate::leagues::league_routes;
 use crate::player::player_routes;
+use crate::r#match::routes::match_routes;
 use crate::teams::team_routes;
 use crate::GameAppData;
 use axum::Router;
@@ -16,7 +17,8 @@ impl ServerRoutes {
             .merge(game_routes())
             .merge(league_routes())
             .merge(team_routes())
-            .merge(player_routes());
+            .merge(player_routes())
+            .merge(match_routes());
 
         routes.merge(SpaRouter::new("/dist", "ui/dist").index_file("index.html"))
     }

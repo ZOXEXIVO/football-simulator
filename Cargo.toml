@@ -15,5 +15,5 @@ env_logger = "0.10.0"
 itertools = "0.10.5"
 chrono = "0.4.23"
 color-eyre = "0.6.2"
-tokio = { version = "1.24.2", features = ["full"] }
+tokio = { version = "1.25.0", features = ["full"] }
 rand = "0.8.5"

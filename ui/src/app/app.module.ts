@@ -10,6 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LeagueModule } from './components/leagues/league.module';
 import { TeamModule } from './components/teams/team.module';
 import { PlayerModule } from './components/players/player.module';
+import { MatchModule } from './components/match/match.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { PlayerModule } from './components/players/player.module';
     SharedModule,
     BrowserModule,
     AppRoutingModule,
+    MatchModule,
     PlayerModule,
     CountryModule,
     LeagueModule,

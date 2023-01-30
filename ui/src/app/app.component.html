@@ -6,49 +6,23 @@
             </div>
             <div class="header_row">
                 <div class="header_top">
-                    <div class="col-md-6" style="padding-left: 40px">
+                    <div class="col-md-6 top-header-wrapper">
                         <top-header></top-header>
                     </div>
-            
+
                     <div class="col-md-6">
-                        <ul class="nav navbar-right">
-                            <li class="item-msg" style="cursor: pointer;">
-                                <div style="text-transform: uppercase;text-align: center;" id="process-game-btn">Process</div>
-                                <div style="margin-top:5px;width:100px;padding-top: 20px;">
-                                    <div class="spinner" id="process-game-btn-spinner" style="display: none;"></div>
-                                </div>
-                            </li>
-                            <li class="item-date">
-                                <div class="date-title" id="date-up"></div>
-                                <div class="date-body" id="date-down"></div>
-                            </li>
-                            <li>
-                                <div class="btn-group btn-drop btn-globe">
-                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="/#" aria-expanded="false">
-                                        <i class="fas fa-globe-americas"></i>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="/#">Item 1</a></li>
-                                        <li><a href="/#">Item 2</a></li>
-                                        <li><a href="/#">Item 3</a></li>
-                                        <li><a href="/#">Item 4</a></li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li><a href="/#" class="link-search"><i class="fas fa-search"></i></a></li>
-                        </ul>
+                        <process></process>
                     </div>
                 </div>
             </div>
-            <hr style="margin:0;padding:0" />
+            <hr />
             <div class="right_col">
                 <div class="main_content">
                     <router-outlet></router-outlet>
-                    
-                    <div style="clear:both"></div>                 
+
+                    <div style="clear:both"></div>
                 </div>
-            </div>           
+            </div>
         </div>
     </div>
 </div>
-

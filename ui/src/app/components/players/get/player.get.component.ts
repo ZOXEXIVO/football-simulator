@@ -27,7 +27,7 @@ export class PlayerGetComponent {
         this.player = playerData;
         this.initLeftMenu(playerData);
 
-        this.titleService.setTitle(playerData.last_name + ' ' + playerData.first_name);
+        this.titleService.setTitle(playerData.last_name + ' ' + playerData.first_name + ', ' + playerData.team_name);
       });
     });
   }

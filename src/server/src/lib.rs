@@ -1,6 +1,7 @@
 mod countries;
 mod game;
 mod leagues;
+mod r#match;
 mod player;
 mod routes;
 mod teams;

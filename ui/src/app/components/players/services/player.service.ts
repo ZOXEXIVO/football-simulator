@@ -26,7 +26,7 @@ export interface PlayerDto {
    age: number,
    team_slug: string
    team_name: string
-   country_slug: number,
+   country_slug: string,
    country_code: string
    country_name: string
    skills: PlayerSkillsDto,

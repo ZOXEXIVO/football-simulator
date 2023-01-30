@@ -11,11 +11,12 @@ Currently, most of elements are stubs, but I change it step by step
 
 Currently available nation for simulation - **Russia**
 
-I use only Askama templates to render UI and it was my decision, because i want to run my simulation only with one command:
+#### How to run?
 
-**cargo run**
-
-without **npm intstall** and other annoying things :) 
+```bash
+cd football-manager
+cargo run
+```
 
 [Player page example](https://football-simulator.org/teams/spartak-moscow/players/0)
 
