@@ -3,7 +3,7 @@
         <div class="menu_section" *ngFor="let section of menuSections$ | async">
             <ul class="nav">
                 <li *ngFor="let menuItem of section.items">
-                    <a href="{{menuItem.url}}"><i class="fa {{menuItem.icon}}"></i>{{menuItem.title}}</a>
+                    <a [routerLink]="[menuItem.url]"><i class="fa {{menuItem.icon}}"></i>{{menuItem.title}}</a>
                 </li>
             </ul>
         </div>       

@@ -9,7 +9,7 @@
                 <div class="header-title-block">
                     <div class="page-title">{{country.name}}</div>
                     <div>
-                        <a href="/countries" class="sub-title-link">
+                        <a [routerLink]="['/countries/']" class="sub-title-link">
                             {{ country.continent_name }}
                         </a>
                     </div>
@@ -20,7 +20,7 @@
         <div>
             <ul class="countries-list">
                 <li *ngFor="let league of country.leagues">
-                    <a href="/leagues/{{ league.slug }}">
+                    <a [routerLink]="['/leagues/' + league.slug]">
                         {{ league.name }}
                     </a>
                 </li>

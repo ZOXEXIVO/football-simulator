@@ -16,7 +16,7 @@
             <div>
                 <ul class="countries-list">
                     <li *ngFor="let countryItem of country.countries">
-                        <a href="/countries/{{ countryItem.slug }}">
+                        <a [routerLink]="['/countries/' + countryItem.slug]">
                             <div class="flag flag-{{countryItem.code}}"></div>&nbsp;&nbsp; {{ countryItem.name }}
                         </a>
                     </li>

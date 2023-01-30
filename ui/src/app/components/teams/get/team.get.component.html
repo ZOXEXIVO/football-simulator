@@ -7,7 +7,7 @@
             <div class="header-title-block">
                 <div class="page-title">{{ team.name }}</div>
                 <div>
-                    <a href="/leagues/{{ team.league_slug }}" class="sub-title-link">
+                    <a [routerLink]="['/leagues/' + team.league_slug]" class="sub-title-link">
                         {{ team.league_name }}
                     </a>
                 </div>
@@ -74,7 +74,7 @@
                 <td style="min-width: 200px;">
                     <div class="player-info-logo">
                     </div>
-                    <a href="/teams/{{ team.slug }}/players/{{ player.id }}">
+                    <a [routerLink]="['/teams/' + team.slug + '/players/' + player.id]">
                         {{ player.last_name }}&nbsp;{{ player.first_name }}
                     </a>
                 </td>
@@ -82,7 +82,7 @@
                     {{ player.position }}
                 </td>
                 <td style="width: 50px">
-                    <a href="/countries/{{ player.country_id }}" class="sub-title-link">
+                    <a [routerLink]="['/countries/' + player.country_slug]" class="sub-title-link">
                         <div class="flag flag-{{player.country_code}}" title="{{ player.country_name }}"></div>
                     </a>
                 </td>

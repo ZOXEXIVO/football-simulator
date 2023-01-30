@@ -98,7 +98,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common/http */ 8987);
 /* harmony import */ var _components_leagues_league_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/leagues/league.module */ 481);
-/* harmony import */ var _components_teams_team_module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/teams/team.module */ 1809);
+/* harmony import */ var _components_teams_team_module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/teams/team.module */ 809);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 2560);
 
 
@@ -146,8 +146,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ 124);
 /* harmony import */ var _components_countries_country_routes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/countries/country.routes */ 2405);
-/* harmony import */ var _components_leagues_league_routes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/leagues/league.routes */ 6214);
-/* harmony import */ var _components_teams_team_routes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/teams/team.routes */ 6406);
+/* harmony import */ var _components_leagues_league_routes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/leagues/league.routes */ 214);
+/* harmony import */ var _components_teams_team_routes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/teams/team.routes */ 520);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
 
 
@@ -189,14 +189,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CountryModule": () => (/* binding */ CountryModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ 8987);
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /* harmony import */ var _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/shared.module */ 4065);
 /* harmony import */ var _get_country_get_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get/country.get.component */ 7722);
 /* harmony import */ var _list_country_list_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./list/country.list.component */ 8909);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
-
 
 
 
@@ -211,12 +209,12 @@ CountryModule.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["�
   type: CountryModule
 });
 CountryModule.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjector"]({
-  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterModule, _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpClientModule]
+  imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
 });
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsetNgModuleScope"](CountryModule, {
     declarations: [_get_country_get_component__WEBPACK_IMPORTED_MODULE_1__.CountryGetComponent, _list_country_list_component__WEBPACK_IMPORTED_MODULE_2__.CountryListComponent],
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterModule, _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpClientModule]
+    imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
   });
 })();
 
@@ -267,7 +265,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/left-menu/services/left.menu.service */ 3456);
 /* harmony import */ var _services_country_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/country.service */ 6399);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 7153);
+/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 153);
 /* harmony import */ var _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/top-header/content/top.header.content.component */ 3278);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
 var _class;
@@ -280,9 +278,6 @@ var _class;
 
 
 
-const _c0 = function (a0) {
-  return [a0];
-};
 function CountryGetComponent_div_1_li_13_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "li")(1, "a", 10);
@@ -292,14 +287,11 @@ function CountryGetComponent_div_1_li_13_Template(rf, ctx) {
   if (rf & 2) {
     const league_r2 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](2, _c0, "/leagues/" + league_r2.slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/leagues/", league_r2.slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", league_r2.name, " ");
   }
 }
-const _c1 = function () {
-  return ["/countries/"];
-};
 function CountryGetComponent_div_1_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div")(1, "div", 2)(2, "div", 3);
@@ -312,7 +304,7 @@ function CountryGetComponent_div_1_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](10);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](11, "div")(12, "ul", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](13, CountryGetComponent_div_1_li_13_Template, 3, 4, "li", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](13, CountryGetComponent_div_1_li_13_Template, 3, 2, "li", 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](14, "div", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
@@ -323,9 +315,7 @@ function CountryGetComponent_div_1_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵclassMapInterpolate1"]("flag flag-", ctx_r0.country.code, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx_r0.country.name);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction0"](7, _c1));
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.country.continent_name, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngForOf", ctx_r0.country.leagues);
@@ -361,11 +351,11 @@ let CountryGetComponent = (_class = class CountryGetComponent {
   selectors: [["ng-component"]],
   decls: 2,
   vars: 1,
-  consts: [[1, "content"], [4, "ngIf"], ["topHeader", ""], [1, "header-block"], [1, "header-title-block"], [1, "page-title"], [1, "sub-title-link", 3, "routerLink"], [1, "countries-list"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], [3, "routerLink"]],
+  consts: [[1, "content"], [4, "ngIf"], ["topHeader", ""], [1, "header-block"], [1, "header-title-block"], [1, "page-title"], ["href", "/countries", 1, "sub-title-link"], [1, "countries-list"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], [3, "href"]],
   template: function CountryGetComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, CountryGetComponent_div_1_Template, 15, 8, "div", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, CountryGetComponent_div_1_Template, 15, 6, "div", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
@@ -373,7 +363,7 @@ let CountryGetComponent = (_class = class CountryGetComponent {
       _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.country);
     }
   },
-  dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterLink, _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf],
+  dependencies: [_shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf],
   styles: ["\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 }), _class);
 CountryGetComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__decorate)([(0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_5__.UntilDestroy)()], CountryGetComponent);
@@ -395,10 +385,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var _shared_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/left-menu/services/left.menu.service */ 3456);
 /* harmony import */ var _services_country_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/country.service */ 6399);
-/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 7153);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 153);
 /* harmony import */ var _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/top-header/content/top.header.content.component */ 3278);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 4666);
 
 
 
@@ -406,10 +395,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-const _c0 = function (a0) {
-  return [a0];
-};
 function CountryListComponent_div_9_li_6_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "li")(1, "a", 10);
@@ -420,7 +405,7 @@ function CountryListComponent_div_9_li_6_Template(rf, ctx) {
   if (rf & 2) {
     const countryItem_r3 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](5, _c0, "/countries/" + countryItem_r3.slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/countries/", countryItem_r3.slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵclassMapInterpolate1"]("flag flag-", countryItem_r3.code, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
@@ -434,7 +419,7 @@ function CountryListComponent_div_9_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](3, "hr");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "div")(5, "ul", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](6, CountryListComponent_div_9_li_6_Template, 4, 7, "li", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](6, CountryListComponent_div_9_li_6_Template, 4, 5, "li", 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](7, "div", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
@@ -473,7 +458,7 @@ CountryListComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE
   selectors: [["country-list"]],
   decls: 11,
   vars: 3,
-  consts: [["topHeader", ""], [2, "float", "left"], [1, "header-title-block"], [1, "page-title"], [1, "content"], ["class", "country-box", 4, "ngFor", "ngForOf"], [1, "country-box"], [1, "countries-list"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], [3, "routerLink"]],
+  consts: [["topHeader", ""], [2, "float", "left"], [1, "header-title-block"], [1, "page-title"], [1, "content"], ["class", "country-box", 4, "ngFor", "ngForOf"], [1, "country-box"], [1, "countries-list"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], [3, "href"]],
   template: function CountryListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "div", 3);
@@ -492,7 +477,7 @@ CountryListComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE
       _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpipeBind1"](10, 1, ctx.countries$));
     }
   },
-  dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterLink, _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.AsyncPipe],
+  dependencies: [_shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_6__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_6__.AsyncPipe],
   styles: ["\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
@@ -534,7 +519,7 @@ CountryService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__[
 
 /***/ }),
 
-/***/ 2406:
+/***/ 406:
 /*!****************************************************************!*\
   !*** ./src/app/components/leagues/get/league.get.component.ts ***!
   \****************************************************************/
@@ -548,9 +533,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ngneat/until-destroy */ 2777);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var _shared_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/left-menu/services/left.menu.service */ 3456);
-/* harmony import */ var _services_league_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/league.service */ 7070);
+/* harmony import */ var _services_league_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/league.service */ 70);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 7153);
+/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 153);
 /* harmony import */ var _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/top-header/content/top.header.content.component */ 3278);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
 var _class;
@@ -563,9 +548,6 @@ var _class;
 
 
 
-const _c0 = function (a0) {
-  return [a0];
-};
 function LeagueGetComponent_div_0_tr_59_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "tr")(1, "td", 37);
@@ -599,7 +581,7 @@ function LeagueGetComponent_div_0_tr_59_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", i_r4, "st ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](9, _c0, "/teams/" + row_r3.team_slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/teams/", row_r3.team_slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", row_r3.team_name, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
@@ -652,17 +634,17 @@ function LeagueGetComponent_div_0_table_65_tr_4_Template(rf, ctx) {
     const item_r7 = ctx.$implicit;
     const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](7, _c0, "/teams/" + item_r7.home_team_slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/teams/", item_r7.home_team_slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", item_r7.home_team_name, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](9, _c0, "/match/" + ctx_r6.league.slug + "/" + item_r7.match_id));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate2"]("href", "/match/", ctx_r6.league.slug, "/", item_r7.match_id, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", item_r7.result);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", !item_r7.result);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](11, _c0, "/teams/" + item_r7.away_team_slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/teams/", item_r7.away_team_slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", item_r7.away_team_name, " ");
   }
@@ -672,7 +654,7 @@ function LeagueGetComponent_div_0_table_65_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "table", 40)(1, "tr")(2, "td", 41);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](4, LeagueGetComponent_div_0_table_65_tr_4_Template, 11, 13, "tr", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](4, LeagueGetComponent_div_0_table_65_tr_4_Template, 11, 8, "tr", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -742,7 +724,7 @@ function LeagueGetComponent_div_0_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](57, "th", 17);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](58, " PTS ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](59, LeagueGetComponent_div_0_tr_59_Template, 18, 11, "tr", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](59, LeagueGetComponent_div_0_tr_59_Template, 18, 9, "tr", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](60, "div", 19)(61, "div", 20)(62, "div", 21)(63, "p", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](64, "Fixtures/results >");
@@ -976,7 +958,7 @@ function LeagueGetComponent_div_0_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx_r0.league.name);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](5, _c0, "/countries/" + ctx_r0.league.country_slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/countries/", ctx_r0.league.country_slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.league.country_name, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](50);
@@ -1015,16 +997,16 @@ let LeagueGetComponent = (_class = class LeagueGetComponent {
   selectors: [["ng-component"]],
   decls: 1,
   vars: 1,
-  consts: [[4, "ngIf"], ["topHeader", ""], [1, "header-block"], [1, "header-title-block"], [1, "page-title"], [1, "flag", "flag-ru", "custom-flag"], [1, "sub-title-link", 3, "routerLink"], [1, "header_row"], [1, "header_bottom"], [1, "nav", "navbar-left"], ["href", "/#"], [1, "row"], [1, "col-xs-5", "col-md-4", "col-sm-5", "delim"], [1, "header"], [1, "league-table"], [2, "width", "50px"], [2, "width", "60%", "min-width", "180px"], [2, "width", "50px", "text-align", "center"], [4, "ngFor", "ngForOf"], [1, "col-xs-7", "delim"], [1, "row", 2, "border-bottom", "2px solid #323A41"], [1, "col-xs-6"], ["class", "week-results", 4, "ngFor", "ngForOf"], [2, "width", "100%"], [2, "width", "20px"], [1, "flag", "flag-es"], [1, "flag", "flag-de"], [1, "flag", "flag-gb"], [1, "col-xs-12"], [1, "statistics-table"], [1, "header", "rating"], [2, "width", "30px"], [1, "club-logo", "club-default-logo"], [1, "club-name"], [2, "width", "25px"], [2, "width", "15px"], [2, "clear", "both"], [1, "idx"], [3, "routerLink"], [2, "text-align", "center"], [1, "week-results"], ["colspan", "3"], [1, "score"]],
+  consts: [[4, "ngIf"], ["topHeader", ""], [1, "header-block"], [1, "header-title-block"], [1, "page-title"], [1, "flag", "flag-ru", "custom-flag"], [1, "sub-title-link", 3, "href"], [1, "header_row"], [1, "header_bottom"], [1, "nav", "navbar-left"], ["href", "/#"], [1, "row"], [1, "col-xs-5", "col-md-4", "col-sm-5", "delim"], [1, "header"], [1, "league-table"], [2, "width", "50px"], [2, "width", "60%", "min-width", "180px"], [2, "width", "50px", "text-align", "center"], [4, "ngFor", "ngForOf"], [1, "col-xs-7", "delim"], [1, "row", 2, "border-bottom", "2px solid #323A41"], [1, "col-xs-6"], ["class", "week-results", 4, "ngFor", "ngForOf"], [2, "width", "100%"], [2, "width", "20px"], [1, "flag", "flag-es"], [1, "flag", "flag-de"], [1, "flag", "flag-gb"], [1, "col-xs-12"], [1, "statistics-table"], [1, "header", "rating"], [2, "width", "30px"], [1, "club-logo", "club-default-logo"], [1, "club-name"], [2, "width", "25px"], [2, "width", "15px"], [2, "clear", "both"], [1, "idx"], [3, "href"], [2, "text-align", "center"], [1, "week-results"], ["colspan", "3"], [1, "score"]],
   template: function LeagueGetComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, LeagueGetComponent_div_0_Template, 261, 7, "div", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, LeagueGetComponent_div_0_Template, 261, 5, "div", 0);
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.league);
     }
   },
-  dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterLink, _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf],
+  dependencies: [_shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf],
   styles: [".content[_ngcontent-%COMP%] {\n  padding: 0px 0px;\n}\n\n.header_row[_ngcontent-%COMP%] {\n  height: 55px;\n  margin-left: 0;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9sZWFndWVzL2dldC9sZWFndWUuZ2V0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksZ0JBQUE7QUFDSjs7QUFFQTtFQUNJLFlBQUE7RUFDQSxjQUFBO0FBQ0oiLCJzb3VyY2VzQ29udGVudCI6WyIuY29udGVudCB7XG4gICAgcGFkZGluZzogMHB4IDBweFxufVxuXG4uaGVhZGVyX3Jvd3sgXG4gICAgaGVpZ2h0OiA1NXB4O1xuICAgIG1hcmdpbi1sZWZ0OiAwXG4gIH0iXSwic291cmNlUm9vdCI6IiJ9 */"]
 }), _class);
 LeagueGetComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__decorate)([(0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_5__.UntilDestroy)()], LeagueGetComponent);
@@ -1042,13 +1024,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LeagueModule": () => (/* binding */ LeagueModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common/http */ 8987);
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /* harmony import */ var _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/shared.module */ 4065);
-/* harmony import */ var _get_league_get_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get/league.get.component */ 2406);
+/* harmony import */ var _get_league_get_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get/league.get.component */ 406);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 2560);
-
 
 
 
@@ -1062,18 +1042,18 @@ LeagueModule.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵ
   type: LeagueModule
 });
 LeagueModule.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjector"]({
-  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_3__.RouterModule, _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
+  imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_4__.HttpClientModule]
 });
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵsetNgModuleScope"](LeagueModule, {
     declarations: [_get_league_get_component__WEBPACK_IMPORTED_MODULE_1__.LeagueGetComponent],
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_3__.RouterModule, _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
+    imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_4__.HttpClientModule]
   });
 })();
 
 /***/ }),
 
-/***/ 6214:
+/***/ 214:
 /*!*****************************************************!*\
   !*** ./src/app/components/leagues/league.routes.ts ***!
   \*****************************************************/
@@ -1083,7 +1063,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "leagueRoutes": () => (/* binding */ leagueRoutes)
 /* harmony export */ });
-/* harmony import */ var _get_league_get_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./get/league.get.component */ 2406);
+/* harmony import */ var _get_league_get_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./get/league.get.component */ 406);
 
 const leagueRoutes = [{
   path: 'leagues/:slug',
@@ -1092,7 +1072,7 @@ const leagueRoutes = [{
 
 /***/ }),
 
-/***/ 7070:
+/***/ 70:
 /*!***************************************************************!*\
   !*** ./src/app/components/leagues/services/league.service.ts ***!
   \***************************************************************/
@@ -1135,13 +1115,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LeftMenuComponent": () => (/* binding */ LeftMenuComponent)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! tslib */ 4929);
 /* harmony import */ var _ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @ngneat/until-destroy */ 2777);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 228);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var _services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./services/left.menu.service */ 3456);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common */ 4666);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ 4666);
 var _class;
 
 
@@ -1149,10 +1128,6 @@ var _class;
 
 
 
-
-const _c0 = function (a0) {
-  return [a0];
-};
 function LeftMenuComponent_div_2_li_2_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "li")(1, "a", 6);
@@ -1163,7 +1138,7 @@ function LeftMenuComponent_div_2_li_2_Template(rf, ctx) {
   if (rf & 2) {
     const menuItem_r3 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](5, _c0, menuItem_r3.url));
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpropertyInterpolate"]("href", menuItem_r3.url, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassMapInterpolate1"]("fa ", menuItem_r3.icon, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
@@ -1173,7 +1148,7 @@ function LeftMenuComponent_div_2_li_2_Template(rf, ctx) {
 function LeftMenuComponent_div_2_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 3)(1, "ul", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, LeftMenuComponent_div_2_li_2_Template, 4, 7, "li", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, LeftMenuComponent_div_2_li_2_Template, 4, 5, "li", 5);
     _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
@@ -1201,7 +1176,7 @@ let LeftMenuComponent = (_class = class LeftMenuComponent {
   selectors: [["left-menu"]],
   decls: 4,
   vars: 3,
-  consts: [[1, "left_col", "scroll-view"], ["id", "sidebar-menu", 1, "main_menu_side", "hidden-print", "main_menu"], ["class", "menu_section", 4, "ngFor", "ngForOf"], [1, "menu_section"], [1, "nav"], [4, "ngFor", "ngForOf"], [3, "routerLink"]],
+  consts: [[1, "left_col", "scroll-view"], ["id", "sidebar-menu", 1, "main_menu_side", "hidden-print", "main_menu"], ["class", "menu_section", 4, "ngFor", "ngForOf"], [1, "menu_section"], [1, "nav"], [4, "ngFor", "ngForOf"], [3, "href"]],
   template: function LeftMenuComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
@@ -1214,11 +1189,11 @@ let LeftMenuComponent = (_class = class LeftMenuComponent {
       _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipeBind1"](3, 1, ctx.menuSections$));
     }
   },
-  dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterLink, _angular_common__WEBPACK_IMPORTED_MODULE_5__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_5__.AsyncPipe],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_4__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_4__.AsyncPipe],
   styles: ["\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"],
   changeDetection: 0
 }), _class);
-LeftMenuComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_6__.__decorate)([(0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_3__.UntilDestroy)()], LeftMenuComponent);
+LeftMenuComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([(0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_3__.UntilDestroy)()], LeftMenuComponent);
 
 
 /***/ }),
@@ -1270,14 +1245,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "SharedModule": () => (/* binding */ SharedModule)
 /* harmony export */ });
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /* harmony import */ var _left_menu_left_menu_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./left-menu/left.menu.component */ 5910);
 /* harmony import */ var _left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./left-menu/services/left.menu.service */ 3456);
 /* harmony import */ var _top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./top-header/content/top.header.content.component */ 3278);
 /* harmony import */ var _top_header_top_header_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./top-header/top.header.component */ 2400);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
-
 
 
 
@@ -1293,12 +1266,12 @@ SharedModule.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵ
 });
 SharedModule.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
   providers: [_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_1__.LeftMenuService],
-  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_6__.BrowserModule]
+  imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__.BrowserModule]
 });
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](SharedModule, {
     declarations: [_left_menu_left_menu_component__WEBPACK_IMPORTED_MODULE_0__.LeftMenuComponent, _top_header_top_header_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderComponent, _top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_2__.TopHeaderContentComponent],
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_6__.BrowserModule],
+    imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__.BrowserModule],
     exports: [_left_menu_left_menu_component__WEBPACK_IMPORTED_MODULE_0__.LeftMenuComponent, _top_header_top_header_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderComponent, _top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_2__.TopHeaderContentComponent]
   });
 })();
@@ -1427,7 +1400,7 @@ TopHeaderComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_3__.__decorate)([(0,_ngne
 
 /***/ }),
 
-/***/ 6051:
+/***/ 51:
 /*!************************************************************!*\
   !*** ./src/app/components/teams/get/team.get.component.ts ***!
   \************************************************************/
@@ -1441,9 +1414,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ngneat/until-destroy */ 2777);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var _shared_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/left-menu/services/left.menu.service */ 3456);
-/* harmony import */ var _services_team_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/team.service */ 6961);
+/* harmony import */ var _services_team_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/team.service */ 961);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 7153);
+/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 153);
 /* harmony import */ var _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/top-header/content/top.header.content.component */ 3278);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
 var _class;
@@ -1481,9 +1454,6 @@ function TeamGetComponent_div_0_tr_57_label_19_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "label", 33);
   }
 }
-const _c0 = function (a0) {
-  return [a0];
-};
 function TeamGetComponent_div_0_tr_57_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "tr")(1, "td", 17);
@@ -1527,13 +1497,13 @@ function TeamGetComponent_div_0_tr_57_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", player_r2.injured);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](17, _c0, "/teams/" + ctx_r1.team.slug + "/players/" + player_r2.id));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate2"]("href", "/teams/", ctx_r1.team.slug, "/players/", player_r2.id, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate2"](" ", player_r2.last_name, "\u00A0", player_r2.first_name, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", player_r2.position, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](19, _c0, "/countries/" + player_r2.country_slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/countries/", player_r2.country_id, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵclassMapInterpolate1"]("flag flag-", player_r2.country_code, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate"]("title", player_r2.country_name);
@@ -1613,7 +1583,7 @@ function TeamGetComponent_div_0_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](55, "th");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](56, " Value ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](57, TeamGetComponent_div_0_tr_57_Template, 28, 21, "tr", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](57, TeamGetComponent_div_0_tr_57_Template, 28, 18, "tr", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](58, "div", 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
@@ -1623,7 +1593,7 @@ function TeamGetComponent_div_0_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx_r0.team.name);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction1"](4, _c0, "/leagues/" + ctx_r0.team.league_slug));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate1"]("href", "/leagues/", ctx_r0.team.league_slug, "", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.team.league_name, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](47);
@@ -1690,16 +1660,16 @@ let TeamGetComponent = (_class = class TeamGetComponent {
   selectors: [["ng-component"]],
   decls: 1,
   vars: 1,
-  consts: [[4, "ngIf"], ["topHeader", ""], [1, "header-block"], [1, "club-logo", "club-default-logo", "header-player-logo"], [1, "header-title-block"], [1, "page-title"], [1, "sub-title-link", 3, "routerLink"], [1, "header_row", 2, "height", "55px", "margin-left", "0"], [1, "header_bottom"], [1, "nav", "navbar-left"], ["href", "/#"], [1, "nav", "navbar-right", 2, "margin-right", "0"], [1, "item-user"], ["href", ""], [1, "fas", "fa-user-friends"], [1, "content"], [1, "squad-table"], [2, "width", "50px"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], ["class", "status-badge injured", 4, "ngIf"], [2, "min-width", "200px"], [1, "player-info-logo"], [3, "routerLink"], [2, "width", "80px"], [3, "title"], [2, "width", "150px"], [1, "rating"], ["class", "checked", 4, "ngFor", "ngForOf"], [2, "width", "100px", "text-align", "center"], [2, "width", "70px"], [2, "width", "170px"], [1, "status-badge", "injured"], [1, "checked"]],
+  consts: [[4, "ngIf"], ["topHeader", ""], [1, "header-block"], [1, "club-logo", "club-default-logo", "header-player-logo"], [1, "header-title-block"], [1, "page-title"], [1, "sub-title-link", 3, "href"], [1, "header_row", 2, "height", "55px", "margin-left", "0"], [1, "header_bottom"], [1, "nav", "navbar-left"], ["href", "/#"], [1, "nav", "navbar-right", 2, "margin-right", "0"], [1, "item-user"], ["href", ""], [1, "fas", "fa-user-friends"], [1, "content"], [1, "squad-table"], [2, "width", "50px"], [4, "ngFor", "ngForOf"], [2, "clear", "both"], ["class", "status-badge injured", 4, "ngIf"], [2, "min-width", "200px"], [1, "player-info-logo"], [3, "href"], [2, "width", "80px"], [3, "title"], [2, "width", "150px"], [1, "rating"], ["class", "checked", 4, "ngFor", "ngForOf"], [2, "width", "100px", "text-align", "center"], [2, "width", "70px"], [2, "width", "170px"], [1, "status-badge", "injured"], [1, "checked"]],
   template: function TeamGetComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, TeamGetComponent_div_0_Template, 59, 6, "div", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, TeamGetComponent_div_0_Template, 59, 4, "div", 0);
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.team);
     }
   },
-  dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterLink, _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf],
+  dependencies: [_shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__.TopHeaderContentComponent, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf],
   styles: ["\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 }), _class);
 TeamGetComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__decorate)([(0,_ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_5__.UntilDestroy)()], TeamGetComponent);
@@ -1707,7 +1677,7 @@ TeamGetComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__decorate)([(0,_ngneat
 
 /***/ }),
 
-/***/ 7646:
+/***/ 646:
 /*!**********************************************************************!*\
   !*** ./src/app/components/teams/schedule/team.schedule.component.ts ***!
   \**********************************************************************/
@@ -1721,9 +1691,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ngneat_until_destroy__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ngneat/until-destroy */ 2777);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var _shared_left_menu_services_left_menu_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/left-menu/services/left.menu.service */ 3456);
-/* harmony import */ var _services_team_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/team.service */ 6961);
+/* harmony import */ var _services_team_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/team.service */ 961);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 7153);
+/* harmony import */ var src_app_shared_services_title_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/shared/services/title.service */ 153);
 /* harmony import */ var _shared_top_header_content_top_header_content_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../shared/top-header/content/top.header.content.component */ 3278);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
 var _class;
@@ -1954,7 +1924,7 @@ TeamScheduleComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__decorate)([(0,_n
 
 /***/ }),
 
-/***/ 6961:
+/***/ 961:
 /*!***********************************************************!*\
   !*** ./src/app/components/teams/services/team.service.ts ***!
   \***********************************************************/
@@ -1990,7 +1960,7 @@ TeamService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵ
 
 /***/ }),
 
-/***/ 1809:
+/***/ 809:
 /*!*************************************************!*\
   !*** ./src/app/components/teams/team.module.ts ***!
   \*************************************************/
@@ -2000,14 +1970,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TeamModule": () => (/* binding */ TeamModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ 8987);
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /* harmony import */ var _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/shared.module */ 4065);
-/* harmony import */ var _get_team_get_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get/team.get.component */ 6051);
-/* harmony import */ var _schedule_team_schedule_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schedule/team.schedule.component */ 7646);
+/* harmony import */ var _get_team_get_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get/team.get.component */ 51);
+/* harmony import */ var _schedule_team_schedule_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./schedule/team.schedule.component */ 646);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
-
 
 
 
@@ -2022,18 +1990,18 @@ TeamModule.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵ
   type: TeamModule
 });
 TeamModule.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjector"]({
-  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterModule, _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpClientModule]
+  imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
 });
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsetNgModuleScope"](TeamModule, {
     declarations: [_get_team_get_component__WEBPACK_IMPORTED_MODULE_1__.TeamGetComponent, _schedule_team_schedule_component__WEBPACK_IMPORTED_MODULE_2__.TeamScheduleComponent],
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterModule, _shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpClientModule]
+    imports: [_shared_shared_module__WEBPACK_IMPORTED_MODULE_0__.SharedModule, _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _angular_common_http__WEBPACK_IMPORTED_MODULE_5__.HttpClientModule]
   });
 })();
 
 /***/ }),
 
-/***/ 6406:
+/***/ 520:
 /*!*************************************************!*\
   !*** ./src/app/components/teams/team.routes.ts ***!
   \*************************************************/
@@ -2043,8 +2011,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "teamRoutes": () => (/* binding */ teamRoutes)
 /* harmony export */ });
-/* harmony import */ var _get_team_get_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./get/team.get.component */ 6051);
-/* harmony import */ var _schedule_team_schedule_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./schedule/team.schedule.component */ 7646);
+/* harmony import */ var _get_team_get_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./get/team.get.component */ 51);
+/* harmony import */ var _schedule_team_schedule_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./schedule/team.schedule.component */ 646);
 
 
 const teamRoutes = [{
@@ -2057,7 +2025,7 @@ const teamRoutes = [{
 
 /***/ }),
 
-/***/ 7153:
+/***/ 153:
 /*!**************************************************!*\
   !*** ./src/app/shared/services/title.service.ts ***!
   \**************************************************/

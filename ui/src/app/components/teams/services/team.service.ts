@@ -37,7 +37,7 @@ export interface TeamPlayerDto {
    value: String,
 
    injured: boolean,
-   country_id: number,
+   country_slug: number,
    country_code: String,
    country_name: String,
 

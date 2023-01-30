@@ -6,7 +6,7 @@
                 <div>
                     <div class="flag flag-ru custom-flag">
                     </div>
-                    <a href="/countries/{{ league.country_slug }}" class="sub-title-link">
+                    <a [routerLink]="['/countries/' + league.country_slug]" class="sub-title-link">
                         {{ league.country_name }}
                     </a>
                 </div>
@@ -64,7 +64,7 @@
                                 {{i}}st
                             </td>
                             <td>
-                                <a href="/teams/{{ row.team_slug }}">
+                                <a [routerLink]="['/teams/' + row.team_slug]">
                                     {{ row.team_name }}
                                 </a>
                             </td>
@@ -104,12 +104,12 @@
 
                             <tr *ngFor="let item of tour_schedule.matches">
                                 <td>
-                                    <a href="/teams/{{ item.home_team_slug }}">
+                                    <a [routerLink]="['/teams/' + item.home_team_slug]">
                                         {{ item.home_team_name }}
                                     </a>
                                 </td>
                                 <td class="score">
-                                    <a href="/match/{{ league.slug }}/{{ item.match_id }}">
+                                    <a [routerLink]="['/match/' + league.slug + '/' + item.match_id]">
 
                                         <span *ngIf="item.result">
 
@@ -123,7 +123,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="/teams/{{ item.away_team_slug }}">
+                                    <a [routerLink]="['/teams/' + item.away_team_slug]">
                                         {{ item.away_team_name }}
                                     </a>
                                 </td>

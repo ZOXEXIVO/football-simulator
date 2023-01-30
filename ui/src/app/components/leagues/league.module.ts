@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { LeagueGetComponent } from './get/league.get.component';
 
@@ -9,6 +10,7 @@ import { LeagueGetComponent } from './get/league.get.component';
     LeagueGetComponent,
   ],
   imports: [
+    RouterModule,
     SharedModule,
     BrowserModule,
     HttpClientModule
