@@ -9,179 +9,136 @@ export class PlayerService {
    constructor(private http: HttpClient) {
    }
 
-   get(slug: String): Observable<TeamDto> {
-      return this.http.get<TeamDto>('/api/teams/' + slug);
-   }
-
-   getSchedule(slug: String): Observable<TeamScheduleDto> {
-      return this.http.get<TeamScheduleDto>('/api/teams/' + slug + '/schedule');
+   get(team_slug: String, playerId: number): Observable<PlayerDto> {
+      return this.http.get<PlayerDto>('/api/teams/' + team_slug + '/players/' + playerId);
    }
 }
 
-export interface PlayerDto {
-   pub id: u32,
-   pub first_name: &'p str,
-   pub last_name: &'p str,
-   pub middle_name: Option<&'p str>,
-   pub position: &'p str,
-   pub contract: Option<PlayerContractDto>,
-   pub birth_date: String,
-   pub age: u8,
-   pub team_slug: &'p str,
-   pub team_name: &'p str,
-   pub country_id: u32,
-   pub country_code: &'p str,
-   pub country_name: &'p str,
-   pub skills: PlayerSkillsDto,
-   pub conditions: u8,
-   pub current_ability: u8,
-   pub potential_ability: u8,
-
-   pub value: &'p str,
-
-   pub preferred_foot: &'p str,
-
-   pub player_attributes: PlayerAttributesDto,
-
-   pub neighbor_teams: Vec<ClubTeam<'p>>,
-
-   pub statistics: PlayerStatistics,
-
-   pub status: PlayerStatusDto,
-}
 
 export interface PlayerDto {
-   pub id: u32,
-   pub first_name: &'p str,
-   pub last_name: &'p str,
-   pub middle_name: Option<&'p str>,
-   pub position: &'p str,
-   pub contract: Option<PlayerContractDto>,
-   pub birth_date: String,
-   pub age: u8,
-   pub team_slug: &'p str,
-   pub team_name: &'p str,
-   pub country_id: u32,
-   pub country_code: &'p str,
-   pub country_name: &'p str,
-   pub skills: PlayerSkillsDto,
-   pub conditions: u8,
-   pub current_ability: u8,
-   pub potential_ability: u8,
+   id: number,
+   first_name: string
+   last_name: string
+   middle_name: string
+   position: string
+   contract: PlayerContractDto,
+   birth_date: String,
+   age: number,
+   team_slug: string
+   team_name: string
+   country_slug: number,
+   country_code: string
+   country_name: string
+   skills: PlayerSkillsDto,
+   conditions: number,
+   current_ability: number,
+   potential_ability: number,
 
-   pub value: &'p str,
+   value: string
 
-   pub preferred_foot: &'p str,
+   preferred_foot: string
 
-   pub player_attributes: PlayerAttributesDto,
+   player_attributes: PlayerAttributesDto,
 
-   pub neighbor_teams: Vec<ClubTeam<'p>>,
+   neighbor_teams: ClubTeam[],
 
-   pub statistics: PlayerStatistics,
+   statistics: PlayerStatistics,
 
-   pub status: PlayerStatusDto,
+   status: PlayerStatusDto,
 }
 
-#[derive(Serialize)]
-pub struct PlayerStatistics {
-    pub played: u16,
-    pub played_subs: u16,
+export interface PlayerStatistics {
+    played: number,
+    played_subs: number,
 
-    pub goals: u16,
-    pub assists: u16,
-    pub penalties: u16,
-    pub player_of_the_match: u8,
-    pub yellow_cards: u8,
-    pub red_cards: u8,
+    goals: number,
+    assists: number,
+    penalties: number,
+    player_of_the_match: number,
+    yellow_cards: number,
+    red_cards: number,
 
-    pub shots_on_target: f32,
-    pub tackling: f32,
-    pub passes: u8,
+    shots_on_target: number,
+    tackling: number,
+    passes: number,
 
-    pub average_rating: f32,
+    average_rating: number,
 }
 
-#[derive(Serialize)]
-pub struct ClubTeam<'c> {
-    pub name: &'c str,
-    pub slug: &'c str,
-    pub reputation: u16,
+export interface ClubTeam {
+    name: string,
+    slug: string,
+    reputation: number,
 }
 
-#[derive(Serialize)]
-pub struct PlayerContractDto {
-    pub salary: u32,
-    pub expiration: String,
-    pub squad_status: String,
+export interface PlayerContractDto {
+    salary: number,
+    expiration: String,
+    squad_status: String,
 }
 
-#[derive(Serialize)]
-pub struct PlayerSkillsDto {
-    pub technical: TechnicalDto,
-    pub mental: MentalDto,
-    pub physical: PhysicalDto,
+
+export interface PlayerSkillsDto {
+    technical: TechnicalDto,
+    mental: MentalDto,
+    physical: PhysicalDto,
 }
 
-#[derive(Serialize)]
-pub struct TechnicalDto {
-    pub corners: u8,
-    pub crossing: u8,
-    pub dribbling: u8,
-    pub finishing: u8,
-    pub first_touch: u8,
-    pub free_kick_taking: u8,
-    pub heading: u8,
-    pub long_shots: u8,
-    pub long_throws: u8,
-    pub marking: u8,
-    pub passing: u8,
-    pub penalty_taking: u8,
-    pub tackling: u8,
-    pub technique: u8,
+export interface TechnicalDto {
+    corners: number,
+    crossing: number,
+    dribbling: number,
+    finishing: number,
+    first_touch: number,
+    free_kick_taking: number,
+    heading: number,
+    long_shots: number,
+    long_throws: number,
+    marking: number,
+    passing: number,
+    penalty_taking: number,
+    tackling: number,
+    technique: number,
 }
 
-#[derive(Serialize)]
-pub struct MentalDto {
-    pub aggression: u8,
-    pub anticipation: u8,
-    pub bravery: u8,
-    pub composure: u8,
-    pub concentration: u8,
-    pub decisions: u8,
-    pub determination: u8,
-    pub flair: u8,
-    pub leadership: u8,
-    pub off_the_ball: u8,
-    pub positioning: u8,
-    pub teamwork: u8,
-    pub vision: u8,
-    pub work_rate: u8,
+export interface MentalDto {
+    aggression: number,
+    anticipation: number,
+    bravery: number,
+    composure: number,
+    concentration: number,
+    decisions: number,
+    determination: number,
+    flair: number,
+    leadership: number,
+    off_the_ball: number,
+    positioning: number,
+    teamwork: number,
+    vision: number,
+    work_rate: number,
 }
 
-#[derive(Serialize)]
-pub struct PhysicalDto {
-    pub acceleration: u8,
-    pub agility: u8,
-    pub balance: u8,
-    pub jumping_reach: u8,
-    pub natural_fitness: u8,
-    pub pace: u8,
-    pub stamina: u8,
-    pub strength: u8,
+export interface PhysicalDto {
+    acceleration: number,
+    agility: number,
+    balance: number,
+    jumping_reach: number,
+    natural_fitness: number,
+    pace: number,
+    stamina: number,
+    strength: number,
 
-    pub match_readiness: u8,
+    match_readiness: number,
 }
 
-#[derive(Serialize)]
-pub struct PlayerAttributesDto {
-    pub international_apps: u16,
-    pub international_goals: u16,
+export interface PlayerAttributesDto {
+    international_apps: number,
+    international_goals: number,
 
-    pub under_21_international_apps: u16,
-    pub under_21_international_goals: u16,
+    under_21_international_apps: number,
+    under_21_international_goals: number,
 }
 
-#[derive(Serialize)]
-pub struct PlayerStatusDto {
-    pub statuses: Vec<PlayerStatusType>,
+export interface PlayerStatusDto {
+    statuses: string[]
 }

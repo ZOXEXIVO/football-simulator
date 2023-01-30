@@ -9,6 +9,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { LeagueModule } from './components/leagues/league.module';
 import { TeamModule } from './components/teams/team.module';
+import { PlayerModule } from './components/players/player.module';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { TeamModule } from './components/teams/team.module';
     SharedModule,
     BrowserModule,
     AppRoutingModule,
+    PlayerModule,
     CountryModule,
     LeagueModule,
     TeamModule,

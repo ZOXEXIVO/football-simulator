@@ -18,6 +18,6 @@ impl ServerRoutes {
             .merge(team_routes())
             .merge(player_routes());
 
-        routes.merge(SpaRouter::new("/assets", "ui/assets").index_file("index.html"))
+        routes.merge(SpaRouter::new("/dist", "ui/dist").index_file("index.html"))
     }
 }

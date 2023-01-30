@@ -29,7 +29,7 @@ pub struct PlayerGetViewModel<'p> {
     pub age: u8,
     pub team_slug: &'p str,
     pub team_name: &'p str,
-    pub country_id: u32,
+    pub country_slug: &'p str,
     pub country_code: &'p str,
     pub country_name: &'p str,
     pub skills: PlayerSkillsDto,
@@ -201,10 +201,10 @@ pub async fn player_get_action(
         position: player.position().get_short_name(),
         contract: None,
         birth_date: player.birth_date.format("%d.%m.%Y").to_string(),
-        age: player.age(simulator_data.date.date()) as u8,
+        age: player.age(simulator_data.date.date()),
         team_slug: &team.slug,
         team_name: &team.name,
-        country_id: country.id,
+        country_slug: &country.slug,
         country_code: &country.code,
         country_name: &country.name,
         skills: get_skills(player),
@@ -221,7 +221,7 @@ pub async fn player_get_action(
 
     if let Some(contract) = &player.contract {
         model.contract = Some(PlayerContractDto {
-            salary: (contract.salary / 1000) as u32,
+            salary: (contract.salary / 1000),
             expiration: contract.expiration.format("%d.%m.%Y").to_string(),
             squad_status: String::from("First team player"),
         });
