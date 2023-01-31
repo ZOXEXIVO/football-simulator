@@ -17,10 +17,10 @@ export class PlayerService {
 
 export interface PlayerDto {
    id: number,
-   first_name: string
-   last_name: string
-   middle_name: string
-   position: string
+   first_name: string,
+   last_name: string,
+   middle_name: string,
+   position: string,
    contract: PlayerContractDto,
    birth_date: String,
    age: number,

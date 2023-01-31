@@ -61,7 +61,7 @@
                         </tr>
                         <tr *ngFor="let row of league.table.rows; let i = index">
                             <td class="idx">
-                                {{i}}st
+                                {{i + 1}}st
                             </td>
                             <td>
                                 <a [routerLink]="['/teams/' + row.team_slug]">

@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DateDto, DateService } from 'src/app/shared/services/date.service';
 import { ProcessService } from './services/process.service';
 
 @UntilDestroy()
@@ -9,24 +10,38 @@ import { ProcessService } from './services/process.service';
   styleUrls: ['./process.component.scss']
 })
 export class ProcessComponent implements OnInit {
-  isProcessing: boolean = false;
+  date: DateDto | undefined;
+  isProcessingInAction: boolean = false;
 
   constructor(
-    private processService: ProcessService) {
+    private processService: ProcessService,
+    private dateService: DateService) {
   }
 
   ngOnInit() {    
+    this.updateDate();
   }
   
   process(){
-    if(this.isProcessing){
+    if(this.isProcessingInAction){
       return;
     }
 
-    this.isProcessing = true;
+    this.isProcessingInAction = true;
 
     this.processService.process().subscribe(data => {
-      this.isProcessing = false;
+      this.isProcessingInAction = false;
+      this.updateDate();
+    });
+  }
+
+  isProcessing(): boolean {
+    return this.isProcessingInAction;
+  }
+
+  updateDate() {
+    this.dateService.get_current().pipe(untilDestroyed(this)).subscribe(dateObj => {
+      this.date = dateObj;
     });
   }
 }
