@@ -1,11 +1,25 @@
+<nav class="navbar navbar-expand-sm bg-light">
+
+    <div class="container-fluid">
+      <!-- Links -->
+      <ul class="navbar-nav" *ngFor="let section of menuSections$ | async">
+        <li class="nav-item" *ngFor="let menuItem of section.items">
+            <a [routerLink]="[menuItem.url]"><i class="fa {{menuItem.icon}}"></i>{{menuItem.title}}</a>
+        </li>
+      </ul>
+    </div>
+  
+  </nav>
+
+<!-- 
 <div class="left_col scroll-view">
     <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
         <div class="menu_section" *ngFor="let section of menuSections$ | async">
             <ul class="nav">
                 <li *ngFor="let menuItem of section.items">
-                    <a [routerLink]="[menuItem.url]"><i class="fa {{menuItem.icon}}"></i>{{menuItem.title}}</a>
+                   
                 </li>
             </ul>
         </div>       
     </div>
-</div>
+</div> -->

@@ -30,12 +30,15 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/assets/styles/fonts/fonts.css",
               "src/assets/styles/fonts/flags.css",
               "src/assets/styles/images.css",
               "src/assets/styles/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {
