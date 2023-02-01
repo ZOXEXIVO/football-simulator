@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { of } from 'rxjs';
 import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { MatchDto, MatchService } from '../services/match.service';
@@ -13,6 +14,12 @@ import { MatchDto, MatchService } from '../services/match.service';
 export class MatchGetComponent {
   public match: MatchDto | null = null;
 
+  leagueSlug: string = '';
+  matchId: string = '';
+
+  offset = 0;
+  limit = 300;
+
   constructor(private leftMenuService: LeftMenuService,
     private service: MatchService,
     private route: ActivatedRoute,
@@ -20,16 +27,11 @@ export class MatchGetComponent {
   }
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      const leagueSlug = params["league_slug"];
-      const matchId = params["match_id"];
-
-      this.service.get(leagueSlug, matchId, params["offset"], params["limit"]).pipe(untilDestroyed(this)).subscribe(matchData => {
-        this.match = matchData;
-        this.initLeftMenu(matchData);
-
-        //this.titleService.setTitle(playerData.last_name + ' ' + playerData.first_name + ', ' + playerData.team_name);
-      });
+      this.leagueSlug = params["league_slug"];
+      this.matchId = params["match_id"];
     });
+
+    this.loadMatchData(this.offset, this.limit);
   }
 
   initLeftMenu(match: MatchDto) {
@@ -39,5 +41,13 @@ export class MatchGetComponent {
     //{ items: [{ url: `/teams/${player.team_slug}/schedule`, title: 'Schedule', icon: 'fa-inbox' }] },
     { items: [{ url: '/calendar', title: 'Calendar', icon: 'fa-calendar-alt' }] },
     ]);
+  }
+
+  loadMatchData(offset: number, limit: number) {
+    this.service.get(this.leagueSlug, this.matchId, offset, limit).pipe(untilDestroyed(this)).subscribe(matchData => {
+      this.match = matchData;
+      
+
+    });
   }
 }

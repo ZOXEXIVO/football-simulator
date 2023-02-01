@@ -25,7 +25,7 @@ export class TeamGetComponent {
         this.team = teamData;
         this.initLeftMenu(teamData);
 
-        this.titleService.setTitle(this.team.name);
+        this.titleService.setTitle(this.team.name + ', ' + this.team.league_name);
       });
     });
   }
