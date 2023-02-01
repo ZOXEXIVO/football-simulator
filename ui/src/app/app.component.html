@@ -1,42 +1,24 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col col-2" style="background-color: red;">
-            <left-menu></left-menu>
+  <div class="row">
+    <div class="col col-2 left-bar">
+      <left-menu></left-menu>
+    </div>
+    <div class="col m-0 p-0">
+      <div class="container-fluid">
+        <div class="row bg-white">
+          <div class="col-8 top-header-col gray_b_b">
+            <top-header></top-header>
+          </div>
+          <div class="col-4 gray_b_b p-0">
+            <process></process>
+          </div>
         </div>
-        <div class="col" style="background-color: green;">
-          One of three columns
+        <div class="row">
+          <div class="col m-0 p-0">
+            <router-outlet></router-outlet>
+          </div>
         </div>
       </div>
-</div>
-
-<!-- 
-
-
-<div class="main_container">
-    <div>
-        <div class="main_content">
-            <div class="col-md-3 left_col">
-                <left-menu></left-menu>
-            </div>
-            <div class="header_row">
-                <div class="header_top">
-                    <div class="col-md-6 top-header-wrapper">
-                        <top-header></top-header>
-                    </div>
-
-                    <div class="col-md-6">
-                        <process></process>
-                    </div>
-                </div>
-            </div>
-            <hr />
-            <div class="right_col">
-                <div class="main_content">
-                    <router-outlet></router-outlet>
-
-                    <div style="clear:both"></div>
-                </div>
-            </div>
-        </div>
     </div>
-</div> -->
+  </div>
+</div>

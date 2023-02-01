@@ -5,9 +5,25 @@ import { BehaviorSubject, of } from "rxjs";
     providedIn: 'root',
 })
 export class TopHeaderService {
-    public content$: BehaviorSubject<String> = new BehaviorSubject<String>('');
+    public content$: BehaviorSubject<ContentDto> = new BehaviorSubject<ContentDto>(      {
+      mainContent: '', subContent: '', subContentLink: ''}
+    );
 
-    setContent(content: String) {
-        this.content$.next(content);
+    setContent(mainContent: String, subContent: String, subContentLink: String) {
+        this.content$.next(new ContentDto(mainContent, subContent, subContentLink));
     }
+}
+
+export class ContentDto {
+  constructor(mainContent: String, subContent: String, subContentLink: String) {
+    this.mainContent = mainContent;
+
+    this.subContent = subContent;
+    this.subContentLink = subContentLink;
+  }
+
+  public mainContent: String;
+
+  public subContent: String;
+  public subContentLink: String;
 }

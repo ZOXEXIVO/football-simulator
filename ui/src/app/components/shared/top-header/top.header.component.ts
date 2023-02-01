@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TopHeaderService } from './services/top.header.service';
+import {ContentDto, TopHeaderService} from './services/top.header.service';
 
 @UntilDestroy()
 @Component({
@@ -10,7 +10,7 @@ import { TopHeaderService } from './services/top.header.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TopHeaderComponent implements OnInit {
-  content: String = '';
+  content: ContentDto | null = null;
 
   constructor(
     private topHeaderService: TopHeaderService,
