@@ -439,18 +439,25 @@ body {
 //   border-left: 2px solid #323A41;
 // }
 
-// p.header {
-//   text-transform: uppercase;
-//   color: #CECECE;
-//   font-size: 13px;
-//   padding-top: 10px;
-//   padding-bottom: 15px;
-//   ;
-// }
+ p.header {
+   text-transform: uppercase;
+   color: #CECECE;
+   font-size: 13px;
+   padding-top: 20px;
+   padding-bottom: 0;
+   ;
+ }
 
-// p .rating .header {
-//   font-size: 12px;
-// }
+ p .rating .header {
+   font-size: 12px;
+ }
+
+
+.flag {
+  width: 30px;
+  height: 20px;
+  display: inline-block;
+}
 
 // img.club-logo {
 //   width: 25px;
@@ -462,14 +469,6 @@ body {
 //   height: 20px;
 // }
 
-// table.statistics-table td {
-//   padding: 5px;
-// }
-
-// table.statistics-table p.club-name {
-//   font-size: 12px;
-//   color: #868A8A;
-// }
 
 
 // .rating {
@@ -930,3 +929,7 @@ a:hover { text-decoration: none !important; }
 
 
 a:active { text-decoration: none !important; }
+
+.navbar-submenu a.nav-link {
+  color: #3e4041;
+}

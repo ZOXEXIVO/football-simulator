@@ -5,6 +5,7 @@ import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { TopHeaderService } from '../../shared/top-header/services/top.header.service';
 import { LeagueDto, LeagueService } from '../services/league.service';
+import {TeamDto} from "../../teams/services/team.service";
 
 @UntilDestroy()
 @Component({
@@ -21,10 +22,6 @@ export class LeagueGetComponent {
     private titleService: TitleService) {
   }
   ngOnInit(): void {
-    this.leftMenuService.setMenu([
-      { items: [{ url: '/', title: 'Home', icon: 'fa-home' }] }
-    ]);
-
     this.route.params.subscribe(params => {
       this.service.get(params["slug"]).pipe(untilDestroyed(this)).subscribe(leagueData => {
         this.league = leagueData;
@@ -33,7 +30,17 @@ export class LeagueGetComponent {
 
         this.topHeaderService.setContent(leagueData.name,
           leagueData.country_name, '/countries/' + leagueData.country_slug);
+
+        this.initLeftMenu(leagueData);
       });
     });
+  }
+
+  initLeftMenu(league: LeagueDto) {
+    this.leftMenuService.setMenu([
+      { items: [{ url: '/', title: 'Home', icon: 'fa-home' }] },
+      { items: [{ url: '/countries/' + league.country_slug, title: league.country_name, icon: 'fa-home' }] },
+      { items: [{ url: '/leagues' + league.slug, title: league.name, icon: 'fa-home' }] }
+    ]);
   }
 }
