@@ -1,22 +1,5 @@
-<div class="content">
+<div class="country-content">
     <div *ngIf="country">
-        <div topHeader>
-            <div class="header-block">
-                <div class="flag flag-{{country.code}}">
-                </div>
-            </div>
-            <div class="header-block">
-                <div class="header-title-block">
-                    <div class="page-title">{{country.name}}</div>
-                    <div>
-                        <a [routerLink]="['/countries/']" class="sub-title-link">
-                            {{ country.continent_name }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
         <div>
             <ul class="countries-list">
                 <li *ngFor="let league of country.leagues">

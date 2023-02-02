@@ -1,14 +1,4 @@
-<div topHeader>
-    <div style="float:left;">
-        <div class="header-title-block">
-            <div class="page-title">Select country</div>
-            <div>Select any country to inspect it all</div>
-        </div>
-    </div>
-
-</div>
-
-<div class="content">
+<div class="country-list-content">
     <div>
         <div class="country-box" *ngFor="let country of countries$ | async">
             <h2>{{country.name}} ({{country.countries.length}})</h2>

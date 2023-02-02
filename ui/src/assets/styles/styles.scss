@@ -1,5 +1,6 @@
 body {
   background-color: #283238;
+  color: #fff;
 }
 
 // body {
@@ -9,14 +10,6 @@ body {
 // a,
 // body {
 //   color: #fff
-// }
-
-// .main_container .col-md-3.left_col {
-//   width: 230px
-// }
-
-// .main_container {
-//   min-width: 1200px
 // }
 
  .container-fluid .header_row {
@@ -436,26 +429,7 @@ body {
 //   font-size: 22px;
 // }
 
-// .country-box {
-//   padding: 10px;
-// }
 
-// ul.countries-list {
-//   margin-bottom: 50px;
-//   clear: both;
-// }
-
-// ul.countries-list li {
-//   float: left;
-//   list-style: none;
-//   ;
-//   margin-right: 20px;
-// }
-
-
-// ul.countries-list li a {
-//   font-size: 20px;
-// }
 
 // table {
 //   width: 100%;
@@ -605,9 +579,7 @@ body {
 // }
 
 
-// ul.countries-list li a {
-//   font-size: 20px;
-// }
+
 
 // table.squad-table {
 //   width: 100%;
@@ -780,11 +752,6 @@ body {
 //   height: 100px;
 // }
 
-// .country-flag {
-//   margin-top: 15px;
-//   margin-left: 20px;
-//   width: 25px;
-//   height: 16px;
 // }
 
 // .basic-info {
@@ -997,11 +964,7 @@ body {
 // }
 
 
-// .flag {
-//   width: 30px;
-//   height: 20px;
-//   display: inline-block;
-// }
+
 
 // table.player-statistics td {
 //   font-size: 14px;
@@ -1031,3 +994,14 @@ body {
  .navbar-submenu {
    background-color: #fff;
  }
+
+a:link { text-decoration: none !important; }
+
+
+a:visited { text-decoration: none !important; }
+
+
+a:hover { text-decoration: none !important; }
+
+
+a:active { text-decoration: none !important; }
