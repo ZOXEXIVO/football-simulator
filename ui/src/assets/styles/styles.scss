@@ -471,57 +471,40 @@ body {
 
 
 
-// .rating {
-//   float: left;
-//   min-width: 80px;
-// }
+ .rating {
+   float: left;
+   min-width: 80px;
+ }
 
-// .rating:not(:checked)>input {
-//   position: absolute;
-//   top: -9999px;
-//   clip: rect(0, 0, 0, 0);
-// }
+ .rating:not(:checked)>input {
+   position: absolute;
+   top: -9999px;
+   clip: rect(0, 0, 0, 0);
+ }
 
-// .rating:not(:checked)>label {
-//   float: right;
-//   width: 1em;
-//   padding: 0.1em;
-//   overflow: hidden;
-//   white-space: nowrap;
-//   cursor: pointer;
-//   font-size: 100%;
-//   line-height: 1.2;
-//   color: #ddd;
-// }
+ .rating:not(:checked)>label {
+   float: right;
+   width: 1em;
+   padding: 0.1em;
+   overflow: hidden;
+   white-space: nowrap;
+   cursor: pointer;
+   font-size: 100%;
+   line-height: 1.2;
+   color: #ddd;
+ }
 
-// .rating:not(:checked)>label:before {
-//   content: '★ ';
-// }
+ .rating:not(:checked)>label:before {
+   content: '★ ';
+ }
 
-// .rating>label.checked {
-//   color: #F2BC04;
-// }
-
-
+ .rating>label.checked {
+   color: #F2BC04;
+ }
 
 
-// table.squad-table {
-//   width: 100%;
 
-//   font-size: 14px;
-// }
 
-// table.squad-table td,
-// th {
-//   padding-top: 13px;
-//   padding-bottom: 5px;
-// }
-
-// table.squad-table th {
-//   color: #868A8A;
-//   font-size: 12px;
-//   text-transform: uppercase;
-// }
 
 // img.country-logo {
 //   width: 30px;
@@ -529,371 +512,45 @@ body {
 //   border-radius: 3px;
 // }
 
-// .status-badge {
-//   position: relative;
-//   width: 37px;
-//   height: 27px;
-//   font-size: 12px;
-// }
+ .status-badge {
+   position: relative;
+   width: 37px;
+   height: 27px;
+   font-size: 12px;
+ }
 
-// .status-badge.injured::before {
-//   position: absolute;
-//   background-color: #A71214;
-//   color: #fff;
-//   content: "Inj";
-//   border-radius: 4px;
-//   width: 38px;
-//   height: 29px;
-//   padding-top: 7px;
-//   text-align: center;
-// }
+ .status-badge.injured::before {
+   position: absolute;
+   background-color: #A71214;
+   color: #fff;
+   content: "Inj";
+   border-radius: 4px;
+   width: 38px;
+   height: 29px;
+   padding-top: 7px;
+   text-align: center;
+ }
 
-// .status-badge.wanted::before {
-//   position: absolute;
-//   background-color: #65BB7F;
-//   color: #18532A;
-//   content: "Wnt";
-//   border-radius: 4px;
-//   width: 38px;
-//   height: 29px;
-//   padding-top: 7px;
-//   text-align: center;
-// }
+ .status-badge.wanted::before {
+   position: absolute;
+   background-color: #65BB7F;
+   color: #18532A;
+   content: "Wnt";
+   border-radius: 4px;
+   width: 38px;
+   height: 29px;
+   padding-top: 7px;
+   text-align: center;
+ }
 
-// table.skills {
-//   max-width: 500px;
-// }
 
-// table.skills td:nth-child(even) {
-//   color: #688B5C;
-//   font-weight: bold;
-//   width: 50px;
-//   text-align: center;
-//   ;
-// }
 
-// table.skills td:nth-child(odd) {
-//   width: 140px;
-// }
 
-// .td_1 {
-//   color: #666B70 !important;
-// }
 
-// .td_2 {
-//   color: #666B70 !important;
-// }
 
-// .td_3 {
-//   color: #666B70 !important;
-// }
 
-// .td_4 {
-//   color: #666B70 !important;
-// }
 
-// .td_5 {
-//   color: #666B70 !important;
-// }
 
-// .td_6 {
-//   color: #BDBEC1 !important;
-// }
-
-// .td_7 {
-//   color: #BDBEC1 !important;
-// }
-
-// .td_8 {
-//   color: #BDBEC1 !important;
-// }
-
-// .td_9 {
-//   color: #BDBEC1 !important;
-// }
-
-// .td_10 {
-//   color: #BDBEC1 !important;
-// }
-
-// .td_11 {
-//   color: #98D177 !important;
-// }
-
-// .td_12 {
-//   color: #93CC76 !important;
-// }
-
-// .td_13 {
-//   color: #93CC76 !important;
-// }
-
-// .td_14 {
-//   color: #93CC76 !important;
-// }
-
-// .td_15 {
-//   color: #93CC76 !important;
-// }
-
-// .td_16 {
-//   color: #76C14B !important;
-// }
-
-// .td_17 {
-//   color: #6AAC4C !important;
-// }
-
-// .td_18 {
-//   color: #7AC64B !important;
-// }
-
-// .td_19 {
-//   color: #69A94D !important;
-// }
-
-// .td_20 {
-//   color: #69A94D !important;
-// }
-
-// p {
-//   margin: 0;
-// }
-
-// .delim {
-//   border-left: 2px solid #2E3238;
-//   height: 100%;
-// }
-
-// .player-header {
-//   background-color: #262A30;
-//   height: 110px;
-//   clear: both;
-// }
-
-// .player-photo {
-//   width: 100px;
-//   height: 100px;
-// }
-
-// }
-
-// .basic-info {
-//   margin-left: 30px;
-//   margin-top: 10px;
-//   font-size: 13px;
-//   color: #787B7A;
-// }
-
-// .basic-info span {
-//   color: #fff;
-// }
-
-// .status-badge {
-//   margin-top: -6px;
-//   position: relative;
-//   width: 37px;
-//   height: 27px;
-//   font-size: 12px;
-// }
-
-// .status-badge.injured::before {
-//   position: absolute;
-//   background-color: #A71214;
-//   color: #fff;
-//   content: "Inj";
-//   border-radius: 24px;
-//   width: 33px;
-//   height: 32px;
-//   padding-top: 9px;
-//   text-align: center;
-// }
-
-// .status-badge.wanted::before {
-//   position: absolute;
-//   background-color: #65BB7F;
-//   color: #18532A;
-//   content: "Wnt";
-//   border-radius: 24px;
-//   width: 33px;
-//   height: 32px;
-//   padding-top: 9px;
-//   text-align: center;
-// }
-
-// .player-content p {
-//   margin: 0;
-// }
-
-// .player-content .delim {
-//   border-left: 2px solid #2E3238;
-//   height: 100%;
-// }
-
-// .player-content .player-header {
-//   background-color: #262A30;
-//   height: auto;
-// }
-
-// .player-content .player-photo {
-//   width: 100px;
-//   height: 100px;
-//   margin-left: 20px;
-// }
-
-// .player-content .flag {
-//   margin-top: 13px;
-//   margin-left: 22px;
-//   width: 26px;
-//   height: 18px;
-// }
-
-// .player-content .basic-info {
-//   margin-left: 30px;
-//   margin-top: 10px;
-//   font-size: 13px;
-//   color: #787B7A;
-// }
-
-// .player-content .basic-info span {
-//   color: #fff;
-// }
-
-// .player-content .status-badge {
-//   margin-top: 10px;
-//   position: relative;
-//   width: 37px;
-//   height: 27px;
-//   font-size: 12px;
-// }
-
-// .player-content .status-badge.injured::before {
-//   position: absolute;
-//   background-color: #A71214;
-//   color: #fff;
-//   content: "Inj";
-//   border-radius: 24px;
-//   width: 33px;
-//   height: 32px;
-//   padding-top: 9px;
-//   text-align: center;
-// }
-
-// .player-content .status-badge.wanted::before {
-//   position: absolute;
-//   background-color: #65BB7F;
-//   color: #18532A;
-//   content: "Wnt";
-//   border-radius: 24px;
-//   width: 33px;
-//   height: 32px;
-//   padding-top: 9px;
-//   text-align: center;
-// }
-
-// .player-content .coach_summary p {
-//   margin-top: 18px;
-//   font-size: 13px;
-//   color: #787B7A;
-// }
-
-// .player-content .current_ability p {
-//   text-transform: uppercase;
-//   margin-top: 20px;
-//   font-size: 10px;
-//   color: #787B7A;
-// }
-
-// .player-content .potential_ability p {
-//   text-transform: uppercase;
-//   margin-top: 20px;
-//   font-size: 10px;
-//   color: #787B7A;
-// }
-
-// .player-content .contract-info {
-//   margin-top: 10px;
-// }
-
-// .player-content .contract-info p.contracted {
-//   font-size: 13px;
-//   color: #787B7A;
-// }
-
-// .player-content .contract-info p.wage {
-//   font-size: 12px;
-// }
-
-// .player-content .contract-info p.status {
-//   font-size: 12px;
-//   color: #787B7A;
-// }
-
-// .player-content .player-data {
-//   background-color: #31373E;
-//   height: 400px;
-
-//   padding-top: 10px;
-
-//   color: #E5E6E7;
-// }
-
-// .player-content .player-data .prefered dt {
-//   text-transform: uppercase;
-//   font-size: 12px;
-// }
-
-// .player-content .player-data .prefered dd {
-//   border-bottom: 2px solid #3C4248;
-//   font-size: 13px;
-// }
-
-// .player-content .player-data .biography {
-//   font-size: 14px;
-// }
-
-// .player-content table.skills td:nth-child(even) {
-//   color: #688B5C;
-//   width: 40px;
-// }
-
-// .player-content table.skills td:nth-child(odd) {
-//   width: 150px;
-// }
-
-// .player-content .player-widgets .delim {
-//   border: 1px solid #31383F;
-//   padding: 30px 0 0 25px;
-//   height: 165px;
-// }
-
-
-// .player-content .player-data div.row {
-//   margin-left: 0 !important;
-// }
-
-// .player-content .no-padding {
-//   padding-left: 0;
-// }
-
-// .player-content .player-data label {
-//   text-transform: uppercase;
-//   font-weight: normal;
-//   font-size: 11px;
-// }
-
-// img.default {
-//   width: 35px;
-//   background: url('data:image/png;base64,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')
-// }
-
-
-
-
-// table.player-statistics td {
-//   font-size: 14px;
-//   opacity: 0.6;
-// }
 
  .header-block {
    float: left;

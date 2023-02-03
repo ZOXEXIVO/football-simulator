@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { PlayerDto, PlayerService } from '../services/player.service';
+import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
 
 @UntilDestroy()
 @Component({
@@ -15,6 +16,7 @@ export class PlayerGetComponent {
 
   constructor(private leftMenuService: LeftMenuService,
     private service: PlayerService,
+    private topHeaderService: TopHeaderService,
     private route: ActivatedRoute,
     private titleService: TitleService) {
   }
@@ -28,6 +30,10 @@ export class PlayerGetComponent {
         this.initLeftMenu(playerData);
 
         this.titleService.setTitle(playerData.last_name + ' ' + playerData.first_name + ', ' + playerData.team_name);
+        this.topHeaderService.setContent(
+          playerData.last_name + ' ' + playerData.first_name,
+          playerData.team_name,
+          '/teams/' + playerData.team_slug)
       });
     });
   }
