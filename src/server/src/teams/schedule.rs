@@ -29,11 +29,12 @@ pub struct TeamScheduleItem<'t> {
     pub is_home: bool,
     pub competition_id: u32,
     pub competition_name: &'t str,
-    pub result: Option<TeamScheduleItemResult>,
+    pub result: Option<TeamScheduleItemResult<'t>>,
 }
 
 #[derive(Serialize)]
-pub struct TeamScheduleItemResult {
+pub struct TeamScheduleItemResult<'t> {
+    pub match_id: &'t str,
     pub home_goals: i32,
     pub away_goals: i32,
 }
@@ -65,6 +66,8 @@ pub async fn team_schedule_get_action(
 
     let league = simulator_data.league(team.league_id).unwrap();
 
+    let schedule = league.schedule.get_matches_for_team(team.id);
+
     let model = TeamScheduleViewModel {
         team_name: &team.name,
         team_slug: &team.slug,
@@ -73,9 +76,7 @@ pub async fn team_schedule_get_action(
         league_name: &league.name,
         neighbor_teams: get_neighbor_teams(team.club_id, simulator_data),
 
-        items: league
-            .schedule
-            .get_matches_for_team(team.id)
+        items: schedule
             .iter()
             .map(|schedule| {
                 let is_home = schedule.home_team_id == team.id;
@@ -101,6 +102,7 @@ pub async fn team_schedule_get_action(
                     competition_name: &league.name,
                     result: if schedule.result.is_some() {
                         Some(TeamScheduleItemResult {
+                            match_id: &schedule.id,
                             home_goals: schedule.result.as_ref().unwrap().home_goals,
                             away_goals: schedule.result.as_ref().unwrap().away_goals,
                         })

@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { TeamDto, TeamScheduleDto, TeamService } from '../services/team.service';
+import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
 
 @UntilDestroy()
 @Component({
@@ -16,6 +17,7 @@ export class TeamScheduleComponent {
 
   constructor(private leftMenuService: LeftMenuService,
     private service: TeamService,
+    private topHeaderService: TopHeaderService,
     private route: ActivatedRoute,
     private titleService: TitleService) {
   }
@@ -26,6 +28,8 @@ export class TeamScheduleComponent {
         this.initLeftMenu(teamScheduleData);
 
         this.titleService.setTitle(teamScheduleData.team_name + ' Schedule');
+        this.topHeaderService.setContent('Schedule',
+          teamScheduleData.team_name, '/leagues/' + teamScheduleData.league_slug);
       });
     });
   }

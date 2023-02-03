@@ -87,6 +87,7 @@ export interface TeamScheduleItemDto {
 
 
 export interface TeamScheduleItemResultDto {
+   match_id: string,
    home_goals: number,
    away_goals: number
 }
