@@ -38,7 +38,8 @@
               "src/assets/styles/styles.scss"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/pixi.js/dist/pixi.min.js"
             ]
           },
           "configurations": {

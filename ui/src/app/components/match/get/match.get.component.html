@@ -1,23 +1,7 @@
-<div *ngIf="match">
-    <div topHeader>
-        <div class="header-block">
-            <div class="club-logo club-default-logo header-player-logo"></div>
-        </div>
-        <div class="header-block">
-            <div class="header-title-block">
-                <!-- <div class="page-title">{{ player.last_name }} {{ player.first_name }}</div>
-                <div>
-                    <a [routerLink]="['/teams/' + player.team_slug ]" class="sub-title-link">
-                        {{ player.team_name }}
-                    </a>
-                </div> -->
-            </div>
-        </div>
+<div>
+  <div class="content">
+    <div class="match-content">
+      <play-match [leagueSlug]="leagueSlug" [matchId]="matchId"></play-match>
     </div>
-    <div class="content">
-        <div class="match-content">
-          
-        </div>
-        <div style="clear:both"></div>
-    </div>
+  </div>
 </div>

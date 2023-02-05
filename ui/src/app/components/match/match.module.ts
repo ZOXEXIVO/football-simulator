@@ -4,10 +4,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { MatchGetComponent } from './get/match.get.component';
+import {MatchPlayComponent} from "./play/play.match.component";
 
 @NgModule({
   declarations: [
-    MatchGetComponent
+    MatchGetComponent,
+    MatchPlayComponent
   ],
   imports: [
     RouterModule,
