@@ -1,7 +1,7 @@
-import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
-import {Observable, Subject} from "rxjs";
-import {BallModel, MatchModel, PlayerModel} from "../play/models";
+import {Observable, of, Subject} from "rxjs";
+import {MatchDto, MatchService, ObjectPositionDto} from "./match.api.service";
+import {BallModel, MatchModel, PlayerModel} from "../play/models/models";
 
 @Injectable({
   providedIn: 'root',
@@ -13,17 +13,22 @@ export class MatchDataService {
   offset = 0;
   limit = 300;
 
-  matchData: MatchModel = new MatchModel();
+  public matchData: MatchModel = new MatchModel();
+  lastLoadedTimestamp = 0;
 
   constructor(private matchService: MatchService) {
 
   }
 
   init(leagueSlug: string, matchId: string): Observable<any> {
-    const subject = new Subject<any>();
-
     this.leagueSlug = leagueSlug;
     this.matchId = matchId;
+
+    return this.loadData();
+  }
+
+  loadData(): Observable<any> {
+    const subject = new Subject<any>();
 
     this.matchService.get(this.leagueSlug, this.matchId, this.offset, this.limit).subscribe(matchData => {
       this.updateMatchData(matchData);
@@ -36,70 +41,79 @@ export class MatchDataService {
     return subject.asObservable();
   }
 
-  updateMatchData(matchData: MatchDto){
+  updateMatchData(matchData: MatchDto) {
     if (this.matchData.ball.data.length == 0) {
       // ball
-      const ball = new BallModel();
-      ball.data = matchData.ball_data;
-      this.matchData.ball = ball;
+      this.matchData.ball = new BallModel(matchData.ball_data
+        .map(data => new ObjectPositionDto(data[0], data[1], data[2]))
+      );
 
       // players
-      for (const [playerId, playerData] of matchData.player_data) {
-        const player = new PlayerModel(playerId);
-        player.data = playerData;
-        this.matchData.players.push(player);
+      for (const [playerId, data] of Object.entries(matchData.player_data)) {
+        let playerData = data as number[][];
+        this.matchData.players.push(new PlayerModel(Number(playerId), playerData.map(dt => new ObjectPositionDto(dt[0], dt[1], dt[2]))));
       }
 
+      if (matchData.ball_data.length > 0) {
+        this.lastLoadedTimestamp = matchData.ball_data[matchData.ball_data.length - 1][0]
+      }
     } else {
       // ball
-      this.matchData.ball.data.push(...matchData.ball_data);
+      this.matchData.ball.data.push(...matchData.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
 
       // players
       for (const playerData of this.matchData.players) {
         const newPlayerData = matchData.player_data.get(playerData.id);
         if (newPlayerData) {
-          playerData.data.push(...newPlayerData);
+          playerData.data.push(...newPlayerData.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
         }
+      }
+
+      if (matchData.ball_data.length > 0) {
+        this.lastLoadedTimestamp = matchData.ball_data[matchData.ball_data.length - 1][0];
       }
     }
   }
+
+  getData(timestamp: number): Observable<MatchDataResultModel> {
+    // ball
+    while (this.matchData.ball.data[this.matchData.ball.currentCoordIdx].timestamp < timestamp) {
+      this.matchData.ball.currentCoordIdx++;
+    }
+
+    const ballResult = this.matchData.ball.data[this.matchData.ball.currentCoordIdx];
+
+    // players
+    let playerResults = [];
+
+    for (const player of this.matchData.players) {
+      while (player.data[player.currentCoordIdx].timestamp < timestamp) {
+        player.currentCoordIdx++;
+      }
+
+      playerResults.push(new PlayerDataResultModel(player.id, player.data[player.currentCoordIdx]));
+    }
+
+    return of(new MatchDataResultModel(playerResults, ballResult));
+  }
 }
 
-// Api Service
-@Injectable({
-  providedIn: 'root',
-})
-export class MatchService {
-  constructor(private http: HttpClient) {
+export class MatchDataResultModel {
+  constructor(players: PlayerDataResultModel[], ball: ObjectPositionDto) {
+    this.players = players;
+    this.ball = ball;
   }
 
-  get(league_slug: string, match_id: string, offset: number, limit: number): Observable<MatchDto> {
-    return this.http.get<MatchDto>(`/api/match/${league_slug}/${match_id}?offset=${offset}&limit=${limit}`);
+  public players: PlayerDataResultModel[];
+  public ball: ObjectPositionDto;
+}
+
+export class PlayerDataResultModel {
+  constructor(playerId: number, position: ObjectPositionDto) {
+    this.playerId = playerId;
+    this.position = position;
   }
-}
 
-export interface MatchDto {
-  player_data: Map<number, PlayerPositionDto[]>,
-  player_data_len: number,
-  ball_data: BallPositionDto[],
-  home_team_players: number[],
-  away_team_players: number[]
-}
-
-export interface BallPositionDto {
-  timestamp: number,
-  x: number,
-  y: number
-}
-
-export interface PlayerPositionDto {
-  timestamp: number,
-  x: number,
-  y: number
-}
-
-export interface PlayerPositionDto {
-  timestamp: number,
-  x: number,
-  y: number
+  public playerId: number;
+  public position: ObjectPositionDto;
 }

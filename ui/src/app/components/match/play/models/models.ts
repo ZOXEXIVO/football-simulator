@@ -1,38 +1,39 @@
 ﻿import {Sprite} from "@pixi/sprite";
-import {BallPositionDto, PlayerPositionDto} from "../services/match.data.service";
+import {ObjectPositionDto} from "../../services/match.api.service";
+import {Graphics} from "pixi.js";
 
 export class MatchModel {
   constructor() {
     this.players = [];
-    this.ball = new BallModel();
+    this.ball = new BallModel([]);
   }
 
   public players: PlayerModel[];
-  public  ball: BallModel;
+  public ball: BallModel;
 }
 
 export class PlayerModel {
-  constructor(id: number) {
+  constructor(id: number, data: ObjectPositionDto[]) {
     this.id = id;
     this.obj = null;
     this.currentCoordIdx = 0;
-    this.data = [];
+    this.data = data;
   }
 
   public id: number;
-  public obj: Sprite | null;
+  public obj: Graphics | null;
   public currentCoordIdx: number;
-  public data: PlayerPositionDto[];
+  public data: ObjectPositionDto[];
 }
 
 export class BallModel {
-  constructor() {
+  constructor(data: ObjectPositionDto[]) {
     this.obj = null;
     this.currentCoordIdx = 0;
-    this.data = [];
+    this.data = data;
   }
 
   public obj?: Sprite | null;
   public currentCoordIdx: number;
-  public data: BallPositionDto[];
+  public data: ObjectPositionDto[];
 }

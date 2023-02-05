@@ -11,8 +11,8 @@ export interface PoleCoordModel {
 }
 
 export const POLE_COORDS: PoleCoordModel = {
-  tl: { x: 38, y: 38 },
-  tr: { x: 603, y: 38 },
-  bl: { x: 38, y: 422 },
-  br: { x: 603, y: 422 }
+  tl: { x: 55, y: 53 },
+  tr: { x: 730, y: 53 },
+  bl: { x: 55, y: 543 },
+  br: { x: 730, y: 543 }
 }

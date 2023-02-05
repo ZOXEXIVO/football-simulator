@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
-import {MatchDto} from "../services/match.data.service";
+import {MatchDto} from "../services/match.api.service";
+
 @UntilDestroy()
 @Component({
   templateUrl: './match.get.component.html',
