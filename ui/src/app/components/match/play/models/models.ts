@@ -13,18 +13,21 @@ export class MatchModel {
 }
 
 export class PlayerModel {
-  constructor(id: number, data: ObjectPositionDto[]) {
+  constructor(id: number, idHome: boolean, data: ObjectPositionDto[]) {
     this.id = id;
+    this.isHome = idHome;
     this.obj = null;
     this.currentCoordIdx = 0;
     this.data = data;
   }
 
   public id: number;
+  public isHome: boolean;
   public obj: Graphics | null;
   public currentCoordIdx: number;
   public data: ObjectPositionDto[];
 }
+
 
 export class BallModel {
   constructor(data: ObjectPositionDto[]) {

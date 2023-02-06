@@ -16,6 +16,12 @@ impl PositionDataItem {
     }
 }
 
+impl PartialEq<PositionDataItem> for PositionDataItem {
+    fn eq(&self, other: &Self) -> bool {
+        self.timestamp == other.timestamp && self.x == other.x && self.y == other.y
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct MatchPositionData {
     pub ball_positions: Vec<PositionDataItem>,
@@ -32,7 +38,11 @@ impl MatchPositionData {
 
     pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, x: f32, y: f32) {
         if let Some(player_data) = self.player_positions.get_mut(&player_id) {
-            player_data.push(PositionDataItem::new(timestamp, x, y));
+            let last_data = player_data.last().unwrap();
+            let position_data = PositionDataItem::new(timestamp, x, y);
+            if *last_data != position_data {
+                player_data.push(position_data);
+            }
         } else {
             self.player_positions
                 .insert(player_id, vec![PositionDataItem::new(timestamp, x, y)]);
@@ -40,8 +50,15 @@ impl MatchPositionData {
     }
 
     pub fn add_ball_positions(&mut self, timestamp: u64, x: f32, y: f32) {
-        self.ball_positions
-            .push(PositionDataItem::new(timestamp, x, y));
+        let position = PositionDataItem::new(timestamp, x, y);
+
+        if let Some(last_position) = self.ball_positions.last() {
+            if last_position != &position {
+                self.ball_positions.push(position);
+            }
+        } else {
+            self.ball_positions.push(position);
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Observable, of, Subject} from "rxjs";
+import {Observable, of, Subject, switchMap} from "rxjs";
 import {MatchDto, MatchService, ObjectPositionDto} from "./match.api.service";
 import {BallModel, MatchModel, PlayerModel} from "../play/models/models";
 
@@ -11,7 +11,7 @@ export class MatchDataService {
   matchId: string = '';
 
   offset = 0;
-  limit = 300;
+  limit = 100;
 
   public matchData: MatchModel = new MatchModel();
   lastLoadedTimestamp = 0;
@@ -41,70 +41,81 @@ export class MatchDataService {
     return subject.asObservable();
   }
 
-  updateMatchData(matchData: MatchDto) {
+  updateMatchData(matchDtaDto: MatchDto) {
     if (this.matchData.ball.data.length == 0) {
       // ball
-      this.matchData.ball = new BallModel(matchData.ball_data
+      this.matchData.ball = new BallModel(matchDtaDto.ball_data
         .map(data => new ObjectPositionDto(data[0], data[1], data[2]))
       );
 
       // players
-      for (const [playerId, data] of Object.entries(matchData.player_data)) {
-        let playerData = data as number[][];
-        this.matchData.players.push(new PlayerModel(Number(playerId), playerData.map(dt => new ObjectPositionDto(dt[0], dt[1], dt[2]))));
+      for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
+        const pid = Number(playerId);
+        this.matchData.players.push(new PlayerModel(pid,
+          matchDtaDto.home_team_players.includes(pid),
+          (data as number[][]).map(dt => new ObjectPositionDto(dt[0], dt[1], dt[2])))
+        );
       }
 
-      if (matchData.ball_data.length > 0) {
-        this.lastLoadedTimestamp = matchData.ball_data[matchData.ball_data.length - 1][0]
+      if (matchDtaDto.ball_data.length > 0) {
+        this.lastLoadedTimestamp = matchDtaDto.ball_data[matchDtaDto.ball_data.length - 1][0]
       }
     } else {
       // ball
-      this.matchData.ball.data.push(...matchData.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
+      this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
 
       // players
       for (const playerData of this.matchData.players) {
-        const newPlayerData = matchData.player_data.get(playerData.id);
-        if (newPlayerData) {
-          playerData.data.push(...newPlayerData.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
+        for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
+          if(playerData.id != Number(playerId)) {
+            let newPlayerData = data as number[][];
+            playerData.data.push(...newPlayerData.map(pd => new ObjectPositionDto(pd[0], pd[1], pd[2])));
+          }
         }
+
       }
 
-      if (matchData.ball_data.length > 0) {
-        this.lastLoadedTimestamp = matchData.ball_data[matchData.ball_data.length - 1][0];
+      if (matchDtaDto.ball_data.length > 0) {
+        this.lastLoadedTimestamp = matchDtaDto.ball_data[matchDtaDto.ball_data.length - 1][0];
       }
     }
   }
 
   getData(timestamp: number): Observable<MatchDataResultModel> {
-    // ball
-    let ts = -1;
-    while (ts < timestamp) {
-      let taVal = this.matchData.ball.data[this.matchData.ball.currentCoordIdx];
-      if(taVal){
-        ts = taVal.timestamp;
+    //console.log('getData: try load data for timestamp: ' + timestamp + ' lastLoadedTimestamp: ' + this.lastLoadedTimestamp);
+
+    // Check if data for the requested timestamp has not been loaded yet
+    if (this.lastLoadedTimestamp < timestamp) {
+      return this.loadData().pipe(
+        switchMap(() => {
+          return this.getData(timestamp);
+        })
+      );
+    } else {
+      // ball
+      let ts = -1;
+      while (ts < timestamp && this.matchData.ball.currentCoordIdx < this.matchData.ball.data.length) {
+        ts = this.matchData.ball.data[this.matchData.ball.currentCoordIdx].timestamp;
+        this.matchData.ball.currentCoordIdx++;
       }
-      this.matchData.ball.currentCoordIdx++;
-    }
 
-    const ballResult = this.matchData.ball.data[this.matchData.ball.currentCoordIdx];
+      // players
+      let playerResults = [];
 
-    // players
-    let playerResults = [];
-
-    for (const player of this.matchData.players) {
-      let pts = -1;
-      while (pts  < timestamp) {
-        let ptsVal = player.data[player.currentCoordIdx];
-        if(ptsVal){
-          pts = ptsVal.timestamp;
+      for (const player of this.matchData.players) {
+        let pts = -1;
+        while (pts  < timestamp && player.currentCoordIdx < player.data.length) {
+          pts = player.data[player.currentCoordIdx].timestamp;
+          player.currentCoordIdx++;
         }
-        player.currentCoordIdx++;
+
+        playerResults.push(new PlayerDataResultModel(player.id, player.data[player.currentCoordIdx - 1]));
       }
 
-      playerResults.push(new PlayerDataResultModel(player.id, player.data[player.currentCoordIdx]));
-    }
+      const ballResult = this.matchData.ball.data[this.matchData.ball.currentCoordIdx - 1];
 
-    return of(new MatchDataResultModel(playerResults, ballResult));
+      return of(new MatchDataResultModel(playerResults, ballResult));
+    }
   }
 }
 

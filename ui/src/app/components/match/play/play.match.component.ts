@@ -1,4 +1,4 @@
-﻿import {AfterViewInit, Component, ElementRef, Input, NgZone, ViewChild} from '@angular/core';
+﻿import {AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild} from '@angular/core';
 import * as PIXI from 'pixi.js';
 import {Sprite} from '@pixi/sprite';
 import {ActivatedRoute} from "@angular/router";
@@ -17,6 +17,9 @@ export class MatchPlayComponent implements AfterViewInit {
   leagueSlug: string;
   @Input()
   matchId: string;
+
+  @Output()
+  @Output() timeTick: EventEmitter<number> = new EventEmitter();
 
   application: PIXI.Application | null = null;
 
@@ -54,7 +57,7 @@ export class MatchPlayComponent implements AfterViewInit {
         this.application.stage.addChild(ball);
 
         this.matchDataService.matchData.players.forEach(player => {
-          const playerObj = this.createPlayer(player.data[0].x, player.data[0].y);
+          const playerObj = this.createPlayer(player.data[0].x, player.data[0].y, player.isHome)
 
           player.obj = playerObj;
 
@@ -68,30 +71,36 @@ export class MatchPlayComponent implements AfterViewInit {
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
         this.application.ticker.add((delta) => {
-          this.currentTime += 1;
+          this.currentTime += 10;
+          this.timeTick.emit(this.currentTime);
 
           this.matchDataService.getData(this.currentTime).subscribe(data => {
-            if(!data){
-              return;
-            }
+            // if(!data){
+            //   return;
+            // }
 
             const ballObject = this.matchDataService.matchData.ball.obj!;
-            ballObject.x = data.ball.x;
-            ballObject.y = data.ball.y;
+
+            let coord = this.translateToField(data.ball.x, data.ball.y);
+
+            ballObject.x = coord.x;
+            ballObject.y = coord.y;
 
             this.matchDataService.matchData.players.forEach(player => {
               const playerObject = player.obj!;
               const playerData = data.players[player.id];
 
               if(playerData && playerData.position){
-                playerObject.x = data.players[player.id].position.x;
-                playerObject.y = data.players[player.id].position.y;
-              }
+                let playerTranslatedCoords = this.translateToField(
+                  data.players[player.id].position.x,
+                  data.players[player.id].position.y
+                );
 
+                playerObject.x = playerTranslatedCoords.x;
+                playerObject.y = playerTranslatedCoords.y;
+              }
             });
           });
-
-          this.application?.render();
         });
 
         this.application.render();
@@ -99,10 +108,23 @@ export class MatchPlayComponent implements AfterViewInit {
     );
   }
 
-  createPlayer(x: number, y: number) {
+  translateToField(x: number, y: number) {
+    let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 150;
+    let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 100;
+
+    return {
+      x: POLE_COORDS.tl.x + x * scaleX,
+      y: POLE_COORDS.tl.y + y * scaleY
+    }
+  }
+
+  createPlayer(x: number, y: number, isHome: boolean) : Graphics {
+    const homeColor = 0x0000ff;
+    const awayColor = 0xff0000;
+
     const circle: Graphics = new PIXI.Graphics();
 
-    circle.beginFill(0xff0000);
+    circle.beginFill(isHome? homeColor : awayColor);
     circle.drawCircle(x, y, 4);
     circle.endFill();
 

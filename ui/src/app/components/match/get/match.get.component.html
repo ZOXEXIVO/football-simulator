@@ -3,19 +3,19 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-3">
-          1
+         ### {{currentTime}}
         </div>
         <div class="col">
           <div class="container-fluid">
             <div class="row">
               <div class="range">
-                <input type="range" class="form-range" min="0" max="3600" value="300"/>
+                <input type="range" class="form-range" min="0" max="60000" [value]="currentTime"/>
               </div>
             </div>
             <div class="row">
               <div class="col">
                 <div id="match-container">
-                  <play-match [leagueSlug]="leagueSlug" [matchId]="matchId"></play-match>
+                  <play-match [leagueSlug]="leagueSlug" [matchId]="matchId" (timeTick)="playMatchTick($event)"></play-match>
                 </div>
               </div>
             </div>

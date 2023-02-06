@@ -4,7 +4,7 @@ use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
 use crate::r#match::{MatchPlayer, PlayerUpdateEvent};
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
-const MATCH_TIME_MS: u64 = 45 * 60 * 100;
+const MATCH_TIME_MS: u64 = 1 * 60 * 1000;
 
 pub struct FootballEngine<const W: usize, const H: usize> {
     pub field: Field,
