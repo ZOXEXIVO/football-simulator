@@ -2,7 +2,7 @@
 import * as PIXI from 'pixi.js';
 import {Sprite} from '@pixi/sprite';
 import {ActivatedRoute} from "@angular/router";
-import {Container, Graphics} from "pixi.js";
+import {Graphics} from "pixi.js";
 import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
 
@@ -68,7 +68,7 @@ export class MatchPlayComponent implements AfterViewInit {
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
         this.application.ticker.add((delta) => {
-          this.currentTime += 10;
+          this.currentTime += 1;
 
           this.matchDataService.getData(this.currentTime).subscribe(data => {
             if(!data){
@@ -81,9 +81,13 @@ export class MatchPlayComponent implements AfterViewInit {
 
             this.matchDataService.matchData.players.forEach(player => {
               const playerObject = player.obj!;
+              const playerData = data.players[player.id];
 
-              playerObject.x = data.players[player.id].position.x;
-              playerObject.y = data.players[player.id].position.y;
+              if(playerData && playerData.position){
+                playerObject.x = data.players[player.id].position.x;
+                playerObject.y = data.players[player.id].position.y;
+              }
+
             });
           });
 

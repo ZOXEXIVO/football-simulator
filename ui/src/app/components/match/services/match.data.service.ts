@@ -77,7 +77,12 @@ export class MatchDataService {
 
   getData(timestamp: number): Observable<MatchDataResultModel> {
     // ball
-    while (this.matchData.ball.data[this.matchData.ball.currentCoordIdx].timestamp < timestamp) {
+    let ts = -1;
+    while (ts < timestamp) {
+      let taVal = this.matchData.ball.data[this.matchData.ball.currentCoordIdx];
+      if(taVal){
+        ts = taVal.timestamp;
+      }
       this.matchData.ball.currentCoordIdx++;
     }
 
@@ -87,7 +92,12 @@ export class MatchDataService {
     let playerResults = [];
 
     for (const player of this.matchData.players) {
-      while (player.data[player.currentCoordIdx].timestamp < timestamp) {
+      let pts = -1;
+      while (pts  < timestamp) {
+        let ptsVal = player.data[player.currentCoordIdx];
+        if(ptsVal){
+          pts = ptsVal.timestamp;
+        }
         player.currentCoordIdx++;
       }
 

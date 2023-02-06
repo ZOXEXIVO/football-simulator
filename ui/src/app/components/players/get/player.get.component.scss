@@ -155,6 +155,7 @@
   //height: 450px;
 
   padding-top: 10px;
+  padding-bottom: 20px;
 
   color: #E5E6E7;
 }
@@ -210,6 +211,10 @@ img.default {
  table.skills {
    max-width: 500px;
  }
+
+table.skills  td {
+  padding-right: 10px;
+}
 
  table.skills td:nth-child(even) {
    color: #688B5C;
@@ -341,4 +346,8 @@ img.default {
  table.player-statistics td {
    font-size: 14px;
    opacity: 0.6;
+ }
+
+ .position-img {
+   width: 360px;
  }
