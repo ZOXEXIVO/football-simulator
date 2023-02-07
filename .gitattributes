@@ -5,6 +5,7 @@
 *.htm linguist-language=Rust
 *.html linguist-language=Rust
 *.fixed linguist-language=Rust
+*.scss linguist-language=Rust
 src/etc/installer/gfx/* binary
 *.woff binary
 Cargo.lock linguist-generated=false
