@@ -5,22 +5,26 @@ import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { PlayerDto, PlayerService } from '../services/player.service';
 import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
+import {ProcessService} from "../../shared/process/services/process.service";
+import {BaseComponent} from "../../base.component";
 
 @UntilDestroy()
 @Component({
   templateUrl: './player.get.component.html',
   styleUrls: ['./player.get.component.scss']
 })
-export class PlayerGetComponent {
+export class PlayerGetComponent extends BaseComponent {
   public player: PlayerDto | null = null;
 
   constructor(private leftMenuService: LeftMenuService,
     private service: PlayerService,
     private topHeaderService: TopHeaderService,
     private route: ActivatedRoute,
-    private titleService: TitleService) {
+    private titleService: TitleService,
+    private processService: ProcessService) {
+    super(processService);
   }
-  ngOnInit(): void {
+  override onDataRefresh(): void {
     this.route.params.subscribe(params => {
       const teamSlug = params["team_slug"];
       const playerId = params["player_id"];

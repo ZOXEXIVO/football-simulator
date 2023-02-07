@@ -5,22 +5,26 @@ import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { TeamDto, TeamService } from '../services/team.service';
 import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
+import {ProcessService} from "../../shared/process/services/process.service";
+import {BaseComponent} from "../../base.component";
 
 @UntilDestroy()
 @Component({
   templateUrl: './team.get.component.html',
   styleUrls: ['./team.get.component.scss']
 })
-export class TeamGetComponent {
+export class TeamGetComponent extends BaseComponent {
   public team: TeamDto | null = null;
 
   constructor(private leftMenuService: LeftMenuService,
     private service: TeamService,
     private topHeaderService: TopHeaderService,
     private route: ActivatedRoute,
-    private titleService: TitleService) {
+    private titleService: TitleService,
+    private processService: ProcessService) {
+    super(processService);
   }
-  ngOnInit(): void {
+  override onDataRefresh(): void {
     this.route.params.subscribe(params => {
       this.service.get(params["slug"]).pipe(untilDestroyed(this)).subscribe(teamData => {
         this.team = teamData;

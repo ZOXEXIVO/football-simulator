@@ -6,22 +6,27 @@ import { TitleService } from 'src/app/shared/services/title.service';
 import { LeftMenuService } from '../../shared/left-menu/services/left.menu.service';
 import { CountryDto, CountryService } from '../services/country.service';
 import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
+import {BaseComponent} from "../../base.component";
+import {ProcessService} from "../../shared/process/services/process.service";
 
 @UntilDestroy()
 @Component({
   templateUrl: './country.get.component.html',
   styleUrls: ['./country.get.component.scss']
 })
-export class CountryGetComponent {
+export class CountryGetComponent extends BaseComponent {
   public country: CountryDto | null = null;
 
   constructor(private leftMenuService: LeftMenuService,
     private service: CountryService,
     private topHeaderService: TopHeaderService,
     private route: ActivatedRoute,
-    private titleService: TitleService) {
+    private titleService: TitleService,
+    private processService: ProcessService) {
+    super(processService);
   }
-  ngOnInit(): void {
+
+  override onDataRefresh(): void {
     this.leftMenuService.setMenu([
       { items: [{ url: '/', title: 'Home', icon: 'fa-home' }] }
     ]);

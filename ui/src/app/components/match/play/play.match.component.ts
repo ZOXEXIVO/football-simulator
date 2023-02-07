@@ -1,16 +1,28 @@
-﻿import {AfterViewInit, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild} from '@angular/core';
+﻿import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  NgZone,
+  OnDestroy,
+  Output,
+  ViewChild
+} from '@angular/core';
 import * as PIXI from 'pixi.js';
 import {Sprite} from '@pixi/sprite';
 import {ActivatedRoute} from "@angular/router";
 import {Graphics} from "pixi.js";
 import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
+import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: 'play-match',
   template: '<div #matchContainer style="height: 600px;margin-left: auto;margin-right: auto;"></div>'
 })
-export class MatchPlayComponent implements AfterViewInit {
+export class MatchPlayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('matchContainer') matchContainer!: ElementRef;
 
   @Input()
@@ -25,6 +37,8 @@ export class MatchPlayComponent implements AfterViewInit {
 
   currentTime: number = 0;
 
+  isDisposed = false;
+
   constructor(private matchDataService: MatchDataService,
               private zone: NgZone,
               private router: ActivatedRoute) {
@@ -36,7 +50,7 @@ export class MatchPlayComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    this.matchDataService.init(this.leagueSlug, this.matchId).subscribe(_ => {
+    this.matchDataService.init(this.leagueSlug, this.matchId).pipe(untilDestroyed(this)).subscribe(_ => {
       this.initGraphics();
     });
   }
@@ -71,10 +85,14 @@ export class MatchPlayComponent implements AfterViewInit {
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
         this.application.ticker.add((delta) => {
+          if(this.isDisposed){
+            return;
+          }
+
           this.currentTime += 10;
           this.timeTick.emit(this.currentTime);
 
-          this.matchDataService.getData(this.currentTime).subscribe(data => {
+          this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
             // if(!data){
             //   return;
             // }
@@ -154,5 +172,10 @@ export class MatchPlayComponent implements AfterViewInit {
     ball.y = center_y;
 
     return ball;
+  }
+
+  ngOnDestroy(): void {
+    this.isDisposed = true;
+    this.application?.ticker.stop();
   }
 }

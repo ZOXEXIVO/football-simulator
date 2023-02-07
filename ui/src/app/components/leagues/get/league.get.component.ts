@@ -6,22 +6,27 @@ import { LeftMenuService } from '../../shared/left-menu/services/left.menu.servi
 import { TopHeaderService } from '../../shared/top-header/services/top.header.service';
 import { LeagueDto, LeagueService } from '../services/league.service';
 import {TeamDto} from "../../teams/services/team.service";
+import {BaseComponent} from "../../base.component";
+import {ProcessService} from "../../shared/process/services/process.service";
 
 @UntilDestroy()
 @Component({
   templateUrl: './league.get.component.html',
   styleUrls: ['./league.get.component.scss']
 })
-export class LeagueGetComponent {
+export class LeagueGetComponent extends BaseComponent {
   public league: LeagueDto | null = null;
 
   constructor(private leftMenuService: LeftMenuService,
     private topHeaderService: TopHeaderService,
     private service: LeagueService,
     private route: ActivatedRoute,
-    private titleService: TitleService) {
+    private titleService: TitleService,
+    private processService: ProcessService) {
+    super(processService);
   }
-  ngOnInit(): void {
+
+  override onDataRefresh(): void {
     this.route.params.subscribe(params => {
       this.service.get(params["slug"]).pipe(untilDestroyed(this)).subscribe(leagueData => {
         this.league = leagueData;
