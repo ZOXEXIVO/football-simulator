@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use serde::Serialize;
 
 #[derive(Debug)]
 pub struct StatusData {
@@ -39,7 +40,7 @@ impl PlayerStatus {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, Serialize)]
 pub enum PlayerStatusType {
     //When a player is absent from the club without permission
     Abs,

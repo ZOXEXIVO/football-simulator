@@ -1,10 +1,6 @@
-use crate::club::PlayerPositionType;
-use crate::{Player, PlayerTrainingHistory};
+use nalgebra::Vector2;
 
-const SKILL_MIN_VALUE: f32 = 1.0;
-const SKILL_MAX_VALUE: f32 = 20.0;
-
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct PlayerSkills {
     pub technical: Technical,
     pub mental: Mental,
@@ -12,14 +8,26 @@ pub struct PlayerSkills {
 }
 
 impl PlayerSkills {
-    pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
-        self.technical.get_for_position(position)
-            + self.mental.get_for_position(position)
-            + self.physical.get_for_position(position)
+    pub fn max_speed(&self) -> f32 {
+        (self.physical.acceleration
+            + self.physical.agility
+            + self.physical.balance
+            + self.physical.pace)
+            / (4.0 * 20.0)
+    }
+
+    pub fn walking_speed(&self) -> Vector2<f32> {
+        let walking_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.1;
+        Vector2::new(walking_speed, walking_speed)
+    }
+
+    pub fn running_speed(&self) -> Vector2<f32> {
+        let running_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.15;
+        Vector2::new(running_speed, running_speed)
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Technical {
     pub corners: f32,
     pub crossing: f32,
@@ -56,45 +64,10 @@ impl Technical {
             / 14.0
     }
 
-    pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
-        match position {
-            PlayerPositionType::Goalkeeper => {
-                (self.penalty_taking + self.first_touch + self.free_kicks) as u32
-            }
-
-            PlayerPositionType::Sweeper
-            | PlayerPositionType::DefenderLeft
-            | PlayerPositionType::DefenderCenter
-            | PlayerPositionType::DefenderRight => {
-                (self.dribbling + self.heading + self.marking + self.passing + self.tackling) as u32
-            }
-
-            PlayerPositionType::MidfielderLeft
-            | PlayerPositionType::MidfielderCenter
-            | PlayerPositionType::MidfielderRight => {
-                (self.dribbling
-                    + self.crossing
-                    + self.marking
-                    + self.passing
-                    + self.tackling
-                    + self.technique
-                    + self.long_shots) as u32
-            }
-
-            PlayerPositionType::WingbackLeft
-            | PlayerPositionType::Striker
-            | PlayerPositionType::WingbackRight => {
-                (self.dribbling + self.first_touch + self.finishing + self.passing) as u32
-            }
-
-            _ => 0,
-        }
-    }
-
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Mental {
     pub aggression: f32,
     pub anticipation: f32,
@@ -131,44 +104,10 @@ impl Mental {
             / 14.0
     }
 
-    pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
-        match position {
-            PlayerPositionType::Goalkeeper => {
-                (self.vision + self.off_the_ball + self.leadership) as u32
-            }
-
-            PlayerPositionType::Sweeper
-            | PlayerPositionType::DefenderLeft
-            | PlayerPositionType::DefenderCenter
-            | PlayerPositionType::DefenderRight => {
-                (self.aggression + self.positioning + self.off_the_ball + self.anticipation) as u32
-            }
-
-            PlayerPositionType::MidfielderLeft
-            | PlayerPositionType::MidfielderCenter
-            | PlayerPositionType::MidfielderRight => {
-                (self.work_rate
-                    + self.teamwork
-                    + self.positioning
-                    + self.decisions
-                    + self.vision
-                    + self.off_the_ball) as u32
-            }
-
-            PlayerPositionType::WingbackLeft
-            | PlayerPositionType::Striker
-            | PlayerPositionType::WingbackRight => {
-                (self.concentration + self.vision + self.positioning) as u32
-            }
-
-            _ => 0,
-        }
-    }
-
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Physical {
     pub acceleration: f32,
     pub agility: f32,
@@ -195,56 +134,5 @@ impl Physical {
             / 8.0
     }
 
-    pub fn get_for_position(&self, position: PlayerPositionType) -> u32 {
-        match position {
-            PlayerPositionType::Goalkeeper => {
-                (self.agility + self.balance + self.pace + self.jumping) as u32
-            }
-
-            PlayerPositionType::Sweeper
-            | PlayerPositionType::DefenderLeft
-            | PlayerPositionType::DefenderCenter
-            | PlayerPositionType::DefenderRight => {
-                (self.agility + self.natural_fitness + self.stamina + self.pace) as u32
-            }
-
-            PlayerPositionType::MidfielderLeft
-            | PlayerPositionType::MidfielderCenter
-            | PlayerPositionType::MidfielderRight => {
-                (self.acceleration
-                    + self.natural_fitness
-                    + self.pace
-                    + self.stamina
-                    + self.strength) as u32
-            }
-
-            PlayerPositionType::WingbackLeft
-            | PlayerPositionType::Striker
-            | PlayerPositionType::WingbackRight => (self.acceleration + self.stamina) as u32,
-            _ => 0,
-        }
-    }
-
     pub fn rest(&mut self) {}
-}
-
-#[inline]
-fn safe_modify(skill: &mut f32, val: i8) {
-    if val < 0 {
-        let abs_val = -val as f32;
-
-        if *skill <= abs_val {
-            *skill = SKILL_MIN_VALUE;
-        } else {
-            *skill -= abs_val;
-        }
-    } else {
-        let abs_val = val as f32;
-
-        if *skill + abs_val > SKILL_MAX_VALUE {
-            *skill = SKILL_MAX_VALUE;
-        } else {
-            *skill += abs_val;
-        }
-    }
 }

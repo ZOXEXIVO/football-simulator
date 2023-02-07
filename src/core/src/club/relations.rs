@@ -1,17 +1,16 @@
-use std::collections::{BTreeMap, HashMap};
-use std::hash::Hash;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Relations {
     players: RelationStore,
-    staffs: RelationStore,
+    _staffs: RelationStore,
 }
 
 impl Relations {
     pub fn new() -> Self {
         Relations {
             players: RelationStore::new(),
-            staffs: RelationStore::new(),
+            _staffs: RelationStore::new(),
         }
     }
 

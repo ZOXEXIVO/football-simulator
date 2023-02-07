@@ -89,43 +89,47 @@ impl SimulatorData {
     }
 
     pub fn league(&self, id: u32) -> Option<&League> {
-        let (league_continent_id, league_country_id) = self
-            .indexes
+        self.indexes
             .as_ref()
-            .unwrap()
-            .get_league_location(id)
-            .unwrap();
-
-        self.continent(league_continent_id)
-            .unwrap()
-            .countries
-            .iter()
-            .find(|country| country.id == league_country_id)
-            .unwrap()
-            .leagues
-            .leagues
-            .iter()
-            .find(|c| c.id == id)
+            .and_then(|indexes| indexes.get_league_location(id))
+            .and_then(|(league_continent_id, league_country_id)| {
+                self.continent(league_continent_id)
+                    .and_then(|continent| {
+                        continent
+                            .countries
+                            .iter()
+                            .find(|country| country.id == league_country_id)
+                    })
+                    .and_then(|country| {
+                        country
+                            .leagues
+                            .leagues
+                            .iter()
+                            .find(|league| league.id == id)
+                    })
+            })
     }
 
     pub fn league_mut(&mut self, id: u32) -> Option<&mut League> {
-        let (league_continent_id, league_country_id) = self
-            .indexes
+        self.indexes
             .as_ref()
-            .unwrap()
-            .get_league_location(id)
-            .unwrap();
-
-        self.continent_mut(league_continent_id)
-            .unwrap()
-            .countries
-            .iter_mut()
-            .find(|country| country.id == league_country_id)
-            .unwrap()
-            .leagues
-            .leagues
-            .iter_mut()
-            .find(|c| c.id == id)
+            .and_then(|indexes| indexes.get_league_location(id))
+            .and_then(|(league_continent_id, league_country_id)| {
+                self.continent_mut(league_continent_id)
+                    .and_then(|continent| {
+                        continent
+                            .countries
+                            .iter_mut()
+                            .find(|country| country.id == league_country_id)
+                    })
+                    .and_then(|country| {
+                        country
+                            .leagues
+                            .leagues
+                            .iter_mut()
+                            .find(|league| league.id == id)
+                    })
+            })
     }
 
     pub fn team_data(&self, id: u32) -> Option<&TeamData> {
@@ -133,146 +137,122 @@ impl SimulatorData {
     }
 
     pub fn club(&self, id: u32) -> Option<&Club> {
-        let (club_continent_id, club_country_id) = self
-            .indexes
+        self.indexes
             .as_ref()
-            .unwrap()
-            .get_club_location(id)
-            .unwrap();
-
-        self.continent(club_continent_id)
-            .unwrap()
-            .countries
-            .iter()
-            .find(|country| country.id == club_country_id)
-            .unwrap()
-            .clubs
-            .iter()
-            .find(|c| c.id == id)
+            .and_then(|indexes| indexes.get_club_location(id))
+            .and_then(|(club_continent_id, club_country_id)| {
+                self.continent(club_continent_id).and_then(|continent| {
+                    continent
+                        .countries
+                        .iter()
+                        .find(|country| country.id == club_country_id)
+                })
+            })
+            .and_then(|country| country.clubs.iter().find(|club| club.id == id))
     }
 
     pub fn club_mut(&mut self, id: u32) -> Option<&mut Club> {
-        let (club_continent_id, club_country_id) = self
-            .indexes
+        self.indexes
             .as_ref()
-            .unwrap()
-            .get_club_location(id)
-            .unwrap();
-
-        self.continent_mut(club_continent_id)
-            .unwrap()
-            .countries
-            .iter_mut()
-            .find(|country| country.id == club_country_id)
-            .unwrap()
-            .clubs
-            .iter_mut()
-            .find(|c| c.id == id)
+            .and_then(|indexes| indexes.get_club_location(id))
+            .and_then(|(club_continent_id, club_country_id)| {
+                self.continent_mut(club_continent_id).and_then(|continent| {
+                    continent
+                        .countries
+                        .iter_mut()
+                        .find(|country| country.id == club_country_id)
+                })
+            })
+            .and_then(|country| country.clubs.iter_mut().find(|club| club.id == id))
     }
 
     pub fn team(&self, id: u32) -> Option<&Team> {
-        let (team_continent_id, team_country_id, team_club_id) = self
-            .indexes
+        self.indexes
             .as_ref()
-            .unwrap()
-            .get_team_location(id)
-            .unwrap();
-
-        self.continent(team_continent_id)
-            .unwrap()
-            .countries
-            .iter()
-            .find(|country| country.id == team_country_id)
-            .unwrap()
-            .clubs
-            .iter()
-            .find(|club| club.id == team_club_id)
-            .unwrap()
-            .teams
-            .teams
-            .iter()
-            .find(|c| c.id == id)
+            .and_then(|indexes| indexes.get_team_location(id))
+            .and_then(|(team_continent_id, team_country_id, team_club_id)| {
+                self.continent(team_continent_id)
+                    .and_then(|continent| {
+                        continent
+                            .countries
+                            .iter()
+                            .find(|country| country.id == team_country_id)
+                    })
+                    .and_then(|country| country.clubs.iter().find(|club| club.id == team_club_id))
+                    .and_then(|club| club.teams.teams.iter().find(|team| team.id == id))
+            })
     }
 
     pub fn team_mut(&mut self, id: u32) -> Option<&mut Team> {
-        let (team_continent_id, team_country_id, team_club_id) = self
-            .indexes
+        self.indexes
             .as_ref()
-            .unwrap()
-            .get_team_location(id)
-            .unwrap();
-
-        self.continent_mut(team_continent_id)
-            .unwrap()
-            .countries
-            .iter_mut()
-            .find(|country| country.id == team_country_id)
-            .unwrap()
-            .clubs
-            .iter_mut()
-            .find(|club| club.id == team_club_id)
-            .unwrap()
-            .teams
-            .teams
-            .iter_mut()
-            .find(|c| c.id == id)
+            .and_then(|indexes| indexes.get_team_location(id))
+            .and_then(|(team_continent_id, team_country_id, team_club_id)| {
+                self.continent_mut(team_continent_id)
+                    .and_then(|continent| {
+                        continent
+                            .countries
+                            .iter_mut()
+                            .find(|country| country.id == team_country_id)
+                    })
+                    .and_then(|country| {
+                        country
+                            .clubs
+                            .iter_mut()
+                            .find(|club| club.id == team_club_id)
+                    })
+                    .and_then(|club| club.teams.teams.iter_mut().find(|team| team.id == id))
+            })
     }
 
     pub fn player(&self, id: u32) -> Option<&Player> {
         let (player_continent_id, player_country_id, player_club_id, player_team_id) = self
             .indexes
             .as_ref()
-            .unwrap()
-            .get_player_location(id)
-            .unwrap();
+            .and_then(|indexes| indexes.get_player_location(id))?;
 
         self.continent(player_continent_id)
-            .unwrap()
-            .countries
-            .iter()
-            .find(|country| country.id == player_country_id)
-            .unwrap()
-            .clubs
-            .iter()
-            .find(|club| club.id == player_club_id)
-            .unwrap()
-            .teams
-            .teams
-            .iter()
-            .find(|team| team.id == player_team_id)
-            .unwrap()
-            .players
-            .players
-            .iter()
-            .find(|c| c.id == id)
+            .and_then(|continent| {
+                continent
+                    .countries
+                    .iter()
+                    .find(|country| country.id == player_country_id)
+            })
+            .and_then(|country| country.clubs.iter().find(|club| club.id == player_club_id))
+            .and_then(|club| {
+                club.teams
+                    .teams
+                    .iter()
+                    .find(|team| team.id == player_team_id)
+            })
+            .and_then(|team| team.players.players.iter().find(|c| c.id == id))
     }
 
     pub fn player_mut(&mut self, id: u32) -> Option<&mut Player> {
         let (player_continent_id, player_country_id, player_club_id, player_team_id) = self
             .indexes
             .as_ref()
-            .unwrap()
-            .get_player_location(id)
-            .unwrap();
+            .and_then(|indexes| indexes.get_player_location(id))?;
 
         self.continent_mut(player_continent_id)
-            .unwrap()
-            .countries
-            .iter_mut()
-            .find(|country| country.id == player_country_id)
-            .unwrap()
-            .clubs
-            .iter_mut()
-            .find(|club| club.id == player_club_id)
-            .unwrap()
-            .teams
-            .teams
-            .iter_mut()
-            .find(|team| team.id == player_team_id)
-            .unwrap()
-            .players
-            .players
-            .iter_mut()
-            .find(|c| c.id == id)
+            .and_then(|continent| {
+                continent
+                    .countries
+                    .iter_mut()
+                    .find(|country| country.id == player_country_id)
+            })
+            .and_then(|country| {
+                country
+                    .clubs
+                    .iter_mut()
+                    .find(|club| club.id == player_club_id)
+            })
+            .and_then(|club| {
+                club.teams
+                    .teams
+                    .iter_mut()
+                    .find(|team| team.id == player_team_id)
+            })
+            .and_then(|team| team.players.players.iter_mut().find(|c| c.id == id))
     }
 }

@@ -42,7 +42,7 @@ impl Country {
     }
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> CountryResult {
-        let mut league_results = self.leagues.simulate(&self.clubs, &ctx);
+        let league_results = self.leagues.simulate(&self.clubs, &ctx);
 
         let clubs_results: Vec<ClubResult> = self
             .clubs

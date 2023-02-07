@@ -1,0 +1,30 @@
+<div>
+  <div class="content match-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3">
+           TODO Squad 1 List
+        </div>
+        <div class="col">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="range">
+                <input type="range" class="form-range" min="0" max="60000" [value]="currentTime"/>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div id="match-container">
+                  <play-match [leagueSlug]="leagueSlug" [matchId]="matchId" (timeTick)="playMatchTick($event)"></play-match>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          TODO Squad 2 List
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

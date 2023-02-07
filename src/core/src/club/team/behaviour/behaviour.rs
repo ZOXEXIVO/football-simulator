@@ -6,7 +6,7 @@ pub struct TeamBehaviour;
 impl TeamBehaviour {
     pub fn simulate(
         players: &mut PlayerCollection,
-        staffs: &mut StaffCollection,
+        _staffs: &mut StaffCollection,
     ) -> TeamBehaviourResult {
         let mut result = TeamBehaviourResult::new();
 

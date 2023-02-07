@@ -32,7 +32,7 @@ impl ScheduleGenerator for RoundSchedule {
             ScheduleError::from_str("team_len is empty");
         }
 
-        let (season_year_start, season_year_end) = match season {
+        let (season_year_start, _season_year_end) = match season {
             Season::OneYear(year) => (year, year),
             Season::TwoYear(start_year, end_year) => (start_year, end_year),
         };

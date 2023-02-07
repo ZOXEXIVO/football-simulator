@@ -140,7 +140,7 @@ mod tests {
 
         let match_results = vec![MatchResult {
             league_id: 0,
-            schedule_id: "123".to_string(),
+            id: "123".to_string(),
             home_team_id: 1,
             away_team_id: 2,
             home_goals: 3,
@@ -187,7 +187,7 @@ mod tests {
 
         let match_results = vec![MatchResult {
             league_id: 0,
-            schedule_id: "123".to_string(),
+            id: "123".to_string(),
             home_team_id,
             away_team_id,
             home_goals: 3,
@@ -242,7 +242,7 @@ mod tests {
 
         let match_results = vec![MatchResult {
             league_id: 0,
-            schedule_id: "123".to_string(),
+            id: "123".to_string(),
             home_team_id,
             away_team_id,
             home_goals: 0,

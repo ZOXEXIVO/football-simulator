@@ -1,243 +1,240 @@
-use super::distributions::random;
-use crate::club::PlayerPositionType;
-use crate::Squad;
-use std::mem;
+use crate::r#match::ball::Ball;
+use crate::r#match::position::{FieldPosition, MatchPositionData};
+use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
+use crate::r#match::{MatchPlayer, PlayerUpdateEvent};
 
-pub struct FootballEngine<'s> {
-    pub home_squad: Squad<'s>,
-    pub away_squad: Squad<'s>,
+const MATCH_TIME_INCREMENT_MS: u64 = 10;
+const MATCH_TIME_MS: u64 = 1 * 60 * 1000;
+
+pub struct FootballEngine<const W: usize, const H: usize> {
+    pub field: Field,
+    pub state: GameState,
 }
 
-const MATCH_ACTIONS: u16 = 50;
-const DEFAULT_MATCH_EVENTS: usize = 100;
-
-impl<'s> FootballEngine<'s> {
-    pub fn new(home_squad: Squad<'s>, away_squad: Squad<'s>) -> Self {
+impl<const W: usize, const H: usize> FootballEngine<W, H> {
+    pub fn new(home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         FootballEngine {
-            home_squad,
-            away_squad,
+            field: Field::new(W, H, home_squad, away_squad),
+            state: GameState::FirstHalf,
         }
     }
 
     pub fn play(&mut self) -> FootballMatchDetails {
-        let mut field_zone = MatchFieldZone::Midfield;
+        let mut details = FootballMatchDetails::new();
 
-        let mut result = FootballMatchDetails {
-            score: Score { home: 0, away: 0 },
-            events: Vec::with_capacity(DEFAULT_MATCH_EVENTS),
-            player_changes: Vec::new(),
-        };
+        self.field.play(&mut details);
 
-        let home_team = self.get_team_for_squad(&self.home_squad);
-        let away_team = self.get_team_for_squad(&self.away_squad);
-
-        let mut attacking_team = &home_team;
-        let mut defending_team = &away_team;
-
-        for _ in 0..MATCH_ACTIONS {
-            let winner_team = self.get_battle_winner(&attacking_team, &defending_team, &field_zone);
-
-            if winner_team.id == attacking_team.id {
-                if attacking_team.id == home_team.id {
-                    if field_zone == MatchFieldZone::BGoal {
-                        result.score.home += 1;
-
-                        field_zone = MatchFieldZone::Midfield;
-                        mem::swap(&mut attacking_team, &mut defending_team);
-
-                        if let Some(ev) = Self::goalscorer(attacking_team) {
-                            result.events.push(MatchEvent::Goal(ev));
-                        }
-                    } else {
-                        field_zone = Self::up_field(&field_zone);
-                    }
-                } else {
-                    if field_zone == MatchFieldZone::AGoal {
-                        result.score.away += 1;
-
-                        field_zone = MatchFieldZone::Midfield;
-                        mem::swap(&mut attacking_team, &mut defending_team);
-
-                        if let Some(ev) = Self::goalscorer(defending_team) {
-                            result.events.push(MatchEvent::Goal(ev));
-                        }
-                    } else {
-                        field_zone = Self::down_field(&field_zone);
-                    }
-                }
-            } else {
-                field_zone = MatchFieldZone::Midfield;
-                mem::swap(&mut attacking_team, &mut defending_team);
-            }
-        }
-
-        for home_player in &self.home_squad.main_squad {
-            result
-                .events
-                .push(MatchEvent::MatchPlayed(home_player.player.id, true, 90));
-        }
-
-        for away_player in &self.away_squad.main_squad {
-            result
-                .events
-                .push(MatchEvent::MatchPlayed(away_player.player.id, true, 90));
-        }
-
-        result
-    }
-
-    fn goalscorer(team: &MatchTeam) -> Option<u32> {
-        let random_player = random(0.0, 5.0) as usize;
-
-        match team
-            .squad
-            .main_squad
-            .get(team.squad.main_squad.len() - random_player)
-        {
-            Some(squad_player) => Some(squad_player.player.id),
-            None => None,
-        }
-    }
-
-    fn up_field(field: &MatchFieldZone) -> MatchFieldZone {
-        match field {
-            MatchFieldZone::AGoal => MatchFieldZone::Midfield,
-            MatchFieldZone::AField => MatchFieldZone::Midfield,
-            MatchFieldZone::Midfield => MatchFieldZone::BField,
-            MatchFieldZone::BField => MatchFieldZone::BGoal,
-            MatchFieldZone::BGoal => MatchFieldZone::BField,
-        }
-    }
-
-    fn down_field(field: &MatchFieldZone) -> MatchFieldZone {
-        match field {
-            MatchFieldZone::BGoal => MatchFieldZone::Midfield,
-            MatchFieldZone::BField => MatchFieldZone::Midfield,
-            MatchFieldZone::Midfield => MatchFieldZone::AField,
-            MatchFieldZone::AField => MatchFieldZone::AGoal,
-            MatchFieldZone::AGoal => MatchFieldZone::AField,
-        }
-    }
-
-    fn get_battle_winner<'a>(
-        &self,
-        attacking_team: &'a MatchTeam<'a>,
-        defending_team: &'a MatchTeam<'a>,
-        current_zone: &MatchFieldZone,
-    ) -> &'a MatchTeam<'a> {
-        let mut attacking_team_skill = 0.0;
-        let mut defending_team_skill = 0.0;
-
-        match current_zone {
-            MatchFieldZone::AField | MatchFieldZone::BField => {
-                attacking_team_skill = attacking_team.striker_skill;
-                defending_team_skill = defending_team.defender_skill;
-            }
-            MatchFieldZone::AGoal | MatchFieldZone::BGoal => {
-                attacking_team_skill = attacking_team.defender_skill;
-                defending_team_skill = defending_team.striker_skill;
-            }
-            MatchFieldZone::Midfield => {
-                attacking_team_skill = attacking_team.midfielder_skill;
-                defending_team_skill = defending_team.midfielder_skill;
-            }
-        }
-
-        let random_a = random(0.0, attacking_team_skill as f64);
-        let random_d = random(0.0, defending_team_skill as f64);
-
-        if random_a > random_d {
-            attacking_team
-        } else {
-            defending_team
-        }
-    }
-
-    fn get_team_for_squad<'a>(&self, squad: &'a Squad) -> MatchTeam<'a> {
-        let mut team = MatchTeam::new(squad.team_id, squad);
-
-        for player in squad.main_squad.iter().map(|p| &p.player) {
-            for position in &player.positions() {
-                match position {
-                    PlayerPositionType::Goalkeeper => {
-                        team.goalkeeping_skill += player.get_skill() as f32;
-                    }
-                    PlayerPositionType::Sweeper
-                    | PlayerPositionType::DefenderLeft
-                    | PlayerPositionType::DefenderCenter
-                    | PlayerPositionType::DefenderRight => {
-                        team.defender_skill += player.get_skill() as f32;
-                    }
-                    PlayerPositionType::MidfielderLeft
-                    | PlayerPositionType::MidfielderCenter
-                    | PlayerPositionType::MidfielderRight => {
-                        team.defender_skill += 0.5 * player.get_skill() as f32;
-                        team.midfielder_skill += player.get_skill() as f32;
-                        team.striker_skill += 0.5 * player.get_skill() as f32;
-                    }
-                    PlayerPositionType::WingbackLeft
-                    | PlayerPositionType::Striker
-                    | PlayerPositionType::WingbackRight => {
-                        team.striker_skill += player.get_skill() as f32;
-                    }
-                    _ => {}
-                }
-            }
-        }
-
-        team
+        details
     }
 }
 
-struct MatchTeam<'s> {
-    pub id: u32,
-
-    pub goalkeeping_skill: f32,
-    pub defender_skill: f32,
-    pub midfielder_skill: f32,
-    pub striker_skill: f32,
-
-    pub squad: &'s Squad<'s>,
-}
-
-impl<'s> MatchTeam<'s> {
-    pub fn new(id: u32, squad: &'s Squad<'s>) -> Self {
-        MatchTeam {
-            id,
-            goalkeeping_skill: 0.0,
-            defender_skill: 0.0,
-            midfielder_skill: 0.0,
-            striker_skill: 0.0,
-            squad,
-        }
-    }
-}
-
+#[derive(Debug, Clone)]
 pub struct FootballMatchDetails {
     pub score: Score,
-    pub events: Vec<MatchEvent>,
-    pub player_changes: Vec<PlayerChanges>,
+    pub position_data: MatchPositionData,
+    pub home_team_players: Vec<u32>,
+    pub away_team_players: Vec<u32>,
 }
 
+impl FootballMatchDetails {
+    pub fn new() -> Self {
+        FootballMatchDetails {
+            score: Score::new(),
+            position_data: MatchPositionData::new(),
+            home_team_players: Vec::new(),
+            away_team_players: Vec::new(),
+        }
+    }
+
+    pub fn write_team_players(
+        &mut self,
+        home_team_players: &Vec<u32>,
+        away_team_players: &Vec<u32>,
+    ) {
+        for &player_id in home_team_players {
+            self.home_team_players.push(player_id);
+        }
+
+        for &player_id in away_team_players {
+            self.away_team_players.push(player_id);
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct Score {
     pub home: i32,
     pub away: i32,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum MatchFieldZone {
-    AGoal,
-    AField,
-    Midfield,
-    BField,
-    BGoal,
+impl Score {
+    pub fn new() -> Self {
+        Score { home: 0, away: 0 }
+    }
 }
 
-pub struct PlayerChanges {}
+pub struct Field {
+    pub width: usize,
+    pub height: usize,
+    pub ball: Ball,
+    pub players: Vec<MatchPlayer>,
+    // Player disposition
+    pub home_team_players: Vec<u32>,
+    pub away_team_players: Vec<u32>,
+}
+
+impl Field {
+    pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
+        let mut players_container =
+            Vec::with_capacity(home_squad.main_squad.len() + away_squad.main_squad.len());
+
+        let home_team_players: Vec<u32> =
+            home_squad.main_squad.iter().map(|p| p.player_id).collect();
+        let away_team_players: Vec<u32> =
+            away_squad.main_squad.iter().map(|p| p.player_id).collect();
+
+        for player in setup_player_on_field(home_squad, away_squad) {
+            players_container.push(player);
+        }
+
+        Field {
+            width,
+            height,
+            ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
+            players: players_container,
+            home_team_players,
+            away_team_players,
+        }
+    }
+
+    pub fn play(&mut self, details: &mut FootballMatchDetails) {
+        self.play_inner(details);
+
+        // write player disposition
+        details.write_team_players(&self.home_team_players, &self.away_team_players);
+    }
+
+    fn play_inner(&mut self, match_details: &mut FootballMatchDetails) {
+        let mut current_time: u64 = 0;
+
+        while current_time <= MATCH_TIME_MS {
+            let ball_evens = self.ball.update();
+
+            let player_events: Vec<PlayerUpdateEvent> =
+                self.players.iter_mut().flat_map(|p| p.update()).collect();
+
+            let players_len = self.players.len();
+
+            for player_idx in 0..players_len {
+                for other_player_idx in 0..players_len {
+                    // if player_idx == other_player_idx {
+                    //     continue;
+                    // }
+                    //
+                    // let player = &mut self.players[player_idx];
+                    // let other_player = &mut self.players[other_player_idx];
+                    //
+                    // player.update();
+                    //
+                    // if player.position == other_player.position {
+                    //     //player.collide_with(other_player);
+                    // }
+                }
+            }
+
+            current_time += MATCH_TIME_INCREMENT_MS;
+
+            self.write_match_positions(match_details, current_time);
+        }
+    }
+
+    fn is_collision(ball_position: &FieldPosition, player_position: &FieldPosition) -> bool {
+        const COLLISION_RADIUS: f32 = 2.0;
+
+        let x_diff = (ball_position.x - player_position.x).abs();
+        let y_diff = (ball_position.y - player_position.y).abs();
+
+        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
+    }
+
+    pub fn write_match_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {
+        // player positions
+        self.players.iter().for_each(|player| {
+            match_details.position_data.add_player_positions(
+                player.player_id,
+                timestamp,
+                player.position.x,
+                player.position.y,
+            );
+        });
+
+        // write positions
+        match_details.position_data.add_ball_positions(
+            timestamp,
+            self.ball.position.x,
+            self.ball.position.y,
+        );
+    }
+}
 
 pub enum MatchEvent {
     MatchPlayed(u32, bool, u8),
     Goal(u32),
     Assist(u32),
     Injury(u32),
+}
+
+fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<MatchPlayer> {
+    let mut players: Vec<MatchPlayer> = Vec::new();
+
+    // home
+    home_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut home_player| {
+            let tactics_position = home_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, home_position, _)| home_position)
+                .for_each(|position| {
+                    if let PositionType::Home(x, y) = position {
+                        home_player.position = FieldPosition::new(*x as f32, *y as f32);
+                        players.push(home_player);
+                    }
+                });
+        });
+
+    // away
+    away_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut away_player| {
+            let tactics_position = away_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, _, away_position)| away_position)
+                .for_each(|position| {
+                    if let PositionType::Away(x, y) = position {
+                        away_player.position = FieldPosition::new(*x as f32, *y as f32);
+                        players.push(away_player);
+                    }
+                });
+        });
+
+    players
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum GameState {
+    FirstHalf,
+    SecondHalf,
+    ExtraTime,
+    PenaltyShootout,
+    Halftime,
+    Fulltime,
+    GameOver,
 }

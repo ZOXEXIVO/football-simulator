@@ -1,0 +1,15 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+core = { path = "../core" }
+database = { path = "../database" }
+axum = "0.6.4"
+log = { version = "0.4.17", features = ["release_max_level_error"] }
+tokio = { version = "1.25.0", features = ["full"] }
+axum-extra = { version = "0.4.2", features = ["spa"] }
+serde = { version = "1.0.152", features = ["derive"] }
+chrono= "0.4.23"
+itertools = "0.10.5"

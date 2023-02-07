@@ -5,7 +5,7 @@ mod technical;
 
 use crate::club::utils::PlayerUtils;
 use crate::{Person, Player, Staff};
-use chrono::{NaiveDate, Utc};
+use chrono::NaiveDate;
 pub use mental::*;
 pub use physical::*;
 pub use technical::*;

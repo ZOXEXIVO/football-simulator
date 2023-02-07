@@ -11,21 +11,38 @@ Currently, most of elements are stubs, but I change it step by step
 
 Currently available nation for simulation - **Russia**
 
-I use only Askama templates to render UI and it was my decision, because i want to run my simulation only with one command:
+#### How to run?
 
-**cargo run**
+1) Local run
+```console
+// run frontend (Angular)
+cd football-simulator/ui
+npm start
+...
+// run backend
+cd football-simulator
+cargo run
+...
+open chrome at http://localhost:18000
+```
+2) Run in Docker
+```console
+cd football-simulator
+docker build -f .\build\Football.Dockerfile -t football-simulator .
+docker run -d -p 18000:18000 --name football-simulator football-simulator
 
-without **npm intstall** and other annoying things :) 
+open chrome at http://localhost:18000
+```
 
-[Player page example](https://football-simulator.org/teams/1/players/1)
+[Player page example](https://football-simulator.org/teams/spartak-moscow/players/0)
 
 ![alt text](docs/images/player.jpg "Player page")
 
-[Club page example](https://football-simulator.org/teams/1)
+[Club page example](https://football-simulator.org/teams/spartak-moscow)
 
 ![alt text](docs/images/club.jpg "Club page")
 
-[League page example](https://football-simulator.org/leagues/0)
+[League page example](https://football-simulator.org/leagues/tinkoff-premier_league)
 
 ![alt text](docs/images/league.jpg "League page")
 

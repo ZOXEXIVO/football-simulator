@@ -2,7 +2,7 @@ mod collection;
 mod context;
 mod league;
 mod result;
-mod schedule;
+pub mod schedule;
 mod season;
 mod table;
 

@@ -1,5 +1,5 @@
 ﻿use crate::training::skills::{MentalSkill, PhysicalSkill, TechnicalSkill};
-use crate::{PlayerPositionType, Technical};
+use crate::PlayerPositionType;
 use std::collections::HashMap;
 
 pub mod tactic_442;

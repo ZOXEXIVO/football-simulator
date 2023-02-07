@@ -3,10 +3,7 @@ use crate::training::skills::{
     determine_mental_skills_to_increase, determine_physical_skills_to_increase,
     determine_technical_skills_to_increase,
 };
-use crate::{
-    MentalFocusType, Player, PlayerTrainingHistory, Staff, TechnicalFocusType, TrainingNetLoader,
-    TrainingRecord,
-};
+use crate::{Player, Staff};
 use chrono::NaiveDateTime;
 
 #[derive(Debug)]

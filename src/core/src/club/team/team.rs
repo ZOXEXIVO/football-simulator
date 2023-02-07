@@ -1,10 +1,11 @@
 use crate::club::team::behaviour::TeamBehaviour;
 use crate::context::GlobalContext;
+use crate::r#match::{SquadSelector, TeamSquad};
 use crate::shared::CurrencyValue;
 use crate::{
-    MatchHistory, Player, PlayerCollection, Squad, SquadSelector, StaffCollection, Tactics,
-    TacticsPositioning, TacticsSelector, TeamReputation, TeamResult, TeamTraining,
-    TrainingSchedule, TransferItem, Transfers,
+    MatchHistory, Player, PlayerCollection, StaffCollection, Tactics, TacticsPositioning,
+    TacticsSelector, TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
+    Transfers,
 };
 use std::borrow::Cow;
 use std::str::FromStr;
@@ -81,34 +82,29 @@ impl Team {
     }
 
     pub fn get_week_salary(&self) -> u32 {
-        let mut result: u32 = 0;
-
-        result += &self
-            .players
+        self.players
             .players
             .iter()
             .filter_map(|p| p.contract.as_ref())
             .map(|c| c.salary)
-            .sum::<u32>();
-
-        result += &self
-            .staffs
-            .staffs
-            .iter()
-            .filter_map(|p| p.contract.as_ref())
-            .map(|c| c.salary)
-            .sum::<u32>();
-
-        result
+            .chain(
+                self.staffs
+                    .staffs
+                    .iter()
+                    .filter_map(|p| p.contract.as_ref())
+                    .map(|c| c.salary),
+            )
+            .sum()
     }
 
-    pub fn get_match_squad(&self) -> Squad {
+    pub fn get_match_squad(&self) -> TeamSquad {
         let head_coach = self.staffs.head_coach();
 
         let squad = SquadSelector::select(self, head_coach);
 
-        Squad {
+        TeamSquad {
             team_id: self.id,
+            team_name: self.name.clone(),
             tactics: TacticsSelector::select(self, head_coach),
             main_squad: squad.main_squad,
             substitutes: squad.substitutes,

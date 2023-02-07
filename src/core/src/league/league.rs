@@ -14,6 +14,7 @@ pub struct League {
     pub schedule: Schedule,
     pub table: LeagueTable,
     pub settings: LeagueSettings,
+    pub match_results: Vec<MatchResult>,
     pub reputation: u16,
 }
 
@@ -33,6 +34,7 @@ impl League {
             country_id,
             schedule: Schedule::default(),
             table: LeagueTable::default(),
+            match_results: Vec::new(),
             settings,
             reputation,
         }
@@ -54,6 +56,10 @@ impl League {
             let match_results = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
             self.table.update_from_results(&match_results);
 
+            match_results.clone().into_iter().for_each(|m| {
+                self.match_results.push(m);
+            });
+
             return LeagueResult::with_match_result(self.id, table_result, match_results);
         }
 
@@ -67,17 +73,21 @@ impl League {
     ) -> Vec<MatchResult> {
         let mut result = Vec::new(); //TODO capacity
 
-        for scheduled_match in scheduled_matches {
+        for scheduled_match in scheduled_matches.iter_mut() {
+            // TODO take 1
+            let home_team = self.get_team(clubs, scheduled_match.home_team_id);
+            let away_team = self.get_team(clubs, scheduled_match.away_team_id);
+
             let match_to_play = Match::make(
+                scheduled_match.id.clone(),
                 scheduled_match.league_id,
-                &scheduled_match.id,
-                self.get_team(clubs, scheduled_match.home_team_id),
-                self.get_team(clubs, scheduled_match.away_team_id),
+                home_team.get_match_squad(),
+                away_team.get_match_squad(),
             );
 
             let message = &format!(
                 "play match: {} - {}",
-                &match_to_play.home_team.name, &match_to_play.away_team.name
+                &match_to_play.home_squad.team_name, &match_to_play.away_squad.team_name
             );
 
             let match_result = Logging::estimate_result(|| match_to_play.play(), message);

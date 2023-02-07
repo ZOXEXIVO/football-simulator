@@ -1,4 +1,4 @@
-use crate::{Person, Player, PlayerPositions, PlayerStatus, PlayerStatusType};
+use crate::{Person, Player, PlayerStatusType};
 use chrono::{Datelike, NaiveDate};
 
 pub struct PlayerValueCalculator;
@@ -96,12 +96,12 @@ fn determine_contract_factor(player: &Player, date: NaiveDate) -> f64 {
     contract_factor
 }
 
-fn determine_country_factor(player: &Player) -> f64 {
+fn determine_country_factor(_player: &Player) -> f64 {
     let country_factor = 1.0;
     country_factor
 }
 
-fn determine_form_factor(player: &Player) -> f64 {
+fn determine_form_factor(_player: &Player) -> f64 {
     let form_factor = 1.0;
 
     // let form = match player.statistics.get_form(date) {
@@ -120,7 +120,7 @@ fn determine_form_factor(player: &Player) -> f64 {
     form_factor
 }
 
-fn determine_match_appearance_factor(player: &Player) -> f64 {
+fn determine_match_appearance_factor(_player: &Player) -> f64 {
     let match_appearance_factor = 1.0;
     match_appearance_factor
 }

@@ -1,7 +1,7 @@
 mod date;
 mod estimation;
 mod floats;
-mod formatting;
+pub mod formatting;
 mod integers;
 mod logging;
 mod strings;
