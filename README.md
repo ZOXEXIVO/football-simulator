@@ -13,9 +13,25 @@ Currently available nation for simulation - **Russia**
 
 #### How to run?
 
-```bash
-cd football-manager
+1) Local run
+```console
+// run frontend (Angular)
+cd football-simulator/ui
+npm start
+...
+// run backend
+cd football-simulator
 cargo run
+...
+open chrome at http://localhost:18000
+```
+2) Run in Docker
+```console
+cd football-simulator
+docker build -f .\build\Football.Dockerfile -t football-simulator .
+docker run -d -p 18000:18000 --name football-simulator football-simulator
+
+open chrome at http://localhost:18000
 ```
 
 [Player page example](https://football-simulator.org/teams/spartak-moscow/players/0)

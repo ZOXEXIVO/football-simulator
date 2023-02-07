@@ -22,6 +22,11 @@ impl ServerRoutes {
             .merge(match_routes())
             .merge(current_date_routes());
 
-        routes.merge(SpaRouter::new("/dist", "ui/dist").index_file("index.html"))
+        #[cfg(debug_assertions)]
+        let client_app_dir = "ui/dist";
+        #[cfg(not(debug_assertions))]
+        let client_app_dir = "dist";
+
+        routes.merge(SpaRouter::new("/dist", client_app_dir).index_file("index.html"))
     }
 }
