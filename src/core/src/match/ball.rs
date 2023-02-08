@@ -1,4 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
+use crate::r#match::FootballMatchDetails;
 use nalgebra::Vector2;
 use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
@@ -28,17 +29,57 @@ impl Ball {
 
         self.update_velocity(&mut result);
         self.move_to(&mut result);
+        self.check_boundary_collision(&mut result);
         self.check_goal(&mut result);
 
         result
     }
 
+    pub fn handle_events(events: &Vec<BallUpdateEvent>, match_details: &mut FootballMatchDetails) {
+        for event in events {
+            match event {
+                BallUpdateEvent::AwayGoal => {
+                    match_details.score.away += 1;
+                }
+                BallUpdateEvent::HomeGoal => {
+                    match_details.score.home += 1;
+                }
+            }
+        }
+    }
+
+    fn check_boundary_collision(&mut self, result: &mut Vec<BallUpdateEvent>) {
+        // Check if ball hits the boundary and reverse its velocity if it does
+        if self.position.x <= 0.0 || self.position.x >= 150.0 {
+            self.velocity.x = -self.velocity.x;
+        }
+
+        if self.position.y <= 0.0 || self.position.y >= 100.0 {
+            self.velocity.y = -self.velocity.y;
+        }
+    }
+
     fn check_goal(&mut self, result: &mut Vec<BallUpdateEvent>) {
-        // if self.position.x >= self.width as i16 {
-        //     match_details.score.home += 1;
-        // } else if self.position.x <= 0 {
-        //     match_details.score.away += 1;
-        // }
+        let goal_post_width = 6.0;
+        let goal_line_x = 140.0;
+
+        if self.position.x > goal_line_x - goal_post_width
+            && self.position.x < goal_line_x + goal_post_width
+        {
+            let goal_line_y = 90.0 / 2.0;
+
+            if (self.start_position.y < goal_line_y && self.position.y >= goal_line_y)
+                || (self.start_position.y > goal_line_y && self.position.y <= goal_line_y)
+            {
+                if self.start_position.x < goal_line_x {
+                    result.push(BallUpdateEvent::AwayGoal);
+                } else {
+                    result.push(BallUpdateEvent::HomeGoal);
+                }
+
+                self.reset();
+            }
+        }
     }
 
     fn update_velocity(&mut self, result: &mut Vec<BallUpdateEvent>) {
@@ -79,5 +120,6 @@ impl Ball {
 }
 
 pub enum BallUpdateEvent {
-    Goal,
+    HomeGoal,
+    AwayGoal,
 }

@@ -1,4 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
+use crate::r#match::FootballMatchDetails;
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
@@ -40,6 +41,13 @@ impl MatchPlayer {
         self.move_to(&mut result);
 
         result
+    }
+
+    pub fn handle_events(
+        events: &Vec<PlayerUpdateEvent>,
+        match_details: &mut FootballMatchDetails,
+    ) {
+        for event in events {}
     }
 
     fn update_state(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
@@ -153,8 +161,8 @@ impl MatchPlayer {
 
         let mut rng = thread_rng();
 
-        let random_x_val: f32 = rng.gen_range(-0.1..0.1);
-        let random_y_val: f32 = rng.gen_range(-0.1..0.1);
+        let random_x_val: f32 = rng.gen_range(-0.05..0.05);
+        let random_y_val: f32 = rng.gen_range(-0.05..0.05);
 
         self.velocity = Vector2::new(speed * random_x_val, speed * random_y_val);
     }

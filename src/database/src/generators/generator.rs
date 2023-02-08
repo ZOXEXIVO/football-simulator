@@ -194,19 +194,19 @@ impl DatabaseGenerator {
     fn generate_players(player_generator: &mut PlayerGenerator, country_id: u32) -> Vec<Player> {
         let mut players = Vec::with_capacity(100);
 
-        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(2, 5))
+        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(3, 5))
             .map(|_| player_generator.generate(country_id, PositionType::Goalkeeper))
             .collect();
 
-        let mut defenders: Vec<Player> = (0..IntegerUtils::random(7, 15))
+        let mut defenders: Vec<Player> = (0..IntegerUtils::random(10, 20))
             .map(|_| player_generator.generate(country_id, PositionType::Defender))
             .collect();
 
-        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(9, 17))
+        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(15, 25))
             .map(|_| player_generator.generate(country_id, PositionType::Midfielder))
             .collect();
 
-        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 6))
+        let mut strikers: Vec<Player> = (0..IntegerUtils::random(4, 7))
             .map(|_| player_generator.generate(country_id, PositionType::Striker))
             .collect();
 

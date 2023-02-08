@@ -118,28 +118,16 @@ impl Field {
         let mut current_time: u64 = 0;
 
         while current_time <= MATCH_TIME_MS {
-            let ball_evens = self.ball.update();
-
-            let player_events: Vec<PlayerUpdateEvent> =
-                self.players.iter_mut().flat_map(|p| p.update()).collect();
+            Ball::handle_events(&self.ball.update(), match_details);
+            MatchPlayer::handle_events(
+                &self.players.iter_mut().flat_map(|p| p.update()).collect(),
+                match_details,
+            );
 
             let players_len = self.players.len();
 
             for player_idx in 0..players_len {
-                for other_player_idx in 0..players_len {
-                    // if player_idx == other_player_idx {
-                    //     continue;
-                    // }
-                    //
-                    // let player = &mut self.players[player_idx];
-                    // let other_player = &mut self.players[other_player_idx];
-                    //
-                    // player.update();
-                    //
-                    // if player.position == other_player.position {
-                    //     //player.collide_with(other_player);
-                    // }
-                }
+                for other_player_idx in 0..players_len {}
             }
 
             current_time += MATCH_TIME_INCREMENT_MS;

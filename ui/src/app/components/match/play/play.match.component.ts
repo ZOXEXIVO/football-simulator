@@ -71,12 +71,15 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
         this.application.stage.addChild(ball);
 
         this.matchDataService.matchData.players.forEach(player => {
-          const playerObj = this.createPlayer(player.data[0].x, player.data[0].y, player.isHome)
+          let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
+          const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player.isHome)
 
           player.obj = playerObj;
 
           this.application?.stage.addChild(playerObj);
         });
+
+        console.log('players count = ' + this.matchDataService.matchData.players.length);
 
         // DEBUG
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.tl.x, POLE_COORDS.tl.y));
@@ -84,42 +87,42 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.bl.x, POLE_COORDS.bl.y));
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
-        this.application.ticker.add((delta) => {
-          if(this.isDisposed){
-            return;
-          }
-
-          this.currentTime += 10;
-          this.timeTick.emit(this.currentTime);
-
-          this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
-            // if(!data){
-            //   return;
-            // }
-
-            const ballObject = this.matchDataService.matchData.ball.obj!;
-
-            let coord = this.translateToField(data.ball.x, data.ball.y);
-
-            ballObject.x = coord.x;
-            ballObject.y = coord.y;
-
-            this.matchDataService.matchData.players.forEach(player => {
-              const playerObject = player.obj!;
-              const playerData = data.players[player.id];
-
-              if(playerData && playerData.position){
-                let playerTranslatedCoords = this.translateToField(
-                  data.players[player.id].position.x,
-                  data.players[player.id].position.y
-                );
-
-                playerObject.x = playerTranslatedCoords.x;
-                playerObject.y = playerTranslatedCoords.y;
-              }
-            });
-          });
-        });
+        // this.application.ticker.add((delta) => {
+        //   if(this.isDisposed){
+        //     return;
+        //   }
+        //
+        //   this.currentTime += 10;
+        //   this.timeTick.emit(this.currentTime);
+        //
+        //   this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
+        //     // if(!data){
+        //     //   return;
+        //     // }
+        //
+        //     const ballObject = this.matchDataService.matchData.ball.obj!;
+        //
+        //     let coord = this.translateToField(data.ball.x, data.ball.y);
+        //
+        //     ballObject.x = coord.x;
+        //     ballObject.y = coord.y;
+        //
+        //     this.matchDataService.matchData.players.forEach(player => {
+        //       const playerObject = player.obj!;
+        //       const playerData = data.players[player.id];
+        //
+        //       if(playerData && playerData.position){
+        //         let playerTranslatedCoords = this.translateToField(
+        //           data.players[player.id].position.x,
+        //           data.players[player.id].position.y
+        //         );
+        //
+        //         playerObject.x = playerTranslatedCoords.x;
+        //         playerObject.y = playerTranslatedCoords.y;
+        //       }
+        //     });
+        //   });
+        // });
 
         this.application.render();
       }

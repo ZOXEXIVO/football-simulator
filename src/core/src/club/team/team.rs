@@ -7,6 +7,7 @@ use crate::{
     TacticsSelector, TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
     Transfers,
 };
+use log::info;
 use std::borrow::Cow;
 use std::str::FromStr;
 

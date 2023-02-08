@@ -53,7 +53,7 @@ impl SquadSelector {
                     .cmp(&b.player_attributes.condition)
             });
 
-            for &player in players_on_position.iter().take(5) {
+            for &player in players_on_position.iter().take(1) {
                 result.push(player);
             }
 
