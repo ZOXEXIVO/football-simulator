@@ -1,9 +1,10 @@
 ﻿use crate::GameAppData;
-use axum::extract::{Path, Query, State};
+use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
+use core::r#match::engine::FootballMatchDetails;
+use core::SimulatorData;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 #[derive(Deserialize)]
 pub struct MatchDetailsRequest {
@@ -15,6 +16,7 @@ pub struct MatchDetailsRequest {
 pub struct MatchLineupResponse<'p> {
     pub home_squad: LineupSquad<'p>,
     pub away_squad: LineupSquad<'p>,
+    pub ball: LineupBall,
 }
 
 #[derive(Serialize)]
@@ -31,6 +33,11 @@ pub struct LineupPlayer<'p> {
     pub middle_name: Option<&'p str>,
     pub position: &'p str,
     pub team_slug: &'p str,
+    pub start_position: (i16, i16),
+}
+
+#[derive(Serialize)]
+pub struct LineupBall {
     pub start_position: (i16, i16),
 }
 
@@ -71,29 +78,18 @@ pub async fn match_lineup_action(
     let match_details = match_details.details.as_ref().unwrap();
 
     let result = MatchLineupResponse {
+        ball: LineupBall {
+            start_position: (
+                match_details.position_data.ball_positions[0].x as i16,
+                match_details.position_data.ball_positions[0].y as i16,
+            ),
+        },
         home_squad: LineupSquad {
             main: match_details
                 .home_team_players
                 .iter()
                 .map(|player_id| {
-                    let player = simulator_data.player(*player_id).unwrap();
-                    let position = match_details
-                        .position_data
-                        .player_positions
-                        .get(player_id)
-                        .unwrap()
-                        .first()
-                        .unwrap();
-
-                    LineupPlayer {
-                        id: player.id,
-                        first_name: &player.full_name.first_name,
-                        last_name: &player.full_name.last_name,
-                        middle_name: player.full_name.middle_name.as_deref(),
-                        position: player.position().get_short_name(),
-                        team_slug: home_team_slug,
-                        start_position: (position.x as i16, position.y as i16),
-                    }
+                    to_lineup_player(*player_id, home_team_slug, match_details, simulator_data)
                 })
                 .collect(),
             substitutes: Vec::new(),
@@ -103,24 +99,7 @@ pub async fn match_lineup_action(
                 .away_team_players
                 .iter()
                 .map(|player_id| {
-                    let player = simulator_data.player(*player_id).unwrap();
-                    let position = match_details
-                        .position_data
-                        .player_positions
-                        .get(player_id)
-                        .unwrap()
-                        .first()
-                        .unwrap();
-
-                    LineupPlayer {
-                        id: player.id,
-                        first_name: &player.full_name.first_name,
-                        last_name: &player.full_name.last_name,
-                        middle_name: player.full_name.middle_name.as_deref(),
-                        position: player.position().get_short_name(),
-                        team_slug: away_team_slug,
-                        start_position: (position.x as i16, position.y as i16),
-                    }
+                    to_lineup_player(*player_id, away_team_slug, match_details, simulator_data)
                 })
                 .collect(),
             substitutes: Vec::new(),
@@ -128,4 +107,31 @@ pub async fn match_lineup_action(
     };
 
     Json(result).into_response()
+}
+
+fn to_lineup_player<'p>(
+    player_id: u32,
+    team_slug: &'p str,
+    match_details: &'p FootballMatchDetails,
+    simulator_data: &'p SimulatorData,
+) -> LineupPlayer<'p> {
+    let player = simulator_data.player(player_id).unwrap();
+
+    let position = match_details
+        .position_data
+        .player_positions
+        .get(&player_id)
+        .unwrap()
+        .first()
+        .unwrap();
+
+    LineupPlayer {
+        id: player.id,
+        first_name: &player.full_name.first_name,
+        last_name: &player.full_name.last_name,
+        middle_name: player.full_name.middle_name.as_deref(),
+        position: player.position().get_short_name(),
+        team_slug,
+        start_position: (position.x as i16, position.y as i16),
+    }
 }

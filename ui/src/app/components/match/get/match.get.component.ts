@@ -1,9 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {UntilDestroy} from '@ngneat/until-destroy';
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 import {TitleService} from 'src/app/shared/services/title.service';
 import {LeftMenuService} from '../../shared/left-menu/services/left.menu.service';
 import {MatchDto} from "../services/match.api.service";
+import {MatchDataService} from "../services/match.data.service";
 
 @UntilDestroy()
 @Component({
@@ -11,15 +12,17 @@ import {MatchDto} from "../services/match.api.service";
   styleUrls: ['./match.get.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MatchGetComponent {
+export class MatchGetComponent implements OnInit {
   public match: MatchDto | null = null;
 
   leagueSlug: string = '';
   matchId: string = '';
 
   currentTime: number = 0;
+  lineupLoaded: boolean = false;
 
   constructor(private leftMenuService: LeftMenuService,
+              public matchDataService: MatchDataService,
               private route: ActivatedRoute,
               private titleService: TitleService,
               private changeDetectorRef: ChangeDetectorRef) {
@@ -29,12 +32,14 @@ export class MatchGetComponent {
   }
 
   ngOnInit(): void {
-
+    this.matchDataService.init(this.leagueSlug, this.matchId).pipe(untilDestroyed(this)).subscribe(_ => {
+      this.lineupLoaded = true;
+      this.changeDetectorRef.markForCheck();
+    });
   }
 
   playMatchTick(time: number) {
     this.currentTime = time;
-    this.changeDetectorRef.detectChanges();
   }
 
   initLeftMenu(match: MatchDto) {

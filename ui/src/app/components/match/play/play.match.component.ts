@@ -25,34 +25,21 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 export class MatchPlayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('matchContainer') matchContainer!: ElementRef;
 
-  @Input()
-  leagueSlug: string;
-  @Input()
-  matchId: string;
-
   @Output()
-  @Output() timeTick: EventEmitter<number> = new EventEmitter();
+  @Input() timeTick: EventEmitter<number> = new EventEmitter();
 
   application: PIXI.Application | null = null;
 
-  currentTime: number = 0;
-
   isDisposed = false;
 
-  constructor(private matchDataService: MatchDataService,
-              private zone: NgZone,
-              private router: ActivatedRoute) {
-
-    this.leagueSlug = router.snapshot.params["league_slug"];
-    this.matchId = router.snapshot.params["match_id"];
-
+  constructor(private zone: NgZone,
+              private matchDataService: MatchDataService) {
     console.log(PIXI.VERSION);
   }
 
   public ngAfterViewInit(): void {
-    this.matchDataService.init(this.leagueSlug, this.matchId).pipe(untilDestroyed(this)).subscribe(_ => {
-      this.initGraphics();
-    });
+
+    this.initGraphics();
   }
 
   initGraphics() {

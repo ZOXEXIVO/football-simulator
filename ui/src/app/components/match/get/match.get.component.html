@@ -2,8 +2,12 @@
   <div class="content match-content">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-3">
-           TODO Squad 1 List
+        <div class="col-2">
+          <ul class="list-group squad-list">
+            <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.home">
+              {{ player.last_name }} {{ player.first_name }} ({{ player.position }})
+            </li>
+          </ul>
         </div>
         <div class="col">
           <div class="container-fluid">
@@ -12,17 +16,21 @@
                 <input type="range" class="form-range" min="0" max="60000" [value]="currentTime"/>
               </div>
             </div>
-            <div class="row">
+            <div class="row text-center">
               <div class="col">
                 <div id="match-container">
-                  <play-match [leagueSlug]="leagueSlug" [matchId]="matchId" (timeTick)="playMatchTick($event)"></play-match>
+                  <play-match *ngIf="lineupLoaded" (timeTick)="playMatchTick($event)"></play-match>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-3">
-          TODO Squad 2 List
+        <div class="col-2">
+          <ul class="list-group squad-list">
+            <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.away">
+              {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+            </li>
+          </ul>
         </div>
       </div>
     </div>
