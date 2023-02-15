@@ -8,6 +8,12 @@
               {{ player.last_name }} {{ player.first_name }} ({{ player.position }})
             </li>
           </ul>
+          <hr />
+          <ul class="list-group squad-list">
+            <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.home_subs">
+              {{ player.last_name }} {{ player.first_name }} ({{ player.position }})
+            </li>
+          </ul>
         </div>
         <div class="col">
           <div class="container-fluid">
@@ -28,6 +34,12 @@
         <div class="col-2">
           <ul class="list-group squad-list">
             <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.away">
+              {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+            </li>
+          </ul>
+          <hr />
+          <ul class="list-group squad-list">
+            <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.away_subs">
               {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
             </li>
           </ul>

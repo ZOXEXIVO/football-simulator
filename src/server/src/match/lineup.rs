@@ -86,23 +86,39 @@ pub async fn match_lineup_action(
         },
         home_squad: LineupSquad {
             main: match_details
-                .home_team_players
+                .home_players
+                .main
                 .iter()
                 .map(|player_id| {
                     to_lineup_player(*player_id, home_team_slug, match_details, simulator_data)
                 })
                 .collect(),
-            substitutes: Vec::new(),
+            substitutes: match_details
+                .home_players
+                .substitutes
+                .iter()
+                .map(|player_id| {
+                    to_lineup_player(*player_id, home_team_slug, match_details, simulator_data)
+                })
+                .collect(),
         },
         away_squad: LineupSquad {
             main: match_details
-                .away_team_players
+                .away_players
+                .main
                 .iter()
                 .map(|player_id| {
                     to_lineup_player(*player_id, away_team_slug, match_details, simulator_data)
                 })
                 .collect(),
-            substitutes: Vec::new(),
+            substitutes: match_details
+                .away_players
+                .substitutes
+                .iter()
+                .map(|player_id| {
+                    to_lineup_player(*player_id, away_team_slug, match_details, simulator_data)
+                })
+                .collect(),
         },
     };
 
@@ -121,7 +137,7 @@ fn to_lineup_player<'p>(
         .position_data
         .player_positions
         .get(&player_id)
-        .unwrap()
+        .unwrap_or_else(|| panic!("player_id: {player_id} not found in match details"))
         .first()
         .unwrap();
 

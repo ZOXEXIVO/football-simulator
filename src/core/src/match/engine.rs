@@ -1,7 +1,7 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::position::{FieldPosition, MatchPositionData};
 use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
-use crate::r#match::{MatchPlayer, PlayerUpdateEvent};
+use crate::r#match::MatchPlayer;
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
 const MATCH_TIME_MS: u64 = 1 * 60 * 1000;
@@ -32,8 +32,9 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 pub struct FootballMatchDetails {
     pub score: Score,
     pub position_data: MatchPositionData,
-    pub home_team_players: Vec<u32>,
-    pub away_team_players: Vec<u32>,
+
+    pub home_players: FieldSquad,
+    pub away_players: FieldSquad,
 }
 
 impl FootballMatchDetails {
@@ -41,23 +42,44 @@ impl FootballMatchDetails {
         FootballMatchDetails {
             score: Score::new(),
             position_data: MatchPositionData::new(),
-            home_team_players: Vec::new(),
-            away_team_players: Vec::new(),
+            home_players: FieldSquad::new(),
+            away_players: FieldSquad::new(),
         }
     }
 
     pub fn write_team_players(
         &mut self,
-        home_team_players: &Vec<u32>,
-        away_team_players: &Vec<u32>,
+        home_team_players: &FieldSquad,
+        away_team_players: &FieldSquad,
     ) {
-        for &player_id in home_team_players {
-            self.home_team_players.push(player_id);
-        }
+        self.home_players = FieldSquad::from(home_team_players);
+        self.away_players = FieldSquad::from(away_team_players);
+    }
+}
 
-        for &player_id in away_team_players {
-            self.away_team_players.push(player_id);
+#[derive(Debug, Clone)]
+pub struct FieldSquad {
+    pub main: Vec<u32>,
+    pub substitutes: Vec<u32>,
+}
+
+impl FieldSquad {
+    pub fn new() -> Self {
+        FieldSquad {
+            main: Vec::new(),
+            substitutes: Vec::new(),
         }
+    }
+
+    pub fn from(field_squad: &FieldSquad) -> Self {
+        FieldSquad {
+            main: field_squad.main.to_vec(),
+            substitutes: field_squad.substitutes.to_vec(),
+        }
+    }
+
+    pub fn count(&self) -> usize {
+        self.main.len() + self.substitutes.len()
     }
 }
 
@@ -78,32 +100,34 @@ pub struct Field {
     pub height: usize,
     pub ball: Ball,
     pub players: Vec<MatchPlayer>,
-    // Player disposition
-    pub home_team_players: Vec<u32>,
-    pub away_team_players: Vec<u32>,
+    pub substitutes: Vec<MatchPlayer>,
+
+    pub home_players: FieldSquad,
+    pub away_players: FieldSquad,
 }
 
 impl Field {
     pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
-        let mut players_container =
-            Vec::with_capacity(home_squad.main_squad.len() + away_squad.main_squad.len());
+        let home_players = FieldSquad {
+            main: home_squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: home_squad.substitutes.iter().map(|p| p.player_id).collect(),
+        };
 
-        let home_team_players: Vec<u32> =
-            home_squad.main_squad.iter().map(|p| p.player_id).collect();
-        let away_team_players: Vec<u32> =
-            away_squad.main_squad.iter().map(|p| p.player_id).collect();
+        let away_players = FieldSquad {
+            main: away_squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: away_squad.substitutes.iter().map(|p| p.player_id).collect(),
+        };
 
-        for player in setup_player_on_field(home_squad, away_squad) {
-            players_container.push(player);
-        }
+        let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
 
         Field {
             width,
             height,
             ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
-            players: players_container,
-            home_team_players,
-            away_team_players,
+            players: players_on_field,
+            substitutes,
+            home_players,
+            away_players,
         }
     }
 
@@ -111,7 +135,7 @@ impl Field {
         self.play_inner(details);
 
         // write player disposition
-        details.write_team_players(&self.home_team_players, &self.away_team_players);
+        details.write_team_players(&self.home_players, &self.away_players);
     }
 
     fn play_inner(&mut self, match_details: &mut FootballMatchDetails) {
@@ -172,8 +196,12 @@ pub enum MatchEvent {
     Injury(u32),
 }
 
-fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<MatchPlayer> {
-    let mut players: Vec<MatchPlayer> = Vec::new();
+fn setup_player_on_field(
+    home_squad: TeamSquad,
+    away_squad: TeamSquad,
+) -> (Vec<MatchPlayer>, Vec<MatchPlayer>) {
+    let mut players_on_field: Vec<MatchPlayer> = Vec::with_capacity(22);
+    let mut substitutes: Vec<MatchPlayer> = Vec::with_capacity(30);
 
     // home
     home_squad
@@ -189,9 +217,17 @@ fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<Ma
                 .for_each(|position| {
                     if let PositionType::Home(x, y) = position {
                         home_player.position = FieldPosition::new(*x as f32, *y as f32);
-                        players.push(home_player);
+                        players_on_field.push(home_player);
                     }
                 });
+        });
+
+    home_squad
+        .substitutes
+        .into_iter()
+        .for_each(|mut home_player| {
+            home_player.position = FieldPosition::new(0.0, 0.0);
+            substitutes.push(home_player);
         });
 
     // away
@@ -208,12 +244,20 @@ fn setup_player_on_field(home_squad: TeamSquad, away_squad: TeamSquad) -> Vec<Ma
                 .for_each(|position| {
                     if let PositionType::Away(x, y) = position {
                         away_player.position = FieldPosition::new(*x as f32, *y as f32);
-                        players.push(away_player);
+                        players_on_field.push(away_player);
                     }
                 });
         });
 
-    players
+    away_squad
+        .substitutes
+        .into_iter()
+        .for_each(|mut away_player| {
+            away_player.position = FieldPosition::new(0.0, 0.0);
+            substitutes.push(away_player);
+        });
+
+    (players_on_field, substitutes)
 }
 
 #[derive(Debug, Clone, Copy)]

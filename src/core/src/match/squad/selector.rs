@@ -1,7 +1,7 @@
 use crate::club::{PlayerPositionType, Staff};
 use crate::r#match::player::MatchPlayer;
-use crate::{Player, Team};
-use std::collections::HashSet;
+use crate::{Player, Tactics, Team};
+use std::borrow::Borrow;
 
 pub struct SquadSelector;
 
@@ -17,107 +17,121 @@ impl SquadSelector {
     pub fn select(team: &Team, staff: &Staff) -> PlayerSelectionResult {
         let current_tactics = team.tactics();
 
-        let mut main_squad: Vec<MatchPlayer> = Vec::with_capacity(DEFAULT_SQUAD_SIZE);
+        let mut players: Vec<&Player> = team
+            .players
+            .players()
+            .iter()
+            .filter(|&&p| !p.player_attributes.is_injured && !p.player_attributes.is_banned)
+            .map(|p| *p)
+            .collect();
 
-        let mut selected_players = HashSet::new();
-
-        for player_position in current_tactics.positions() {
-            for position_player in select_by_type(team, player_position) {
-                if staff.relations.is_favorite_player(position_player.id) {
-                    main_squad.push(MatchPlayer::from_player(&position_player, *player_position))
-                } else {
-                    // TODO
-                    main_squad.push(MatchPlayer::from_player(&position_player, *player_position))
-                }
-
-                selected_players.insert(position_player.id);
-            }
-        }
-
-        let substitutes: Vec<MatchPlayer> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
-
-        return PlayerSelectionResult {
-            main_squad,
-            substitutes,
-        };
-
-        // helpers
-        fn select_by_type<'p>(team: &'p Team, position: &PlayerPositionType) -> Vec<&'p Player> {
-            let mut result: Vec<&Player> = Vec::with_capacity(5);
-
-            let mut players_on_position = team.players.by_position(position);
-
-            players_on_position.sort_by(|a, b| {
-                a.player_attributes
-                    .condition
-                    .cmp(&b.player_attributes.condition)
-            });
-
-            for &player in players_on_position.iter().take(1) {
-                result.push(player);
-            }
-
-            result
+        PlayerSelectionResult {
+            main_squad: SquadSelector::select_main_squad(
+                &mut players,
+                staff,
+                current_tactics.borrow(),
+            ),
+            substitutes: SquadSelector::select_substitutes(
+                &mut players,
+                staff,
+                current_tactics.borrow(),
+            ),
         }
     }
-}
 
-// use crate::club::{PlayerPositionType, Staff};
-// use crate::{Player, SquadPlayer, Tactics, Team};
-// use std::collections::HashSet;
-//
-// pub struct SquadSelector;
-//
-// const DEFAULT_SQUAD_SIZE: usize = 11;
-// const DEFAULT_BENCH_SIZE: usize = 6;
-//
-// const POSITIONS: &[PlayerPositionType; 8] = &[
-//     PlayerPositionType::Goalkeeper,
-//     PlayerPositionType::DefenderLeft,
-//     PlayerPositionType::DefenderCenter,
-//     PlayerPositionType::DefenderRight,
-//     PlayerPositionType::MidfielderLeft,
-//     PlayerPositionType::MidfielderCenter,
-//     PlayerPositionType::MidfielderRight,
-//     PlayerPositionType::Striker,
-// ];
-//
-// pub struct PlayerSelectionResult<'s> {
-//     pub main_squad: Vec<SquadPlayer<'s>>,
-//     pub substitutes: Vec<SquadPlayer<'s>>,
-// }
-//
-// impl SquadSelector {
-//     pub fn select<'c>(team: &'c Team, staff: &Staff) -> PlayerSelectionResult<'c> {
-//         let current_tactics = team.tactics.as_ref().unwrap();
-//
-//         let mut main_squad: Vec<SquadPlayer<'c>> = Vec::with_capacity(DEFAULT_SQUAD_SIZE);
-//         let mut substitutes: Vec<SquadPlayer<'c>> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
-//
-//         return PlayerSelectionResult {
-//             main_squad,
-//             substitutes,
-//         };
-//     }
-//
-//     fn calculate_player_rating(player: &Player, tactics: &Tactics) -> f32 {
-//         let mut rating = 0.0;
-//
-//         // for (skill, weight) in &tactics.skills_weights {
-//         //     rating += player.skills.get_skill_level(skill) * weight;
-//         // }
-//         //
-//         // for (attribute, weight) in &tactics.attributes_weights {
-//         //     rating += player.player_attributes.get_attribute_value(attribute) * weight;
-//         // }
-//         //
-//         // // Учитываем предпочтения тренера (если они есть).
-//         // if let Some(preferred_players) = staff.preferred_players.as_ref() {
-//         //     if preferred_players.contains(&player.id) {
-//         //         rating += PREFERRED_PLAYER_BONUS;
-//         //     }
-//         // }
-//
-//         rating
-//     }
-// }
+    pub fn select_main_squad(
+        players: &mut Vec<&Player>,
+        staff: &Staff,
+        tactics: &Tactics,
+    ) -> Vec<MatchPlayer> {
+        let mut squad: Vec<MatchPlayer> = Vec::with_capacity(DEFAULT_SQUAD_SIZE);
+
+        for player_position in tactics.positions() {
+            let mut best_player = None;
+            let mut best_player_rating = 0.0;
+
+            for &player in players
+                .iter()
+                .filter(|p| p.positions.has_position(*player_position))
+            {
+                let player_rating =
+                    SquadSelector::calculate_player_rating(player, staff, player_position);
+
+                if player_rating > best_player_rating {
+                    best_player = Some(player);
+                    best_player_rating = player_rating;
+                }
+            }
+
+            if let Some(player) = best_player {
+                squad.push(MatchPlayer::from_player(player, *player_position));
+                players.retain(|p| p.id != player.id);
+            }
+        }
+
+        squad
+    }
+
+    pub fn select_substitutes(
+        players: &mut Vec<&Player>,
+        staff: &Staff,
+        tactics: &Tactics,
+    ) -> Vec<MatchPlayer> {
+        let mut squad: Vec<MatchPlayer> = Vec::with_capacity(DEFAULT_BENCH_SIZE);
+
+        let goalkeeper = players
+            .iter()
+            .find(|player| player.positions.is_goalkeeper());
+
+        if let Some(goalkeeper) = goalkeeper {
+            squad.push(MatchPlayer::from_player(
+                goalkeeper,
+                PlayerPositionType::Goalkeeper,
+            ));
+            players.retain(|p| p.id != goalkeeper.id);
+        }
+
+        for player_position in tactics.positions() {
+            let mut best_player = None;
+            let mut best_player_rating = 0.0;
+
+            for player in players.iter() {
+                let player_rating =
+                    SquadSelector::calculate_player_rating(player, staff, player_position);
+
+                if player_rating > best_player_rating {
+                    best_player = Some(player);
+                    best_player_rating = player_rating;
+                }
+            }
+
+            if let Some(player) = best_player {
+                squad.push(MatchPlayer::from_player(player, *player_position));
+                players.retain(|p| p.id != player.id);
+            }
+        }
+
+        return squad;
+    }
+
+    fn calculate_player_rating(
+        player: &Player,
+        staff: &Staff,
+        position: &PlayerPositionType,
+    ) -> f32 {
+        let mut rating = 0.0;
+
+        rating += player.positions.get_level(*position) as f32 / 20.0;
+
+        rating += player.player_attributes.condition as f32 / 10000.0;
+
+        rating += 0.3 * (player.player_attributes.world_reputation as f32 / 10000.0);
+        rating += 0.2 * (player.player_attributes.home_reputation as f32 / 10000.0);
+
+        if staff.relations.is_favorite_player(player.id) {
+            rating += 0.5;
+        }
+
+        rating
+    }
+}

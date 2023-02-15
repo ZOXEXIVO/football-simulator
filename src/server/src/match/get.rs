@@ -22,8 +22,6 @@ pub struct MatchDetailsResponse {
     pub player_data: HashMap<u32, Vec<(u64, i16, i16)>>,
     pub player_data_len: u32,
     pub ball_data: Vec<(u64, i16, i16)>,
-    pub home_team_players: Vec<u32>,
-    pub away_team_players: Vec<u32>,
 }
 
 pub async fn match_get_action(
@@ -54,8 +52,6 @@ pub async fn match_get_action(
     let match_details = match_details.details.as_ref().unwrap();
 
     let result = MatchDetailsResponse {
-        home_team_players: match_details.home_team_players.clone(),
-        away_team_players: match_details.away_team_players.clone(),
         player_data: match_details
             .position_data
             .player_positions

@@ -74,6 +74,17 @@ impl PlayerPositions {
     pub fn is_goalkeeper(&self) -> bool {
         self.positions().contains(&PlayerPositionType::Goalkeeper)
     }
+
+    pub fn has_position(&self, position: PlayerPositionType) -> bool {
+        self.positions().contains(&position)
+    }
+
+    pub fn get_level(&self, position: PlayerPositionType) -> u8 {
+        match self.positions.iter().find(|p| p.position == position) {
+            Some(p) => p.level,
+            None => 0,
+        }
+    }
 }
 
 #[derive(Debug)]
