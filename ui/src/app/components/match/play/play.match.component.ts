@@ -25,12 +25,12 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 export class MatchPlayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('matchContainer') matchContainer!: ElementRef;
 
-  @Output()
-  @Input() timeTick: EventEmitter<number> = new EventEmitter();
-
   application: PIXI.Application | null = null;
 
   isDisposed = false;
+
+  @Input()
+  currentTime = 0;
 
   constructor(private zone: NgZone,
               private matchDataService: MatchDataService) {
@@ -74,42 +74,39 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.bl.x, POLE_COORDS.bl.y));
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
-        // this.application.ticker.add((delta) => {
-        //   if(this.isDisposed){
-        //     return;
-        //   }
-        //
-        //   this.currentTime += 10;
-        //   this.timeTick.emit(this.currentTime);
-        //
-        //   this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
-        //     // if(!data){
-        //     //   return;
-        //     // }
-        //
-        //     const ballObject = this.matchDataService.matchData.ball.obj!;
-        //
-        //     let coord = this.translateToField(data.ball.x, data.ball.y);
-        //
-        //     ballObject.x = coord.x;
-        //     ballObject.y = coord.y;
-        //
-        //     this.matchDataService.matchData.players.forEach(player => {
-        //       const playerObject = player.obj!;
-        //       const playerData = data.players[player.id];
-        //
-        //       if(playerData && playerData.position){
-        //         let playerTranslatedCoords = this.translateToField(
-        //           data.players[player.id].position.x,
-        //           data.players[player.id].position.y
-        //         );
-        //
-        //         playerObject.x = playerTranslatedCoords.x;
-        //         playerObject.y = playerTranslatedCoords.y;
-        //       }
-        //     });
-        //   });
-        // });
+        this.application.ticker.add((delta) => {
+          if(this.isDisposed){
+            return;
+          }
+
+          this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
+            // if(!data){
+            //   return;
+            // }
+
+            const ballObject = this.matchDataService.matchData.ball.obj!;
+
+            let coord = this.translateToField(data.ball.x, data.ball.y);
+
+            ballObject.x = coord.x;
+            ballObject.y = coord.y;
+
+            this.matchDataService.matchData.players.forEach(player => {
+              const playerObject = player.obj!;
+              const playerData = data.players[player.id];
+
+              if(playerData && playerData.position){
+                let playerTranslatedCoords = this.translateToField(
+                  data.players[player.id].position.x,
+                  data.players[player.id].position.y
+                );
+
+                playerObject.x = playerTranslatedCoords.x;
+                playerObject.y = playerTranslatedCoords.y;
+              }
+            });
+          });
+        });
 
         this.application.render();
       }

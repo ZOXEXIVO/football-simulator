@@ -35,11 +35,12 @@ export class MatchGetComponent implements OnInit {
     this.matchDataService.init(this.leagueSlug, this.matchId).pipe(untilDestroyed(this)).subscribe(_ => {
       this.lineupLoaded = true;
       this.changeDetectorRef.markForCheck();
-    });
-  }
 
-  playMatchTick(time: number) {
-    this.currentTime = time;
+      setInterval(() => {
+        this.currentTime += 10;
+        this.changeDetectorRef.markForCheck();
+      },100)
+    });
   }
 
   initLeftMenu(match: MatchDto) {

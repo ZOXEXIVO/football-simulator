@@ -150,10 +150,6 @@ impl Field {
 
             let players_len = self.players.len();
 
-            for player_idx in 0..players_len {
-                for other_player_idx in 0..players_len {}
-            }
-
             current_time += MATCH_TIME_INCREMENT_MS;
 
             self.write_match_positions(match_details, current_time);
@@ -177,6 +173,16 @@ impl Field {
                 timestamp,
                 player.position.x,
                 player.position.y,
+            );
+        });
+
+        // player positions
+        self.substitutes.iter().for_each(|sub_player| {
+            match_details.position_data.add_player_positions(
+                sub_player.player_id,
+                timestamp,
+                sub_player.position.x,
+                sub_player.position.y,
             );
         });
 

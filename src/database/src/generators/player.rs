@@ -16,7 +16,7 @@ pub struct PlayerGenerator {
 impl PlayerGenerator {
     pub fn with_people_names(people_names: &PeopleNameGeneratorData) -> Self {
         PlayerGenerator {
-            sequence: Arc::new(AtomicU32::new(0)),
+            sequence: Arc::new(AtomicU32::new(1)),
             people_names_data: PeopleNameGeneratorData {
                 first_names: people_names.first_names.clone(),
                 last_names: people_names.last_names.clone(),

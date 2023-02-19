@@ -25,7 +25,7 @@
             <div class="row text-center">
               <div class="col">
                 <div id="match-container">
-                  <play-match *ngIf="lineupLoaded" (timeTick)="playMatchTick($event)"></play-match>
+                  <play-match *ngIf="lineupLoaded" [currentTime]="currentTime"></play-match>
                 </div>
               </div>
             </div>
