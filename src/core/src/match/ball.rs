@@ -104,13 +104,12 @@ impl Ball {
     }
 
     pub fn move_towards_player(&mut self, player_pos: &FieldPosition) {
-        let dx = (player_pos.x - self.position.x) as f32;
-        let dy = (player_pos.y - self.position.y) as f32;
+        let position_diff = *player_pos - self.position;
 
-        let distance = (dx.pow(2.0) + dy.pow(2.0)).sqrt();
+        let distance = (position_diff.x.pow(2.0) + position_diff.y.pow(2.0)).sqrt();
 
-        self.position.x += (dx / distance) * self.velocity.x;
-        self.position.y += (dy / distance) * self.velocity.y;
+        self.position.x += (position_diff.x / distance) * self.velocity.x;
+        self.position.y += (position_diff.y / distance) * self.velocity.y;
     }
 
     pub fn reset(&mut self) {
