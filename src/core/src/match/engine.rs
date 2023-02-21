@@ -104,6 +104,8 @@ pub struct Field {
 
     pub home_players: FieldSquad,
     pub away_players: FieldSquad,
+
+    owning_side: Option<OwningSide>,
 }
 
 impl Field {
@@ -128,6 +130,7 @@ impl Field {
             substitutes,
             home_players,
             away_players,
+            owning_side: None,
         }
     }
 
@@ -142,11 +145,22 @@ impl Field {
         let mut current_time: u64 = 0;
 
         while current_time <= MATCH_TIME_MS {
-            Ball::handle_events(&self.ball.update(), match_details);
-            MatchPlayer::handle_events(
-                &self.players.iter_mut().flat_map(|p| p.update()).collect(),
-                match_details,
-            );
+            let ball_update_events = self.ball.update();
+
+            // handle ball
+            Ball::handle_events(&ball_update_events, match_details);
+
+            let player_positions: Vec<FieldPosition> =
+                self.players.iter().map(|p| p.position).collect();
+
+            let player_update_events = self
+                .players
+                .iter_mut()
+                .flat_map(|p| p.update(&self.ball.position, &player_positions))
+                .collect();
+
+            // handle player
+            MatchPlayer::handle_events(&player_update_events, match_details);
 
             let players_len = self.players.len();
 
@@ -275,4 +289,9 @@ pub enum GameState {
     Halftime,
     Fulltime,
     GameOver,
+}
+
+pub enum OwningSide {
+    Home,
+    Away,
 }

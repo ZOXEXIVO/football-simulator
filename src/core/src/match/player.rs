@@ -12,7 +12,6 @@ pub struct MatchPlayer {
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
-    pub velocity: Vector2<f32>,
     pub has_ball: bool,
     pub state: PlayerState,
 }
@@ -26,19 +25,21 @@ impl MatchPlayer {
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            velocity: Vector2::new(0.0, 0.0),
             has_ball: false,
             state: PlayerState::Standing,
         }
     }
 
-    pub fn update(&mut self) -> Vec<PlayerUpdateEvent> {
+    pub fn update(
+        &mut self,
+        ball_position: &FieldPosition,
+        players_positions: &Vec<FieldPosition>,
+    ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        self.update_state(&mut result);
+        self.update_state(&mut result, ball_position, players_positions);
         self.update_condition(&mut result);
-        self.update_velocity(&mut result);
-        self.move_to(&mut result);
+        self.move_to(&mut result, ball_position, players_positions);
 
         result
     }
@@ -50,7 +51,12 @@ impl MatchPlayer {
         for event in events {}
     }
 
-    fn update_state(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
+    fn update_state(
+        &mut self,
+        result: &mut Vec<PlayerUpdateEvent>,
+        ball_position: &FieldPosition,
+        players_positions: &Vec<FieldPosition>,
+    ) {
         match self.state {
             PlayerState::Standing => {
                 self.velocity = Vector2::new(0.0, 0.0);
@@ -141,19 +147,12 @@ impl MatchPlayer {
         // self.player_attributes.condition
     }
 
-    fn move_to(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
-        self.position.x += self.velocity.x;
-        if self.position.x > 140.0 {
-            self.position.x = 140.0;
-        }
-
-        self.position.y += self.velocity.y;
-        if self.position.y > 90.0 {
-            self.position.y = 90.0;
-        }
-    }
-
-    fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
+    fn move_to(
+        &mut self,
+        result: &mut Vec<PlayerUpdateEvent>,
+        ball_position: &FieldPosition,
+        players_positions: &Vec<FieldPosition>,
+    ) {
         let condition = self.player_attributes.condition as f32;
         let max_speed = self.skills.max_speed();
 
@@ -164,7 +163,11 @@ impl MatchPlayer {
         let random_x_val: f32 = rng.gen_range(-0.05..0.05);
         let random_y_val: f32 = rng.gen_range(-0.05..0.05);
 
-        self.velocity = Vector2::new(speed * random_x_val, speed * random_y_val);
+        let vx = speed * random_x_val;
+        let vy = speed * random_y_val;
+
+        self.position.x += vx;
+        self.position.y += vy;
     }
 }
 
