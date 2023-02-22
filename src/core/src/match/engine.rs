@@ -104,8 +104,6 @@ pub struct Field {
 
     pub home_players: FieldSquad,
     pub away_players: FieldSquad,
-
-    owning_side: Option<OwningSide>,
 }
 
 impl Field {
@@ -130,7 +128,6 @@ impl Field {
             substitutes,
             home_players,
             away_players,
-            owning_side: None,
         }
     }
 
@@ -237,6 +234,8 @@ fn setup_player_on_field(
                 .for_each(|position| {
                     if let PositionType::Home(x, y) = position {
                         home_player.position = FieldPosition::new(*x as f32, *y as f32);
+                        home_player.start_position = FieldPosition::new(*x as f32, *y as f32);
+
                         players_on_field.push(home_player);
                     }
                 });
@@ -264,6 +263,8 @@ fn setup_player_on_field(
                 .for_each(|position| {
                     if let PositionType::Away(x, y) = position {
                         away_player.position = FieldPosition::new(*x as f32, *y as f32);
+                        away_player.start_position = FieldPosition::new(*x as f32, *y as f32);
+
                         players_on_field.push(away_player);
                     }
                 });
@@ -289,9 +290,4 @@ pub enum GameState {
     Halftime,
     Fulltime,
     GameOver,
-}
-
-pub enum OwningSide {
-    Home,
-    Away,
 }

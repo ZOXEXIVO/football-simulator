@@ -2,16 +2,17 @@
 use crate::r#match::FootballMatchDetails;
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector2;
-use rand::{thread_rng, Rng};
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
     pub player_id: u32,
     pub position: FieldPosition,
+    pub start_position: FieldPosition,
     pub attributes: PersonAttributes,
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
+    pub velocity: Vector2<f32>,
     pub has_ball: bool,
     pub state: PlayerState,
 }
@@ -21,10 +22,12 @@ impl MatchPlayer {
         MatchPlayer {
             player_id: player.id,
             position: FieldPosition::new(0.0, 0.0),
+            start_position: FieldPosition::new(0.0, 0.0),
             attributes: player.attributes.clone(),
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
+            velocity: Vector2::new(0.0, 0.0),
             has_ball: false,
             state: PlayerState::Standing,
         }
@@ -39,6 +42,7 @@ impl MatchPlayer {
 
         self.update_state(&mut result, ball_position, players_positions);
         self.update_condition(&mut result);
+        self.update_velocity(&mut result);
         self.move_to(&mut result, ball_position, players_positions);
 
         result
@@ -111,6 +115,20 @@ impl MatchPlayer {
                 //     self.state = PlayerState::Standing;
                 // }
             }
+            PlayerState::Returning => {
+                let start_position = self.start_position;
+                let distance_to_start = self.position.distance_to(&start_position);
+
+                if distance_to_start > 0.0 {
+                    // Calculate a velocity vector that moves the player towards their starting position
+                    let direction_to_start = (start_position - self.position).normalize();
+                    self.velocity = Vector2::new(direction_to_start.x, direction_to_start.y);
+                } else {
+                    // Player has returned to their starting position, reset velocity and state
+                    self.velocity = Vector2::new(0.0, 0.0);
+                    self.state = PlayerState::Standing;
+                }
+            }
         }
     }
 
@@ -153,21 +171,17 @@ impl MatchPlayer {
         ball_position: &FieldPosition,
         players_positions: &Vec<FieldPosition>,
     ) {
+        self.position.x += self.velocity.x;
+        self.position.y += self.velocity.y;
+    }
+
+    fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
         let condition = self.player_attributes.condition as f32;
         let max_speed = self.skills.max_speed();
 
         let speed = max_speed * (condition / 100.0);
 
-        let mut rng = thread_rng();
-
-        let random_x_val: f32 = rng.gen_range(-0.05..0.05);
-        let random_y_val: f32 = rng.gen_range(-0.05..0.05);
-
-        let vx = speed * random_x_val;
-        let vy = speed * random_y_val;
-
-        self.position.x += vx;
-        self.position.y += vy;
+        self.velocity = Vector2::new(speed, speed);
     }
 }
 
@@ -179,6 +193,7 @@ pub enum PlayerState {
     Tackling,
     Shooting,
     Passing,
+    Returning,
 }
 
 pub enum PlayerUpdateEvent {

@@ -10,7 +10,7 @@ pub struct Ball {
     pub position: FieldPosition,
     pub velocity: Vector2<f32>,
     pub direction: FieldPosition,
-    rnd: ThreadRng,
+    pub owner: Option<BallOwner>,
 }
 
 impl Ball {
@@ -20,7 +20,7 @@ impl Ball {
             start_position: FieldPosition { x, y },
             velocity: Vector2::new(0.0, 0.0),
             direction: FieldPosition { x: 0.0, y: 0.0 },
-            rnd: thread_rng(),
+            owner: None,
         }
     }
 
@@ -121,4 +121,9 @@ impl Ball {
 pub enum BallUpdateEvent {
     HomeGoal,
     AwayGoal,
+}
+
+pub enum BallOwner {
+    Home,
+    Away,
 }
