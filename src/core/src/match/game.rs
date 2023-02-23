@@ -30,7 +30,7 @@ impl Match {
         let away_team_id = self.away_squad.team_id;
         let away_team_name = String::from(&self.away_squad.team_name);
 
-        let mut engine = FootballEngine::<150, 100>::new(self.home_squad, self.away_squad);
+        let mut engine = FootballEngine::<840, 545>::new(self.home_squad, self.away_squad);
 
         let mut match_details = engine.play();
 

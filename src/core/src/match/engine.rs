@@ -164,6 +164,8 @@ impl Field {
             current_time += MATCH_TIME_INCREMENT_MS;
 
             self.write_match_positions(match_details, current_time);
+
+            break;
         }
     }
 

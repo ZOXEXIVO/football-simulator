@@ -114,8 +114,8 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
   }
 
   translateToField(x: number, y: number) {
-    let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 150;
-    let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 100;
+    let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 840;
+    let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 545;
 
     return {
       x: POLE_COORDS.tl.x + x * scaleX,
