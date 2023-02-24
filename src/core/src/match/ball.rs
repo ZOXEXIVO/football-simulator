@@ -1,7 +1,6 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::FootballMatchDetails;
 use nalgebra::Vector2;
-use rand::prelude::ThreadRng;
 use rand::{thread_rng, Rng};
 use rand_distr::num_traits::Pow;
 

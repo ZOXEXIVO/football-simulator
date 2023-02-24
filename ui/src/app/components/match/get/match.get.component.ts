@@ -9,8 +9,7 @@ import {MatchDataService} from "../services/match.data.service";
 @UntilDestroy()
 @Component({
   templateUrl: './match.get.component.html',
-  styleUrls: ['./match.get.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./match.get.component.scss']
 })
 export class MatchGetComponent implements OnInit {
   public match: MatchDto | null = null;
@@ -19,28 +18,33 @@ export class MatchGetComponent implements OnInit {
   matchId: string = '';
 
   currentTime: number = 0;
+  matchTimeMs: number =  -1;
+
   lineupLoaded: boolean = false;
 
   constructor(private leftMenuService: LeftMenuService,
               public matchDataService: MatchDataService,
               private route: ActivatedRoute,
-              private titleService: TitleService,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private titleService: TitleService) {
 
     this.leagueSlug = this.route.snapshot.params["league_slug"];
     this.matchId = this.route.snapshot.params["match_id"];
   }
 
   ngOnInit(): void {
-    this.matchDataService.init(this.leagueSlug, this.matchId).pipe(untilDestroyed(this)).subscribe(_ => {
-      this.lineupLoaded = true;
-      this.changeDetectorRef.markForCheck();
+    this.matchDataService.init(this.leagueSlug, this.matchId).pipe(untilDestroyed(this)).subscribe(matchLineupCompleted => {
+      this.matchTimeMs = matchLineupCompleted.matchTimeMs;
 
-      setInterval(() => {
-        this.currentTime += 10;
-        this.changeDetectorRef.markForCheck();
-      },100)
+      this.lineupLoaded = true;
+
+      this.startMatch();
     });
+  }
+
+  startMatch(){
+    setInterval(() => {
+      this.currentTime += 100;
+    },100);
   }
 
   initLeftMenu(match: MatchDto) {

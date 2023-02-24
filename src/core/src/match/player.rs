@@ -15,6 +15,7 @@ pub struct MatchPlayer {
     pub velocity: Vector2<f32>,
     pub has_ball: bool,
     pub state: PlayerState,
+    pub in_state_time: u32,
 }
 
 impl MatchPlayer {
@@ -30,6 +31,7 @@ impl MatchPlayer {
             velocity: Vector2::new(0.0, 0.0),
             has_ball: false,
             state: PlayerState::Standing,
+            in_state_time: 0,
         }
     }
 
@@ -48,11 +50,25 @@ impl MatchPlayer {
         result
     }
 
+    fn is_collision(ball_position: &FieldPosition, player_position: &FieldPosition) -> bool {
+        const COLLISION_RADIUS: f32 = 2.0;
+
+        let x_diff = (ball_position.x - player_position.x).abs();
+        let y_diff = (ball_position.y - player_position.y).abs();
+
+        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
+    }
+
     pub fn handle_events(
         events: &Vec<PlayerUpdateEvent>,
         match_details: &mut FootballMatchDetails,
     ) {
         for event in events {}
+    }
+
+    fn change_state(&mut self, state: PlayerState) {
+        self.in_state_time = 0;
+        self.state = state;
     }
 
     fn update_state(
@@ -61,10 +77,16 @@ impl MatchPlayer {
         ball_position: &FieldPosition,
         players_positions: &Vec<FieldPosition>,
     ) {
+        self.in_state_time += 1;
+
         match self.state {
             PlayerState::Standing => {
-                self.velocity = Vector2::new(0.0, 0.0);
+                self.velocity = Vector2::new(0.1, 0.1);
                 // Check for transition to walking or running state
+
+                if self.in_state_time > 10 {
+                    self.change_state(PlayerState::Walking);
+                }
             }
             PlayerState::Walking => {
                 self.velocity = self.skills.walking_speed();

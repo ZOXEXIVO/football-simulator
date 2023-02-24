@@ -26,15 +26,15 @@ const TACTICS_POSITIONS: &[(TacticsPositioning, [PlayerPositionType; 11])] = &[(
     [
         PlayerPositionType::Goalkeeper,
         PlayerPositionType::DefenderLeft,
-        PlayerPositionType::DefenderCenter,
-        PlayerPositionType::DefenderCenter,
+        PlayerPositionType::DefenderCenterLeft,
+        PlayerPositionType::DefenderCenterRight,
         PlayerPositionType::DefenderRight,
         PlayerPositionType::MidfielderLeft,
-        PlayerPositionType::MidfielderCenter,
-        PlayerPositionType::MidfielderCenter,
+        PlayerPositionType::MidfielderCenterLeft,
+        PlayerPositionType::MidfielderCenterRight,
         PlayerPositionType::MidfielderRight,
-        PlayerPositionType::Striker,
-        PlayerPositionType::Striker,
+        PlayerPositionType::ForwardLeft,
+        PlayerPositionType::ForwardRight,
     ],
 )];
 

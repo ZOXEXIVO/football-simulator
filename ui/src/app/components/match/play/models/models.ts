@@ -80,3 +80,10 @@ export class SquadPlayerModel {
   public team_slug: string;
 }
 
+export class MatchLineupSetupCompleted {
+  constructor(matchTimeMs: number) {
+    this.matchTimeMs = matchTimeMs;
+  }
+
+  public matchTimeMs: number;
+}

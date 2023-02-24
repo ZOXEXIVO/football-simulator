@@ -17,6 +17,7 @@ pub struct MatchLineupResponse<'p> {
     pub home_squad: LineupSquad<'p>,
     pub away_squad: LineupSquad<'p>,
     pub ball: LineupBall,
+    pub match_time_ms: u64,
 }
 
 #[derive(Serialize)]
@@ -78,6 +79,7 @@ pub async fn match_lineup_action(
     let match_details = match_details.details.as_ref().unwrap();
 
     let result = MatchLineupResponse {
+        match_time_ms: match_details.match_time_ms,
         ball: LineupBall {
             start_position: (
                 match_details.position_data.ball_positions[0].x as i16,

@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Observable, of, Subject, switchMap} from "rxjs";
 import {MatchDto, MatchService, ObjectPositionDto} from "./match.api.service";
-import {BallModel, MatchModel, PlayerModel, SquadPlayerModel} from "../play/models/models";
+import {BallModel, MatchLineupSetupCompleted, MatchModel, PlayerModel, SquadPlayerModel} from "../play/models/models";
 
 @Injectable({
   providedIn: 'root',
@@ -11,20 +11,24 @@ export class MatchDataService {
   matchId: string = '';
 
   offset = 0;
-  limit = 100;
+  limit = 500;
+
+  isBusy = false;
 
   public matchData: MatchModel = new MatchModel();
+
   lastLoadedTimestamp = 0;
+  loadDataFinished = false;
 
   constructor(private matchService: MatchService) {
 
   }
 
-  init(leagueSlug: string, matchId: string): Observable<any> {
+  init(leagueSlug: string, matchId: string): Observable<MatchLineupSetupCompleted> {
     this.leagueSlug = leagueSlug;
     this.matchId = matchId;
 
-    const subject = new Subject<any>();
+    const subject = new Subject<MatchLineupSetupCompleted>();
 
     this.matchService.lineup(this.leagueSlug, this.matchId).subscribe(matchLineupData => {
       // setup ball
@@ -104,7 +108,7 @@ export class MatchDataService {
         ));
       }
 
-      subject.next({});
+      subject.next(new MatchLineupSetupCompleted(matchLineupData.match_time_ms));
     });
 
     return subject.asObservable();
@@ -125,6 +129,10 @@ export class MatchDataService {
 
     }
 
+    for (const ballData of matchDtaDto.ball_data) {
+      this.matchData.ball.data.push(new ObjectPositionDto(ballData[0], ballData[1], ballData[2]))
+    }
+
     if (matchDtaDto.ball_data.length > 0) {
       this.lastLoadedTimestamp = matchDtaDto.ball_data[matchDtaDto.ball_data.length - 1][0];
     }
@@ -133,7 +141,15 @@ export class MatchDataService {
   loadData(): Observable<any> {
     const subject = new Subject<any>();
 
+    if(this.loadDataFinished){
+      return of({});
+    }
+
     this.matchService.get(this.leagueSlug, this.matchId, this.offset, this.limit).subscribe(matchData => {
+      if(matchData.ball_data.length == 0){
+        this.loadDataFinished = true;
+      }
+
       this.updateMatchData(matchData);
 
       this.offset += this.limit;
@@ -149,36 +165,42 @@ export class MatchDataService {
 
     // Check if data for the requested timestamp has not been loaded yet
     if (this.lastLoadedTimestamp < timestamp) {
+      console.log('need load data: ' + this.lastLoadedTimestamp + ' + timestamp=' + timestamp);
       return this.loadData().pipe(
         switchMap(() => {
           return this.getData(timestamp);
         })
       );
     } else {
-      // ball
-      let ts = -1;
-      while (ts < timestamp && this.matchData.ball.currentCoordIdx < this.matchData.ball.data.length) {
-        ts = this.matchData.ball.data[this.matchData.ball.currentCoordIdx].timestamp;
-        this.matchData.ball.currentCoordIdx++;
-      }
-
-      // players
-      let playerResults = [];
-
-      for (const player of this.matchData.players) {
-        let pts = -1;
-        while (pts < timestamp && player.currentCoordIdx < player.data.length) {
-          pts = player.data[player.currentCoordIdx].timestamp;
-          player.currentCoordIdx++;
-        }
-
-        playerResults.push(new PlayerDataResultModel(player.id, player.data[player.currentCoordIdx - 1]));
-      }
-
-      const ballResult = this.matchData.ball.data[this.matchData.ball.currentCoordIdx - 1];
-
-      return of(new MatchDataResultModel(playerResults, ballResult));
+        return this.getLocalData(timestamp);
     }
+  }
+
+  getLocalData(timestamp: number): Observable<MatchDataResultModel> {
+    console.log('use local data: timestamp=' + timestamp);
+
+    // ball
+    let ts = -1;
+    while (ts < timestamp && this.matchData.ball.currentCoordIdx < this.matchData.ball.data.length) {
+      ts = this.matchData.ball.data[this.matchData.ball.currentCoordIdx].timestamp;
+      this.matchData.ball.currentCoordIdx++;
+    }
+
+    const ballResult = this.matchData.ball.data[this.matchData.ball.currentCoordIdx - 1];
+
+    // players
+    let playerResults = [];
+    for (const player of this.matchData.players) {
+      let pts = -1;
+      while (pts < timestamp && player.currentCoordIdx < player.data.length) {
+        pts = player.data[player.currentCoordIdx].timestamp;
+        player.currentCoordIdx++;
+      }
+
+      playerResults.push(new PlayerDataResultModel(player.id, player.data[player.currentCoordIdx - 1]));
+    }
+
+    return of(new MatchDataResultModel(playerResults, ballResult));
   }
 }
 

@@ -20,7 +20,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn play(&mut self) -> FootballMatchDetails {
-        let mut details = FootballMatchDetails::new();
+        let mut details = FootballMatchDetails::new(MATCH_TIME_MS);
 
         self.field.play(&mut details);
 
@@ -35,15 +35,18 @@ pub struct FootballMatchDetails {
 
     pub home_players: FieldSquad,
     pub away_players: FieldSquad,
+
+    pub match_time_ms: u64,
 }
 
 impl FootballMatchDetails {
-    pub fn new() -> Self {
+    pub fn new(match_time_ms: u64) -> Self {
         FootballMatchDetails {
             score: Score::new(),
             position_data: MatchPositionData::new(),
             home_players: FieldSquad::new(),
             away_players: FieldSquad::new(),
+            match_time_ms,
         }
     }
 
@@ -164,18 +167,7 @@ impl Field {
             current_time += MATCH_TIME_INCREMENT_MS;
 
             self.write_match_positions(match_details, current_time);
-
-            break;
         }
-    }
-
-    fn is_collision(ball_position: &FieldPosition, player_position: &FieldPosition) -> bool {
-        const COLLISION_RADIUS: f32 = 2.0;
-
-        let x_diff = (ball_position.x - player_position.x).abs();
-        let y_diff = (ball_position.y - player_position.y).abs();
-
-        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
     }
 
     pub fn write_match_positions(&self, match_details: &mut FootballMatchDetails, timestamp: u64) {

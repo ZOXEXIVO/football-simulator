@@ -41,7 +41,8 @@ export class ObjectPositionDto {
 export interface MatchLineupDto {
   home_squad: MatchLineupSquadDto,
   away_squad: MatchLineupSquadDto,
-  ball: MatchLineupBallDto
+  ball: MatchLineupBallDto,
+  match_time_ms: number
 }
 
 export interface MatchLineupSquadDto {

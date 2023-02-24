@@ -1,5 +1,5 @@
 ﻿import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -33,7 +33,8 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
   currentTime = 0;
 
   constructor(private zone: NgZone,
-              private matchDataService: MatchDataService) {
+              private matchDataService: MatchDataService,
+              private changeDetectorRef: ChangeDetectorRef) {
     console.log(PIXI.VERSION);
   }
 
@@ -80,8 +81,8 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
           }
 
           this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
-            // if(!data){
-            //   return;
+            // if(!data.players){
+            //
             // }
 
             const ballObject = this.matchDataService.matchData.ball.obj!;
@@ -103,12 +104,15 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
                 playerObject.x = playerTranslatedCoords.x;
                 playerObject.y = playerTranslatedCoords.y;
+
+                console.log("move player to: " + playerObject.x + ', ' + playerObject.y);
               }
             });
           });
         });
 
         this.application.render();
+        //this.changeDetectorRef.detectChanges();
       }
     );
   }
@@ -118,8 +122,8 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
     let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 545;
 
     return {
-      x: POLE_COORDS.tl.x + x * scaleX,
-      y: POLE_COORDS.tl.y + y * scaleY
+      x: POLE_COORDS.tl.x + (x * scaleX),
+      y: POLE_COORDS.tl.y + (y * scaleY)
     }
   }
 
