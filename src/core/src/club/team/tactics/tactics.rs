@@ -21,7 +21,7 @@ impl Tactics {
     }
 }
 
-const TACTICS_POSITIONS: &[(TacticsPositioning, [PlayerPositionType; 11])] = &[(
+pub const TACTICS_POSITIONS: &[(TacticsPositioning, [PlayerPositionType; 11])] = &[(
     TacticsPositioning::T442,
     [
         PlayerPositionType::Goalkeeper,

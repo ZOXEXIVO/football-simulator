@@ -116,7 +116,7 @@ impl PlayerGenerator {
                 position: PlayerPositionType::Goalkeeper,
                 level: 20,
             }),
-            PositionType::Defender => match IntegerUtils::random(0, 3) % 3 {
+            PositionType::Defender => match IntegerUtils::random(0, 4) % 4 {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::DefenderLeft,
@@ -125,11 +125,24 @@ impl PlayerGenerator {
                 }
                 1 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::DefenderCenter,
+                        position: PlayerPositionType::DefenderCenterLeft,
                         level: 20,
                     });
                 }
                 2 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::DefenderCenter,
+                        level: 20,
+                    });
+                }
+                3 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::DefenderCenterRight,
+                        level: 20,
+                    });
+                }
+
+                4 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::DefenderRight,
                         level: 20,
@@ -137,7 +150,7 @@ impl PlayerGenerator {
                 }
                 _ => {}
             },
-            PositionType::Midfielder => match IntegerUtils::random(0, 3) % 3 {
+            PositionType::Midfielder => match IntegerUtils::random(0, 6) % 6 {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::MidfielderLeft,
@@ -146,13 +159,37 @@ impl PlayerGenerator {
                 }
                 1 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::MidfielderCenter,
+                        position: PlayerPositionType::MidfielderCenterLeft,
                         level: 20,
                     });
                 }
                 2 => {
                     positions.push(PlayerPosition {
+                        position: PlayerPositionType::MidfielderCenter,
+                        level: 20,
+                    });
+                }
+                3 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::MidfielderCenterRight,
+                        level: 20,
+                    });
+                }
+                4 => {
+                    positions.push(PlayerPosition {
                         position: PlayerPositionType::MidfielderRight,
+                        level: 20,
+                    });
+                }
+                5 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::WingbackLeft,
+                        level: 20,
+                    });
+                }
+                6 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::WingbackRight,
                         level: 20,
                     });
                 }
@@ -161,19 +198,25 @@ impl PlayerGenerator {
             PositionType::Striker => match IntegerUtils::random(0, 3) % 3 {
                 0 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::WingbackLeft,
+                        position: PlayerPositionType::Striker,
                         level: 20,
                     });
                 }
                 1 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::Striker,
+                        position: PlayerPositionType::ForwardLeft,
                         level: 20,
                     });
                 }
                 2 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::WingbackRight,
+                        position: PlayerPositionType::ForwardCenter,
+                        level: 20,
+                    });
+                }
+                3 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::ForwardRight,
                         level: 20,
                     });
                 }

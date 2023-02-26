@@ -135,3 +135,73 @@ impl SquadSelector {
         rating
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::r#match::PositionType;
+    use crate::shared::FullName;
+    use crate::{
+        IntegerUtils, PlayerClubContract, PlayerCollection, PlayerGenerator, StaffCollection,
+        StaffStub, TacticsPositioning, TeamReputation, TeamType, TrainingSchedule,
+        TACTICS_POSITIONS,
+    };
+    use chrono::{NaiveDate, NaiveTime, Utc};
+
+    #[test]
+    fn select_is_correct() {
+        let team = generate_team();
+
+        let staff = StaffStub::default();
+
+        let squad = SquadSelector::select(&team, &staff);
+
+        assert_eq!(11, squad.main_squad.len())
+    }
+
+    // helpers
+
+    fn generate_team() -> Team {
+        let mut team = Team::new(
+            0,
+            0,
+            0,
+            "".to_string(),
+            "".to_string(),
+            TeamType::Main,
+            TrainingSchedule::new(
+                NaiveTime::from_hms_opt(10, 0, 0).unwrap(),
+                NaiveTime::from_hms_opt(17, 0, 0).unwrap(),
+            ),
+            TeamReputation::new(0, 0, 0),
+            PlayerCollection::new(generate_players()),
+            StaffCollection::new(Vec::new(), Some(StaffStub::default())),
+        );
+
+        team.tactics = Some(Tactics::new(TacticsPositioning::T442));
+
+        team
+    }
+
+    fn generate_players() -> Vec<Player> {
+        let tactics = TACTICS_POSITIONS
+            .iter()
+            .find(|(tp, pt)| *tp == TacticsPositioning::T442)
+            .map(|(tp, pt)| pt)
+            .unwrap();
+
+        let mut players = Vec::with_capacity(50);
+
+        for tactic_position in tactics {
+            for i in 0..5 {
+                let level = IntegerUtils::random(10, 20) as u8;
+                let player =
+                    PlayerGenerator::generate(0, Utc::now().date_naive(), *tactic_position, level);
+
+                players.push(player);
+            }
+        }
+
+        players
+    }
+}

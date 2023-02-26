@@ -36,11 +36,11 @@ impl ClubAcademy {
         let country_id = 0;
 
         for _ in 0..IntegerUtils::random(5, 15) {
-            let generated_player =
-                PlayerGenerator::generate(country_id, ctx.simulation.date.date());
-
-            self.players
-                .push(AcademyPlayer::from_player(generated_player))
+            // let generated_player =
+            //     PlayerGenerator::generate(country_id, ctx.simulation.date.date());
+            //
+            // self.players
+            //     .push(AcademyPlayer::from_player(generated_player))
         }
     }
 }
