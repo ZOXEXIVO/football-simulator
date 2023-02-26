@@ -66,7 +66,6 @@ impl SquadSelector {
             if let Some(player) = best_player {
                 squad.push(MatchPlayer::from_player(player, *player_position));
                 players.retain(|p| p.id != player.id);
-            } else {
             }
         }
 

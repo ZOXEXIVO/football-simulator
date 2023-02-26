@@ -150,7 +150,7 @@ impl PlayerGenerator {
                 }
                 _ => {}
             },
-            PositionType::Midfielder => match IntegerUtils::random(0, 6) {
+            PositionType::Midfielder => match IntegerUtils::random(0, 7) {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::MidfielderLeft,
@@ -195,7 +195,7 @@ impl PlayerGenerator {
                 }
                 _ => {}
             },
-            PositionType::Striker => match IntegerUtils::random(0, 3) {
+            PositionType::Striker => match IntegerUtils::random(0, 4) {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::Striker,

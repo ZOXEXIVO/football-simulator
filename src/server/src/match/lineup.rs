@@ -91,7 +91,7 @@ pub async fn match_lineup_action(
                 .home_players
                 .main
                 .iter()
-                .map(|player_id| {
+                .filter_map(|player_id| {
                     to_lineup_player(*player_id, home_team_slug, match_details, simulator_data)
                 })
                 .collect(),
@@ -99,7 +99,7 @@ pub async fn match_lineup_action(
                 .home_players
                 .substitutes
                 .iter()
-                .map(|player_id| {
+                .filter_map(|player_id| {
                     to_lineup_player(*player_id, home_team_slug, match_details, simulator_data)
                 })
                 .collect(),
@@ -109,7 +109,7 @@ pub async fn match_lineup_action(
                 .away_players
                 .main
                 .iter()
-                .map(|player_id| {
+                .filter_map(|player_id| {
                     to_lineup_player(*player_id, away_team_slug, match_details, simulator_data)
                 })
                 .collect(),
@@ -117,7 +117,7 @@ pub async fn match_lineup_action(
                 .away_players
                 .substitutes
                 .iter()
-                .map(|player_id| {
+                .filter_map(|player_id| {
                     to_lineup_player(*player_id, away_team_slug, match_details, simulator_data)
                 })
                 .collect(),
@@ -132,24 +132,25 @@ fn to_lineup_player<'p>(
     team_slug: &'p str,
     match_details: &'p FootballMatchDetails,
     simulator_data: &'p SimulatorData,
-) -> LineupPlayer<'p> {
+) -> Option<LineupPlayer<'p>> {
     let player = simulator_data.player(player_id).unwrap();
 
-    let position = match_details
-        .position_data
-        .player_positions
-        .get(&player_id)
-        .unwrap_or_else(|| panic!("player_id: {player_id} not found in match details"))
-        .first()
-        .unwrap();
+    let position = match_details.position_data.player_positions.get(&player_id);
 
-    LineupPlayer {
-        id: player.id,
-        first_name: &player.full_name.first_name,
-        last_name: &player.full_name.last_name,
-        middle_name: player.full_name.middle_name.as_deref(),
-        position: player.position().get_short_name(),
-        team_slug,
-        start_position: (position.x as i16, position.y as i16),
+    match position {
+        Some(mut position) => {
+            let position = position.first().unwrap();
+
+            Some(LineupPlayer {
+                id: player.id,
+                first_name: &player.full_name.first_name,
+                last_name: &player.full_name.last_name,
+                middle_name: player.full_name.middle_name.as_deref(),
+                position: player.position().get_short_name(),
+                team_slug,
+                start_position: (position.x as i16, position.y as i16),
+            })
+        }
+        None => None,
     }
 }
