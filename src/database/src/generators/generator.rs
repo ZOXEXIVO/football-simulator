@@ -198,7 +198,7 @@ impl DatabaseGenerator {
             .map(|_| player_generator.generate(country_id, PositionType::Goalkeeper))
             .collect();
 
-        let mut defenders: Vec<Player> = (0..IntegerUtils::random(10, 20))
+        let mut defenders: Vec<Player> = (0..IntegerUtils::random(10, 30))
             .map(|_| player_generator.generate(country_id, PositionType::Defender))
             .collect();
 
@@ -206,7 +206,7 @@ impl DatabaseGenerator {
             .map(|_| player_generator.generate(country_id, PositionType::Midfielder))
             .collect();
 
-        let mut strikers: Vec<Player> = (0..IntegerUtils::random(4, 7))
+        let mut strikers: Vec<Player> = (0..IntegerUtils::random(4, 9))
             .map(|_| player_generator.generate(country_id, PositionType::Striker))
             .collect();
 

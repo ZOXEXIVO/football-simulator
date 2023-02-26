@@ -48,7 +48,7 @@ impl SquadSelector {
 
         for player_position in tactics.positions() {
             let mut best_player = None;
-            let mut best_player_rating = 0.0;
+            let mut best_player_rating = -1.0;
 
             for &player in players
                 .iter()
@@ -66,6 +66,7 @@ impl SquadSelector {
             if let Some(player) = best_player {
                 squad.push(MatchPlayer::from_player(player, *player_position));
                 players.retain(|p| p.id != player.id);
+            } else {
             }
         }
 

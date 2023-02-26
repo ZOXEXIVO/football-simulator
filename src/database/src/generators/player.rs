@@ -116,7 +116,7 @@ impl PlayerGenerator {
                 position: PlayerPositionType::Goalkeeper,
                 level: 20,
             }),
-            PositionType::Defender => match IntegerUtils::random(0, 4) % 4 {
+            PositionType::Defender => match IntegerUtils::random(0, 5) {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::DefenderLeft,
@@ -150,7 +150,7 @@ impl PlayerGenerator {
                 }
                 _ => {}
             },
-            PositionType::Midfielder => match IntegerUtils::random(0, 6) % 6 {
+            PositionType::Midfielder => match IntegerUtils::random(0, 6) {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::MidfielderLeft,
@@ -195,7 +195,7 @@ impl PlayerGenerator {
                 }
                 _ => {}
             },
-            PositionType::Striker => match IntegerUtils::random(0, 3) % 3 {
+            PositionType::Striker => match IntegerUtils::random(0, 3) {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::Striker,
