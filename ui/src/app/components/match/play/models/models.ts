@@ -7,11 +7,42 @@ export class MatchModel {
     this.players = [];
     this.ball = new BallModel([]);
     this.squad = new SquadModel();
+
+    this.home_team = new TeamModel('', '');
+    this.away_team = new TeamModel('', '');
+
+    this.score = new ScoreModel(0, 0);
   }
 
   public players: PlayerModel[];
   public ball: BallModel;
-  public squad: SquadModel
+  public squad: SquadModel;
+
+  public home_team: TeamModel;
+  public away_team: TeamModel;
+
+  public score: ScoreModel
+}
+
+export class TeamModel {
+  constructor(name: string, slug: string) {
+    this.name = name;
+    this.slug = slug;
+  }
+
+  public name: string;
+  public slug: string;
+}
+
+
+export class ScoreModel {
+  constructor(home_goals: number, away_goals: number) {
+    this.home_goals = home_goals;
+    this.away_goals = away_goals;
+  }
+
+  public home_goals: number;
+  public away_goals: number;
 }
 
 export class PlayerModel {

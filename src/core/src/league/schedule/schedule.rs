@@ -11,18 +11,16 @@ pub struct Schedule {
 
 impl Schedule {
     pub fn new() -> Self {
-        Schedule {
-            tours: Vec::new()
-        }
+        Schedule { tours: Vec::new() }
     }
-    
+
     pub fn simulate(
         &mut self,
         league_settings: &LeagueSettings,
         ctx: GlobalContext<'_>,
     ) -> ScheduleResult {
         let mut result = ScheduleResult::new();
-        
+
         if self.tours.is_empty() || league_settings.is_time_for_new_schedule(&ctx.simulation) {
             let league_ctx = ctx.league.as_ref().unwrap();
 
@@ -56,7 +54,7 @@ impl Schedule {
                 result: None,
             })
             .collect();
-        
+
         result
     }
 
@@ -88,7 +86,7 @@ impl Schedule {
             .collect()
     }
 
-    pub fn update_match_result(&mut self, id: &str, home_goals: i32, away_goals: i32) {
+    pub fn update_match_result(&mut self, id: &str, home_goals: u8, away_goals: u8) {
         let mut updated = false;
 
         for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {
@@ -121,9 +119,7 @@ impl Schedule {
 
 impl Default for Schedule {
     fn default() -> Self {
-        Schedule {
-            tours: Vec::new(),
-        }
+        Schedule { tours: Vec::new() }
     }
 }
 
@@ -177,8 +173,8 @@ impl ScheduleItem {
 
 #[derive(Debug, Clone)]
 pub struct ScheduleItemResult {
-    pub home_goals: i32,
-    pub away_goals: i32,
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 #[derive(Debug, Clone)]

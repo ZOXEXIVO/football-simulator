@@ -35,8 +35,8 @@ pub struct TeamScheduleItem<'t> {
 #[derive(Serialize)]
 pub struct TeamScheduleItemResult<'t> {
     pub match_id: &'t str,
-    pub home_goals: i32,
-    pub away_goals: i32,
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 #[derive(Serialize)]

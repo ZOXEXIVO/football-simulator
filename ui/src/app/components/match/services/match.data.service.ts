@@ -1,7 +1,14 @@
 import {Injectable} from "@angular/core";
 import {Observable, of, Subject, switchMap} from "rxjs";
 import {MatchDto, MatchService, ObjectPositionDto} from "./match.api.service";
-import {BallModel, MatchLineupSetupCompleted, MatchModel, PlayerModel, SquadPlayerModel} from "../play/models/models";
+import {
+  BallModel,
+  MatchLineupSetupCompleted,
+  MatchModel,
+  PlayerModel,
+  SquadPlayerModel,
+  TeamModel
+} from "../play/models/models";
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +38,19 @@ export class MatchDataService {
     const subject = new Subject<MatchLineupSetupCompleted>();
 
     this.matchService.lineup(this.leagueSlug, this.matchId).subscribe(matchLineupData => {
+      this.matchData.score.home_goals = matchLineupData.score.home_goals;
+      this.matchData.score.away_goals = matchLineupData.score.away_goals;
+
+      this.matchData.home_team = new TeamModel(
+        matchLineupData.home_team_name,
+        matchLineupData.home_team_slug
+      );
+
+      this.matchData.away_team = new TeamModel(
+        matchLineupData.away_team_name,
+        matchLineupData.away_team_slug
+      );
+
       // setup ball
       this.matchData.ball = new BallModel([
         new ObjectPositionDto(0,
@@ -98,7 +118,7 @@ export class MatchDataService {
       }
 
       for (const awaySubsSquadPlayer of matchLineupData.away_squad.substitutes) {
-        this.matchData.squad.away.push(new SquadPlayerModel(
+        this.matchData.squad.away_subs.push(new SquadPlayerModel(
           awaySubsSquadPlayer.id,
           awaySubsSquadPlayer.first_name,
           awaySubsSquadPlayer.last_name,
@@ -161,20 +181,16 @@ export class MatchDataService {
   }
 
   getData(timestamp: number): Observable<MatchDataResultModel> {
-    return this.getLocalData(timestamp);
-    //console.log('getData: try load data for timestamp: ' + timestamp + ' lastLoadedTimestamp: ' + this.lastLoadedTimestamp);
-
-    // Check if data for the requested timestamp has not been loaded yet
-    // if (this.lastLoadedTimestamp < timestamp) {
-    //   console.log('need load data: ' + this.lastLoadedTimestamp + ' + timestamp=' + timestamp);
-    //   return this.loadData().pipe(
-    //     switchMap(() => {
-    //       return this.getData(timestamp);
-    //     })
-    //   );
-    // } else {
-    //     return this.getLocalData(timestamp);
-    // }
+    if (this.lastLoadedTimestamp < timestamp) {
+      console.log('need load data: ' + this.lastLoadedTimestamp + ' + timestamp=' + timestamp);
+      return this.loadData().pipe(
+        switchMap(() => {
+          return this.getData(timestamp);
+        })
+      );
+    } else {
+        return this.getLocalData(timestamp);
+    }
   }
 
   getLocalData(timestamp: number): Observable<MatchDataResultModel> {

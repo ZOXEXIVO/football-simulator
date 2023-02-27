@@ -88,8 +88,8 @@ impl FieldSquad {
 
 #[derive(Debug, Clone)]
 pub struct Score {
-    pub home: i32,
-    pub away: i32,
+    pub home: u8,
+    pub away: u8,
 }
 
 impl Score {

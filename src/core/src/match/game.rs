@@ -57,9 +57,9 @@ pub struct MatchResult {
     pub league_id: u32,
     pub details: Option<FootballMatchDetails>,
     pub home_team_id: u32,
-    pub home_goals: i32,
+    pub home_goals: u8,
     pub away_team_id: u32,
-    pub away_goals: i32,
+    pub away_goals: u8,
 }
 
 impl From<&LeagueMatch> for MatchResult {

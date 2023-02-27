@@ -14,10 +14,26 @@ pub struct MatchDetailsRequest {
 
 #[derive(Serialize)]
 pub struct MatchLineupResponse<'p> {
+    // home
+    pub home_team_name: &'p str,
+    pub home_team_slug: &'p str,
     pub home_squad: LineupSquad<'p>,
+    // away
+    pub away_team_name: &'p str,
+    pub away_team_slug: &'p str,
     pub away_squad: LineupSquad<'p>,
+
+    // ball
     pub ball: LineupBall,
     pub match_time_ms: u64,
+
+    pub score: LineupScore,
+}
+
+#[derive(Serialize)]
+pub struct LineupScore {
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 #[derive(Serialize)]
@@ -33,7 +49,6 @@ pub struct LineupPlayer<'p> {
     pub last_name: &'p str,
     pub middle_name: Option<&'p str>,
     pub position: &'p str,
-    pub team_slug: &'p str,
     pub start_position: (i16, i16),
 }
 
@@ -66,19 +81,16 @@ pub async fn match_lineup_action(
         .find(|m| m.id == route_params.match_id)
         .unwrap();
 
-    let home_team_slug = &simulator_data
-        .team(match_details.home_team_id)
-        .unwrap()
-        .slug;
-
-    let away_team_slug = &simulator_data
-        .team(match_details.away_team_id)
-        .unwrap()
-        .slug;
+    let home_team = &simulator_data.team(match_details.home_team_id).unwrap();
+    let away_team = &simulator_data.team(match_details.away_team_id).unwrap();
 
     let match_details = match_details.details.as_ref().unwrap();
 
     let result = MatchLineupResponse {
+        score: LineupScore {
+            home_goals: match_details.score.home,
+            away_goals: match_details.score.away,
+        },
         match_time_ms: match_details.match_time_ms,
         ball: LineupBall {
             start_position: (
@@ -86,40 +98,36 @@ pub async fn match_lineup_action(
                 match_details.position_data.ball_positions[0].y as i16,
             ),
         },
+        home_team_name: &home_team.name,
+        home_team_slug: &home_team.slug,
         home_squad: LineupSquad {
             main: match_details
                 .home_players
                 .main
                 .iter()
-                .filter_map(|player_id| {
-                    to_lineup_player(*player_id, home_team_slug, match_details, simulator_data)
-                })
+                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
                 .collect(),
             substitutes: match_details
                 .home_players
                 .substitutes
                 .iter()
-                .filter_map(|player_id| {
-                    to_lineup_player(*player_id, home_team_slug, match_details, simulator_data)
-                })
+                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
                 .collect(),
         },
+        away_team_name: &away_team.name,
+        away_team_slug: &away_team.slug,
         away_squad: LineupSquad {
             main: match_details
                 .away_players
                 .main
                 .iter()
-                .filter_map(|player_id| {
-                    to_lineup_player(*player_id, away_team_slug, match_details, simulator_data)
-                })
+                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
                 .collect(),
             substitutes: match_details
                 .away_players
                 .substitutes
                 .iter()
-                .filter_map(|player_id| {
-                    to_lineup_player(*player_id, away_team_slug, match_details, simulator_data)
-                })
+                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
                 .collect(),
         },
     };
@@ -129,7 +137,6 @@ pub async fn match_lineup_action(
 
 fn to_lineup_player<'p>(
     player_id: u32,
-    team_slug: &'p str,
     match_details: &'p FootballMatchDetails,
     simulator_data: &'p SimulatorData,
 ) -> Option<LineupPlayer<'p>> {
@@ -147,7 +154,6 @@ fn to_lineup_player<'p>(
                 last_name: &player.full_name.last_name,
                 middle_name: player.full_name.middle_name.as_deref(),
                 position: player.position().get_short_name(),
-                team_slug,
                 start_position: (position.x as i16, position.y as i16),
             })
         }

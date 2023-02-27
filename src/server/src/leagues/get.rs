@@ -47,8 +47,8 @@ pub struct LeagueScheduleItem<'si> {
 
 #[derive(Serialize)]
 pub struct LeagueScheduleItemResult {
-    pub home_goals: i32,
-    pub away_goals: i32,
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 #[derive(Serialize)]
