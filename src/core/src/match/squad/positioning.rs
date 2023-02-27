@@ -3,8 +3,8 @@ use crate::PlayerPositionType;
 pub const POSITION_POSITIONING: &[(PlayerPositionType, PositionType, PositionType)] = &[
     (
         PlayerPositionType::Goalkeeper,
-        PositionType::Home(4, 270),
-        PositionType::Away(831, 270),
+        PositionType::Home(7, 275),
+        PositionType::Away(848, 275),
     ),
     (
         PlayerPositionType::Sweeper,
@@ -14,27 +14,27 @@ pub const POSITION_POSITIONING: &[(PlayerPositionType, PositionType, PositionTyp
     (
         PlayerPositionType::DefenderLeft,
         PositionType::Home(165, 85),
-        PositionType::Away(670, 400),
+        PositionType::Away(695, 450),
     ),
     (
         PlayerPositionType::DefenderCenterLeft,
-        PositionType::Home(165, 200),
-        PositionType::Away(670, 300),
+        PositionType::Home(165, 210),
+        PositionType::Away(695, 330),
     ),
     (
         PlayerPositionType::DefenderCenter,
-        PositionType::Home(185, 270),
-        PositionType::Away(655, 270),
+        PositionType::Home(165, 280),
+        PositionType::Away(695, 280),
     ),
     (
         PlayerPositionType::DefenderCenterRight,
-        PositionType::Home(165, 300),
-        PositionType::Away(670, 200),
+        PositionType::Home(165, 330),
+        PositionType::Away(695, 210),
     ),
     (
         PlayerPositionType::DefenderRight,
-        PositionType::Home(165, 400),
-        PositionType::Away(670, 85),
+        PositionType::Home(165, 450),
+        PositionType::Away(695, 85),
     ),
     (
         PlayerPositionType::DefensiveMidfielder,
@@ -53,27 +53,27 @@ pub const POSITION_POSITIONING: &[(PlayerPositionType, PositionType, PositionTyp
     ),
     (
         PlayerPositionType::MidfielderLeft,
-        PositionType::Home(280, 85),
-        PositionType::Away(560, 400),
+        PositionType::Home(297, 85),
+        PositionType::Away(560, 450),
     ),
     (
         PlayerPositionType::MidfielderCenterLeft,
-        PositionType::Home(280, 200),
-        PositionType::Away(560, 300),
+        PositionType::Home(297, 210),
+        PositionType::Away(560, 330),
     ),
     (
         PlayerPositionType::MidfielderCenter,
-        PositionType::Home(280, 270),
-        PositionType::Away(560, 270),
+        PositionType::Home(297, 280),
+        PositionType::Away(560, 280),
     ),
     (
-        PlayerPositionType::MidfielderCenterLeft,
-        PositionType::Home(280, 300),
-        PositionType::Away(560, 200),
+        PlayerPositionType::MidfielderCenterRight,
+        PositionType::Home(297, 330),
+        PositionType::Away(560, 210),
     ),
     (
         PlayerPositionType::MidfielderRight,
-        PositionType::Home(280, 400),
+        PositionType::Home(297, 450),
         PositionType::Away(560, 85),
     ),
     (
@@ -94,17 +94,17 @@ pub const POSITION_POSITIONING: &[(PlayerPositionType, PositionType, PositionTyp
     (
         PlayerPositionType::ForwardLeft,
         PositionType::Home(385, 210),
-        PositionType::Away(460, 330),
+        PositionType::Away(480, 330),
     ),
     (
         PlayerPositionType::ForwardCenter,
         PositionType::Home(385, 270),
-        PositionType::Away(460, 270),
+        PositionType::Away(480, 270),
     ),
     (
         PlayerPositionType::ForwardRight,
         PositionType::Home(385, 330),
-        PositionType::Away(460, 210),
+        PositionType::Away(480, 210),
     ),
     (
         PlayerPositionType::Striker,

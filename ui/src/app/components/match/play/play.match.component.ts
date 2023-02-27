@@ -47,6 +47,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
     this.zone.runOutsideAngular(
       (): void => {
         this.application = new PIXI.Application({
+          antialias: true
           //resizeTo: this.matchContainer.nativeElement
         });
 
@@ -96,17 +97,17 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
               const playerObject = player.obj!;
               const playerData = data.players[player.id];
 
-              if(playerData && playerData.position){
-                let playerTranslatedCoords = this.translateToField(
-                  data.players[player.id].position.x,
-                  data.players[player.id].position.y
-                );
-
-                playerObject.x = playerTranslatedCoords.x;
-                playerObject.y = playerTranslatedCoords.y;
-
-                console.log("move player to: " + playerObject.x + ', ' + playerObject.y);
-              }
+              // if(playerData && playerData.position){
+              //   let playerTranslatedCoords = this.translateToField(
+              //     data.players[player.id].position.x,
+              //     data.players[player.id].position.y
+              //   );
+              //
+              //   playerObject.x = playerTranslatedCoords.x;
+              //   playerObject.y = playerTranslatedCoords.y;
+              //
+              //   console.log("move player to: " + playerObject.x + ', ' + playerObject.y);
+              // }
             });
           });
         });
@@ -134,7 +135,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
     const circle: Graphics = new PIXI.Graphics();
 
     circle.beginFill(isHome? homeColor : awayColor);
-    circle.drawCircle(x, y, 4);
+    circle.drawCircle(x, y, 6);
     circle.endFill();
 
     return circle;

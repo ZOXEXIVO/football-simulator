@@ -138,7 +138,7 @@ fn to_lineup_player<'p>(
     let position = match_details.position_data.player_positions.get(&player_id);
 
     match position {
-        Some(mut position) => {
+        Some(position) => {
             let position = position.first().unwrap();
 
             Some(LineupPlayer {

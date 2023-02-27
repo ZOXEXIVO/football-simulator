@@ -161,19 +161,20 @@ export class MatchDataService {
   }
 
   getData(timestamp: number): Observable<MatchDataResultModel> {
+    return this.getLocalData(timestamp);
     //console.log('getData: try load data for timestamp: ' + timestamp + ' lastLoadedTimestamp: ' + this.lastLoadedTimestamp);
 
     // Check if data for the requested timestamp has not been loaded yet
-    if (this.lastLoadedTimestamp < timestamp) {
-      console.log('need load data: ' + this.lastLoadedTimestamp + ' + timestamp=' + timestamp);
-      return this.loadData().pipe(
-        switchMap(() => {
-          return this.getData(timestamp);
-        })
-      );
-    } else {
-        return this.getLocalData(timestamp);
-    }
+    // if (this.lastLoadedTimestamp < timestamp) {
+    //   console.log('need load data: ' + this.lastLoadedTimestamp + ' + timestamp=' + timestamp);
+    //   return this.loadData().pipe(
+    //     switchMap(() => {
+    //       return this.getData(timestamp);
+    //     })
+    //   );
+    // } else {
+    //     return this.getLocalData(timestamp);
+    // }
   }
 
   getLocalData(timestamp: number): Observable<MatchDataResultModel> {

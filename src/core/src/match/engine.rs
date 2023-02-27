@@ -121,6 +121,14 @@ impl Field {
             substitutes: away_squad.substitutes.iter().map(|p| p.player_id).collect(),
         };
 
+        let home_pids: Vec<u32> = home_squad.main_squad.iter().map(|p| p.player_id).collect();
+
+        println!("home_team: {:?}", home_pids);
+
+        let away_pids: Vec<u32> = home_squad.main_squad.iter().map(|p| p.player_id).collect();
+
+        println!("away_squad: {:?}", away_pids);
+
         let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
 
         Field {
@@ -145,28 +153,30 @@ impl Field {
         let mut current_time: u64 = 0;
 
         while current_time <= MATCH_TIME_MS {
-            let ball_update_events = self.ball.update();
-
-            // handle ball
-            Ball::handle_events(&ball_update_events, match_details);
-
-            let player_positions: Vec<FieldPosition> =
-                self.players.iter().map(|p| p.position).collect();
-
-            let player_update_events = self
-                .players
-                .iter_mut()
-                .flat_map(|p| p.update(&self.ball.position, &player_positions))
-                .collect();
-
-            // handle player
-            MatchPlayer::handle_events(&player_update_events, match_details);
-
-            let players_len = self.players.len();
+            // let ball_update_events = self.ball.update();
+            //
+            // // handle ball
+            // Ball::handle_events(&ball_update_events, match_details);
+            //
+            // let player_positions: Vec<FieldPosition> =
+            //     self.players.iter().map(|p| p.position).collect();
+            //
+            // let player_update_events = self
+            //     .players
+            //     .iter_mut()
+            //     .flat_map(|p| p.update(&self.ball.position, &player_positions))
+            //     .collect();
+            //
+            // // handle player
+            // MatchPlayer::handle_events(&player_update_events, match_details);
+            //
+            // let players_len = self.players.len();
 
             current_time += MATCH_TIME_INCREMENT_MS;
 
             self.write_match_positions(match_details, current_time);
+
+            break;
         }
     }
 
