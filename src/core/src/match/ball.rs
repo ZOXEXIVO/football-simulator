@@ -84,22 +84,15 @@ impl Ball {
     fn update_velocity(&mut self, result: &mut Vec<BallUpdateEvent>) {
         let mut rng = thread_rng();
 
-        let random_x_val: f32 = rng.gen_range(-0.1..0.1);
-        let random_y_val: f32 = rng.gen_range(-0.1..0.1);
+        let random_x_val: f32 = rng.gen_range(-1.0..1.0);
+        let random_y_val: f32 = rng.gen_range(-1.0..1.0);
 
         self.velocity = Vector2::new(random_x_val, random_y_val);
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
         self.position.x += self.velocity.x;
-        if self.position.x > 140.0 {
-            self.position.x = 140.0;
-        }
-
         self.position.y += self.velocity.y;
-        if self.position.y > 90.0 {
-            self.position.y = 90.0;
-        }
     }
 
     pub fn move_towards_player(&mut self, player_pos: &FieldPosition) {

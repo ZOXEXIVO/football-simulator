@@ -2,6 +2,7 @@
 use crate::r#match::FootballMatchDetails;
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector2;
+use rand::{thread_rng, Rng};
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -28,7 +29,7 @@ impl MatchPlayer {
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            velocity: Vector2::new(0.0, 0.0),
+            velocity: Vector2::new(1.0, 1.0),
             has_ball: false,
             state: PlayerState::Standing,
             in_state_time: 0,
@@ -81,7 +82,7 @@ impl MatchPlayer {
 
         match self.state {
             PlayerState::Standing => {
-                self.velocity = Vector2::new(0.1, 0.1);
+                self.velocity = Vector2::new(1.0, 1.0);
                 // Check for transition to walking or running state
 
                 if self.in_state_time > 10 {
@@ -193,17 +194,32 @@ impl MatchPlayer {
         ball_position: &FieldPosition,
         players_positions: &Vec<FieldPosition>,
     ) {
-        self.position.x += self.velocity.x;
-        self.position.y += self.velocity.y;
+        let mut rng = thread_rng();
+
+        self.position.x = rng.gen_range(0.0..400.0);
+        self.position.y = rng.gen_range(0.0..300.0);
     }
 
     fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
-        let condition = self.player_attributes.condition as f32;
-        let max_speed = self.skills.max_speed();
+        let mut rng = thread_rng();
 
-        let speed = max_speed * (condition / 100.0);
+        let random_x_val: f32 = rng.gen_range(-1.0..1.0);
+        let random_y_val: f32 = rng.gen_range(-1.0..1.0);
 
-        self.velocity = Vector2::new(speed, speed);
+        self.velocity = Vector2::new(random_x_val, random_y_val);
+
+        // let mut rng = thread_rng();
+        //
+        // let condition = self.player_attributes.condition as f32;
+        // let max_speed = self.skills.max_speed();
+        //
+        // let speed = max_speed * (condition / 100.0);
+        //
+        // let random_x_val: f32 = 1.0;
+        // ///rng.gen_range(-1.0..1.0);
+        // let random_y_val: f32 = 1.0; //rng.gen_range(-1.0..1.0);
+        //
+        // self.velocity = Vector2::new(speed * random_x_val, speed * random_y_val);
     }
 }
 

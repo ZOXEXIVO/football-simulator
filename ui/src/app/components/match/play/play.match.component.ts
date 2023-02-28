@@ -20,7 +20,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 @UntilDestroy()
 @Component({
   selector: 'play-match',
-  template: '<div #matchContainer style="height: 600px;margin-left: auto;margin-right: auto;"></div>'
+  template: '<div #matchContainer style="min-height: 500px;"></div>'
 })
 export class MatchPlayComponent implements AfterViewInit, OnDestroy {
   @ViewChild('matchContainer') matchContainer!: ElementRef;
@@ -47,7 +47,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
     this.zone.runOutsideAngular(
       (): void => {
         this.application = new PIXI.Application({
-          antialias: true
+          antialias: true,
           //resizeTo: this.matchContainer.nativeElement
         });
 
@@ -68,7 +68,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
           this.application?.stage.addChild(playerObj);
         });
 
-        console.log('players count = ' + this.matchDataService.matchData.players.length);
+        // console.log('players count = ' + this.matchDataService.matchData.players.length);
 
         // DEBUG
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.tl.x, POLE_COORDS.tl.y));
@@ -77,39 +77,47 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
         this.application.ticker.add((delta) => {
-          return;
-
           if(this.isDisposed){
             return;
           }
 
-          this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
-            // if(!data.players){
-            //
-            // }
+          // console.log('time=' + this.currentTime);
 
+          this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
             const ballObject = this.matchDataService.matchData.ball.obj!;
 
             let coord = this.translateToField(data.ball.x, data.ball.y);
 
-            ballObject.x = coord.x;
-            ballObject.y = coord.y;
+            if(ballObject.x != coord.x && ballObject.y != coord.y){
+              //console.log(`ball move x = ${ballObject.x}, y = ${ballObject.y}`);
+
+              ballObject.x = coord.x;
+              ballObject.y = coord.y;
+            }
 
             this.matchDataService.matchData.players.forEach(player => {
               const playerObject = player.obj!;
               const playerData = data.players[player.id];
 
-              // if(playerData && playerData.position){
-              //   let playerTranslatedCoords = this.translateToField(
-              //     data.players[player.id].position.x,
-              //     data.players[player.id].position.y
-              //   );
-              //
-              //   playerObject.x = playerTranslatedCoords.x;
-              //   playerObject.y = playerTranslatedCoords.y;
-              //
-              //   console.log("move player to: " + playerObject.x + ', ' + playerObject.y);
-              // }
+              if(playerData && playerData.position){
+                const playerPosition = data.players[player.id].position;
+
+                if(playerPosition && (playerPosition.x != 0 && playerPosition.y != 0)){
+                  let playerTranslatedPositions = this.translateToField(
+                    playerPosition.x,
+                    playerPosition.y
+                  );
+
+                  if(playerObject.x != playerTranslatedPositions.x && playerObject.y != playerTranslatedPositions.y){
+                    playerObject.x = playerTranslatedPositions.x;
+                    playerObject.y = playerTranslatedPositions.y;
+
+                    // console.log(`player id=${player.id}, move x = ${playerObject.x}, y = ${playerObject.y}`);
+                  }else {
+                    // console.log(`player id=${player.id} stay`);
+                  }
+                }
+              }
             });
           });
         });

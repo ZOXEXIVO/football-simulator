@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Observable, of, Subject, switchMap} from "rxjs";
+import {finalize, Observable, of, Subject, switchMap} from "rxjs";
 import {MatchDto, MatchService, ObjectPositionDto} from "./match.api.service";
 import {
   BallModel,
@@ -18,7 +18,7 @@ export class MatchDataService {
   matchId: string = '';
 
   offset = 0;
-  limit = 500;
+  limit = 1000;
 
   isBusy = false;
 
@@ -155,6 +155,8 @@ export class MatchDataService {
 
     if (matchDtaDto.ball_data.length > 0) {
       this.lastLoadedTimestamp = matchDtaDto.ball_data[matchDtaDto.ball_data.length - 1][0];
+
+      console.log('lastLoadedTimestamp = ' + this.lastLoadedTimestamp);
     }
   }
 
@@ -181,21 +183,27 @@ export class MatchDataService {
   }
 
   getData(timestamp: number): Observable<MatchDataResultModel> {
-    if (this.lastLoadedTimestamp < timestamp) {
-      console.log('need load data: ' + this.lastLoadedTimestamp + ' + timestamp=' + timestamp);
-      return this.loadData().pipe(
-        switchMap(() => {
-          return this.getData(timestamp);
-        })
-      );
-    } else {
+    if (this.lastLoadedTimestamp + 100 < timestamp) {
+      if (!this.isBusy) {
+        this.isBusy = true;
+
+        return this.loadData().pipe(
+          finalize(() => {
+            this.isBusy = false;
+          }),
+          switchMap(() => {
+            return this.getLocalData(timestamp);
+          })
+        );
+      } else {
         return this.getLocalData(timestamp);
+      }
     }
+
+    return this.getLocalData(timestamp);
   }
 
   getLocalData(timestamp: number): Observable<MatchDataResultModel> {
-    console.log('use local data: timestamp=' + timestamp);
-
     // ball
     let ts = -1;
     while (ts < timestamp && this.matchData.ball.currentCoordIdx < this.matchData.ball.data.length) {

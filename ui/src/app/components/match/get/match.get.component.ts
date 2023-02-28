@@ -52,7 +52,7 @@ export class MatchGetComponent implements OnInit {
 
   startMatch(){
     setInterval(() => {
-      this.currentTime += 100;
+      this.currentTime += 10;
     },100);
   }
 
