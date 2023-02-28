@@ -5,13 +5,17 @@
         <div class="col-2">
           <ul class="list-group squad-list">
             <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.home">
-              {{ player.last_name }} {{ player.first_name }} ({{ player.position }})
+              <a [routerLink]="['/teams/' + this.matchDataService.matchData.home_team.slug + '/players/' + player.id]">
+                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+              </a>
             </li>
           </ul>
           <hr />
           <ul class="list-group squad-list">
             <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.home_subs">
-              {{ player.last_name }} {{ player.first_name }} ({{ player.position }})
+              <a [routerLink]="['/teams/' + this.matchDataService.matchData.home_team.slug + '/players/' + player.id]">
+                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+              </a>
             </li>
           </ul>
         </div>
@@ -34,13 +38,17 @@
         <div class="col-2">
           <ul class="list-group squad-list">
             <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.away">
-              {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+              <a [routerLink]="['/teams/' + this.matchDataService.matchData.away_team.slug + '/players/' + player.id]">
+                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+              </a>
             </li>
           </ul>
           <hr />
           <ul class="list-group squad-list">
             <li class="list-group-item bg-transparent" *ngFor="let player of this.matchDataService.matchData.squad.away_subs">
-              {{ player.last_name }}  {{ player.first_name }}  ({{ player.position }})
+              <a [routerLink]="['/teams/' + this.matchDataService.matchData.away_team.slug + '/players/' + player.id]">
+                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+              </a>
             </li>
           </ul>
         </div>

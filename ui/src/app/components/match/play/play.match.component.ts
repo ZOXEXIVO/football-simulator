@@ -77,6 +77,8 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
         // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
         this.application.ticker.add((delta) => {
+          return;
+
           if(this.isDisposed){
             return;
           }
