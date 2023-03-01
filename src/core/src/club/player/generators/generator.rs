@@ -1,4 +1,3 @@
-use crate::r#match::PositionType;
 use crate::shared::FullName;
 use crate::utils::IntegerUtils;
 use crate::{

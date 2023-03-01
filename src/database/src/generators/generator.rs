@@ -1,9 +1,9 @@
 use crate::generators::{PlayerGenerator, PositionType, StaffGenerator};
 use crate::loaders::ContinentEntity;
 use crate::DatabaseEntity;
-use chrono::{Duration, NaiveDate, NaiveDateTime};
+use chrono::{NaiveDate, NaiveDateTime};
 use core::club::academy::ClubAcademy;
-use core::context::{NaiveTime, Timelike};
+use core::context::NaiveTime;
 use core::continent::Continent;
 use core::league::LeagueCollection;
 use core::league::Schedule;
@@ -15,9 +15,8 @@ use core::TeamCollection;
 use core::{
     Club, ClubBoard, ClubFinances, ClubMood, Country, CountryGeneratorData, Player,
     PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, StaffStub, Team,
-    TeamReputation, TeamType, TrainingSchedule, Utc,
+    TeamReputation, TeamType, TrainingSchedule,
 };
-use std::ops::Add;
 use std::str::FromStr;
 
 pub struct DatabaseGenerator;

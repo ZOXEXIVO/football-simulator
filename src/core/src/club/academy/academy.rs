@@ -3,7 +3,6 @@ use crate::club::academy::result::ClubAcademyResult;
 use crate::club::academy::settings::AcademySettings;
 use crate::context::GlobalContext;
 use crate::utils::IntegerUtils;
-use crate::PlayerGenerator;
 
 #[derive(Debug)]
 pub struct ClubAcademy {
@@ -31,10 +30,7 @@ impl ClubAcademy {
         result
     }
 
-    fn produce_youth_players(&mut self, ctx: GlobalContext<'_>) {
-        //TODO Country
-        let country_id = 0;
-
+    fn produce_youth_players(&mut self, _ctx: GlobalContext<'_>) {
         for _ in 0..IntegerUtils::random(5, 15) {
             // let generated_player =
             //     PlayerGenerator::generate(country_id, ctx.simulation.date.date());

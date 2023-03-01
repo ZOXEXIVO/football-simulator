@@ -1,7 +1,7 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::MatchPlayer;
 
-enum SteeringBehavior<'p> {
+pub enum SteeringBehavior<'p> {
     Seek {
         target: FieldPosition,
     },
@@ -18,11 +18,10 @@ enum SteeringBehavior<'p> {
 }
 
 impl<'p> SteeringBehavior<'p> {
-    fn calculate(&self, player: &MatchPlayer) -> SteeringOutput {
+    pub fn calculate(&self, player: &MatchPlayer) -> SteeringOutput {
         match self {
             SteeringBehavior::Seek { target } => {
-                let desired_velocity =
-                    (*target - player.position).normalize() * player.skills.max_speed();
+                let desired_velocity = (*target - player.position).normalize();
                 let steering = desired_velocity - player.velocity;
                 SteeringOutput {
                     velocity: steering,

@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::FootballMatchDetails;
+use crate::r#match::{FootballMatchDetails, SteeringBehavior};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
@@ -90,7 +90,12 @@ impl MatchPlayer {
                 }
             }
             PlayerState::Walking => {
-                self.velocity = self.skills.walking_speed();
+                let direction = SteeringBehavior::Seek {
+                    target: FieldPosition::new(848.0, 275.0),
+                }
+                .calculate(self);
+
+                self.velocity = Vector2::new(direction.velocity.x, direction.velocity.y);
                 // Check for transition to standing or running state
             }
             PlayerState::Running => {
@@ -194,19 +199,17 @@ impl MatchPlayer {
         ball_position: &FieldPosition,
         players_positions: &Vec<FieldPosition>,
     ) {
-        let mut rng = thread_rng();
-
-        self.position.x = rng.gen_range(0.0..400.0);
-        self.position.y = rng.gen_range(0.0..300.0);
+        self.position.x += self.velocity.x;
+        self.position.y += self.velocity.y;
     }
 
     fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
-        let mut rng = thread_rng();
+        //let mut rng = thread_rng();
 
-        let random_x_val: f32 = rng.gen_range(-1.0..1.0);
-        let random_y_val: f32 = rng.gen_range(-1.0..1.0);
+        //let random_x_val: f32 = rng.gen_range(-1.0..1.0);
+        //let random_y_val: f32 = rng.gen_range(-1.0..1.0);
 
-        self.velocity = Vector2::new(random_x_val, random_y_val);
+        //self.velocity = Vector2::new(random_x_val, random_y_val);
 
         // let mut rng = thread_rng();
         //
