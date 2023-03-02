@@ -90,6 +90,15 @@ impl FieldPosition {
         }
     }
 
+    fn is_collision(&self, other: &FieldPosition) -> bool {
+        const COLLISION_RADIUS: f32 = 2.0;
+
+        let x_diff = (self.x - other.x).abs();
+        let y_diff = (self.y - other.y).abs();
+
+        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
+    }
+
     pub fn distance_to(&self, other: &FieldPosition) -> f32 {
         ((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).sqrt()
     }

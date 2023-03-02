@@ -85,7 +85,6 @@ impl<'p> SteeringBehavior<'p> {
                     rotation: 0.0,
                 }
             }
-            // New behaviors
             SteeringBehavior::Wander {
                 target,
                 radius,

@@ -50,15 +50,6 @@ impl MatchPlayer {
         result
     }
 
-    fn is_collision(ball_position: &FieldPosition, player_position: &FieldPosition) -> bool {
-        const COLLISION_RADIUS: f32 = 2.0;
-
-        let x_diff = (ball_position.x - player_position.x).abs();
-        let y_diff = (ball_position.y - player_position.y).abs();
-
-        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
-    }
-
     pub fn handle_events(
         events: &Vec<PlayerUpdateEvent>,
         match_details: &mut FootballMatchDetails,
