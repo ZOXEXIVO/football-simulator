@@ -1,7 +1,8 @@
 ﻿use nalgebra::Vector2;
+use rand::Rng;
 use rand_distr::num_traits::Pow;
 use std::collections::HashMap;
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, AddAssign, Mul, Sub};
 
 #[derive(Debug, Clone)]
 pub struct PositionDataItem {
@@ -92,6 +93,17 @@ impl FieldPosition {
     pub fn distance_to(&self, other: &FieldPosition) -> f32 {
         ((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).sqrt()
     }
+
+    pub fn random_in_unit_circle() -> Self {
+        let mut rng = rand::thread_rng();
+
+        let r: f32 = rng.gen_range(0.0..1.0);
+        let theta: f32 = rng.gen_range(0.0..2.0 * std::f32::consts::PI);
+        FieldPosition {
+            x: r * theta.cos(),
+            y: r * theta.sin(),
+        }
+    }
 }
 
 impl Sub for FieldPosition {
@@ -135,6 +147,24 @@ impl Add<f32> for FieldPosition {
             x: self.x + other,
             y: self.y + other,
         }
+    }
+}
+
+impl Add<FieldPosition> for FieldPosition {
+    type Output = FieldPosition;
+
+    fn add(self, other: FieldPosition) -> FieldPosition {
+        FieldPosition {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+impl AddAssign<f32> for FieldPosition {
+    fn add_assign(&mut self, rhs: f32) {
+        self.x += rhs;
+        self.y += rhs;
     }
 }
 

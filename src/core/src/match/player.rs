@@ -2,7 +2,6 @@
 use crate::r#match::{FootballMatchDetails, SteeringBehavior};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector2;
-use rand::{thread_rng, Rng};
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -223,6 +222,10 @@ impl MatchPlayer {
         // let random_y_val: f32 = 1.0; //rng.gen_range(-1.0..1.0);
         //
         // self.velocity = Vector2::new(speed * random_x_val, speed * random_y_val);
+    }
+
+    pub fn heading(&self) -> f32 {
+        self.velocity.y.atan2(self.velocity.x)
     }
 }
 
