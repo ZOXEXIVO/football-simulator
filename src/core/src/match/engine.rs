@@ -1,7 +1,7 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::position::{FieldPosition, MatchPositionData};
 use crate::r#match::squad::{PositionType, TeamSquad, POSITION_POSITIONING};
-use crate::r#match::MatchPlayer;
+use crate::r#match::{MatchPlayer, MatchState};
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
 const MATCH_TIME_MS: u64 = 1 * 60 * 1000;
@@ -143,6 +143,8 @@ impl Field {
 
     fn play_inner(&mut self, match_details: &mut FootballMatchDetails) {
         let mut current_time: u64 = 0;
+
+        let mut state = MatchState::new();
 
         while current_time <= MATCH_TIME_MS {
             let ball_update_events = self.ball.update();
