@@ -2,7 +2,7 @@
 use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use core::r#match::engine::FootballMatchDetails;
+use core::r#match::engine::FootballMatchResult;
 use core::SimulatorData;
 use serde::{Deserialize, Serialize};
 
@@ -75,59 +75,67 @@ pub async fn match_lineup_action(
 
     let league = simulator_data.league(league_id).unwrap();
 
-    let match_details = league
+    let match_result = league
         .match_results
         .iter()
         .find(|m| m.id == route_params.match_id)
         .unwrap();
 
-    let home_team = &simulator_data.team(match_details.home_team_id).unwrap();
-    let away_team = &simulator_data.team(match_details.away_team_id).unwrap();
+    let home_team = &simulator_data.team(match_result.home_team_id).unwrap();
+    let away_team = &simulator_data.team(match_result.away_team_id).unwrap();
 
-    let match_details = match_details.details.as_ref().unwrap();
+    let result_details = match_result.result_details.as_ref().unwrap();
 
     let result = MatchLineupResponse {
         score: LineupScore {
-            home_goals: match_details.score.home,
-            away_goals: match_details.score.away,
+            home_goals: result_details.score.home,
+            away_goals: result_details.score.away,
         },
-        match_time_ms: match_details.match_time_ms,
+        match_time_ms: result_details.match_time_ms,
         ball: LineupBall {
             start_position: (
-                match_details.position_data.ball_positions[0].x as i16,
-                match_details.position_data.ball_positions[0].y as i16,
+                result_details.position_data.ball_positions[0].x as i16,
+                result_details.position_data.ball_positions[0].y as i16,
             ),
         },
         home_team_name: &home_team.name,
         home_team_slug: &home_team.slug,
         home_squad: LineupSquad {
-            main: match_details
+            main: result_details
                 .home_players
                 .main
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
+                .filter_map(|player_id| {
+                    to_lineup_player(*player_id, result_details, simulator_data)
+                })
                 .collect(),
-            substitutes: match_details
+            substitutes: result_details
                 .home_players
                 .substitutes
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
+                .filter_map(|player_id| {
+                    to_lineup_player(*player_id, result_details, simulator_data)
+                })
                 .collect(),
         },
         away_team_name: &away_team.name,
         away_team_slug: &away_team.slug,
         away_squad: LineupSquad {
-            main: match_details
+            main: result_details
                 .away_players
                 .main
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
+                .filter_map(|player_id| {
+                    to_lineup_player(*player_id, result_details, simulator_data)
+                })
                 .collect(),
-            substitutes: match_details
+            substitutes: result_details
                 .away_players
                 .substitutes
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, match_details, simulator_data))
+                .filter_map(|player_id| {
+                    to_lineup_player(*player_id, result_details, simulator_data)
+                })
                 .collect(),
         },
     };
@@ -137,7 +145,7 @@ pub async fn match_lineup_action(
 
 fn to_lineup_player<'p>(
     player_id: u32,
-    match_details: &'p FootballMatchDetails,
+    match_details: &'p FootballMatchResult,
     simulator_data: &'p SimulatorData,
 ) -> Option<LineupPlayer<'p>> {
     let player = simulator_data.player(player_id).unwrap();

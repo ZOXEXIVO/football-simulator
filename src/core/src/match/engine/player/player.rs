@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{FootballMatchDetails, SteeringBehavior};
+use crate::r#match::{FootballMatchResult, SteeringBehavior};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector2;
 
@@ -50,10 +50,7 @@ impl MatchPlayer {
         result
     }
 
-    pub fn handle_events(
-        events: &Vec<PlayerUpdateEvent>,
-        match_details: &mut FootballMatchDetails,
-    ) {
+    pub fn handle_events(events: &Vec<PlayerUpdateEvent>, result: &mut FootballMatchResult) {
         for event in events {}
     }
 

@@ -145,7 +145,7 @@ mod tests {
             away_team_id: 2,
             home_goals: 3,
             away_goals: 3,
-            details: None,
+            result_details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -192,7 +192,7 @@ mod tests {
             away_team_id,
             home_goals: 3,
             away_goals: 0,
-            details: None,
+            result_details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -247,7 +247,7 @@ mod tests {
             away_team_id,
             home_goals: 0,
             away_goals: 3,
-            details: None,
+            result_details: None,
         }];
 
         table.update_from_results(&match_results);

@@ -1,5 +1,5 @@
 use super::engine::FootballEngine;
-use crate::r#match::engine::FootballMatchDetails;
+use crate::r#match::engine::FootballMatchResult;
 
 use crate::league::LeagueMatch;
 use crate::r#match::TeamSquad;
@@ -44,7 +44,7 @@ impl Match {
             home_goals: match_results.score.home,
             away_team_id,
             away_goals: match_results.score.away,
-            details: Some(match_results),
+            result_details: Some(match_results),
         }
     }
 }
@@ -53,7 +53,7 @@ impl Match {
 pub struct MatchResult {
     pub id: String,
     pub league_id: u32,
-    pub details: Option<FootballMatchDetails>,
+    pub result_details: Option<FootballMatchResult>,
     pub home_team_id: u32,
     pub home_goals: u8,
     pub away_team_id: u32,
@@ -65,7 +65,7 @@ impl From<&LeagueMatch> for MatchResult {
         MatchResult {
             id: m.id.clone(),
             league_id: m.league_id,
-            details: None,
+            result_details: None,
             home_team_id: m.home_team_id,
             home_goals: m.result.as_ref().unwrap().home_goals,
             away_team_id: m.away_team_id,

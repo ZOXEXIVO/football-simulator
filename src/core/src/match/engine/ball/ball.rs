@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::FootballMatchDetails;
+use crate::r#match::FootballMatchResult;
 use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
 use rand_distr::num_traits::Pow;
@@ -34,14 +34,14 @@ impl Ball {
         result
     }
 
-    pub fn handle_events(events: &Vec<BallUpdateEvent>, match_details: &mut FootballMatchDetails) {
+    pub fn handle_events(events: &Vec<BallUpdateEvent>, result: &mut FootballMatchResult) {
         for event in events {
             match event {
                 BallUpdateEvent::AwayGoal => {
-                    match_details.score.away += 1;
+                    result.score.away += 1;
                 }
                 BallUpdateEvent::HomeGoal => {
-                    match_details.score.home += 1;
+                    result.score.home += 1;
                 }
             }
         }

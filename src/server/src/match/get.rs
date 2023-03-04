@@ -43,16 +43,16 @@ pub async fn match_get_action(
 
     let league = simulator_data.league(league_id).unwrap();
 
-    let match_details = league
+    let match_result = league
         .match_results
         .iter()
         .find(|m| m.id == route_params.match_id)
         .unwrap();
 
-    let match_details = match_details.details.as_ref().unwrap();
+    let result_details = match_result.result_details.as_ref().unwrap();
 
     let result = MatchDetailsResponse {
-        player_data: match_details
+        player_data: result_details
             .position_data
             .player_positions
             .iter()
@@ -67,8 +67,8 @@ pub async fn match_get_action(
                 )
             })
             .collect(),
-        player_data_len: match_details.position_data.player_positions.len() as u32,
-        ball_data: match_details
+        player_data_len: result_details.position_data.player_positions.len() as u32,
+        ball_data: result_details
             .position_data
             .ball_positions
             .iter()
