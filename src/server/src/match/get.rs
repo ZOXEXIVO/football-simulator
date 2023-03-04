@@ -29,7 +29,7 @@ pub async fn match_get_action(
     Path(route_params): Path<MatchDetailsRequest>,
     Query(query_params): Query<MatchDetailsRequestQuery>,
 ) -> Response {
-    let guard = state.data.lock().await;
+    let guard = state.data.read().await;
 
     let simulator_data = guard.as_ref().unwrap();
 

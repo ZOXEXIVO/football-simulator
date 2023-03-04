@@ -12,7 +12,7 @@ pub struct CurrentDateModel {
 }
 
 pub async fn current_date_action(State(state): State<GameAppData>) -> Response {
-    let data = state.data.lock().await;
+    let data = state.data.read().await;
 
     let date = match data.as_ref() {
         None => Utc::now().naive_utc(),

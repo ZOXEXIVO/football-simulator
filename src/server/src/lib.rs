@@ -12,7 +12,7 @@ use database::DatabaseEntity;
 use log::info;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, RwLock};
 
 pub struct FootballSimulatorServer {
     data: GameAppData,
@@ -39,7 +39,7 @@ impl FootballSimulatorServer {
 
 pub struct GameAppData {
     pub database: Arc<DatabaseEntity>,
-    pub data: Arc<Mutex<Option<SimulatorData>>>,
+    pub data: Arc<RwLock<Option<SimulatorData>>>,
 }
 
 impl Clone for GameAppData {

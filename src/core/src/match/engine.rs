@@ -6,23 +6,42 @@ use crate::r#match::{MatchPlayer, MatchState};
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
 const MATCH_TIME_MS: u64 = 1 * 60 * 1000;
 
-pub struct FootballEngine<const W: usize, const H: usize> {
-    pub field: Field,
-    pub state: GameState,
-}
+pub struct FootballEngine<const W: usize, const H: usize> {}
 
 impl<const W: usize, const H: usize> FootballEngine<W, H> {
-    pub fn new(home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
-        FootballEngine {
-            field: Field::new(W, H, home_squad, away_squad),
-            state: GameState::FirstHalf,
-        }
-    }
-
-    pub fn play(&mut self) -> FootballMatchDetails {
+    pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> FootballMatchDetails {
         let mut details = FootballMatchDetails::new(MATCH_TIME_MS);
 
-        self.field.play(&mut details);
+        let mut field = Field::new(W, H, home_squad, away_squad);
+
+        let mut current_time: u64 = 0;
+
+        let mut state = MatchState::new();
+
+        while current_time <= MATCH_TIME_MS {
+            let ball_update_events = field.ball.update();
+
+            // handle ball
+            Ball::handle_events(&ball_update_events, &mut details);
+
+            let player_positions: Vec<FieldPosition> =
+                field.players.iter().map(|p| p.position).collect();
+
+            let player_update_events = field
+                .players
+                .iter_mut()
+                .flat_map(|p| p.update(&field.ball.position, &player_positions))
+                .collect();
+
+            // handle player
+            MatchPlayer::handle_events(&player_update_events, &mut details);
+
+            // let players_len = self.players.len();
+
+            current_time += MATCH_TIME_INCREMENT_MS;
+
+            field.write_match_positions(&mut details, current_time);
+        }
 
         details
     }
@@ -131,44 +150,6 @@ impl Field {
             substitutes,
             home_players,
             away_players,
-        }
-    }
-
-    pub fn play(&mut self, details: &mut FootballMatchDetails) {
-        self.play_inner(details);
-
-        // write player disposition
-        details.write_team_players(&self.home_players, &self.away_players);
-    }
-
-    fn play_inner(&mut self, match_details: &mut FootballMatchDetails) {
-        let mut current_time: u64 = 0;
-
-        let mut state = MatchState::new();
-
-        while current_time <= MATCH_TIME_MS {
-            let ball_update_events = self.ball.update();
-
-            // handle ball
-            Ball::handle_events(&ball_update_events, match_details);
-
-            let player_positions: Vec<FieldPosition> =
-                self.players.iter().map(|p| p.position).collect();
-
-            let player_update_events = self
-                .players
-                .iter_mut()
-                .flat_map(|p| p.update(&self.ball.position, &player_positions))
-                .collect();
-
-            // handle player
-            MatchPlayer::handle_events(&player_update_events, match_details);
-
-            // let players_len = self.players.len();
-
-            current_time += MATCH_TIME_INCREMENT_MS;
-
-            self.write_match_positions(match_details, current_time);
         }
     }
 

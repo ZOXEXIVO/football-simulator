@@ -10,7 +10,7 @@ use std::sync::Arc;
 pub async fn game_process_action(State(state): State<GameAppData>) -> impl IntoResponse {
     let data = Arc::clone(&state.data);
 
-    let mut simulator_data_guard = data.lock_owned().await;
+    let mut simulator_data_guard = data.write_owned().await;
 
     let process_result = tokio::task::spawn_blocking(move || {
         let simulator_data = simulator_data_guard.as_mut().unwrap();

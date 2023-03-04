@@ -50,7 +50,7 @@ pub async fn team_schedule_get_action(
     State(state): State<GameAppData>,
     Path(route_params): Path<TeamScheduleGetRequest>,
 ) -> Response {
-    let guard = state.data.lock().await;
+    let guard = state.data.read().await;
 
     let simulator_data = guard.as_ref().unwrap();
 

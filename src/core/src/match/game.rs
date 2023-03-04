@@ -30,23 +30,21 @@ impl Match {
         let away_team_id = self.away_squad.team_id;
         let away_team_name = String::from(&self.away_squad.team_name);
 
-        let mut engine = FootballEngine::<840, 545>::new(self.home_squad, self.away_squad);
-
-        let match_details = engine.play();
+        let mut match_results = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
 
         debug!(
             "match played: {} {}:{} {}",
-            home_team_name, match_details.score.home, away_team_name, match_details.score.away
+            home_team_name, match_results.score.home, away_team_name, match_results.score.away
         );
 
         MatchResult {
             id: String::from(self.id),
             league_id: self.league_id,
             home_team_id,
-            home_goals: match_details.score.home,
+            home_goals: match_results.score.home,
             away_team_id,
-            away_goals: match_details.score.away,
-            details: Some(match_details),
+            away_goals: match_results.score.away,
+            details: Some(match_results),
         }
     }
 }

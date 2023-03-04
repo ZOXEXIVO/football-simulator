@@ -4,7 +4,7 @@ use env_logger::Env;
 use log::info;
 use server::{FootballSimulatorServer, GameAppData};
 use std::sync::Arc;
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, RwLock};
 
 #[tokio::main]
 async fn main() {
@@ -20,7 +20,7 @@ async fn main() {
 
     let data = GameAppData {
         database: Arc::new(database),
-        data: Arc::new(Mutex::new(Some(game_data))),
+        data: Arc::new(RwLock::new(Some(game_data))),
     };
 
     FootballSimulatorServer::new(data).run().await;

@@ -7,7 +7,7 @@ use core::utils::TimeEstimation;
 use database::DatabaseGenerator;
 
 pub async fn game_create_action(State(state): State<GameAppData>) -> impl IntoResponse {
-    let mut state_data = state.data.lock().await;
+    let mut state_data = state.data.write().await;
 
     let cloned_state = GameAppData::clone(&state);
 
