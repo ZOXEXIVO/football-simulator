@@ -22,18 +22,18 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             field.away_players.as_ref().unwrap(),
         );
 
-        let mut state = MatchState::new();
+        let mut match_state = MatchState::new();
 
-        for half in [GameState::FirstHalf, GameState::SecondHalf] {
+        for current_game_state in [GameState::FirstHalf, GameState::SecondHalf] {
             let mut current_time: u64 = 0;
 
-            state.set_state(half);
+            match_state.set_game_state(current_game_state);
 
             while current_time <= MATCH_HALF_TIME_MS {
-                let ball_update_events = field.ball.update(&state);
+                let ball_update_events = field.ball.update(&match_state);
 
                 // handle ball
-                Ball::handle_events(&state, &ball_update_events, &mut result);
+                Ball::handle_events(ball_update_events, &match_state, &mut result);
 
                 let player_positions: Vec<FieldPosition> =
                     field.players.iter().map(|p| p.position).collect();
@@ -41,11 +41,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
                 let player_update_events = field
                     .players
                     .iter_mut()
-                    .flat_map(|p| p.update(&state, &field.ball.position, &player_positions))
+                    .flat_map(|p| p.update(&match_state, &field.ball.position, &player_positions))
                     .collect();
 
                 // handle player
-                MatchPlayer::handle_events(&state, &player_update_events, &mut result);
+                MatchPlayer::handle_events(player_update_events, &match_state, &mut result);
 
                 field.write_match_positions(&mut result, current_time);
 

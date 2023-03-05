@@ -52,8 +52,8 @@ impl MatchPlayer {
     }
 
     pub fn handle_events(
+        events: Vec<PlayerUpdateEvent>,
         state: &MatchState,
-        events: &Vec<PlayerUpdateEvent>,
         result: &mut FootballMatchResult,
     ) {
         for event in events {}
