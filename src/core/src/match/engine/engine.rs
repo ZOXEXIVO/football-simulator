@@ -30,7 +30,22 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             state.set_state(half);
 
             while current_time <= MATCH_HALF_TIME_MS {
-                Self::play_inner(&mut field, &state, &mut result);
+                let ball_update_events = field.ball.update(&state);
+
+                // handle ball
+                Ball::handle_events(&state, &ball_update_events, &mut result);
+
+                let player_positions: Vec<FieldPosition> =
+                    field.players.iter().map(|p| p.position).collect();
+
+                let player_update_events = field
+                    .players
+                    .iter_mut()
+                    .flat_map(|p| p.update(&state, &field.ball.position, &player_positions))
+                    .collect();
+
+                // handle player
+                MatchPlayer::handle_events(&state, &player_update_events, &mut result);
 
                 field.write_match_positions(&mut result, current_time);
 
@@ -39,25 +54,6 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         result
-    }
-
-    pub fn play_inner(field: &mut Field, state: &MatchState, result: &mut FootballMatchResult) {
-        let ball_update_events = field.ball.update(state);
-
-        // handle ball
-        Ball::handle_events(state, &ball_update_events, result);
-
-        let player_positions: Vec<FieldPosition> =
-            field.players.iter().map(|p| p.position).collect();
-
-        let player_update_events = field
-            .players
-            .iter_mut()
-            .flat_map(|p| p.update(state, &field.ball.position, &player_positions))
-            .collect();
-
-        // handle player
-        MatchPlayer::handle_events(state, &player_update_events, result);
     }
 }
 
