@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::FootballMatchResult;
+use crate::r#match::{FootballMatchResult, MatchState};
 use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
 use rand_distr::num_traits::Pow;
@@ -23,7 +23,7 @@ impl Ball {
         }
     }
 
-    pub fn update(&mut self) -> Vec<BallUpdateEvent> {
+    pub fn update(&mut self, state: &MatchState) -> Vec<BallUpdateEvent> {
         let mut result = Vec::new();
 
         self.update_velocity(&mut result);
@@ -34,7 +34,11 @@ impl Ball {
         result
     }
 
-    pub fn handle_events(events: &Vec<BallUpdateEvent>, result: &mut FootballMatchResult) {
+    pub fn handle_events(
+        state: &MatchState,
+        events: &Vec<BallUpdateEvent>,
+        result: &mut FootballMatchResult,
+    ) {
         for event in events {
             match event {
                 BallUpdateEvent::AwayGoal => {

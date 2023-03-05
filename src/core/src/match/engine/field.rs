@@ -11,33 +11,38 @@ pub struct Field {
     pub players: Vec<MatchPlayer>,
     pub substitutes: Vec<MatchPlayer>,
 
-    pub home_players: FieldSquad,
-    pub away_players: FieldSquad,
+    pub home_players: Option<FieldSquad>,
+    pub away_players: Option<FieldSquad>,
 }
 
 impl Field {
-    pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
-        let home_players = FieldSquad {
-            main: home_squad.main_squad.iter().map(|p| p.player_id).collect(),
-            substitutes: home_squad.substitutes.iter().map(|p| p.player_id).collect(),
-        };
-
-        let away_players = FieldSquad {
-            main: away_squad.main_squad.iter().map(|p| p.player_id).collect(),
-            substitutes: away_squad.substitutes.iter().map(|p| p.player_id).collect(),
-        };
-
-        let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
-
+    pub fn new(width: usize, height: usize) -> Self {
         Field {
             width,
             height,
             ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
-            players: players_on_field,
-            substitutes,
-            home_players,
-            away_players,
+            players: Vec::new(),
+            substitutes: Vec::new(),
+            home_players: None,
+            away_players: None,
         }
+    }
+
+    pub fn setup(&mut self, home_squad: TeamSquad, away_squad: TeamSquad) {
+        self.home_players = Some(FieldSquad {
+            main: home_squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: home_squad.substitutes.iter().map(|p| p.player_id).collect(),
+        });
+
+        self.away_players = Some(FieldSquad {
+            main: away_squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: away_squad.substitutes.iter().map(|p| p.player_id).collect(),
+        });
+
+        let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
+
+        self.players.extend(players_on_field);
+        self.substitutes.extend(substitutes);
     }
 
     pub fn write_match_positions(&self, result: &mut FootballMatchResult, timestamp: u64) {

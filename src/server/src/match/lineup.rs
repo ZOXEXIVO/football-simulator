@@ -81,8 +81,8 @@ pub async fn match_lineup_action(
         .find(|m| m.id == route_params.match_id)
         .unwrap();
 
-    let home_team = &simulator_data.team(match_result.home_team_id).unwrap();
-    let away_team = &simulator_data.team(match_result.away_team_id).unwrap();
+    let home_team = simulator_data.team(match_result.home_team_id).unwrap();
+    let away_team = simulator_data.team(match_result.away_team_id).unwrap();
 
     let result_details = match_result.result_details.as_ref().unwrap();
 

@@ -12,7 +12,7 @@ pub struct FootballMatchResult {
 }
 
 impl FootballMatchResult {
-    pub fn new(match_time_ms: u64) -> Self {
+    pub fn with_match_time(match_time_ms: u64) -> Self {
         FootballMatchResult {
             score: Score::new(),
             position_data: MatchPositionData::new(),
