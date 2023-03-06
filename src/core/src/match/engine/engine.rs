@@ -24,36 +24,50 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let mut match_state = MatchState::new();
 
-        for current_game_state in [GameState::FirstHalf, GameState::SecondHalf] {
-            let mut current_time: u64 = 0;
+        // First half
+        match_state.set_game_state(GameState::FirstHalf);
 
-            match_state.set_game_state(current_game_state);
+        Self::play_inner(&mut field, &mut match_state, &mut result);
 
-            while current_time <= MATCH_HALF_TIME_MS {
-                let ball_update_events = field.ball.update(&match_state);
+        // Second half
+        field.swap_squads();
 
-                // handle ball
-                Ball::handle_events(ball_update_events, &match_state, &mut result);
+        match_state.set_game_state(GameState::SecondHalf);
 
-                let player_positions: Vec<FieldPosition> =
-                    field.players.iter().map(|p| p.position).collect();
-
-                let player_update_events = field
-                    .players
-                    .iter_mut()
-                    .flat_map(|p| p.update(&match_state, &field.ball.position, &player_positions))
-                    .collect();
-
-                // handle player
-                MatchPlayer::handle_events(player_update_events, &match_state, &mut result);
-
-                field.write_match_positions(&mut result, current_time);
-
-                current_time += MATCH_TIME_INCREMENT_MS;
-            }
-        }
+        Self::play_inner(&mut field, &mut match_state, &mut result);
 
         result
+    }
+
+    fn play_inner(
+        field: &mut Field,
+        match_state: &mut MatchState,
+        result: &mut FootballMatchResult,
+    ) {
+        let mut current_time: u64 = 0;
+
+        while current_time <= MATCH_HALF_TIME_MS {
+            let ball_update_events = field.ball.update(&match_state);
+
+            // handle ball
+            Ball::handle_events(ball_update_events, match_state, result);
+
+            let player_positions: Vec<FieldPosition> =
+                field.players.iter().map(|p| p.position).collect();
+
+            let player_update_events = field
+                .players
+                .iter_mut()
+                .flat_map(|p| p.update(&match_state, &field.ball.position, &player_positions))
+                .collect();
+
+            // handle player
+            MatchPlayer::handle_events(player_update_events, &match_state, result);
+
+            field.write_match_positions(result, current_time);
+
+            current_time += MATCH_TIME_INCREMENT_MS;
+        }
     }
 }
 

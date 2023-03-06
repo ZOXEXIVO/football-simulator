@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{FootballMatchResult, MatchState};
+use crate::r#match::{BallState, FootballMatchResult, MatchState};
 use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
 use rand_distr::num_traits::Pow;
@@ -10,6 +10,8 @@ pub struct Ball {
     pub velocity: Vector2<f32>,
     pub direction: FieldPosition,
     pub owner: Option<BallOwner>,
+    pub ball_position: BallPosition,
+    pub center_field_position: f32,
 }
 
 impl Ball {
@@ -20,6 +22,8 @@ impl Ball {
             velocity: Vector2::new(0.0, 0.0),
             direction: FieldPosition { x: 0.0, y: 0.0 },
             owner: None,
+            ball_position: BallPosition::Home,
+            center_field_position: x, // initial ball position = center field
         }
     }
 
@@ -36,7 +40,7 @@ impl Ball {
 
     pub fn handle_events(
         events: Vec<BallUpdateEvent>,
-        state: &MatchState,
+        state: &mut MatchState,
         result: &mut FootballMatchResult,
     ) {
         for event in events {
@@ -46,6 +50,14 @@ impl Ball {
                 }
                 BallUpdateEvent::HomeGoal => {
                     result.score.home += 1;
+                }
+                BallUpdateEvent::ChangeBallSide(position) => {
+                    let ball_state = match position {
+                        BallPosition::Home => BallState::HomeSide,
+                        BallPosition::Away => BallState::AwaySide,
+                    };
+
+                    state.set_ball_state(ball_state)
                 }
             }
         }
@@ -97,6 +109,19 @@ impl Ball {
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
+
+        let position = self.position();
+        if position != self.ball_position {
+            result.push(BallUpdateEvent::ChangeBallSide(position))
+        }
+    }
+
+    fn position(&self) -> BallPosition {
+        if self.position.x <= self.center_field_position {
+            BallPosition::Home
+        } else {
+            BallPosition::Away
+        }
     }
 
     pub fn move_towards_player(&mut self, player_pos: &FieldPosition) {
@@ -117,9 +142,16 @@ impl Ball {
 pub enum BallUpdateEvent {
     HomeGoal,
     AwayGoal,
+    ChangeBallSide(BallPosition),
 }
 
 pub enum BallOwner {
+    Home,
+    Away,
+}
+
+#[derive(Eq, PartialEq)]
+pub enum BallPosition {
     Home,
     Away,
 }

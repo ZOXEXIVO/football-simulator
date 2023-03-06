@@ -1,6 +1,12 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{FootballMatchResult, MatchState, SteeringBehavior};
-use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
+use crate::r#match::{
+    DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchState,
+    MidfielderStrategies, SteeringBehavior,
+};
+use crate::{
+    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
+    PlayerSkills,
+};
 use nalgebra::Vector2;
 
 #[derive(Debug, Copy, Clone)]
@@ -45,7 +51,7 @@ impl MatchPlayer {
 
         self.update_state(&mut result, ball_position, players_positions);
         self.update_condition(&mut result);
-        self.update_velocity(&mut result);
+        self.update_velocity(&mut result, state);
         self.move_to(&mut result, ball_position, players_positions);
 
         result
@@ -195,26 +201,21 @@ impl MatchPlayer {
         self.position.y += self.velocity.y;
     }
 
-    fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
-        //let mut rng = thread_rng();
-
-        //let random_x_val: f32 = rng.gen_range(-1.0..1.0);
-        //let random_y_val: f32 = rng.gen_range(-1.0..1.0);
-
-        //self.velocity = Vector2::new(random_x_val, random_y_val);
-
-        // let mut rng = thread_rng();
-        //
-        // let condition = self.player_attributes.condition as f32;
-        // let max_speed = self.skills.max_speed();
-        //
-        // let speed = max_speed * (condition / 100.0);
-        //
-        // let random_x_val: f32 = 1.0;
-        // ///rng.gen_range(-1.0..1.0);
-        // let random_y_val: f32 = 1.0; //rng.gen_range(-1.0..1.0);
-        //
-        // self.velocity = Vector2::new(speed * random_x_val, speed * random_y_val);
+    fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>, state: &MatchState) {
+        match self.tactics_position.position_group() {
+            PlayerFieldPositionGroup::Goalkeeper => {
+                GoalkeeperStrategies::move_to(self, result, state);
+            }
+            PlayerFieldPositionGroup::Defender => {
+                DefenderStrategies::move_to(self, result, state);
+            }
+            PlayerFieldPositionGroup::Midfielder => {
+                MidfielderStrategies::move_to(self, result, state);
+            }
+            PlayerFieldPositionGroup::Forward => {
+                ForwardStrategies::move_to(self, result, state);
+            }
+        }
     }
 
     pub fn heading(&self) -> f32 {

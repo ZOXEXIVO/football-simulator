@@ -45,6 +45,10 @@ impl Field {
         self.substitutes.extend(substitutes);
     }
 
+    pub fn swap_squads(&mut self) {
+        std::mem::swap(&mut self.home_players, &mut self.away_players);
+    }
+
     pub fn write_match_positions(&self, result: &mut FootballMatchResult, timestamp: u64) {
         // player positions
         self.players.iter().for_each(|player| {

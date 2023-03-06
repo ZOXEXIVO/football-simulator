@@ -1,6 +1,6 @@
 ﻿pub struct MatchState {
-    game_state: Option<GameState>,
-    ball_state: Option<BallState>,
+    pub game_state: Option<GameState>,
+    pub ball_state: Option<BallState>,
 }
 
 impl MatchState {

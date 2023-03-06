@@ -60,6 +60,33 @@ impl PlayerPositionType {
             PlayerPositionType::Striker => "ST",
         }
     }
+
+    pub fn position_group(&self) -> PlayerFieldPositionGroup {
+        match *self {
+            PlayerPositionType::Goalkeeper => PlayerFieldPositionGroup::Goalkeeper,
+            PlayerPositionType::Sweeper => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderLeft => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderCenterLeft => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderCenter => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderCenterRight => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderRight => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefensiveMidfielder => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::MidfielderLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderCenterLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderCenter => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderCenterRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::AttackingMidfielderLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::AttackingMidfielderCenter => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::AttackingMidfielderRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::WingbackLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::WingbackRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::ForwardLeft => PlayerFieldPositionGroup::Forward,
+            PlayerPositionType::ForwardCenter => PlayerFieldPositionGroup::Forward,
+            PlayerPositionType::ForwardRight => PlayerFieldPositionGroup::Forward,
+            PlayerPositionType::Striker => PlayerFieldPositionGroup::Forward,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -173,4 +200,11 @@ mod tests {
 
         assert_eq!("WL,WR", display_positions);
     }
+}
+
+pub enum PlayerFieldPositionGroup {
+    Goalkeeper,
+    Defender,
+    Midfielder,
+    Forward,
 }
