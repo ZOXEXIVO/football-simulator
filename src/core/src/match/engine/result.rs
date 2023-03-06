@@ -9,6 +9,7 @@ pub struct FootballMatchResult {
     pub away_players: FieldSquad,
 
     pub match_time_ms: u64,
+    pub additinal_time_ms: u64,
 }
 
 impl FootballMatchResult {
@@ -19,6 +20,7 @@ impl FootballMatchResult {
             home_players: FieldSquad::new(),
             away_players: FieldSquad::new(),
             match_time_ms,
+            additinal_time_ms: 0,
         }
     }
 

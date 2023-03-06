@@ -24,19 +24,67 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let mut match_state = MatchState::new();
 
+        // first time
+        {
+            Self::play_first_time(&mut field, &mut match_state, &mut result);
+        }
+
+        {
+            field.swap_squads();
+            Self::play_rest_time(&mut field);
+        }
+
+        {
+            // second time
+            Self::play_second_time(&mut field, &mut match_state, &mut result);
+        }
+
+        {
+            if result.additinal_time_ms > 0 {
+                // additional time
+                Self::play_additional_time(&mut field, &mut match_state, &mut result);
+            }
+        }
+
+        result
+    }
+
+    fn play_first_time(
+        field: &mut Field,
+        match_state: &mut MatchState,
+        result: &mut FootballMatchResult,
+    ) {
         // First half
         match_state.set_game_state(GameState::FirstHalf);
 
-        Self::play_inner(&mut field, &mut match_state, &mut result);
+        Self::play_inner(field, match_state, result);
+    }
 
-        // Second half
-        field.swap_squads();
-
+    fn play_second_time(
+        field: &mut Field,
+        match_state: &mut MatchState,
+        result: &mut FootballMatchResult,
+    ) {
+        // First half
         match_state.set_game_state(GameState::SecondHalf);
 
-        Self::play_inner(&mut field, &mut match_state, &mut result);
+        Self::play_inner(field, match_state, result);
+    }
 
-        result
+    fn play_rest_time(field: &mut Field) {
+        field.players.iter_mut().for_each(|p| {
+            p.player_attributes.rest(1000);
+        })
+    }
+
+    fn play_additional_time(
+        field: &mut Field,
+        match_state: &mut MatchState,
+        result: &mut FootballMatchResult,
+    ) {
+        match_state.set_game_state(GameState::ExtraTime);
+
+        Self::play_inner(field, match_state, result);
     }
 
     fn play_inner(
