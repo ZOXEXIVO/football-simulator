@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{BallState, FootballMatchResult, MatchState};
+use crate::r#match::{BallState, MatchContext, MatchState};
 use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
 use rand_distr::num_traits::Pow;
@@ -38,18 +38,14 @@ impl Ball {
         result
     }
 
-    pub fn handle_events(
-        events: Vec<BallUpdateEvent>,
-        state: &mut MatchState,
-        result: &mut FootballMatchResult,
-    ) {
+    pub fn handle_events(events: Vec<BallUpdateEvent>, context: &mut MatchContext) {
         for event in events {
             match event {
                 BallUpdateEvent::AwayGoal => {
-                    result.score.away += 1;
+                    context.result.score.away += 1;
                 }
                 BallUpdateEvent::HomeGoal => {
-                    result.score.home += 1;
+                    context.result.score.home += 1;
                 }
                 BallUpdateEvent::ChangeBallSide(position) => {
                     let ball_state = match position {
@@ -57,7 +53,7 @@ impl Ball {
                         BallPosition::Away => BallState::AwaySide,
                     };
 
-                    state.set_ball_state(ball_state)
+                    context.state.set_ball_state(ball_state)
                 }
             }
         }

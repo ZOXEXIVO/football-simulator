@@ -4,7 +4,7 @@ use crate::r#match::{
     FieldSquad, FootballMatchResult, MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING,
 };
 
-pub struct Field {
+pub struct MatchField {
     pub width: usize,
     pub height: usize,
     pub ball: Ball,
@@ -15,9 +15,9 @@ pub struct Field {
     pub away_players: Option<FieldSquad>,
 }
 
-impl Field {
+impl MatchField {
     pub fn new(width: usize, height: usize) -> Self {
-        Field {
+        MatchField {
             width,
             height,
             ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),

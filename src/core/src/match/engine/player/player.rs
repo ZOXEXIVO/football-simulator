@@ -1,7 +1,7 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::{
-    DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchState,
-    MidfielderStrategies, SteeringBehavior,
+    DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchContext,
+    MatchState, MidfielderStrategies, SteeringBehavior,
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
@@ -57,11 +57,7 @@ impl MatchPlayer {
         result
     }
 
-    pub fn handle_events(
-        events: Vec<PlayerUpdateEvent>,
-        state: &MatchState,
-        result: &mut FootballMatchResult,
-    ) {
+    pub fn handle_events(events: Vec<PlayerUpdateEvent>, context: &mut MatchContext) {
         for event in events {}
     }
 
