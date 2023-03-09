@@ -4,7 +4,7 @@ use nalgebra::Vector2;
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
-    pub fn move_to(
+    pub fn detect_velocity(
         player: &MatchPlayer,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,

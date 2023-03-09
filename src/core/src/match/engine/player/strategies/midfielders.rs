@@ -4,7 +4,7 @@ use nalgebra::Vector2;
 pub struct MidfielderStrategies {}
 
 impl MidfielderStrategies {
-    pub fn move_to(
+    pub fn detect_velocity(
         player: &MatchPlayer,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,

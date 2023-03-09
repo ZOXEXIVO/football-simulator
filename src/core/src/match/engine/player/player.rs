@@ -20,6 +20,7 @@ pub struct MatchPlayer {
     pub tactics_position: PlayerPositionType,
     pub velocity: Vector2<f32>,
     pub has_ball: bool,
+    pub is_home: bool,
     pub state: PlayerState,
     pub in_state_time: u32,
 }
@@ -36,6 +37,7 @@ impl MatchPlayer {
             tactics_position: position,
             velocity: Vector2::new(1.0, 1.0),
             has_ball: false,
+            is_home: false,
             state: PlayerState::Standing,
             in_state_time: 0,
         }
@@ -51,7 +53,8 @@ impl MatchPlayer {
         self.update_state(&mut result, objects_positions);
         self.update_condition(&mut result, objects_positions);
         self.update_velocity(&mut result, objects_positions, state);
-        self.move_to(&mut result, objects_positions);
+
+        self.move_to();
 
         result
     }
@@ -189,11 +192,7 @@ impl MatchPlayer {
         // self.player_attributes.condition
     }
 
-    fn move_to(
-        &mut self,
-        result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-    ) {
+    fn move_to(&mut self) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
     }
@@ -204,20 +203,22 @@ impl MatchPlayer {
         objects_positions: &MatchObjectsPositions,
         state: &MatchState,
     ) {
-        match self.tactics_position.position_group() {
+        let velocity = match self.tactics_position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => {
-                GoalkeeperStrategies::move_to(self, result, objects_positions, state);
+                GoalkeeperStrategies::detect_velocity(self, result, objects_positions, state)
             }
             PlayerFieldPositionGroup::Defender => {
-                DefenderStrategies::move_to(self, result, objects_positions, state);
+                DefenderStrategies::detect_velocity(self, result, objects_positions, state)
             }
             PlayerFieldPositionGroup::Midfielder => {
-                MidfielderStrategies::move_to(self, result, objects_positions, state);
+                MidfielderStrategies::detect_velocity(self, result, objects_positions, state)
             }
             PlayerFieldPositionGroup::Forward => {
-                ForwardStrategies::move_to(self, result, objects_positions, state);
+                ForwardStrategies::detect_velocity(self, result, objects_positions, state)
             }
-        }
+        };
+
+        self.velocity = velocity;
     }
 
     pub fn heading(&self) -> f32 {
