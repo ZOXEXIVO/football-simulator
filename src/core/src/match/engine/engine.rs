@@ -51,29 +51,25 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_inner(field: &mut MatchField, context: &mut MatchContext) -> u64 {
         let mut additional_time: u64 = 0;
 
-        while context.time.time <= MATCH_HALF_TIME_MS {
+        while context.increment_time() {
             let ball_update_events = field.ball.update(&context.state);
 
             // handle ball
             Ball::handle_events(ball_update_events, context);
 
-            let player_positions: Vec<FieldPosition> =
-                field.players.iter().map(|p| p.position).collect();
+            // setup positions
+            let objects_positions = MatchObjectsPositions::from(&field);
 
             let player_update_events = field
                 .players
                 .iter_mut()
-                .flat_map(|player| {
-                    player.update(&context.state, &field.ball.position, &player_positions)
-                })
+                .flat_map(|player| player.update(&context.state, &objects_positions))
                 .collect();
 
             // handle player
             MatchPlayer::handle_events(player_update_events, context);
 
             field.write_match_positions(&mut context.result, context.time.time);
-
-            context.increment_time();
         }
 
         additional_time
@@ -102,8 +98,8 @@ impl MatchContext {
         }
     }
 
-    pub fn increment_time(&mut self) {
-        self.time.inc(MATCH_TIME_INCREMENT_MS);
+    pub fn increment_time(&mut self) -> bool {
+        self.time.increment(MATCH_TIME_INCREMENT_MS) < MATCH_HALF_TIME_MS
     }
 }
 
@@ -119,7 +115,22 @@ impl MatchTime {
         MatchTime { time: 0 }
     }
 
-    pub fn inc(&mut self, val: u64) {
+    pub fn increment(&mut self, val: u64) -> u64 {
         self.time += val;
+        self.time
+    }
+}
+
+pub struct MatchObjectsPositions {
+    ball_positions: FieldPosition,
+    players_positions: Vec<FieldPosition>,
+}
+
+impl MatchObjectsPositions {
+    pub fn from(field: &MatchField) -> Self {
+        MatchObjectsPositions {
+            ball_positions: field.ball.position,
+            players_positions: field.players.iter().map(|p| p.position).collect(),
+        }
     }
 }

@@ -4,7 +4,7 @@ use env_logger::Env;
 use log::info;
 use server::{FootballSimulatorServer, GameAppData};
 use std::sync::Arc;
-use tokio::sync::{Mutex, RwLock};
+use tokio::sync::{RwLock};
 
 #[tokio::main]
 async fn main() {

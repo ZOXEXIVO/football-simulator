@@ -28,7 +28,7 @@ impl Ball {
     }
 
     pub fn update(&mut self, state: &MatchState) -> Vec<BallUpdateEvent> {
-        let mut result = Vec::new();
+        let mut result = Vec::with_capacity(10);
 
         self.update_velocity(&mut result);
         self.move_to(&mut result);

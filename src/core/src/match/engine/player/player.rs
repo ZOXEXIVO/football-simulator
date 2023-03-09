@@ -1,7 +1,7 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchContext,
-    MatchState, MidfielderStrategies, SteeringBehavior,
+    MatchObjectsPositions, MatchState, MidfielderStrategies, SteeringBehavior,
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
@@ -44,15 +44,14 @@ impl MatchPlayer {
     pub fn update(
         &mut self,
         state: &MatchState,
-        ball_position: &FieldPosition,
-        players_positions: &Vec<FieldPosition>,
+        objects_positions: &MatchObjectsPositions,
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        self.update_state(&mut result, ball_position, players_positions);
-        self.update_condition(&mut result);
-        self.update_velocity(&mut result, state);
-        self.move_to(&mut result, ball_position, players_positions);
+        self.update_state(&mut result, objects_positions);
+        self.update_condition(&mut result, objects_positions);
+        self.update_velocity(&mut result, objects_positions, state);
+        self.move_to(&mut result, objects_positions);
 
         result
     }
@@ -69,8 +68,7 @@ impl MatchPlayer {
     fn update_state(
         &mut self,
         result: &mut Vec<PlayerUpdateEvent>,
-        ball_position: &FieldPosition,
-        players_positions: &Vec<FieldPosition>,
+        objects_positions: &MatchObjectsPositions,
     ) {
         self.in_state_time += 1;
 
@@ -183,33 +181,41 @@ impl MatchPlayer {
 
     fn check_ball_collision(&mut self) {}
 
-    fn update_condition(&mut self, result: &mut Vec<PlayerUpdateEvent>) {
+    fn update_condition(
+        &mut self,
+        result: &mut Vec<PlayerUpdateEvent>,
+        objects_positions: &MatchObjectsPositions,
+    ) {
         // self.player_attributes.condition
     }
 
     fn move_to(
         &mut self,
         result: &mut Vec<PlayerUpdateEvent>,
-        ball_position: &FieldPosition,
-        players_positions: &Vec<FieldPosition>,
+        objects_positions: &MatchObjectsPositions,
     ) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
     }
 
-    fn update_velocity(&mut self, result: &mut Vec<PlayerUpdateEvent>, state: &MatchState) {
+    fn update_velocity(
+        &mut self,
+        result: &mut Vec<PlayerUpdateEvent>,
+        objects_positions: &MatchObjectsPositions,
+        state: &MatchState,
+    ) {
         match self.tactics_position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => {
-                GoalkeeperStrategies::move_to(self, result, state);
+                GoalkeeperStrategies::move_to(self, result, objects_positions, state);
             }
             PlayerFieldPositionGroup::Defender => {
-                DefenderStrategies::move_to(self, result, state);
+                DefenderStrategies::move_to(self, result, objects_positions, state);
             }
             PlayerFieldPositionGroup::Midfielder => {
-                MidfielderStrategies::move_to(self, result, state);
+                MidfielderStrategies::move_to(self, result, objects_positions, state);
             }
             PlayerFieldPositionGroup::Forward => {
-                ForwardStrategies::move_to(self, result, state);
+                ForwardStrategies::move_to(self, result, objects_positions, state);
             }
         }
     }
