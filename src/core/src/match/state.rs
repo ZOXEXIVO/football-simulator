@@ -28,7 +28,7 @@ pub enum GameState {
     PenaltyShootout,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum BallState {
     HomeSide,
     AwaySide,

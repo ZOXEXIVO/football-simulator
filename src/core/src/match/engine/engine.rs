@@ -122,8 +122,8 @@ impl MatchTime {
 }
 
 pub struct MatchObjectsPositions {
-    ball_positions: FieldPosition,
-    players_positions: Vec<FieldPosition>,
+    pub ball_positions: FieldPosition,
+    pub players_positions: Vec<FieldPosition>,
 }
 
 impl MatchObjectsPositions {
