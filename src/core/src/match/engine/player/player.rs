@@ -5,7 +5,7 @@ use crate::r#match::{
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
-    PlayerSkills,
+    PlayerSkills, PlayerStatusType,
 };
 use nalgebra::Vector2;
 
@@ -51,10 +51,11 @@ impl MatchPlayer {
         let mut result = Vec::with_capacity(10);
 
         self.update_state(&mut result, objects_positions);
-        self.update_condition(&mut result, objects_positions);
-        self.update_velocity(&mut result, objects_positions, state);
+        self.update_velocity(&mut result, objects_positions, state, self.state);
 
         self.move_to();
+
+        self.update_condition(&mut result, objects_positions);
 
         result
     }
@@ -138,41 +139,55 @@ impl MatchPlayer {
                 //     self.state = PlayerState::Standing;
                 // }
             }
+            PlayerState::PassDecision => {
+                // if self.has_ball {
+                //     // find closest teammate
+                //     let closest_teammate = self.find_closest_teammate();
+                //     // calculate pass vector
+                //     let pass_vector = self.calculate_pass_vector(&closest_teammate);
+                //     // pass the ball to the teammate
+                //     self.pass_ball(pass_vector);
+                //     // transition to standing state
+                //     self.state = PlayerState::Standing;
+                // }
+            }
             PlayerState::Returning => {
-                let start_position = self.start_position;
-                let distance_to_start = self.position.distance_to(&start_position);
-
-                if distance_to_start > 0.0 {
-                    // Calculate a velocity vector that moves the player towards their starting position
-                    let direction_to_start = (start_position - self.position).normalize();
-                    self.velocity = Vector2::new(direction_to_start.x, direction_to_start.y);
+                if self.position.distance_to(&self.start_position) < 10.0 {
+                    self.change_state(PlayerState::Standing);
                 } else {
-                    // Player has returned to their starting position, reset velocity and state
-                    self.velocity = Vector2::new(0.0, 0.0);
-                    self.state = PlayerState::Standing;
+                    if self.in_state_time == 0 {
+                        let calculated_steering = SteeringBehavior::Seek {
+                            target: self.start_position,
+                        }
+                        .calculate(self);
+
+                        // return Vector2::new(
+                        //     calculated_steering.velocity.x,
+                        //     calculated_steering.velocity.y,
+                        // );
+                    }
                 }
             }
         }
     }
 
-    fn find_closest_teammate(&self) -> Option<MatchPlayer> {
-        None
-        // let mut closest_teammate = None;
-        // let mut closest_distance = std::f32::MAX;
-        //
-        // for teammate in team {
-        //     if player.player_id != teammate.player_id {
-        //         let distance = (teammate.position.x - player.position.x).powi(2)
-        //             + (teammate.position.y - player.position.y).powi(2);
-        //         if distance < closest_distance {
-        //             closest_distance = distance;
-        //             closest_teammate = Some(teammate.clone());
-        //         }
-        //     }
-        // }
-        //
-        // closest_teammate
-    }
+    // fn find_closest_teammate(&self, state: &MatchState) -> Option<&MatchPlayer> {
+    //     let max_pass_distance = 20.0; // Maximum distance a player can pass the ball
+    //     let mut closest_teammate = None;
+    //     let mut closest_distance = std::f32::MAX;
+    //
+    //     for player in state.players.iter() {
+    //         if player.is_home == self.is_home && player != self && !player.attributes.is_marked {
+    //             let distance = self.position.distance_to(&player.position);
+    //             if distance < closest_distance && distance < max_pass_distance {
+    //                 closest_teammate = Some(player);
+    //                 closest_distance = distance;
+    //             }
+    //         }
+    //     }
+    //
+    //     closest_teammate
+    // }
 
     // fn calculate_pass_vector(&self, teammate: &MatchPlayer) -> Vector {
     //     // code to calculate pass vector
@@ -202,6 +217,7 @@ impl MatchPlayer {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
         state: &MatchState,
+        player_state: PlayerState,
     ) {
         let velocity = match self.tactics_position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => {
@@ -233,6 +249,7 @@ pub enum PlayerState {
     Running,
     Tackling,
     Shooting,
+    PassDecision,
     Passing,
     Returning,
 }

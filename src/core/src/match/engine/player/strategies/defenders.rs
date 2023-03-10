@@ -16,7 +16,7 @@ impl DefenderStrategies {
             Some(ball_state) => match ball_state {
                 BallState::HomeSide => {
                     if player.is_home {
-                        // defent when i'm defender and ball on my side of field
+                        // defend when i'm defender and ball on my side of field
                         DefenderStrategies::defend(player, result, objects_positions, state)
                     } else {
                         DefenderStrategies::support(player, result, objects_positions, state)
