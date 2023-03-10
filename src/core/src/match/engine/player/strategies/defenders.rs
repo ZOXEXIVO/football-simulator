@@ -13,22 +13,23 @@ impl DefenderStrategies {
         state: &MatchState,
     ) -> Vector2<f32> {
         match state.ball_state {
-            // ball in the left side of field
-            Some(ball_state) => {
-                if ball_state == BallState::HomeSide {
+            Some(ball_state) => match ball_state {
+                BallState::HomeSide => {
                     if player.is_home {
+                        // defent when i'm defender and ball on my side of field
                         DefenderStrategies::defend(player, result, objects_positions, state)
                     } else {
                         DefenderStrategies::support(player, result, objects_positions, state)
                     }
-                } else {
+                }
+                BallState::AwaySide => {
                     if player.is_home {
                         DefenderStrategies::support(player, result, objects_positions, state)
                     } else {
                         DefenderStrategies::defend(player, result, objects_positions, state)
                     }
                 }
-            }
+            },
             None => Vector2::new(0.0, 0.0),
         }
     }
