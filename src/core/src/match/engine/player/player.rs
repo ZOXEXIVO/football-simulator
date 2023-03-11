@@ -1,7 +1,8 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchContext,
-    MatchObjectsPositions, MatchState, MidfielderStrategies, SteeringBehavior,
+    MatchObjectsPositions, MatchState, MidfielderStrategies, PassingState, ReturningState,
+    RunningState, ShootingState, StandingState, SteeringBehavior, TacklingState, WalkingState,
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
@@ -51,11 +52,7 @@ impl MatchPlayer {
         let mut result = Vec::with_capacity(10);
 
         self.update_state(&mut result, objects_positions);
-        self.update_velocity(&mut result, objects_positions, state, self.state);
-
         self.move_to();
-
-        self.update_condition(&mut result, objects_positions);
 
         result
     }
@@ -76,99 +73,21 @@ impl MatchPlayer {
     ) {
         self.in_state_time += 1;
 
-        match self.state {
-            PlayerState::Standing => {
-                self.velocity = Vector2::new(1.0, 1.0);
-                // Check for transition to walking or running state
+        let changed_state = match self.state {
+            PlayerState::Standing => StandingState::process(self, result, objects_positions),
+            PlayerState::Walking => WalkingState::process(self, result, objects_positions),
+            PlayerState::Running => RunningState::process(self, result, objects_positions),
+            PlayerState::Tackling => TacklingState::process(self, result, objects_positions),
+            PlayerState::Shooting => ShootingState::process(self, result, objects_positions),
+            PlayerState::Passing => PassingState::process(self, result, objects_positions),
+            PlayerState::Returning => ReturningState::process(self, result, objects_positions),
+        };
 
-                if self.in_state_time > 10 {
-                    self.change_state(PlayerState::Walking);
-                }
-            }
-            PlayerState::Walking => {
-                let direction = SteeringBehavior::Seek {
-                    target: FieldPosition::new(848.0, 275.0),
-                }
-                .calculate(self);
-
-                self.velocity = Vector2::new(direction.velocity.x, direction.velocity.y);
-                // Check for transition to standing or running state
-            }
-            PlayerState::Running => {
-                self.velocity = self.skills.running_speed();
-                // Check for transition to standing or walking state
-            }
-            PlayerState::Tackling => {
-                // let tackling_success = self.skills.tackling() * self.player_attributes.condition;
-                // if tackling_success > 50.0 {
-                //     self.has_ball = true;
-                // }
-                // // Check for transition to standing state
-                // if self.player_attributes.condition < 20.0 {
-                //     self.state = PlayerState::Standing;
-                // }
-            }
-            PlayerState::Shooting => {
-                // let distance_to_goal = (self.position.x - self.field.width as i16 / 2).abs();
-                // if distance_to_goal < 50 {
-                //     let mut rng = thread_rng();
-                //     let shot_success = rng.gen_range(0, 100);
-                //
-                //     let shooting_skill = self.skills.technical.finishing;
-                //
-                //     if shot_success < shooting_skill {
-                //         if self.position.x < self.field.width as i16 / 2 {
-                //             self.field.home_goals += 1;
-                //         } else {
-                //             self.field.away_goals += 1;
-                //         }
-                //     }
-                // }
-
-                self.state = PlayerState::Standing;
-            }
-            PlayerState::Passing => {
-                // if self.has_ball {
-                //     // find closest teammate
-                //     let closest_teammate = self.find_closest_teammate();
-                //     // calculate pass vector
-                //     let pass_vector = self.calculate_pass_vector(&closest_teammate);
-                //     // pass the ball to the teammate
-                //     self.pass_ball(pass_vector);
-                //     // transition to standing state
-                //     self.state = PlayerState::Standing;
-                // }
-            }
-            PlayerState::PassDecision => {
-                // if self.has_ball {
-                //     // find closest teammate
-                //     let closest_teammate = self.find_closest_teammate();
-                //     // calculate pass vector
-                //     let pass_vector = self.calculate_pass_vector(&closest_teammate);
-                //     // pass the ball to the teammate
-                //     self.pass_ball(pass_vector);
-                //     // transition to standing state
-                //     self.state = PlayerState::Standing;
-                // }
-            }
-            PlayerState::Returning => {
-                if self.position.distance_to(&self.start_position) < 10.0 {
-                    self.change_state(PlayerState::Standing);
-                } else {
-                    if self.in_state_time == 0 {
-                        let calculated_steering = SteeringBehavior::Seek {
-                            target: self.start_position,
-                        }
-                        .calculate(self);
-
-                        // return Vector2::new(
-                        //     calculated_steering.velocity.x,
-                        //     calculated_steering.velocity.y,
-                        // );
-                    }
-                }
-            }
+        if let Some(state) = changed_state {
+            self.change_state(state);
         }
+
+        //self.update_velocity(result, objects_positions, state, self.state);
     }
 
     // fn find_closest_teammate(&self, state: &MatchState) -> Option<&MatchPlayer> {
@@ -198,14 +117,6 @@ impl MatchPlayer {
     // }
 
     fn check_ball_collision(&mut self) {}
-
-    fn update_condition(
-        &mut self,
-        result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-    ) {
-        // self.player_attributes.condition
-    }
 
     fn move_to(&mut self) {
         self.position.x += self.velocity.x;
@@ -249,7 +160,6 @@ pub enum PlayerState {
     Running,
     Tackling,
     Shooting,
-    PassDecision,
     Passing,
     Returning,
 }
