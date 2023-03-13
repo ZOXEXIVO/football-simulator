@@ -63,7 +63,9 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             let player_update_events = field
                 .players
                 .iter_mut()
-                .flat_map(|player| player.update(&context.state, &objects_positions))
+                .flat_map(|player| {
+                    player.update(context.time.time, &context.state, &objects_positions)
+                })
                 .collect();
 
             // handle player

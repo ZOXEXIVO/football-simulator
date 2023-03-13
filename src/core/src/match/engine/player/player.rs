@@ -23,7 +23,7 @@ pub struct MatchPlayer {
     pub has_ball: bool,
     pub is_home: bool,
     pub state: PlayerState,
-    pub in_state_time: u32,
+    pub in_state_time: u64,
 }
 
 impl MatchPlayer {
@@ -46,12 +46,13 @@ impl MatchPlayer {
 
     pub fn update(
         &mut self,
+        current_time: u64,
         state: &MatchState,
         objects_positions: &MatchObjectsPositions,
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        self.update_state(&mut result, objects_positions);
+        self.update_state(current_time, &mut result, objects_positions);
         self.move_to();
 
         result
@@ -68,19 +69,34 @@ impl MatchPlayer {
 
     fn update_state(
         &mut self,
+        current_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) {
         self.in_state_time += 1;
 
         let changed_state = match self.state {
-            PlayerState::Standing => StandingState::process(self, result, objects_positions),
-            PlayerState::Walking => WalkingState::process(self, result, objects_positions),
-            PlayerState::Running => RunningState::process(self, result, objects_positions),
-            PlayerState::Tackling => TacklingState::process(self, result, objects_positions),
-            PlayerState::Shooting => ShootingState::process(self, result, objects_positions),
-            PlayerState::Passing => PassingState::process(self, result, objects_positions),
-            PlayerState::Returning => ReturningState::process(self, result, objects_positions),
+            PlayerState::Standing => {
+                StandingState::process(self.in_state_time, self, result, objects_positions)
+            }
+            PlayerState::Walking => {
+                WalkingState::process(self.in_state_time, self, result, objects_positions)
+            }
+            PlayerState::Running => {
+                RunningState::process(self.in_state_time, self, result, objects_positions)
+            }
+            PlayerState::Tackling => {
+                TacklingState::process(self.in_state_time, self, result, objects_positions)
+            }
+            PlayerState::Shooting => {
+                ShootingState::process(self.in_state_time, self, result, objects_positions)
+            }
+            PlayerState::Passing => {
+                PassingState::process(self.in_state_time, self, result, objects_positions)
+            }
+            PlayerState::Returning => {
+                ReturningState::process(self.in_state_time, self, result, objects_positions)
+            }
         };
 
         if let Some(state) = changed_state {
@@ -125,24 +141,41 @@ impl MatchPlayer {
 
     fn update_velocity(
         &mut self,
+        current_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
         state: &MatchState,
         player_state: PlayerState,
     ) {
         let velocity = match self.tactics_position.position_group() {
-            PlayerFieldPositionGroup::Goalkeeper => {
-                GoalkeeperStrategies::detect_velocity(self, result, objects_positions, state)
-            }
-            PlayerFieldPositionGroup::Defender => {
-                DefenderStrategies::detect_velocity(self, result, objects_positions, state)
-            }
-            PlayerFieldPositionGroup::Midfielder => {
-                MidfielderStrategies::detect_velocity(self, result, objects_positions, state)
-            }
-            PlayerFieldPositionGroup::Forward => {
-                ForwardStrategies::detect_velocity(self, result, objects_positions, state)
-            }
+            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::detect_velocity(
+                current_time,
+                self,
+                result,
+                objects_positions,
+                state,
+            ),
+            PlayerFieldPositionGroup::Defender => DefenderStrategies::detect_velocity(
+                current_time,
+                self,
+                result,
+                objects_positions,
+                state,
+            ),
+            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::detect_velocity(
+                current_time,
+                self,
+                result,
+                objects_positions,
+                state,
+            ),
+            PlayerFieldPositionGroup::Forward => ForwardStrategies::detect_velocity(
+                current_time,
+                self,
+                result,
+                objects_positions,
+                state,
+            ),
         };
 
         self.velocity = velocity;

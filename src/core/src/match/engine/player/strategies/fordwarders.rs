@@ -5,6 +5,7 @@ pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
     pub fn detect_velocity(
+        current_time: u64,
         player: &MatchPlayer,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,

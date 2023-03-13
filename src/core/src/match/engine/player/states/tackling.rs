@@ -8,6 +8,7 @@ pub struct TacklingState {}
 
 impl TacklingState {
     pub fn process(
+        in_state_time: u64,
         player: &mut MatchPlayer,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
