@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{BallState, MatchContext, MatchState};
+use crate::r#match::{BallState, GoalDetail, MatchContext, MatchState};
 use nalgebra::Vector2;
 use rand::{thread_rng, Rng};
 use rand_distr::num_traits::Pow;
@@ -38,14 +38,28 @@ impl Ball {
         result
     }
 
-    pub fn handle_events(events: Vec<BallUpdateEvent>, context: &mut MatchContext) {
+    pub fn handle_events(
+        current_time: u64,
+        events: Vec<BallUpdateEvent>,
+        context: &mut MatchContext,
+    ) {
         for event in events {
             match event {
-                BallUpdateEvent::AwayGoal => {
+                BallUpdateEvent::AwayGoal(goal_scorer, goal_assistant) => {
                     context.result.score.away += 1;
+                    context.result.score.details.push(GoalDetail {
+                        player_id: goal_scorer,
+                        assistant: goal_assistant,
+                        minute: (current_time / 1000 / 60) as u8,
+                    })
                 }
-                BallUpdateEvent::HomeGoal => {
+                BallUpdateEvent::HomeGoal(goal_scorer, goal_assistant) => {
                     context.result.score.home += 1;
+                    context.result.score.details.push(GoalDetail {
+                        player_id: goal_scorer,
+                        assistant: goal_assistant,
+                        minute: (current_time / 1000 / 60) as u8,
+                    })
                 }
                 BallUpdateEvent::ChangeBallSide(position) => {
                     let ball_state = match position {
@@ -83,9 +97,9 @@ impl Ball {
                 || (self.start_position.y > goal_line_y && self.position.y <= goal_line_y)
             {
                 if self.start_position.x < goal_line_x {
-                    result.push(BallUpdateEvent::AwayGoal);
+                    //result.push(BallUpdateEvent::AwayGoal);
                 } else {
-                    result.push(BallUpdateEvent::HomeGoal);
+                    //result.push(BallUpdateEvent::HomeGoal);
                 }
 
                 self.reset();
@@ -136,8 +150,8 @@ impl Ball {
 }
 
 pub enum BallUpdateEvent {
-    HomeGoal,
-    AwayGoal,
+    HomeGoal(u32, Option<u32>),
+    AwayGoal(u32, Option<u32>),
     ChangeBallSide(BallPosition),
 }
 

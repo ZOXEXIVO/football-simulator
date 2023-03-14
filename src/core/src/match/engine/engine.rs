@@ -55,7 +55,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             let ball_update_events = field.ball.update(&context.state);
 
             // handle ball
-            Ball::handle_events(ball_update_events, context);
+            Ball::handle_events(context.time.time, ball_update_events, context);
 
             // setup positions
             let objects_positions = MatchObjectsPositions::from(&field);

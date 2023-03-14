@@ -64,10 +64,22 @@ impl FieldSquad {
 pub struct Score {
     pub home: u8,
     pub away: u8,
+    pub details: Vec<GoalDetail>,
+}
+
+#[derive(Debug, Clone)]
+pub struct GoalDetail {
+    pub player_id: u32,
+    pub assistant: Option<u32>,
+    pub minute: u8,
 }
 
 impl Score {
     pub fn new() -> Self {
-        Score { home: 0, away: 0 }
+        Score {
+            home: 0,
+            away: 0,
+            details: Vec::new(),
+        }
     }
 }

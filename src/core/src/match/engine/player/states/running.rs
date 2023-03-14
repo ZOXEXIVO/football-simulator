@@ -13,8 +13,13 @@ impl RunningState {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        player.velocity = player.skills.running_speed();
-        // Check for transition to standing or walking state
+        if objects_positions
+            .ball_positions
+            .distance_to(&player.position)
+            < 5.0
+        {
+            result.push(PlayerUpdateEvent::TacklingBall(player.player_id))
+        }
 
         None
     }

@@ -1,8 +1,9 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchContext,
-    MatchObjectsPositions, MatchState, MidfielderStrategies, PassingState, ReturningState,
-    RunningState, ShootingState, StandingState, SteeringBehavior, TacklingState, WalkingState,
+    MatchObjectsPositions, MatchState, MidfielderStrategies, PassingDecisionState, PassingState,
+    ReturningState, RunningState, ShootingState, StandingState, SteeringBehavior, TacklingState,
+    WalkingState,
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
@@ -52,14 +53,31 @@ impl MatchPlayer {
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        self.update_state(current_time, &mut result, objects_positions);
+        // update state
+        let player_state = self.update_state(current_time, &mut result, objects_positions);
+
+        // set velocity
+        self.update_velocity(
+            current_time,
+            &mut result,
+            objects_positions,
+            state,
+            player_state,
+        );
+
+        // move
         self.move_to();
 
         result
     }
 
     pub fn handle_events(events: Vec<PlayerUpdateEvent>, context: &mut MatchContext) {
-        for event in events {}
+        for event in events {
+            match event {
+                PlayerUpdateEvent::Goal(player_id) => {}
+                PlayerUpdateEvent::TacklingBall(player_id) => {}
+            }
+        }
     }
 
     fn change_state(&mut self, state: PlayerState) {
@@ -72,7 +90,7 @@ impl MatchPlayer {
         current_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) {
+    ) -> PlayerState {
         self.in_state_time += 1;
 
         let changed_state = match self.state {
@@ -94,6 +112,9 @@ impl MatchPlayer {
             PlayerState::Passing => {
                 PassingState::process(self.in_state_time, self, result, objects_positions)
             }
+            PlayerState::PassingDecision => {
+                PassingDecisionState::process(self.in_state_time, self, result, objects_positions)
+            }
             PlayerState::Returning => {
                 ReturningState::process(self.in_state_time, self, result, objects_positions)
             }
@@ -103,7 +124,7 @@ impl MatchPlayer {
             self.change_state(state);
         }
 
-        //self.update_velocity(result, objects_positions, state, self.state);
+        self.state
     }
 
     // fn find_closest_teammate(&self, state: &MatchState) -> Option<&MatchPlayer> {
@@ -132,7 +153,7 @@ impl MatchPlayer {
     //     // code to pass the ball to the teammate
     // }
 
-    fn check_ball_collision(&mut self) {}
+    fn check_collisions(&mut self) {}
 
     fn move_to(&mut self) {
         self.position.x += self.velocity.x;
@@ -147,6 +168,10 @@ impl MatchPlayer {
         state: &MatchState,
         player_state: PlayerState,
     ) {
+        if current_time % 100 != 0 {
+            return;
+        }
+
         let velocity = match self.tactics_position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::detect_velocity(
                 current_time,
@@ -193,10 +218,12 @@ pub enum PlayerState {
     Running,
     Tackling,
     Shooting,
+    PassingDecision,
     Passing,
     Returning,
 }
 
 pub enum PlayerUpdateEvent {
     Goal(u32),
+    TacklingBall(u32),
 }
