@@ -6,6 +6,6 @@ edition = "2021"
 [dependencies]
 core = { path = "../core" }
 serde_json = "1.0.94"
-serde = "1.0.154"
+serde = "1.0.156"
 rand = "0.8.5"
-chrono= "0.4.23"
+chrono= "0.4.24"
