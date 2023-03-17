@@ -25,6 +25,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         {
             field.swap_squads();
+            field.swap_player_positions();
+
             Self::play_rest_time(&mut field);
         }
 

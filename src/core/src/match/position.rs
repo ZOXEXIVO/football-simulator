@@ -63,6 +63,8 @@ impl MatchPositionData {
     }
 }
 
+const MAX_NORMALIZED_VALUE: f32 = 0.5f32;
+
 #[derive(Debug, Copy, Clone)]
 pub struct FieldPosition {
     pub x: f32,
@@ -79,15 +81,20 @@ impl FieldPosition {
     }
 
     pub fn normalize(&self) -> FieldPosition {
-        let len = self.length().sqrt();
+        let mut val = *self;
+
+        let len = val.length();
         if len != 0.0 {
-            FieldPosition {
-                x: self.x / len,
-                y: self.y / len,
+            val.x /= len;
+            val.y /= len;
+
+            if len > MAX_NORMALIZED_VALUE {
+                val.x *= MAX_NORMALIZED_VALUE / len;
+                val.y *= MAX_NORMALIZED_VALUE / len;
             }
-        } else {
-            *self
         }
+
+        val
     }
 
     fn is_collision(&self, other: &FieldPosition) -> bool {
