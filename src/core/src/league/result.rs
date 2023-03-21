@@ -104,8 +104,8 @@ pub struct LeagueMatch {
 }
 
 pub struct LeagueMatchResultResult {
-    pub home_goals: i32,
-    pub away_goals: i32,
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 impl From<ScheduleItem> for LeagueMatch {

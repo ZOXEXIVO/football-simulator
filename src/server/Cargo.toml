@@ -6,10 +6,10 @@ edition = "2021"
 [dependencies]
 core = { path = "../core" }
 database = { path = "../database" }
-axum = "0.6.4"
+axum = "0.6.11"
 log = { version = "0.4.17", features = ["release_max_level_error"] }
-tokio = { version = "1.25.0", features = ["full"] }
-axum-extra = { version = "0.4.2", features = ["spa"] }
-serde = { version = "1.0.152", features = ["derive"] }
-chrono= "0.4.23"
+tokio = { version = "1.26.0", features = ["full"] }
+tower-http = { version = "0.4.0", features = ["fs"] }
+serde = { version = "1.0.158", features = ["derive"] }
+chrono= "0.4.24"
 itertools = "0.10.5"

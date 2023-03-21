@@ -6,11 +6,15 @@ pub enum PlayerPositionType {
     Goalkeeper,
     Sweeper,
     DefenderLeft,
+    DefenderCenterLeft,
     DefenderCenter,
+    DefenderCenterRight,
     DefenderRight,
     DefensiveMidfielder,
     MidfielderLeft,
+    MidfielderCenterLeft,
     MidfielderCenter,
+    MidfielderCenterRight,
     MidfielderRight,
     AttackingMidfielderLeft,
     AttackingMidfielderCenter,
@@ -18,6 +22,9 @@ pub enum PlayerPositionType {
     WingbackLeft,
     WingbackRight,
     Striker,
+    ForwardLeft,
+    ForwardCenter,
+    ForwardRight,
 }
 
 impl Display for PlayerPositionType {
@@ -32,18 +39,52 @@ impl PlayerPositionType {
             PlayerPositionType::Goalkeeper => "GK",
             PlayerPositionType::Sweeper => "SW",
             PlayerPositionType::DefenderLeft => "DL",
+            PlayerPositionType::DefenderCenterLeft => "DCL",
             PlayerPositionType::DefenderCenter => "DC",
+            PlayerPositionType::DefenderCenterRight => "DCR",
             PlayerPositionType::DefenderRight => "DR",
             PlayerPositionType::DefensiveMidfielder => "DM",
             PlayerPositionType::MidfielderLeft => "ML",
+            PlayerPositionType::MidfielderCenterLeft => "MCL",
             PlayerPositionType::MidfielderCenter => "MC",
+            PlayerPositionType::MidfielderCenterRight => "MCR",
             PlayerPositionType::MidfielderRight => "MR",
             PlayerPositionType::AttackingMidfielderLeft => "AML",
             PlayerPositionType::AttackingMidfielderCenter => "AMC",
             PlayerPositionType::AttackingMidfielderRight => "AMR",
-            PlayerPositionType::Striker => "ST",
             PlayerPositionType::WingbackLeft => "WL",
             PlayerPositionType::WingbackRight => "WR",
+            PlayerPositionType::ForwardLeft => "FL",
+            PlayerPositionType::ForwardCenter => "FC",
+            PlayerPositionType::ForwardRight => "FR",
+            PlayerPositionType::Striker => "ST",
+        }
+    }
+
+    pub fn position_group(&self) -> PlayerFieldPositionGroup {
+        match *self {
+            PlayerPositionType::Goalkeeper => PlayerFieldPositionGroup::Goalkeeper,
+            PlayerPositionType::Sweeper => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderLeft => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderCenterLeft => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderCenter => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderCenterRight => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefenderRight => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::DefensiveMidfielder => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::MidfielderLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderCenterLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderCenter => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderCenterRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::AttackingMidfielderLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::AttackingMidfielderCenter => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::AttackingMidfielderRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::WingbackLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::WingbackRight => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::ForwardLeft => PlayerFieldPositionGroup::Forward,
+            PlayerPositionType::ForwardCenter => PlayerFieldPositionGroup::Forward,
+            PlayerPositionType::ForwardRight => PlayerFieldPositionGroup::Forward,
+            PlayerPositionType::Striker => PlayerFieldPositionGroup::Forward,
         }
     }
 }
@@ -73,6 +114,17 @@ impl PlayerPositions {
 
     pub fn is_goalkeeper(&self) -> bool {
         self.positions().contains(&PlayerPositionType::Goalkeeper)
+    }
+
+    pub fn has_position(&self, position: PlayerPositionType) -> bool {
+        self.positions().contains(&position)
+    }
+
+    pub fn get_level(&self, position: PlayerPositionType) -> u8 {
+        match self.positions.iter().find(|p| p.position == position) {
+            Some(p) => p.level,
+            None => 0,
+        }
     }
 }
 
@@ -148,4 +200,11 @@ mod tests {
 
         assert_eq!("WL,WR", display_positions);
     }
+}
+
+pub enum PlayerFieldPositionGroup {
+    Goalkeeper,
+    Defender,
+    Midfielder,
+    Forward,
 }

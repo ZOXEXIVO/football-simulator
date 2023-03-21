@@ -2,19 +2,28 @@ use crate::shared::FullName;
 use crate::utils::IntegerUtils;
 use crate::{
     Mental, PersonAttributes, PersonBehaviour, PersonBehaviourState, Physical, Player,
-    PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPositions, PlayerPreferredFoot,
-    PlayerSkills, PlayerStatistics, PlayerStatisticsHistory, PlayerStatus, PlayerTraining,
-    PlayerTrainingHistory, Relations, Technical,
+    PlayerAttributes, PlayerHappiness, PlayerMailbox, PlayerPosition, PlayerPositionType,
+    PlayerPositions, PlayerPreferredFoot, PlayerSkills, PlayerStatistics, PlayerStatisticsHistory,
+    PlayerStatus, PlayerTraining, PlayerTrainingHistory, Relations, Technical,
 };
 use chrono::{Datelike, NaiveDate};
 
 pub struct PlayerGenerator;
 
 impl PlayerGenerator {
-    pub fn generate(country_id: u32, now: NaiveDate) -> Player {
+    pub fn generate(
+        country_id: u32,
+        now: NaiveDate,
+        position: PlayerPositionType,
+        level: u8,
+    ) -> Player {
         let year = IntegerUtils::random(now.year() - 14, now.year() - 16) as u32;
         let month = IntegerUtils::random(1, 12) as u32;
         let day = IntegerUtils::random(1, 29) as u32;
+
+        let positions = PlayerPositions {
+            positions: vec![PlayerPosition { position, level }],
+        };
 
         Player {
             id: 0,
@@ -82,7 +91,7 @@ impl PlayerGenerator {
                 },
             },
             contract: Option::None,
-            positions: PlayerPositions { positions: vec![] },
+            positions,
             preferred_foot: PlayerPreferredFoot::Left,
             player_attributes: PlayerAttributes {
                 is_banned: false,

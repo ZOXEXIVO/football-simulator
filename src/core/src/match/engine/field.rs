@@ -1,0 +1,159 @@
+﻿use crate::r#match::ball::Ball;
+use crate::r#match::position::FieldPosition;
+use crate::r#match::{
+    FieldSquad, FootballMatchResult, MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING,
+};
+
+pub struct MatchField {
+    pub width: usize,
+    pub height: usize,
+    pub ball: Ball,
+    pub players: Vec<MatchPlayer>,
+    pub substitutes: Vec<MatchPlayer>,
+
+    pub home_players: Option<FieldSquad>,
+    pub away_players: Option<FieldSquad>,
+}
+
+impl MatchField {
+    pub fn new(width: usize, height: usize) -> Self {
+        MatchField {
+            width,
+            height,
+            ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
+            players: Vec::new(),
+            substitutes: Vec::new(),
+            home_players: None,
+            away_players: None,
+        }
+    }
+
+    pub fn setup(&mut self, home_squad: TeamSquad, away_squad: TeamSquad) {
+        self.home_players = Some(FieldSquad {
+            main: home_squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: home_squad.substitutes.iter().map(|p| p.player_id).collect(),
+        });
+
+        self.away_players = Some(FieldSquad {
+            main: away_squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: away_squad.substitutes.iter().map(|p| p.player_id).collect(),
+        });
+
+        let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
+
+        self.players.extend(players_on_field);
+        self.substitutes.extend(substitutes);
+    }
+
+    pub fn swap_squads(&mut self) {
+        std::mem::swap(&mut self.home_players, &mut self.away_players);
+    }
+
+    pub fn swap_player_positions(&mut self) {
+        self.players.iter_mut().for_each(|p| p.is_home = !p.is_home);
+    }
+
+    pub fn write_match_positions(&self, result: &mut FootballMatchResult, timestamp: u64) {
+        // player positions
+        self.players.iter().for_each(|player| {
+            result.position_data.add_player_positions(
+                player.player_id,
+                timestamp,
+                player.position.x,
+                player.position.y,
+            );
+        });
+
+        // player positions
+        self.substitutes.iter().for_each(|sub_player| {
+            result.position_data.add_player_positions(
+                sub_player.player_id,
+                timestamp,
+                sub_player.position.x,
+                sub_player.position.y,
+            );
+        });
+
+        // write positions
+        result.position_data.add_ball_positions(
+            timestamp,
+            self.ball.position.x,
+            self.ball.position.y,
+        );
+    }
+}
+
+fn setup_player_on_field(
+    home_squad: TeamSquad,
+    away_squad: TeamSquad,
+) -> (Vec<MatchPlayer>, Vec<MatchPlayer>) {
+    let mut players_on_field: Vec<MatchPlayer> = Vec::with_capacity(22);
+    let mut substitutes: Vec<MatchPlayer> = Vec::with_capacity(30);
+
+    // home
+    home_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut home_player| {
+            let tactics_position = home_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, home_position, _)| home_position)
+                .for_each(|position| {
+                    if let PositionType::Home(x, y) = position {
+                        home_player.is_home = true;
+                        home_player.position = FieldPosition::new(*x as f32, *y as f32);
+                        home_player.start_position = FieldPosition::new(*x as f32, *y as f32);
+
+                        players_on_field.push(home_player);
+                    }
+                });
+        });
+
+    home_squad
+        .substitutes
+        .into_iter()
+        .for_each(|mut home_player| {
+            home_player.is_home = true;
+            home_player.position = FieldPosition::new(1.0, 1.0);
+
+            substitutes.push(home_player);
+        });
+
+    // away
+    away_squad
+        .main_squad
+        .into_iter()
+        .for_each(|mut away_player| {
+            let tactics_position = away_player.tactics_position;
+
+            POSITION_POSITIONING
+                .iter()
+                .filter(|(positioning, _, _)| *positioning == tactics_position)
+                .map(|(_, _, away_position)| away_position)
+                .for_each(|position| {
+                    if let PositionType::Away(x, y) = position {
+                        away_player.is_home = false;
+
+                        away_player.position = FieldPosition::new(*x as f32, *y as f32);
+                        away_player.start_position = FieldPosition::new(*x as f32, *y as f32);
+
+                        players_on_field.push(away_player);
+                    }
+                });
+        });
+
+    away_squad
+        .substitutes
+        .into_iter()
+        .for_each(|mut away_player| {
+            away_player.is_home = false;
+            away_player.position = FieldPosition::new(1.0, 1.0);
+
+            substitutes.push(away_player);
+        });
+
+    (players_on_field, substitutes)
+}

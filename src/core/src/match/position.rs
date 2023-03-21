@@ -1,7 +1,8 @@
 ﻿use nalgebra::Vector2;
+use rand::Rng;
 use rand_distr::num_traits::Pow;
 use std::collections::HashMap;
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, AddAssign, Mul, Sub};
 
 #[derive(Debug, Clone)]
 pub struct PositionDataItem {
@@ -62,6 +63,8 @@ impl MatchPositionData {
     }
 }
 
+const MAX_NORMALIZED_VALUE: f32 = 0.5f32;
+
 #[derive(Debug, Copy, Clone)]
 pub struct FieldPosition {
     pub x: f32,
@@ -78,14 +81,43 @@ impl FieldPosition {
     }
 
     pub fn normalize(&self) -> FieldPosition {
-        let len = self.length().sqrt();
+        let mut val = *self;
+
+        let len = val.length();
         if len != 0.0 {
-            FieldPosition {
-                x: self.x / len,
-                y: self.y / len,
+            val.x /= len;
+            val.y /= len;
+
+            if len > MAX_NORMALIZED_VALUE {
+                val.x *= MAX_NORMALIZED_VALUE / len;
+                val.y *= MAX_NORMALIZED_VALUE / len;
             }
-        } else {
-            *self
+        }
+
+        val
+    }
+
+    fn is_collision(&self, other: &FieldPosition) -> bool {
+        const COLLISION_RADIUS: f32 = 2.0;
+
+        let x_diff = (self.x - other.x).abs();
+        let y_diff = (self.y - other.y).abs();
+
+        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
+    }
+
+    pub fn distance_to(&self, other: &FieldPosition) -> f32 {
+        ((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).sqrt()
+    }
+
+    pub fn random_in_unit_circle() -> Self {
+        let mut rng = rand::thread_rng();
+
+        let r: f32 = rng.gen_range(0.0..1.0);
+        let theta: f32 = rng.gen_range(0.0..2.0 * std::f32::consts::PI);
+        FieldPosition {
+            x: r * theta.cos(),
+            y: r * theta.sin(),
         }
     }
 }
@@ -131,6 +163,24 @@ impl Add<f32> for FieldPosition {
             x: self.x + other,
             y: self.y + other,
         }
+    }
+}
+
+impl Add<FieldPosition> for FieldPosition {
+    type Output = FieldPosition;
+
+    fn add(self, other: FieldPosition) -> FieldPosition {
+        FieldPosition {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+impl AddAssign<f32> for FieldPosition {
+    fn add_assign(&mut self, rhs: f32) {
+        self.x += rhs;
+        self.y += rhs;
     }
 }
 

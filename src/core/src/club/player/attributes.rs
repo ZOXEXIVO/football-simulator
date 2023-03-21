@@ -1,3 +1,5 @@
+const CONDITION_MAX_VALUE: i16 = 10000;
+
 #[derive(Debug, Clone, Copy)]
 pub struct PlayerAttributes {
     pub is_banned: bool,
@@ -27,4 +29,13 @@ pub struct PlayerAttributes {
 
     pub under_21_international_apps: u16,
     pub under_21_international_goals: u16,
+}
+
+impl PlayerAttributes {
+    pub fn rest(&mut self, val: u16) {
+        self.condition += val as i16;
+        if self.condition > CONDITION_MAX_VALUE {
+            self.condition = CONDITION_MAX_VALUE;
+        }
+    }
 }

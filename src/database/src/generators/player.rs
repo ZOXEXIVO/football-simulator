@@ -16,7 +16,7 @@ pub struct PlayerGenerator {
 impl PlayerGenerator {
     pub fn with_people_names(people_names: &PeopleNameGeneratorData) -> Self {
         PlayerGenerator {
-            sequence: Arc::new(AtomicU32::new(0)),
+            sequence: Arc::new(AtomicU32::new(1)),
             people_names_data: PeopleNameGeneratorData {
                 first_names: people_names.first_names.clone(),
                 last_names: people_names.last_names.clone(),
@@ -116,7 +116,7 @@ impl PlayerGenerator {
                 position: PlayerPositionType::Goalkeeper,
                 level: 20,
             }),
-            PositionType::Defender => match IntegerUtils::random(0, 3) % 3 {
+            PositionType::Defender => match IntegerUtils::random(0, 5) {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::DefenderLeft,
@@ -125,11 +125,24 @@ impl PlayerGenerator {
                 }
                 1 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::DefenderCenter,
+                        position: PlayerPositionType::DefenderCenterLeft,
                         level: 20,
                     });
                 }
                 2 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::DefenderCenter,
+                        level: 20,
+                    });
+                }
+                3 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::DefenderCenterRight,
+                        level: 20,
+                    });
+                }
+
+                4 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::DefenderRight,
                         level: 20,
@@ -137,7 +150,7 @@ impl PlayerGenerator {
                 }
                 _ => {}
             },
-            PositionType::Midfielder => match IntegerUtils::random(0, 3) % 3 {
+            PositionType::Midfielder => match IntegerUtils::random(0, 7) {
                 0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::MidfielderLeft,
@@ -146,34 +159,64 @@ impl PlayerGenerator {
                 }
                 1 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::MidfielderCenter,
+                        position: PlayerPositionType::MidfielderCenterLeft,
                         level: 20,
                     });
                 }
                 2 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::MidfielderCenter,
+                        level: 20,
+                    });
+                }
+                3 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::MidfielderCenterRight,
+                        level: 20,
+                    });
+                }
+                4 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::MidfielderRight,
                         level: 20,
                     });
                 }
-                _ => {}
-            },
-            PositionType::Striker => match IntegerUtils::random(0, 3) % 3 {
-                0 => {
+                5 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::WingbackLeft,
                         level: 20,
                     });
                 }
-                1 => {
+                6 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::WingbackRight,
+                        level: 20,
+                    });
+                }
+                _ => {}
+            },
+            PositionType::Striker => match IntegerUtils::random(0, 4) {
+                0 => {
                     positions.push(PlayerPosition {
                         position: PlayerPositionType::Striker,
                         level: 20,
                     });
                 }
+                1 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::ForwardLeft,
+                        level: 20,
+                    });
+                }
                 2 => {
                     positions.push(PlayerPosition {
-                        position: PlayerPositionType::WingbackRight,
+                        position: PlayerPositionType::ForwardCenter,
+                        level: 20,
+                    });
+                }
+                3 => {
+                    positions.push(PlayerPosition {
+                        position: PlayerPositionType::ForwardRight,
                         level: 20,
                     });
                 }

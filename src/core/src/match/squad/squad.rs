@@ -9,3 +9,10 @@ pub struct TeamSquad {
     pub main_squad: Vec<MatchPlayer>,
     pub substitutes: Vec<MatchPlayer>,
 }
+
+impl TeamSquad {
+    pub fn contains_player(&self, player_id: u32) -> bool {
+        self.main_squad.iter().any(|p| p.player_id == player_id)
+            || self.substitutes.iter().any(|p| p.player_id == player_id)
+    }
+}

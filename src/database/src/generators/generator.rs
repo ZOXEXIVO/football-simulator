@@ -1,9 +1,9 @@
 use crate::generators::{PlayerGenerator, PositionType, StaffGenerator};
 use crate::loaders::ContinentEntity;
 use crate::DatabaseEntity;
-use chrono::{Duration, NaiveDate, NaiveDateTime};
+use chrono::{NaiveDate, NaiveDateTime};
 use core::club::academy::ClubAcademy;
-use core::context::{NaiveTime, Timelike};
+use core::context::NaiveTime;
 use core::continent::Continent;
 use core::league::LeagueCollection;
 use core::league::Schedule;
@@ -15,9 +15,8 @@ use core::TeamCollection;
 use core::{
     Club, ClubBoard, ClubFinances, ClubMood, Country, CountryGeneratorData, Player,
     PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, StaffStub, Team,
-    TeamReputation, TeamType, TrainingSchedule, Utc,
+    TeamReputation, TeamType, TrainingSchedule,
 };
-use std::ops::Add;
 use std::str::FromStr;
 
 pub struct DatabaseGenerator;
@@ -194,19 +193,19 @@ impl DatabaseGenerator {
     fn generate_players(player_generator: &mut PlayerGenerator, country_id: u32) -> Vec<Player> {
         let mut players = Vec::with_capacity(100);
 
-        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(2, 5))
+        let mut goalkeepers: Vec<Player> = (0..IntegerUtils::random(3, 5))
             .map(|_| player_generator.generate(country_id, PositionType::Goalkeeper))
             .collect();
 
-        let mut defenders: Vec<Player> = (0..IntegerUtils::random(7, 15))
+        let mut defenders: Vec<Player> = (0..IntegerUtils::random(20, 40))
             .map(|_| player_generator.generate(country_id, PositionType::Defender))
             .collect();
 
-        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(9, 17))
+        let mut midfielders: Vec<Player> = (0..IntegerUtils::random(25, 35))
             .map(|_| player_generator.generate(country_id, PositionType::Midfielder))
             .collect();
 
-        let mut strikers: Vec<Player> = (0..IntegerUtils::random(2, 6))
+        let mut strikers: Vec<Player> = (0..IntegerUtils::random(20, 24))
             .map(|_| player_generator.generate(country_id, PositionType::Striker))
             .collect();
 

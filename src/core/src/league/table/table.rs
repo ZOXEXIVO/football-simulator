@@ -50,32 +50,32 @@ impl LeagueTable {
         self.rows.iter_mut().find(|c| c.team_id == team_id).unwrap()
     }
 
-    fn winner(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
+    fn winner(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
         let mut team = self.get_team_mut(team_id);
 
         team.played += 1;
         team.win += 1;
-        team.goal_scored += goal_scored;
-        team.goal_concerned += goal_concerned;
+        team.goal_scored += goal_scored as i32;
+        team.goal_concerned += goal_concerned as i32;
         team.points += 3;
     }
 
-    fn looser(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
+    fn looser(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
         let mut team = self.get_team_mut(team_id);
 
         team.played += 1;
         team.lost += 1;
-        team.goal_scored += goal_scored;
-        team.goal_concerned += goal_concerned;
+        team.goal_scored += goal_scored as i32;
+        team.goal_concerned += goal_concerned as i32;
     }
 
-    fn draft(&mut self, team_id: u32, goal_scored: i32, goal_concerned: i32) {
+    fn draft(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
         let mut team = self.get_team_mut(team_id);
 
         team.played += 1;
         team.draft += 1;
-        team.goal_scored += goal_scored;
-        team.goal_concerned += goal_concerned;
+        team.goal_scored += goal_scored as i32;
+        team.goal_concerned += goal_concerned as i32;
         team.points += 1;
     }
 
@@ -145,7 +145,7 @@ mod tests {
             away_team_id: 2,
             home_goals: 3,
             away_goals: 3,
-            details: None,
+            result_details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -192,7 +192,7 @@ mod tests {
             away_team_id,
             home_goals: 3,
             away_goals: 0,
-            details: None,
+            result_details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -247,7 +247,7 @@ mod tests {
             away_team_id,
             home_goals: 0,
             away_goals: 3,
-            details: None,
+            result_details: None,
         }];
 
         table.update_from_results(&match_results);

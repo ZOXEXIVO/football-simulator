@@ -1,6 +1,5 @@
-﻿use crate::player::PlayerStatusDto;
-use crate::GameAppData;
-use axum::extract::{Path, State};
+﻿use crate::GameAppData;
+use axum::extract::State;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use chrono::Utc;
@@ -13,7 +12,7 @@ pub struct CurrentDateModel {
 }
 
 pub async fn current_date_action(State(state): State<GameAppData>) -> Response {
-    let data = state.data.lock().await;
+    let data = state.data.read().await;
 
     let date = match data.as_ref() {
         None => Utc::now().naive_utc(),

@@ -35,8 +35,8 @@ pub struct TeamScheduleItem<'t> {
 #[derive(Serialize)]
 pub struct TeamScheduleItemResult<'t> {
     pub match_id: &'t str,
-    pub home_goals: i32,
-    pub away_goals: i32,
+    pub home_goals: u8,
+    pub away_goals: u8,
 }
 
 #[derive(Serialize)]
@@ -50,7 +50,7 @@ pub async fn team_schedule_get_action(
     State(state): State<GameAppData>,
     Path(route_params): Path<TeamScheduleGetRequest>,
 ) -> Response {
-    let guard = state.data.lock().await;
+    let guard = state.data.read().await;
 
     let simulator_data = guard.as_ref().unwrap();
 

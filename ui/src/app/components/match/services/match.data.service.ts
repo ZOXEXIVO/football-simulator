@@ -1,7 +1,14 @@
 import {Injectable} from "@angular/core";
-import {Observable, of, Subject, switchMap} from "rxjs";
+import {finalize, Observable, of, Subject, switchMap} from "rxjs";
 import {MatchDto, MatchService, ObjectPositionDto} from "./match.api.service";
-import {BallModel, MatchModel, PlayerModel} from "../play/models/models";
+import {
+  BallModel,
+  MatchLineupSetupCompleted,
+  MatchModel,
+  PlayerModel,
+  SquadPlayerModel,
+  TeamModel
+} from "../play/models/models";
 
 @Injectable({
   providedIn: 'root',
@@ -11,26 +18,160 @@ export class MatchDataService {
   matchId: string = '';
 
   offset = 0;
-  limit = 100;
+  limit = 1000;
+
+  isBusy = false;
 
   public matchData: MatchModel = new MatchModel();
+
   lastLoadedTimestamp = 0;
+  loadDataFinished = false;
 
   constructor(private matchService: MatchService) {
 
   }
 
-  init(leagueSlug: string, matchId: string): Observable<any> {
+  init(leagueSlug: string, matchId: string): Observable<MatchLineupSetupCompleted> {
     this.leagueSlug = leagueSlug;
     this.matchId = matchId;
 
-    return this.loadData();
+    const subject = new Subject<MatchLineupSetupCompleted>();
+
+    this.matchService.lineup(this.leagueSlug, this.matchId).subscribe(matchLineupData => {
+      this.matchData.score.home_goals = matchLineupData.score.home_goals;
+      this.matchData.score.away_goals = matchLineupData.score.away_goals;
+
+      this.matchData.home_team = new TeamModel(
+        matchLineupData.home_team_name,
+        matchLineupData.home_team_slug
+      );
+
+      this.matchData.away_team = new TeamModel(
+        matchLineupData.away_team_name,
+        matchLineupData.away_team_slug
+      );
+
+      // setup ball
+      this.matchData.ball = new BallModel([
+        new ObjectPositionDto(0,
+          matchLineupData.ball.start_position[0],
+          matchLineupData.ball.start_position[1]
+        )
+      ]);
+
+      // setup players
+      for (const player of matchLineupData.home_squad.main) {
+        let playerPosition = new ObjectPositionDto(0,
+          player.start_position[0],
+          player.start_position[1]
+        );
+
+        this.matchData.players.push(new PlayerModel(player.id, true, [playerPosition]));
+      }
+
+      for (const player of matchLineupData.away_squad.main) {
+        let playerPosition = new ObjectPositionDto(0,
+          player.start_position[0],
+          player.start_position[1]
+        );
+
+        this.matchData.players.push(new PlayerModel(player.id, false, [playerPosition]));
+      }
+
+      // Squad
+
+      // Home
+      for (const homeSquadPlayer of matchLineupData.home_squad.main) {
+        this.matchData.squad.home.push(new SquadPlayerModel(
+          homeSquadPlayer.id,
+          homeSquadPlayer.first_name,
+          homeSquadPlayer.last_name,
+          homeSquadPlayer.middle_name,
+          homeSquadPlayer.position,
+          homeSquadPlayer.team_slug
+        ));
+      }
+
+      // Home subs
+      for (const homeSubsSquadPlayer of matchLineupData.home_squad.substitutes) {
+        this.matchData.squad.home_subs.push(new SquadPlayerModel(
+          homeSubsSquadPlayer.id,
+          homeSubsSquadPlayer.first_name,
+          homeSubsSquadPlayer.last_name,
+          homeSubsSquadPlayer.middle_name,
+          homeSubsSquadPlayer.position,
+          homeSubsSquadPlayer.team_slug
+        ));
+      }
+
+      // Away
+
+      for (const awaySquadPlayer of matchLineupData.away_squad.main) {
+        this.matchData.squad.away.push(new SquadPlayerModel(
+          awaySquadPlayer.id,
+          awaySquadPlayer.first_name,
+          awaySquadPlayer.last_name,
+          awaySquadPlayer.middle_name,
+          awaySquadPlayer.position,
+          awaySquadPlayer.team_slug
+        ));
+      }
+
+      for (const awaySubsSquadPlayer of matchLineupData.away_squad.substitutes) {
+        this.matchData.squad.away_subs.push(new SquadPlayerModel(
+          awaySubsSquadPlayer.id,
+          awaySubsSquadPlayer.first_name,
+          awaySubsSquadPlayer.last_name,
+          awaySubsSquadPlayer.middle_name,
+          awaySubsSquadPlayer.position,
+          awaySubsSquadPlayer.team_slug
+        ));
+      }
+
+      subject.next(new MatchLineupSetupCompleted(matchLineupData.match_time_ms));
+    });
+
+    return subject.asObservable();
+  }
+
+  updateMatchData(matchDtaDto: MatchDto) {
+    // ball
+    this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
+
+    // players
+    for (const playerData of this.matchData.players) {
+      for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
+        if (playerData.id != Number(playerId)) {
+          let newPlayerData = data as number[][];
+          playerData.data.push(...newPlayerData.map(pd => new ObjectPositionDto(pd[0], pd[1], pd[2])));
+        }
+      }
+
+    }
+
+    for (const ballData of matchDtaDto.ball_data) {
+      this.matchData.ball.data.push(new ObjectPositionDto(ballData[0], ballData[1], ballData[2]))
+    }
+
+    if (matchDtaDto.ball_data.length > 0) {
+      this.lastLoadedTimestamp = matchDtaDto.ball_data[matchDtaDto.ball_data.length - 1][0];
+
+      console.log('lastLoadedTimestamp = ' + this.lastLoadedTimestamp);
+    }
   }
 
   loadData(): Observable<any> {
     const subject = new Subject<any>();
 
+    if(this.loadDataFinished){
+      return of({});
+    }
+
     this.matchService.get(this.leagueSlug, this.matchId, this.offset, this.limit).subscribe(matchData => {
+      if(matchData.ball_data.length == 0){
+        this.loadDataFinished = true;
+      }
+
       this.updateMatchData(matchData);
 
       this.offset += this.limit;
@@ -41,81 +182,50 @@ export class MatchDataService {
     return subject.asObservable();
   }
 
-  updateMatchData(matchDtaDto: MatchDto) {
-    if (this.matchData.ball.data.length == 0) {
-      // ball
-      this.matchData.ball = new BallModel(matchDtaDto.ball_data
-        .map(data => new ObjectPositionDto(data[0], data[1], data[2]))
-      );
+  getData(timestamp: number): Observable<MatchDataResultModel> {
+    if (this.lastLoadedTimestamp + 100 < timestamp) {
+      if (!this.isBusy) {
+        this.isBusy = true;
 
-      // players
-      for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
-        const pid = Number(playerId);
-        this.matchData.players.push(new PlayerModel(pid,
-          matchDtaDto.home_team_players.includes(pid),
-          (data as number[][]).map(dt => new ObjectPositionDto(dt[0], dt[1], dt[2])))
+        return this.loadData().pipe(
+          finalize(() => {
+            this.isBusy = false;
+          }),
+          switchMap(() => {
+            return this.getLocalData(timestamp);
+          })
         );
-      }
-
-      if (matchDtaDto.ball_data.length > 0) {
-        this.lastLoadedTimestamp = matchDtaDto.ball_data[matchDtaDto.ball_data.length - 1][0]
-      }
-    } else {
-      // ball
-      this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
-
-      // players
-      for (const playerData of this.matchData.players) {
-        for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
-          if(playerData.id != Number(playerId)) {
-            let newPlayerData = data as number[][];
-            playerData.data.push(...newPlayerData.map(pd => new ObjectPositionDto(pd[0], pd[1], pd[2])));
-          }
-        }
-
-      }
-
-      if (matchDtaDto.ball_data.length > 0) {
-        this.lastLoadedTimestamp = matchDtaDto.ball_data[matchDtaDto.ball_data.length - 1][0];
+      } else {
+        return this.getLocalData(timestamp);
       }
     }
+
+    return this.getLocalData(timestamp);
   }
 
-  getData(timestamp: number): Observable<MatchDataResultModel> {
-    //console.log('getData: try load data for timestamp: ' + timestamp + ' lastLoadedTimestamp: ' + this.lastLoadedTimestamp);
-
-    // Check if data for the requested timestamp has not been loaded yet
-    if (this.lastLoadedTimestamp < timestamp) {
-      return this.loadData().pipe(
-        switchMap(() => {
-          return this.getData(timestamp);
-        })
-      );
-    } else {
-      // ball
-      let ts = -1;
-      while (ts < timestamp && this.matchData.ball.currentCoordIdx < this.matchData.ball.data.length) {
-        ts = this.matchData.ball.data[this.matchData.ball.currentCoordIdx].timestamp;
-        this.matchData.ball.currentCoordIdx++;
-      }
-
-      // players
-      let playerResults = [];
-
-      for (const player of this.matchData.players) {
-        let pts = -1;
-        while (pts  < timestamp && player.currentCoordIdx < player.data.length) {
-          pts = player.data[player.currentCoordIdx].timestamp;
-          player.currentCoordIdx++;
-        }
-
-        playerResults.push(new PlayerDataResultModel(player.id, player.data[player.currentCoordIdx - 1]));
-      }
-
-      const ballResult = this.matchData.ball.data[this.matchData.ball.currentCoordIdx - 1];
-
-      return of(new MatchDataResultModel(playerResults, ballResult));
+  getLocalData(timestamp: number): Observable<MatchDataResultModel> {
+    // ball
+    let ts = -1;
+    while (ts < timestamp && this.matchData.ball.currentCoordIdx < this.matchData.ball.data.length) {
+      ts = this.matchData.ball.data[this.matchData.ball.currentCoordIdx].timestamp;
+      this.matchData.ball.currentCoordIdx++;
     }
+
+    const ballResult = this.matchData.ball.data[this.matchData.ball.currentCoordIdx - 1];
+
+    // players
+    let playerResults = [];
+    for (const player of this.matchData.players) {
+      let pts = -1;
+      while (pts < timestamp && player.currentCoordIdx < player.data.length) {
+        pts = player.data[player.currentCoordIdx].timestamp;
+        player.currentCoordIdx++;
+      }
+
+      playerResults.push(new PlayerDataResultModel(player.id, player.data[player.currentCoordIdx - 1]));
+    }
+
+    return of(new MatchDataResultModel(playerResults, ballResult));
   }
 }
 

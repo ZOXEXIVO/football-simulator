@@ -6,8 +6,9 @@ use crate::player::player_routes;
 use crate::r#match::routes::match_routes;
 use crate::teams::team_routes;
 use crate::GameAppData;
+use axum::routing::get_service;
 use axum::Router;
-use axum_extra::routing::SpaRouter;
+use tower_http::services::{ServeDir, ServeFile};
 
 pub struct ServerRoutes;
 
@@ -24,9 +25,20 @@ impl ServerRoutes {
 
         #[cfg(debug_assertions)]
         let client_app_dir = "ui/dist";
+        #[cfg(debug_assertions)]
+        let client_app_index_file = "./ui/dist/index.html";
+
         #[cfg(not(debug_assertions))]
         let client_app_dir = "dist";
+        #[cfg(not(debug_assertions))]
+        let client_app_index_file = "dist/index.html";
 
-        routes.merge(SpaRouter::new("/dist", client_app_dir).index_file("index.html"))
+        Router::new()
+            .fallback(get_service(ServeFile::new(client_app_index_file)))
+            .merge(routes)
+            .nest_service(
+                "/dist",
+                ServeDir::new(client_app_dir).fallback(ServeFile::new(client_app_index_file)),
+            )
     }
 }

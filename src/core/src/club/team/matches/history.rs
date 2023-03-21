@@ -23,11 +23,11 @@ impl MatchHistory {
 pub struct MatchHistoryItem {
     date: NaiveDateTime,
     rival_team_id: u32,
-    score: (i32, i32),
+    score: (u8, u8),
 }
 
 impl MatchHistoryItem {
-    pub fn new(date: NaiveDateTime, rival_team_id: u32, score: (i32, i32)) -> Self {
+    pub fn new(date: NaiveDateTime, rival_team_id: u32, score: (u8, u8)) -> Self {
         MatchHistoryItem {
             date,
             rival_team_id,
