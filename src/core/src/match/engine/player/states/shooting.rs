@@ -13,10 +13,10 @@ impl ShootingState {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        player.velocity = player.skills.running_speed();
-        // let distance_to_goal = (self.position.x - self.field.width as i16 / 2).abs();
-        // if distance_to_goal < 50 {
-        //     let mut rng = thread_rng();
+        //         player.velocity = player.skills.running_speed();
+        //         // let distance_to_goal = (self.position.x - self.field.width as i16 / 2).abs();
+        //         // if distance_to_goal < 50 {
+        //         //     let mut rng = thread_rng();
         //     let shot_success = rng.gen_range(0, 100);
         //
         //     let shooting_skill = self.skills.technical.finishing;

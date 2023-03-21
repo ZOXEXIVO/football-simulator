@@ -1,5 +1,7 @@
-﻿use crate::r#match::{
+﻿use crate::r#match::position::FieldPosition;
+use crate::r#match::{
     BallState, MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
+    SteeringOutput,
 };
 use nalgebra::Vector2;
 
@@ -13,53 +15,65 @@ impl DefenderStrategies {
         objects_positions: &MatchObjectsPositions,
         state: &MatchState,
     ) -> Vector2<f32> {
-        match state.ball_state {
+        let behavior = match state.ball_state {
             Some(ball_state) => match ball_state {
                 BallState::HomeSide => {
                     if player.is_home {
-                        // defend when i'm defender and ball on my side of field
-                        DefenderStrategies::defend(player, result, objects_positions, state)
+                        DefenderBehavior::Defend
                     } else {
-                        DefenderStrategies::support(player, result, objects_positions, state)
+                        DefenderBehavior::Support
                     }
                 }
                 BallState::AwaySide => {
                     if player.is_home {
-                        DefenderStrategies::support(player, result, objects_positions, state)
+                        DefenderBehavior::Support
                     } else {
-                        DefenderStrategies::defend(player, result, objects_positions, state)
+                        DefenderBehavior::Defend
                     }
                 }
             },
-            None => Vector2::new(0.0, 0.0),
-        }
-    }
+            None => DefenderBehavior::Idle,
+        };
 
-    fn defend(
-        player: &MatchPlayer,
-        result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-        state: &MatchState,
-    ) -> Vector2<f32> {
-        let steering_output = SteeringBehavior::Seek {
-            target: objects_positions.ball_positions,
-        }
-        .calculate(player);
+        let steering_output = match behavior {
+            DefenderBehavior::Defend => {
+                if DefenderStrategies::is_on_defending_half(player, state) {
+                    SteeringBehavior::Seek {
+                        target: objects_positions.ball_positions,
+                    }
+                    .calculate(player)
+                } else {
+                    SteeringBehavior::Arrive {
+                        target: FieldPosition::new(0.0, 0.0),
+                        slowing_distance: 2.0,
+                    }
+                    .calculate(player)
+                }
+            }
+            DefenderBehavior::Support => SteeringBehavior::Arrive {
+                target: player.start_position,
+                slowing_distance: 2.0,
+            }
+            .calculate(player),
+            DefenderBehavior::Idle => SteeringOutput {
+                velocity: FieldPosition::new(0.0, 0.0),
+                rotation: 0.0,
+            },
+        };
 
         Vector2::new(steering_output.velocity.x, steering_output.velocity.y)
     }
 
-    fn support(
-        player: &MatchPlayer,
-        result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-        state: &MatchState,
-    ) -> Vector2<f32> {
-        let steering_output = SteeringBehavior::Seek {
-            target: player.start_position,
+    fn is_on_defending_half(player: &MatchPlayer, state: &MatchState) -> bool {
+        match state.ball_state {
+            Some(ball_state) => ball_state == BallState::HomeSide && player.is_home,
+            None => false,
         }
-        .calculate(player);
-
-        Vector2::new(steering_output.velocity.x, steering_output.velocity.y)
     }
+}
+
+enum DefenderBehavior {
+    Defend,
+    Support,
+    Idle,
 }

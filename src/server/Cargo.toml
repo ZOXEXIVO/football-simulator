@@ -9,8 +9,7 @@ database = { path = "../database" }
 axum = "0.6.11"
 log = { version = "0.4.17", features = ["release_max_level_error"] }
 tokio = { version = "1.26.0", features = ["full"] }
-axum-extra = { version = "0.5.0", features = ["spa"] }
-tower-http  = "0.4.0"
-serde = { version = "1.0.156", features = ["derive"] }
+tower-http = { version = "0.4.0", features = ["fs"] }
+serde = { version = "1.0.158", features = ["derive"] }
 chrono= "0.4.24"
 itertools = "0.10.5"
