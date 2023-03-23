@@ -12,6 +12,7 @@ pub struct Ball {
     pub owner: Option<BallOwner>,
     pub ball_position: BallPosition,
     pub center_field_position: f32,
+    pub height: f32,
 }
 
 impl Ball {
@@ -24,6 +25,7 @@ impl Ball {
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
+            height: 0.0,
         }
     }
 
@@ -71,6 +73,30 @@ impl Ball {
                 }
             }
         }
+    }
+
+    pub fn calculate_velocity(pass_direction: Vector2<f32>, pass_power: f32) -> Vector2<f32> {
+        // The mass of a standard football is around 0.43 kg
+        let ball_mass = 0.43;
+        // The coefficient of friction between the ball and grass is around 0.1
+        let friction_coefficient = 0.1;
+        // The acceleration due to gravity is approximately 9.81 m/s^2
+        let gravity = Vector2::new(0.0, -9.81);
+
+        // Calculate the direction and magnitude of the pass velocity
+        let pass_velocity = pass_direction.normalize() * pass_power;
+
+        // Calculate the net force acting on the ball, taking into account friction and gravity
+        let net_force = pass_velocity * ball_mass * -friction_coefficient + ball_mass * gravity;
+
+        // Calculate the acceleration of the ball based on the net force
+        let acceleration = net_force / ball_mass;
+
+        // Calculate the final velocity of the ball after a certain amount of time has passed
+        let time_elapsed = 0.5; // 0.5 seconds for the sake of example
+        let final_velocity = pass_velocity + acceleration * time_elapsed;
+
+        final_velocity
     }
 
     fn check_boundary_collision(&mut self, result: &mut Vec<BallUpdateEvent>) {

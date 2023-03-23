@@ -211,3 +211,9 @@ impl PartialEq for FieldPosition {
         self.x == other.x && self.y == other.y
     }
 }
+
+pub struct PlayerFieldPosition {
+    pub player_id: u32,
+    pub is_home: bool,
+    pub position: FieldPosition,
+}

@@ -127,24 +127,6 @@ impl MatchPlayer {
         self.state
     }
 
-    // fn find_closest_teammate(&self, state: &MatchState) -> Option<&MatchPlayer> {
-    //     let max_pass_distance = 20.0; // Maximum distance a player can pass the ball
-    //     let mut closest_teammate = None;
-    //     let mut closest_distance = std::f32::MAX;
-    //
-    //     for player in state.players.iter() {
-    //         if player.is_home == self.is_home && player != self && !player.attributes.is_marked {
-    //             let distance = self.position.distance_to(&player.position);
-    //             if distance < closest_distance && distance < max_pass_distance {
-    //                 closest_teammate = Some(player);
-    //                 closest_distance = distance;
-    //             }
-    //         }
-    //     }
-    //
-    //     closest_teammate
-    // }
-
     // fn calculate_pass_vector(&self, teammate: &MatchPlayer) -> Vector {
     //     // code to calculate pass vector
     // }
