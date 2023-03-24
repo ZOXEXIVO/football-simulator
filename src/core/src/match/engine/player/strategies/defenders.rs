@@ -3,7 +3,7 @@ use crate::r#match::{
     BallState, MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
     SteeringOutput,
 };
-use nalgebra::{Vector2, Vector3};
+use nalgebra::Vector3;
 
 pub struct DefenderStrategies {}
 

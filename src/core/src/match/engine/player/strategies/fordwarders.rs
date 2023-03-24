@@ -1,5 +1,5 @@
 ﻿use crate::r#match::{MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent};
-use nalgebra::{Vector2, Vector3};
+use nalgebra::Vector3;
 
 pub struct ForwardStrategies {}
 

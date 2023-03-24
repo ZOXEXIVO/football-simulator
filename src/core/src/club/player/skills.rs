@@ -1,4 +1,4 @@
-use nalgebra::{Vector2, Vector3};
+use nalgebra::Vector3;
 
 #[derive(Debug, Copy, Clone)]
 pub struct PlayerSkills {

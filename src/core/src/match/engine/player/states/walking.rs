@@ -2,7 +2,7 @@ use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior,
 };
-use nalgebra::{Vector2, Vector3};
+use nalgebra::Vector3;
 
 pub struct WalkingState {}
 

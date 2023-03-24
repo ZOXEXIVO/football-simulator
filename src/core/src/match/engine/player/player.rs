@@ -1,9 +1,8 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::{
-    DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchContext,
+    DefenderStrategies, ForwardStrategies, GoalkeeperStrategies, MatchContext,
     MatchObjectsPositions, MatchState, MidfielderStrategies, PassingDecisionState, PassingState,
-    ReturningState, RunningState, ShootingState, StandingState, SteeringBehavior, TacklingState,
-    WalkingState,
+    ReturningState, RunningState, ShootingState, StandingState, TacklingState, WalkingState,
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,

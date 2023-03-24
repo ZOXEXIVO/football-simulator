@@ -1,7 +1,4 @@
-use crate::r#match::{
-    MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior,
-};
-use nalgebra::Vector2;
+use crate::r#match::{MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
 
 pub struct RunningState {}
 
