@@ -7,9 +7,9 @@ use crate::r#match::{
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
-    PlayerSkills, PlayerStatusType,
+    PlayerSkills,
 };
-use nalgebra::Vector2;
+use nalgebra::Vector3;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -20,7 +20,7 @@ pub struct MatchPlayer {
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
-    pub velocity: Vector2<f32>,
+    pub velocity: Vector3<f32>,
     pub has_ball: bool,
     pub is_home: bool,
     pub state: PlayerState,
@@ -31,13 +31,13 @@ impl MatchPlayer {
     pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
         MatchPlayer {
             player_id: player.id,
-            position: FieldPosition::new(0.0, 0.0),
-            start_position: FieldPosition::new(0.0, 0.0),
+            position: FieldPosition::new(0.0, 0.0, 0.0),
+            start_position: FieldPosition::new(0.0, 0.0, 0.0),
             attributes: player.attributes.clone(),
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            velocity: Vector2::new(1.0, 1.0),
+            velocity: Vector3::new(1.0, 1.0, 0.0),
             has_ball: false,
             is_home: false,
             state: PlayerState::Standing,

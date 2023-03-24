@@ -2,7 +2,7 @@ use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior,
 };
-use nalgebra::Vector2;
+use nalgebra::{Vector2, Vector3};
 
 pub struct WalkingState {}
 
@@ -14,11 +14,11 @@ impl WalkingState {
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
         let direction = SteeringBehavior::Seek {
-            target: FieldPosition::new(848.0, 275.0),
+            target: FieldPosition::new(848.0, 275.0, 0.0),
         }
         .calculate(player);
 
-        player.velocity = Vector2::new(direction.velocity.x, direction.velocity.y);
+        player.velocity = Vector3::new(direction.velocity.x, direction.velocity.y, 0.0);
 
         None
     }

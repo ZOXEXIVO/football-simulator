@@ -1,5 +1,6 @@
-﻿use nalgebra::Vector2;
+﻿use nalgebra::Vector3;
 use rand::Rng;
+use rand_distr::num_traits::real::Real;
 use rand_distr::num_traits::Pow;
 use std::collections::HashMap;
 use std::ops::{Add, AddAssign, Mul, Sub};
@@ -69,11 +70,12 @@ const MAX_NORMALIZED_VALUE: f32 = 0.5f32;
 pub struct FieldPosition {
     pub x: f32,
     pub y: f32,
+    pub z: f32,
 }
 
 impl FieldPosition {
-    pub fn new(x: f32, y: f32) -> Self {
-        FieldPosition { x, y }
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        FieldPosition { x, y, z }
     }
 
     pub fn length(&self) -> f32 {
@@ -87,10 +89,12 @@ impl FieldPosition {
         if len != 0.0 {
             val.x /= len;
             val.y /= len;
+            val.z /= len;
 
             if len > MAX_NORMALIZED_VALUE {
                 val.x *= MAX_NORMALIZED_VALUE / len;
                 val.y *= MAX_NORMALIZED_VALUE / len;
+                val.z *= MAX_NORMALIZED_VALUE / len;
             }
         }
 
@@ -102,22 +106,27 @@ impl FieldPosition {
 
         let x_diff = (self.x - other.x).abs();
         let y_diff = (self.y - other.y).abs();
+        let z_diff = (self.z - other.z).abs();
 
-        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS
+        x_diff <= COLLISION_RADIUS && y_diff <= COLLISION_RADIUS && z_diff <= COLLISION_RADIUS
     }
 
     pub fn distance_to(&self, other: &FieldPosition) -> f32 {
-        ((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).sqrt()
+        ((self.x - other.x).powi(2) + (self.y - other.y).powi(2) + (self.z - other.z).powi(2))
+            .sqrt()
     }
 
     pub fn random_in_unit_circle() -> Self {
         let mut rng = rand::thread_rng();
 
-        let r: f32 = rng.gen_range(0.0..1.0);
+        let r: f32 = rng.gen_range(0.0..1.0).powf(1.0 / 3.0) as f32;
         let theta: f32 = rng.gen_range(0.0..2.0 * std::f32::consts::PI);
+        let phi: f32 = rng.gen_range(0.0..std::f32::consts::PI);
+
         FieldPosition {
-            x: r * theta.cos(),
-            y: r * theta.sin(),
+            x: r * phi.sin() * theta.cos(),
+            y: r * phi.sin() * theta.sin(),
+            z: r * phi.cos(),
         }
     }
 }
@@ -129,6 +138,7 @@ impl Sub for FieldPosition {
         FieldPosition {
             x: self.x - other.x,
             y: self.y - other.y,
+            z: self.z - other.z,
         }
     }
 }
@@ -140,17 +150,19 @@ impl Sub<f32> for FieldPosition {
         FieldPosition {
             x: self.x - other,
             y: self.y - other,
+            z: self.z - other,
         }
     }
 }
 
-impl Sub<Vector2<f32>> for FieldPosition {
+impl Sub<Vector3<f32>> for FieldPosition {
     type Output = FieldPosition;
 
-    fn sub(self, other: Vector2<f32>) -> FieldPosition {
+    fn sub(self, other: Vector3<f32>) -> FieldPosition {
         FieldPosition {
             x: self.x - other.x,
             y: self.y - other.y,
+            z: self.z - other.z,
         }
     }
 }
@@ -162,6 +174,7 @@ impl Add<f32> for FieldPosition {
         FieldPosition {
             x: self.x + other,
             y: self.y + other,
+            z: self.z + other,
         }
     }
 }
@@ -173,6 +186,7 @@ impl Add<FieldPosition> for FieldPosition {
         FieldPosition {
             x: self.x + other.x,
             y: self.y + other.y,
+            z: self.z + other.z,
         }
     }
 }
@@ -181,16 +195,18 @@ impl AddAssign<f32> for FieldPosition {
     fn add_assign(&mut self, rhs: f32) {
         self.x += rhs;
         self.y += rhs;
+        self.z += rhs;
     }
 }
 
-impl Add<Vector2<f32>> for FieldPosition {
+impl Add<Vector3<f32>> for FieldPosition {
     type Output = FieldPosition;
 
-    fn add(self, other: Vector2<f32>) -> FieldPosition {
+    fn add(self, other: Vector3<f32>) -> FieldPosition {
         FieldPosition {
             x: self.x + other.x,
             y: self.y + other.y,
+            z: self.z + other.z,
         }
     }
 }
@@ -202,6 +218,7 @@ impl Mul<f32> for FieldPosition {
         FieldPosition {
             x: self.x * other,
             y: self.y * other,
+            z: self.z * other,
         }
     }
 }

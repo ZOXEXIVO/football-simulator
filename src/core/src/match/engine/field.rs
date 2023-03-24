@@ -104,8 +104,8 @@ fn setup_player_on_field(
                 .for_each(|position| {
                     if let PositionType::Home(x, y) = position {
                         home_player.is_home = true;
-                        home_player.position = FieldPosition::new(*x as f32, *y as f32);
-                        home_player.start_position = FieldPosition::new(*x as f32, *y as f32);
+                        home_player.position = FieldPosition::new(*x as f32, *y as f32, 0.0);
+                        home_player.start_position = FieldPosition::new(*x as f32, *y as f32, 0.0);
 
                         players_on_field.push(home_player);
                     }
@@ -117,7 +117,7 @@ fn setup_player_on_field(
         .into_iter()
         .for_each(|mut home_player| {
             home_player.is_home = true;
-            home_player.position = FieldPosition::new(1.0, 1.0);
+            home_player.position = FieldPosition::new(1.0, 1.0, 0.0);
 
             substitutes.push(home_player);
         });
@@ -137,8 +137,8 @@ fn setup_player_on_field(
                     if let PositionType::Away(x, y) = position {
                         away_player.is_home = false;
 
-                        away_player.position = FieldPosition::new(*x as f32, *y as f32);
-                        away_player.start_position = FieldPosition::new(*x as f32, *y as f32);
+                        away_player.position = FieldPosition::new(*x as f32, *y as f32, 0.0);
+                        away_player.start_position = FieldPosition::new(*x as f32, *y as f32, 0.0);
 
                         players_on_field.push(away_player);
                     }
@@ -150,7 +150,7 @@ fn setup_player_on_field(
         .into_iter()
         .for_each(|mut away_player| {
             away_player.is_home = false;
-            away_player.position = FieldPosition::new(1.0, 1.0);
+            away_player.position = FieldPosition::new(1.0, 1.0, 0.0);
 
             substitutes.push(away_player);
         });

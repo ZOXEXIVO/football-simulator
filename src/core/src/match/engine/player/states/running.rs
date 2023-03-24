@@ -1,4 +1,3 @@
-use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior,
 };

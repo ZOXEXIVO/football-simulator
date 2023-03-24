@@ -15,6 +15,7 @@ impl PassingState {
     ) -> Option<PlayerState> {
         //let pass_direction = objects_positions;
         player.velocity = player.skills.running_speed();
+
         // if self.has_ball {
         //     // find closest teammate
         //     let closest_teammate = self.find_closest_teammate();

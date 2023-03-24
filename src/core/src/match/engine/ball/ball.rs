@@ -1,14 +1,13 @@
 ﻿use crate::r#match::position::FieldPosition;
 use crate::r#match::{BallState, GoalDetail, MatchContext, MatchState};
-use nalgebra::Vector2;
+use nalgebra::{Vector2, Vector3};
 use rand::{thread_rng, Rng};
 use rand_distr::num_traits::Pow;
 
 pub struct Ball {
     pub start_position: FieldPosition,
     pub position: FieldPosition,
-    pub velocity: Vector2<f32>,
-    pub direction: FieldPosition,
+    pub velocity: Vector3<f32>,
     pub owner: Option<BallOwner>,
     pub ball_position: BallPosition,
     pub center_field_position: f32,
@@ -18,10 +17,9 @@ pub struct Ball {
 impl Ball {
     pub fn with_coord(x: f32, y: f32) -> Self {
         Ball {
-            position: FieldPosition { x, y },
-            start_position: FieldPosition { x, y },
-            velocity: Vector2::new(0.0, 0.0),
-            direction: FieldPosition { x: 0.0, y: 0.0 },
+            position: FieldPosition { x, y, z: 0.0 },
+            start_position: FieldPosition { x, y, z: 0.0 },
+            velocity: Vector3::new(0.0, 0.0, 0.0),
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
@@ -138,8 +136,9 @@ impl Ball {
 
         let random_x_val: f32 = rng.gen_range(-1.0..1.0);
         let random_y_val: f32 = rng.gen_range(-1.0..1.0);
+        let random_z_val: f32 = rng.gen_range(-1.0..1.0);
 
-        self.velocity = Vector2::new(random_x_val, random_y_val);
+        self.velocity = Vector3::new(random_x_val, random_y_val, random_z_val);
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
