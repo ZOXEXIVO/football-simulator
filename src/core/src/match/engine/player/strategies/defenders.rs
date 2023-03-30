@@ -1,5 +1,4 @@
-﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{
+﻿use crate::r#match::{
     BallState, MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
     SteeringOutput,
 };
@@ -44,7 +43,7 @@ impl DefenderStrategies {
                     .calculate(player)
                 } else {
                     SteeringBehavior::Arrive {
-                        target: FieldPosition::new(0.0, 0.0, 0.0),
+                        target: Vector3::new(0.0, 0.0, 0.0),
                         slowing_distance: 2.0,
                     }
                     .calculate(player)
@@ -56,7 +55,7 @@ impl DefenderStrategies {
             }
             .calculate(player),
             DefenderBehavior::Idle => SteeringOutput {
-                velocity: FieldPosition::new(0.0, 0.0, 0.0),
+                velocity: Vector3::new(0.0, 0.0, 0.0),
                 rotation: 0.0,
             },
         };

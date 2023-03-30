@@ -1,5 +1,4 @@
-﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{
+﻿use crate::r#match::{
     DefenderStrategies, ForwardStrategies, GoalkeeperStrategies, MatchContext,
     MatchObjectsPositions, MatchState, MidfielderStrategies, PassingDecisionState, PassingState,
     ReturningState, RunningState, ShootingState, StandingState, TacklingState, WalkingState,
@@ -13,8 +12,8 @@ use nalgebra::Vector3;
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
     pub player_id: u32,
-    pub position: FieldPosition,
-    pub start_position: FieldPosition,
+    pub position: Vector3<f32>,
+    pub start_position: Vector3<f32>,
     pub attributes: PersonAttributes,
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
@@ -30,8 +29,8 @@ impl MatchPlayer {
     pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
         MatchPlayer {
             player_id: player.id,
-            position: FieldPosition::new(0.0, 0.0, 0.0),
-            start_position: FieldPosition::new(0.0, 0.0, 0.0),
+            position: Vector3::new(0.0, 0.0, 0.0),
+            start_position: Vector3::new(0.0, 0.0, 0.0),
             attributes: player.attributes.clone(),
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),

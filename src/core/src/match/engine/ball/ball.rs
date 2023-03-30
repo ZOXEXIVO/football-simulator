@@ -1,12 +1,10 @@
-﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{BallState, GoalDetail, MatchContext, MatchState};
-use nalgebra::{Vector2, Vector3};
-use rand::{thread_rng, Rng};
+﻿use crate::r#match::{BallState, GoalDetail, MatchContext, MatchState};
+use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 
 pub struct Ball {
-    pub start_position: FieldPosition,
-    pub position: FieldPosition,
+    pub start_position: Vector3<f32>,
+    pub position: Vector3<f32>,
     pub velocity: Vector3<f32>,
     pub owner: Option<BallOwner>,
     pub ball_position: BallPosition,
@@ -17,8 +15,8 @@ pub struct Ball {
 impl Ball {
     pub fn with_coord(x: f32, y: f32) -> Self {
         Ball {
-            position: FieldPosition { x, y, z: 0.0 },
-            start_position: FieldPosition { x, y, z: 0.0 },
+            position: Vector3::new(x, y, 0.0),
+            start_position: Vector3::new(x, y, 0.0),
             velocity: Vector3::new(0.0, 0.0, 0.0),
             owner: None,
             ball_position: BallPosition::Home,
@@ -132,13 +130,17 @@ impl Ball {
     }
 
     fn update_velocity(&mut self, result: &mut Vec<BallUpdateEvent>) {
-        let mut rng = thread_rng();
+        let gravity = Vector3::new(0.0, 0.0, -9.81);
 
-        let random_x_val: f32 = rng.gen_range(-1.0..1.0);
-        let random_y_val: f32 = rng.gen_range(-1.0..1.0);
-        let random_z_val: f32 = rng.gen_range(-1.0..1.0);
+        const FRICTION_COEFFICIENT: f32 = 0.1;
+        const BALL_MASS: f32 = 0.43;
 
-        self.velocity = Vector3::new(random_x_val, random_y_val, random_z_val);
+        let friction = -self.velocity.normalize() * FRICTION_COEFFICIENT * gravity.norm();
+
+        let total_force = gravity * BALL_MASS + friction;
+
+        let acceleration = total_force / BALL_MASS;
+        self.velocity += acceleration * 0.01; // timestep of 0.01 seconds
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
@@ -159,7 +161,7 @@ impl Ball {
         }
     }
 
-    pub fn move_towards_player(&mut self, player_pos: &FieldPosition) {
+    pub fn move_towards_player(&mut self, player_pos: &Vector3<f32>) {
         let position_diff = *player_pos - self.position;
 
         let distance = (position_diff.x.pow(2.0) + position_diff.y.pow(2.0)).sqrt();

@@ -1,8 +1,9 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
-use crate::r#match::position::{FieldPosition, PlayerFieldPosition};
+use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{FootballMatchResult, GameState, MatchPlayer, MatchState};
+use nalgebra::Vector3;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -126,7 +127,7 @@ impl MatchTime {
 }
 
 pub struct MatchObjectsPositions {
-    pub ball_positions: FieldPosition,
+    pub ball_positions: Vector3<f32>,
     pub players_positions: Vec<PlayerFieldPosition>,
 }
 
@@ -150,7 +151,7 @@ impl MatchObjectsPositions {
         &self,
         current_player: &MatchPlayer,
         state: &MatchState,
-    ) -> Option<FieldPosition> {
+    ) -> Option<Vector3<f32>> {
         let max_pass_distance = 30.0;
 
         let mut closest_teammate = None;

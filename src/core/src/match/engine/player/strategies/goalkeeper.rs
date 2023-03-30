@@ -1,5 +1,4 @@
-﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{
+﻿use crate::r#match::{
     MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
 };
 use nalgebra::Vector3;
@@ -20,7 +19,7 @@ impl GoalkeeperStrategies {
         };
 
         let output = SteeringBehavior::Wander {
-            target: FieldPosition::new(
+            target: Vector3::new(
                 player.start_position.x + x_position,
                 player.start_position.y,
                 0.0,

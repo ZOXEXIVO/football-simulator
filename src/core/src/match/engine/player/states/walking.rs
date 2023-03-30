@@ -1,4 +1,3 @@
-use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior,
 };
@@ -14,7 +13,7 @@ impl WalkingState {
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
         let direction = SteeringBehavior::Seek {
-            target: FieldPosition::new(848.0, 275.0, 0.0),
+            target: Vector3::new(848.0, 275.0, 0.0),
         }
         .calculate(player);
 

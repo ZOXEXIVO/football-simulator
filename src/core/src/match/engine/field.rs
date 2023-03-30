@@ -1,8 +1,8 @@
 ﻿use crate::r#match::ball::Ball;
-use crate::r#match::position::FieldPosition;
 use crate::r#match::{
     FieldSquad, FootballMatchResult, MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING,
 };
+use nalgebra::Vector3;
 
 pub struct MatchField {
     pub width: usize,
@@ -56,12 +56,9 @@ impl MatchField {
     pub fn write_match_positions(&self, result: &mut FootballMatchResult, timestamp: u64) {
         // player positions
         self.players.iter().for_each(|player| {
-            result.position_data.add_player_positions(
-                player.player_id,
-                timestamp,
-                player.position.x,
-                player.position.y,
-            );
+            result
+                .position_data
+                .add_player_positions(player.player_id, timestamp, player.position);
         });
 
         // player positions
@@ -69,17 +66,14 @@ impl MatchField {
             result.position_data.add_player_positions(
                 sub_player.player_id,
                 timestamp,
-                sub_player.position.x,
-                sub_player.position.y,
+                sub_player.position,
             );
         });
 
         // write positions
-        result.position_data.add_ball_positions(
-            timestamp,
-            self.ball.position.x,
-            self.ball.position.y,
-        );
+        result
+            .position_data
+            .add_ball_positions(timestamp, self.ball.position);
     }
 }
 
@@ -104,8 +98,8 @@ fn setup_player_on_field(
                 .for_each(|position| {
                     if let PositionType::Home(x, y) = position {
                         home_player.is_home = true;
-                        home_player.position = FieldPosition::new(*x as f32, *y as f32, 0.0);
-                        home_player.start_position = FieldPosition::new(*x as f32, *y as f32, 0.0);
+                        home_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
+                        home_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
 
                         players_on_field.push(home_player);
                     }
@@ -117,7 +111,7 @@ fn setup_player_on_field(
         .into_iter()
         .for_each(|mut home_player| {
             home_player.is_home = true;
-            home_player.position = FieldPosition::new(1.0, 1.0, 0.0);
+            home_player.position = Vector3::new(1.0, 1.0, 0.0);
 
             substitutes.push(home_player);
         });
@@ -137,8 +131,8 @@ fn setup_player_on_field(
                     if let PositionType::Away(x, y) = position {
                         away_player.is_home = false;
 
-                        away_player.position = FieldPosition::new(*x as f32, *y as f32, 0.0);
-                        away_player.start_position = FieldPosition::new(*x as f32, *y as f32, 0.0);
+                        away_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
+                        away_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
 
                         players_on_field.push(away_player);
                     }
@@ -150,7 +144,7 @@ fn setup_player_on_field(
         .into_iter()
         .for_each(|mut away_player| {
             away_player.is_home = false;
-            away_player.position = FieldPosition::new(1.0, 1.0, 0.0);
+            away_player.position = Vector3::new(1.0, 1.0, 0.0);
 
             substitutes.push(away_player);
         });
