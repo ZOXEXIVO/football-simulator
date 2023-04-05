@@ -55,7 +55,8 @@ export class MatchDataService {
       this.matchData.ball = new BallModel([
         new ObjectPositionDto(0,
           matchLineupData.ball.start_position[0],
-          matchLineupData.ball.start_position[1]
+          matchLineupData.ball.start_position[1],
+          0
         )
       ]);
 
@@ -63,7 +64,8 @@ export class MatchDataService {
       for (const player of matchLineupData.home_squad.main) {
         let playerPosition = new ObjectPositionDto(0,
           player.start_position[0],
-          player.start_position[1]
+          player.start_position[1],
+          0
         );
 
         this.matchData.players.push(new PlayerModel(player.id, true, [playerPosition]));
@@ -72,7 +74,8 @@ export class MatchDataService {
       for (const player of matchLineupData.away_squad.main) {
         let playerPosition = new ObjectPositionDto(0,
           player.start_position[0],
-          player.start_position[1]
+          player.start_position[1],
+          0
         );
 
         this.matchData.players.push(new PlayerModel(player.id, false, [playerPosition]));
@@ -136,21 +139,21 @@ export class MatchDataService {
 
   updateMatchData(matchDtaDto: MatchDto) {
     // ball
-    this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2])));
+    this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2], data[3])));
 
     // players
     for (const playerData of this.matchData.players) {
       for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
         if (playerData.id != Number(playerId)) {
           let newPlayerData = data as number[][];
-          playerData.data.push(...newPlayerData.map(pd => new ObjectPositionDto(pd[0], pd[1], pd[2])));
+          playerData.data.push(...newPlayerData.map(pd => new ObjectPositionDto(pd[0], pd[1], pd[2], pd[3])));
         }
       }
 
     }
 
     for (const ballData of matchDtaDto.ball_data) {
-      this.matchData.ball.data.push(new ObjectPositionDto(ballData[0], ballData[1], ballData[2]))
+      this.matchData.ball.data.push(new ObjectPositionDto(ballData[0], ballData[1], ballData[2], ballData[3]))
     }
 
     if (matchDtaDto.ball_data.length > 0) {

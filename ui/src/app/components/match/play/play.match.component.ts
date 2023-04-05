@@ -93,6 +93,10 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
               ballObject.x = coord.x;
               ballObject.y = coord.y;
+
+              const scaleFactor= (data.ball.z + 20) / 20;
+
+              ballObject.scale.set(scaleFactor, scaleFactor);
             }
 
             this.matchDataService.matchData.players.forEach(player => {
@@ -111,6 +115,10 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
                   if(playerObject.x != playerTranslatedPositions.x && playerObject.y != playerTranslatedPositions.y){
                     playerObject.x = playerTranslatedPositions.x;
                     playerObject.y = playerTranslatedPositions.y;
+
+                    const scaleFactor= (playerPosition.z + 20) / 20;
+
+                    playerObject.scale.set(scaleFactor, scaleFactor);
 
                     // console.log(`player id=${player.id}, move x = ${playerObject.x}, y = ${playerObject.y}`);
                   }else {

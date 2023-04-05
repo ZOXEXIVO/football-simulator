@@ -19,9 +19,9 @@ pub struct MatchDetailsRequestQuery {
 
 #[derive(Serialize)]
 pub struct MatchDetailsResponse {
-    pub player_data: HashMap<u32, Vec<(u64, i16, i16)>>,
+    pub player_data: HashMap<u32, Vec<(u64, i16, i16, i16)>>,
     pub player_data_len: u32,
-    pub ball_data: Vec<(u64, i16, i16)>,
+    pub ball_data: Vec<(u64, i16, i16, i16)>,
 }
 
 pub async fn match_get_action(
@@ -62,7 +62,14 @@ pub async fn match_get_action(
                     data.iter()
                         .skip(query_params.offset as usize)
                         .take(query_params.limit as usize)
-                        .map(|item| (item.timestamp, item.x as i16, item.y as i16))
+                        .map(|item| {
+                            (
+                                item.timestamp,
+                                item.position.x as i16,
+                                item.position.y as i16,
+                                item.position.z as i16,
+                            )
+                        })
                         .collect(),
                 )
             })
@@ -74,7 +81,14 @@ pub async fn match_get_action(
             .iter()
             .skip(query_params.offset as usize)
             .take(query_params.limit as usize)
-            .map(|item| (item.timestamp, item.x as i16, item.y as i16))
+            .map(|item| {
+                (
+                    item.timestamp,
+                    item.position.x as i16,
+                    item.position.y as i16,
+                    item.position.z as i16,
+                )
+            })
             .collect(),
     };
 

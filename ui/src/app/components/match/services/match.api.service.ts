@@ -25,15 +25,17 @@ export interface MatchDto {
 }
 
 export class ObjectPositionDto {
-  constructor(timestamp: number, x: number, y: number) {
+  constructor(timestamp: number, x: number, y: number, z: number) {
     this.timestamp = timestamp;
     this.x = x;
     this.y = y;
+    this.z = z;
   }
 
   timestamp: number;
   x: number;
   y: number;
+  z: number;
 }
 
 // Lineup

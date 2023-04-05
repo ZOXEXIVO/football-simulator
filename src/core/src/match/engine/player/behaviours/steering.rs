@@ -97,7 +97,7 @@ impl<'p> SteeringBehavior<'p> {
                 let target = rand_vec + *target;
                 let target_offset = target - player.position;
                 let mut target_offset = target_offset.normalize() * *distance;
-                target_offset = target_offset + player.heading() * *radius;
+                target_offset = target_offset.add_scalar(player.heading() * *radius);
                 let steering = target_offset - player.velocity;
                 SteeringOutput {
                     velocity: steering,
