@@ -17,7 +17,7 @@ impl Ball {
         Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(x, y, 0.0),
-            velocity: Vector3::new(0.0, 0.0, 0.0),
+            velocity: Vector3::new(0.1, 0.1, 0.1),
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
@@ -135,12 +135,19 @@ impl Ball {
         const FRICTION_COEFFICIENT: f32 = 0.1;
         const BALL_MASS: f32 = 0.43;
 
-        let friction = -self.velocity.normalize() * FRICTION_COEFFICIENT * gravity.norm();
+        let velocity_norm = self.velocity.norm();
+        let friction = if velocity_norm > 0.0 {
+            -self.velocity.normalize() * FRICTION_COEFFICIENT * gravity.norm()
+        } else {
+            Vector3::zeros()
+        };
 
         let total_force = gravity * BALL_MASS + friction;
 
         let acceleration = total_force / BALL_MASS;
         self.velocity += acceleration * 0.01; // timestep of 0.01 seconds
+
+        //println!("friction.x={}, friction.y{}", v.x, self.velocity.y)
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
