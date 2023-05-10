@@ -143,8 +143,8 @@ impl Ball {
         };
 
         let total_force = gravity * BALL_MASS + friction;
-
         let acceleration = total_force / BALL_MASS;
+
         self.velocity += acceleration * 0.01; // timestep of 0.01 seconds
 
         //println!("friction.x={}, friction.y{}", v.x, self.velocity.y)
