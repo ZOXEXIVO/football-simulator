@@ -1,29 +1,27 @@
-﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{BallState, GoalDetail, MatchContext, MatchState};
-use nalgebra::Vector2;
-use rand::{thread_rng, Rng};
+﻿use crate::r#match::{BallState, GoalDetail, MatchContext, MatchState};
+use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 
 pub struct Ball {
-    pub start_position: FieldPosition,
-    pub position: FieldPosition,
-    pub velocity: Vector2<f32>,
-    pub direction: FieldPosition,
+    pub start_position: Vector3<f32>,
+    pub position: Vector3<f32>,
+    pub velocity: Vector3<f32>,
     pub owner: Option<BallOwner>,
     pub ball_position: BallPosition,
     pub center_field_position: f32,
+    pub height: f32,
 }
 
 impl Ball {
     pub fn with_coord(x: f32, y: f32) -> Self {
         Ball {
-            position: FieldPosition { x, y },
-            start_position: FieldPosition { x, y },
-            velocity: Vector2::new(0.0, 0.0),
-            direction: FieldPosition { x: 0.0, y: 0.0 },
+            position: Vector3::new(x, y, 0.0),
+            start_position: Vector3::new(x, y, 0.0),
+            velocity: Vector3::new(0.1, 0.1, 0.1),
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
+            height: 0.0,
         }
     }
 
@@ -73,6 +71,30 @@ impl Ball {
         }
     }
 
+    // pub fn calculate_velocity(pass_direction: Vector2<f32>, pass_power: f32) -> Vector3<f32> {
+    //     // The mass of a standard football is around 0.43 kg
+    //     let ball_mass = 0.43;
+    //     // The coefficient of friction between the ball and grass is around 0.1
+    //     let friction_coefficient = 0.1;
+    //     // The acceleration due to gravity is approximately 9.81 m/s^2
+    //     let gravity = Vector3::new(0.0, 0.0, -9.81);
+    //
+    //     // Calculate the direction and magnitude of the pass velocity
+    //     let pass_velocity = pass_direction.normalize() * pass_power;
+    //
+    //     // Calculate the net force acting on the ball, taking into account friction and gravity
+    //     let net_force = pass_velocity * ball_mass * -friction_coefficient + ball_mass * gravity;
+    //
+    //     // Calculate the acceleration of the ball based on the net force
+    //     let acceleration = net_force / ball_mass;
+    //
+    //     // Calculate the final velocity of the ball after a certain amount of time has passed
+    //     let time_elapsed = 0.5; // 0.5 seconds for the sake of example
+    //     let final_velocity = pass_velocity + acceleration * time_elapsed;
+    //
+    //     final_velocity
+    // }
+
     fn check_boundary_collision(&mut self, result: &mut Vec<BallUpdateEvent>) {
         // Check if ball hits the boundary and reverse its velocity if it does
         if self.position.x <= 0.0 || self.position.x >= 150.0 {
@@ -108,12 +130,24 @@ impl Ball {
     }
 
     fn update_velocity(&mut self, result: &mut Vec<BallUpdateEvent>) {
-        let mut rng = thread_rng();
+        let gravity = Vector3::new(0.0, 0.0, -9.81);
 
-        let random_x_val: f32 = rng.gen_range(-1.0..1.0);
-        let random_y_val: f32 = rng.gen_range(-1.0..1.0);
+        const FRICTION_COEFFICIENT: f32 = 0.1;
+        const BALL_MASS: f32 = 0.43;
 
-        self.velocity = Vector2::new(random_x_val, random_y_val);
+        let velocity_norm = self.velocity.norm();
+        let friction = if velocity_norm > 0.0 {
+            -self.velocity.normalize() * FRICTION_COEFFICIENT * gravity.norm()
+        } else {
+            Vector3::zeros()
+        };
+
+        let total_force = gravity * BALL_MASS + friction;
+        let acceleration = total_force / BALL_MASS;
+
+        self.velocity += acceleration * 0.01; // timestep of 0.01 seconds
+
+        //println!("friction.x={}, friction.y{}", v.x, self.velocity.y)
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
@@ -134,7 +168,7 @@ impl Ball {
         }
     }
 
-    pub fn move_towards_player(&mut self, player_pos: &FieldPosition) {
+    pub fn move_towards_player(&mut self, player_pos: &Vector3<f32>) {
         let position_diff = *player_pos - self.position;
 
         let distance = (position_diff.x.pow(2.0) + position_diff.y.pow(2.0)).sqrt();

@@ -1,26 +1,24 @@
-﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{
-    DefenderStrategies, FootballMatchResult, ForwardStrategies, GoalkeeperStrategies, MatchContext,
+﻿use crate::r#match::{
+    DefenderStrategies, ForwardStrategies, GoalkeeperStrategies, MatchContext,
     MatchObjectsPositions, MatchState, MidfielderStrategies, PassingDecisionState, PassingState,
-    ReturningState, RunningState, ShootingState, StandingState, SteeringBehavior, TacklingState,
-    WalkingState,
+    ReturningState, RunningState, ShootingState, StandingState, TacklingState, WalkingState,
 };
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
-    PlayerSkills, PlayerStatusType,
+    PlayerSkills,
 };
-use nalgebra::Vector2;
+use nalgebra::Vector3;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
     pub player_id: u32,
-    pub position: FieldPosition,
-    pub start_position: FieldPosition,
+    pub position: Vector3<f32>,
+    pub start_position: Vector3<f32>,
     pub attributes: PersonAttributes,
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
-    pub velocity: Vector2<f32>,
+    pub velocity: Vector3<f32>,
     pub has_ball: bool,
     pub is_home: bool,
     pub state: PlayerState,
@@ -31,13 +29,13 @@ impl MatchPlayer {
     pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
         MatchPlayer {
             player_id: player.id,
-            position: FieldPosition::new(0.0, 0.0),
-            start_position: FieldPosition::new(0.0, 0.0),
+            position: Vector3::new(0.0, 0.0, 0.0),
+            start_position: Vector3::new(0.0, 0.0, 0.0),
             attributes: player.attributes.clone(),
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            velocity: Vector2::new(1.0, 1.0),
+            velocity: Vector3::new(1.0, 1.0, 0.0),
             has_ball: false,
             is_home: false,
             state: PlayerState::Standing,
@@ -126,24 +124,6 @@ impl MatchPlayer {
 
         self.state
     }
-
-    // fn find_closest_teammate(&self, state: &MatchState) -> Option<&MatchPlayer> {
-    //     let max_pass_distance = 20.0; // Maximum distance a player can pass the ball
-    //     let mut closest_teammate = None;
-    //     let mut closest_distance = std::f32::MAX;
-    //
-    //     for player in state.players.iter() {
-    //         if player.is_home == self.is_home && player != self && !player.attributes.is_marked {
-    //             let distance = self.position.distance_to(&player.position);
-    //             if distance < closest_distance && distance < max_pass_distance {
-    //                 closest_teammate = Some(player);
-    //                 closest_distance = distance;
-    //             }
-    //         }
-    //     }
-    //
-    //     closest_teammate
-    // }
 
     // fn calculate_pass_vector(&self, teammate: &MatchPlayer) -> Vector {
     //     // code to calculate pass vector

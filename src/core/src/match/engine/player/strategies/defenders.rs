@@ -1,9 +1,8 @@
-﻿use crate::r#match::position::FieldPosition;
-use crate::r#match::{
+﻿use crate::r#match::{
     BallState, MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
     SteeringOutput,
 };
-use nalgebra::Vector2;
+use nalgebra::Vector3;
 
 pub struct DefenderStrategies {}
 
@@ -14,7 +13,7 @@ impl DefenderStrategies {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
         state: &MatchState,
-    ) -> Vector2<f32> {
+    ) -> Vector3<f32> {
         let behavior = match state.ball_state {
             Some(ball_state) => match ball_state {
                 BallState::HomeSide => {
@@ -44,7 +43,7 @@ impl DefenderStrategies {
                     .calculate(player)
                 } else {
                     SteeringBehavior::Arrive {
-                        target: FieldPosition::new(0.0, 0.0),
+                        target: Vector3::new(0.0, 0.0, 0.0),
                         slowing_distance: 2.0,
                     }
                     .calculate(player)
@@ -56,12 +55,12 @@ impl DefenderStrategies {
             }
             .calculate(player),
             DefenderBehavior::Idle => SteeringOutput {
-                velocity: FieldPosition::new(0.0, 0.0),
+                velocity: Vector3::new(0.0, 0.0, 0.0),
                 rotation: 0.0,
             },
         };
 
-        Vector2::new(steering_output.velocity.x, steering_output.velocity.y)
+        Vector3::new(steering_output.velocity.x, steering_output.velocity.y, 0.0)
     }
 
     fn is_on_defending_half(player: &MatchPlayer, state: &MatchState) -> bool {

@@ -1,12 +1,13 @@
-﻿use crate::r#match::position::FieldPosition;
+﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::MatchPlayer;
+use nalgebra::Vector3;
 
 pub enum SteeringBehavior<'p> {
     Seek {
-        target: FieldPosition,
+        target: Vector3<f32>,
     },
     Arrive {
-        target: FieldPosition,
+        target: Vector3<f32>,
         slowing_distance: f32,
     },
     Pursuit {
@@ -16,14 +17,14 @@ pub enum SteeringBehavior<'p> {
         target: &'p MatchPlayer,
     },
     Wander {
-        target: FieldPosition,
+        target: Vector3<f32>,
         radius: f32,
         jitter: f32,
         distance: f32,
         angle: f32,
     },
     Flee {
-        target: FieldPosition,
+        target: Vector3<f32>,
     },
 }
 
@@ -92,11 +93,11 @@ impl<'p> SteeringBehavior<'p> {
                 distance,
                 angle,
             } => {
-                let rand_vec = FieldPosition::random_in_unit_circle() * *jitter;
+                let rand_vec = Vector3::random_in_unit_circle() * *jitter;
                 let target = rand_vec + *target;
                 let target_offset = target - player.position;
                 let mut target_offset = target_offset.normalize() * *distance;
-                target_offset += player.heading() * *radius;
+                target_offset = target_offset.add_scalar(player.heading() * *radius);
                 let steering = target_offset - player.velocity;
                 SteeringOutput {
                     velocity: steering,
@@ -118,12 +119,12 @@ impl<'p> SteeringBehavior<'p> {
 
 #[derive(Debug, Clone, Copy)]
 pub struct SteeringOutput {
-    pub velocity: FieldPosition,
+    pub velocity: Vector3<f32>,
     pub rotation: f32,
 }
 
 impl SteeringOutput {
-    pub fn new(velocity: FieldPosition, rotation: f32) -> Self {
+    pub fn new(velocity: Vector3<f32>, rotation: f32) -> Self {
         SteeringOutput { velocity, rotation }
     }
 }

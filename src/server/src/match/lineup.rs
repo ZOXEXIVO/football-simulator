@@ -94,8 +94,8 @@ pub async fn match_lineup_action(
         match_time_ms: result_details.match_time_ms,
         ball: LineupBall {
             start_position: (
-                result_details.position_data.ball_positions[0].x as i16,
-                result_details.position_data.ball_positions[0].y as i16,
+                result_details.position_data.ball_positions[0].position.x as i16,
+                result_details.position_data.ball_positions[0].position.y as i16,
             ),
         },
         home_team_name: &home_team.name,
@@ -162,7 +162,7 @@ fn to_lineup_player<'p>(
                 last_name: &player.full_name.last_name,
                 middle_name: player.full_name.middle_name.as_deref(),
                 position: player.position().get_short_name(),
-                start_position: (position.x as i16, position.y as i16),
+                start_position: (position.position.x as i16, position.position.y as i16),
             })
         }
         None => None,
