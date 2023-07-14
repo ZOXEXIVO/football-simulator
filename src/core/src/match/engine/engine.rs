@@ -9,7 +9,7 @@ pub struct FootballEngine<const W: usize, const H: usize> {}
 
 impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> FootballMatchResult {
-        let mut context = MatchContext::new();
+        let mut context = MatchContext::new(FieldSize::new(W, H));
 
         let mut field = MatchField::new(W, H);
 
@@ -55,7 +55,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         let mut additional_time: u64 = 0;
 
         while context.increment_time() {
-            let ball_update_events = field.ball.update(&context.state);
+            let ball_update_events = field.ball.update(context);
 
             // handle ball
             Ball::handle_events(context.time.time, ball_update_events, context);
@@ -92,19 +92,32 @@ pub struct MatchContext {
     pub state: MatchState,
     time: MatchTime,
     pub result: FootballMatchResult,
+    pub field_size: FieldSize,
 }
 
 impl MatchContext {
-    pub fn new() -> Self {
+    pub fn new(field_size: FieldSize) -> Self {
         MatchContext {
             state: MatchState::new(),
             time: MatchTime::new(),
             result: FootballMatchResult::with_match_time(MATCH_HALF_TIME_MS),
+            field_size,
         }
     }
 
     pub fn increment_time(&mut self) -> bool {
         self.time.increment(MATCH_TIME_INCREMENT_MS) < MATCH_HALF_TIME_MS
+    }
+}
+
+pub struct FieldSize {
+    pub width: usize,
+    pub height: usize,
+}
+
+impl FieldSize {
+    pub fn new(width: usize, height: usize) -> Self {
+        FieldSize { width, height }
     }
 }
 

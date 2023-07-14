@@ -17,7 +17,7 @@ impl Ball {
         Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(x, y, 0.0),
-            velocity: Vector3::new(0.1, 0.1, 0.1),
+            velocity: Vector3::new(1.3, 0.2, 0.1),
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
@@ -25,12 +25,12 @@ impl Ball {
         }
     }
 
-    pub fn update(&mut self, state: &MatchState) -> Vec<BallUpdateEvent> {
+    pub fn update(&mut self, context: &mut MatchContext) -> Vec<BallUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
         self.update_velocity(&mut result);
         self.move_to(&mut result);
-        self.check_boundary_collision(&mut result);
+        self.check_boundary_collision(&mut result, context);
         self.check_goal(&mut result);
 
         result
@@ -95,13 +95,17 @@ impl Ball {
     //     final_velocity
     // }
 
-    fn check_boundary_collision(&mut self, result: &mut Vec<BallUpdateEvent>) {
+    fn check_boundary_collision(
+        &mut self,
+        result: &mut Vec<BallUpdateEvent>,
+        context: &mut MatchContext,
+    ) {
         // Check if ball hits the boundary and reverse its velocity if it does
-        if self.position.x <= 0.0 || self.position.x >= 150.0 {
+        if self.position.x <= 0.0 || self.position.x >= context.field_size.width as f32 {
             self.velocity.x = -self.velocity.x;
         }
 
-        if self.position.y <= 0.0 || self.position.y >= 100.0 {
+        if self.position.y <= 0.0 || self.position.y >= context.field_size.height as f32 {
             self.velocity.y = -self.velocity.y;
         }
     }
@@ -145,9 +149,12 @@ impl Ball {
         let total_force = gravity * BALL_MASS + friction;
         let acceleration = total_force / BALL_MASS;
 
-        self.velocity += acceleration * 0.01; // timestep of 0.01 seconds
+        self.velocity += acceleration * 0.008; // timestep of 0.01 seconds
 
-        //println!("friction.x={}, friction.y{}", v.x, self.velocity.y)
+        // println!(
+        //     "friction.x={}, friction.y{}",
+        //     self.velocity.x, self.velocity.y
+        // )
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
