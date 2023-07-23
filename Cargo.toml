@@ -8,12 +8,12 @@ edition = "2018"
 core = { path = "src/core" }
 server = { path = "src/server" }
 database = { path = "src/database" }
-serde_json = "1.0.96"
-serde = "1.0.163"
-log = { version = "0.4.18", features = ["release_max_level_error"] }
+serde_json = "1.0.103"
+serde = "1.0.174"
+log = { version = "0.4.19", features = ["release_max_level_error"] }
 env_logger = "0.10.0"
 itertools = "0.10.5"
 chrono = "0.4.26"
 color-eyre = "0.6.2"
-tokio = { version = "1.28.2", features = ["full"] }
+tokio = { version = "1.29.1", features = ["full"] }
 rand = "0.8.5"
