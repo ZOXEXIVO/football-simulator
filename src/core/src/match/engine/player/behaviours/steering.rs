@@ -1,6 +1,7 @@
 ﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::MatchPlayer;
 use nalgebra::Vector3;
+use std::f32::NAN;
 
 pub enum SteeringBehavior<'p> {
     Seek {
@@ -34,6 +35,7 @@ impl<'p> SteeringBehavior<'p> {
             SteeringBehavior::Seek { target } => {
                 let desired_velocity = (*target - player.position).normalize();
                 let steering = desired_velocity - player.velocity;
+
                 SteeringOutput {
                     velocity: steering,
                     rotation: 0.0,
@@ -44,22 +46,28 @@ impl<'p> SteeringBehavior<'p> {
                 slowing_distance,
             } => {
                 let distance = (*target - player.position).length();
-                if distance < *slowing_distance {
-                    let desired_speed = distance / *slowing_distance * player.skills.max_speed();
-                    let desired_velocity = (*target - player.position).normalize() * desired_speed;
-                    let steering = desired_velocity - player.velocity;
-                    SteeringOutput {
-                        velocity: steering,
-                        rotation: 0.0,
-                    }
-                } else {
-                    let desired_velocity =
-                        (*target - player.position).normalize() * player.skills.max_speed();
-                    let steering = desired_velocity - player.velocity;
-                    SteeringOutput {
-                        velocity: steering,
-                        rotation: 0.0,
-                    }
+                let desired_velocity = (*target - player.position).normalize()
+                    * (distance / *slowing_distance * player.skills.max_speed());
+                let steering = desired_velocity - player.velocity;
+                let max_acceleration = player.skills.max_speed();
+                let steering_length = steering.norm();
+
+                println!(
+                    "max_acceleration = {}, steering_length = {} ",
+                    max_acceleration, steering_length
+                );
+
+                // Limit the steering to the maximum acceleration
+                let steering_ratio = max_acceleration / steering_length;
+                let mut limited_steering = steering * steering_ratio;
+
+                if limited_steering.x == NAN || limited_steering.x == NAN {
+                    limited_steering = Vector3::zeros();
+                }
+
+                SteeringOutput {
+                    velocity: limited_steering,
+                    rotation: 0.0,
                 }
             }
             SteeringBehavior::Pursuit { target } => {
@@ -68,7 +76,12 @@ impl<'p> SteeringBehavior<'p> {
                 let target_position = target.position + (target.velocity * prediction);
                 let desired_velocity =
                     (target_position - player.position).normalize() * player.skills.max_speed();
-                let steering = desired_velocity - player.velocity;
+                let mut steering = desired_velocity - player.velocity;
+
+                if steering.x == NAN || steering.x == NAN {
+                    steering = Vector3::zeros();
+                }
+
                 SteeringOutput {
                     velocity: steering,
                     rotation: 0.0,
@@ -80,7 +93,12 @@ impl<'p> SteeringBehavior<'p> {
                 let target_position = target.position + target.velocity * prediction;
                 let desired_velocity =
                     (player.position - target_position).normalize() * player.skills.max_speed();
-                let steering = desired_velocity - player.velocity;
+                let mut steering = desired_velocity - player.velocity;
+
+                if steering.x == NAN || steering.x == NAN {
+                    steering = Vector3::zeros();
+                }
+
                 SteeringOutput {
                     velocity: steering,
                     rotation: 0.0,
@@ -98,7 +116,12 @@ impl<'p> SteeringBehavior<'p> {
                 let target_offset = target - player.position;
                 let mut target_offset = target_offset.normalize() * *distance;
                 target_offset = target_offset.add_scalar(player.heading() * *radius);
-                let steering = target_offset - player.velocity;
+                let mut steering = target_offset - player.velocity;
+
+                if steering.x == NAN || steering.x == NAN {
+                    steering = Vector3::zeros();
+                }
+
                 SteeringOutput {
                     velocity: steering,
                     rotation: 0.0,
@@ -107,7 +130,12 @@ impl<'p> SteeringBehavior<'p> {
             SteeringBehavior::Flee { target } => {
                 let desired_velocity =
                     (player.position - *target).normalize() * player.skills.max_speed();
-                let steering = desired_velocity - player.velocity;
+                let mut steering = desired_velocity - player.velocity;
+
+                if steering.x == NAN || steering.x == NAN {
+                    steering = Vector3::zeros();
+                }
+
                 SteeringOutput {
                     velocity: steering,
                     rotation: 0.0,

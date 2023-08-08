@@ -148,10 +148,6 @@ impl MatchPlayer {
         state: &MatchState,
         player_state: PlayerState,
     ) {
-        if current_time % 100 != 0 {
-            return;
-        }
-
         let velocity = match self.tactics_position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::detect_velocity(
                 current_time,
