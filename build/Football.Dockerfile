@@ -11,7 +11,7 @@ COPY ./ui/ .
 
 RUN npm run publish 
 
-FROM rust:1.71 as build-backend
+FROM rust:1.72 as build-backend
 WORKDIR /src
 
 COPY ./ ./
@@ -20,7 +20,7 @@ RUN cargo test -p core
 
 RUN cargo build --release
 
-FROM rust:1.71-slim
+FROM rust:1.72-slim
 WORKDIR /app
 
 COPY --from=build-backend /src/target/release/football_simulator .
