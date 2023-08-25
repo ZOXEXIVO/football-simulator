@@ -109,7 +109,7 @@ impl<'p> SteeringBehavior<'p> {
                 radius,
                 jitter,
                 distance,
-                angle,
+                angle: _,
             } => {
                 let rand_vec = Vector3::random_in_unit_circle() * *jitter;
                 let target = rand_vec + *target;

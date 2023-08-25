@@ -52,7 +52,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     fn play_inner(field: &mut MatchField, context: &mut MatchContext) -> u64 {
-        let mut additional_time: u64 = 0;
+        let additional_time: u64 = 0;
 
         while context.increment_time() {
             let ball_update_events = field.ball.update(context);
@@ -165,7 +165,7 @@ impl MatchObjectsPositions {
     fn find_closest_teammate(
         &self,
         current_player: &MatchPlayer,
-        state: &MatchState,
+        _state: &MatchState,
     ) -> Option<Vector3<f32>> {
         let max_pass_distance = 30.0;
 

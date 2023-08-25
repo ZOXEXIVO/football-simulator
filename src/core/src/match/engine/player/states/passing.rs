@@ -4,10 +4,10 @@ pub struct PassingState {}
 
 impl PassingState {
     pub fn process(
-        in_state_time: u64,
+        _in_state_time: u64,
         player: &mut MatchPlayer,
-        result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
+        _result: &mut Vec<PlayerUpdateEvent>,
+        _objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
         //let pass_direction = objects_positions;
         player.velocity = player.skills.running_speed();

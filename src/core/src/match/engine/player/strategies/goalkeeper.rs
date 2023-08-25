@@ -3,17 +3,17 @@ use crate::r#match::{
     MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
 };
 use nalgebra::Vector3;
-use std::f32::NAN;
+
 
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
     pub fn detect_velocity(
-        current_time: u64,
+        _current_time: u64,
         player: &MatchPlayer,
-        result: &mut Vec<PlayerUpdateEvent>,
+        _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-        state: &MatchState,
+        _state: &MatchState,
     ) -> Vector3<f32> {
         let is_ball_moving =
             objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
@@ -22,7 +22,7 @@ impl GoalkeeperStrategies {
             return Vector3::zeros();
         }
 
-        let ball_distance = objects_positions
+        let _ball_distance = objects_positions
             .ball_positions
             .distance_to(&player.position);
 

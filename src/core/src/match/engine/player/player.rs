@@ -69,11 +69,11 @@ impl MatchPlayer {
         result
     }
 
-    pub fn handle_events(events: Vec<PlayerUpdateEvent>, context: &mut MatchContext) {
+    pub fn handle_events(events: Vec<PlayerUpdateEvent>, _context: &mut MatchContext) {
         for event in events {
             match event {
-                PlayerUpdateEvent::Goal(player_id) => {}
-                PlayerUpdateEvent::TacklingBall(player_id) => {}
+                PlayerUpdateEvent::Goal(_player_id) => {}
+                PlayerUpdateEvent::TacklingBall(_player_id) => {}
             }
         }
     }
@@ -85,7 +85,7 @@ impl MatchPlayer {
 
     fn update_state(
         &mut self,
-        current_time: u64,
+        _current_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> PlayerState {
@@ -146,7 +146,7 @@ impl MatchPlayer {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
         state: &MatchState,
-        player_state: PlayerState,
+        _player_state: PlayerState,
     ) {
         let velocity = match self.tactics_position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::detect_velocity(

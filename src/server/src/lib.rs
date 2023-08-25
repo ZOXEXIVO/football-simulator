@@ -12,7 +12,7 @@ use database::DatabaseEntity;
 use log::info;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use tokio::sync::{Mutex, RwLock};
+use tokio::sync::{RwLock};
 
 pub struct FootballSimulatorServer {
     data: GameAppData,

@@ -1,4 +1,4 @@
-﻿use crate::r#match::{BallState, GoalDetail, MatchContext, MatchState};
+﻿use crate::r#match::{BallState, GoalDetail, MatchContext};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 
@@ -97,7 +97,7 @@ impl Ball {
 
     fn check_boundary_collision(
         &mut self,
-        result: &mut Vec<BallUpdateEvent>,
+        _result: &mut Vec<BallUpdateEvent>,
         context: &mut MatchContext,
     ) {
         // Check if ball hits the boundary and reverse its velocity if it does
@@ -110,7 +110,7 @@ impl Ball {
         }
     }
 
-    fn check_goal(&mut self, result: &mut Vec<BallUpdateEvent>) {
+    fn check_goal(&mut self, _result: &mut Vec<BallUpdateEvent>) {
         let goal_post_width = 6.0;
         let goal_line_x = 140.0;
 
@@ -133,7 +133,7 @@ impl Ball {
         }
     }
 
-    fn update_velocity(&mut self, result: &mut Vec<BallUpdateEvent>) {
+    fn update_velocity(&mut self, _result: &mut Vec<BallUpdateEvent>) {
         let gravity = Vector3::new(0.0, 0.0, -9.81);
 
         const FRICTION_COEFFICIENT: f32 = 0.1;

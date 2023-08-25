@@ -51,7 +51,7 @@ impl LeagueTable {
     }
 
     fn winner(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut team = self.get_team_mut(team_id);
+        let team = self.get_team_mut(team_id);
 
         team.played += 1;
         team.win += 1;
@@ -61,7 +61,7 @@ impl LeagueTable {
     }
 
     fn looser(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut team = self.get_team_mut(team_id);
+        let team = self.get_team_mut(team_id);
 
         team.played += 1;
         team.lost += 1;
@@ -70,7 +70,7 @@ impl LeagueTable {
     }
 
     fn draft(&mut self, team_id: u32, goal_scored: u8, goal_concerned: u8) {
-        let mut team = self.get_team_mut(team_id);
+        let team = self.get_team_mut(team_id);
 
         team.played += 1;
         team.draft += 1;

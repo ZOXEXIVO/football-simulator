@@ -8,9 +8,9 @@ pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
     pub fn detect_velocity(
-        current_time: u64,
+        _current_time: u64,
         player: &MatchPlayer,
-        result: &mut Vec<PlayerUpdateEvent>,
+        _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
         state: &MatchState,
     ) -> Vector3<f32> {
