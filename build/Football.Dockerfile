@@ -11,6 +11,8 @@ COPY ./ui/ .
 
 RUN npm run publish 
 
+# BUILD BACKEND
+
 FROM rust:1.72 as build-backend
 WORKDIR /src
 
