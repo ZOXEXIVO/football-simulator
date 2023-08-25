@@ -6,7 +6,7 @@ pub struct IntegerUtils;
 impl IntegerUtils {
     #[inline]
     pub fn random(min: i32, max: i32) -> i32 {
-        let random_val: f64 = thread_rng().gen();
+        let random_val: f64 = random();
 
         min + (random_val * ((max - min) as f64)) as i32
     }

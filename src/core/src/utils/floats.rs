@@ -6,7 +6,7 @@ pub struct FloatUtils;
 impl FloatUtils {
     #[inline]
     pub fn random(min: f32, max: f32) -> f32 {
-        let random_val: f64 = thread_rng().gen();
+        let random_val: f64 = random();
 
         min + (random_val as f32 * (max - min))
     }
