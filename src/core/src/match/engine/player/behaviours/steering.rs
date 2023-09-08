@@ -52,10 +52,10 @@ impl<'p> SteeringBehavior<'p> {
                 let max_acceleration = player.skills.max_speed();
                 let steering_length = steering.norm();
 
-                println!(
-                    "max_acceleration = {}, steering_length = {} ",
-                    max_acceleration, steering_length
-                );
+                // println!(
+                //     "max_acceleration = {}, steering_length = {} ",
+                //     max_acceleration, steering_length
+                // );
 
                 // Limit the steering to the maximum acceleration
                 let steering_ratio = max_acceleration / steering_length;
