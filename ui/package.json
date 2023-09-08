@@ -10,14 +10,14 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^16.2.2",
-    "@angular/common": "^16.2.2",
-    "@angular/compiler": "^16.2.2",
-    "@angular/core": "^16.2.2",
-    "@angular/forms": "^16.2.2",
-    "@angular/platform-browser": "^16.2.2",
-    "@angular/platform-browser-dynamic": "^16.2.2",
-    "@angular/router": "^16.2.2",
+    "@angular/animations": "^16.2.4",
+    "@angular/common": "^16.2.4",
+    "@angular/compiler": "^16.2.4",
+    "@angular/core": "^16.2.4",
+    "@angular/forms": "^16.2.4",
+    "@angular/platform-browser": "^16.2.4",
+    "@angular/platform-browser-dynamic": "^16.2.4",
+    "@angular/router": "^16.2.4",
     "@fortawesome/fontawesome-free": "^6.4.2",
     "@ngneat/until-destroy": "^10.0.0",
     "bootstrap": "^5.3.1",
@@ -27,9 +27,9 @@
     "zone.js": "~0.13.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.2.0",
-    "@angular/cli": "~16.2.0",
-    "@angular/compiler-cli": "^16.2.2",
+    "@angular-devkit/build-angular": "^16.2.1",
+    "@angular/cli": "~16.2.1",
+    "@angular/compiler-cli": "^16.2.4",
     "typescript": "5.1.6"
   }
 }
