@@ -1,4 +1,4 @@
-﻿use crate::r#match::{BallState, GoalDetail, MatchContext};
+use crate::r#match::{BallState, GoalDetail, MatchContext};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 
@@ -71,42 +71,21 @@ impl Ball {
         }
     }
 
-    // pub fn calculate_velocity(pass_direction: Vector2<f32>, pass_power: f32) -> Vector3<f32> {
-    //     // The mass of a standard football is around 0.43 kg
-    //     let ball_mass = 0.43;
-    //     // The coefficient of friction between the ball and grass is around 0.1
-    //     let friction_coefficient = 0.1;
-    //     // The acceleration due to gravity is approximately 9.81 m/s^2
-    //     let gravity = Vector3::new(0.0, 0.0, -9.81);
-    //
-    //     // Calculate the direction and magnitude of the pass velocity
-    //     let pass_velocity = pass_direction.normalize() * pass_power;
-    //
-    //     // Calculate the net force acting on the ball, taking into account friction and gravity
-    //     let net_force = pass_velocity * ball_mass * -friction_coefficient + ball_mass * gravity;
-    //
-    //     // Calculate the acceleration of the ball based on the net force
-    //     let acceleration = net_force / ball_mass;
-    //
-    //     // Calculate the final velocity of the ball after a certain amount of time has passed
-    //     let time_elapsed = 0.5; // 0.5 seconds for the sake of example
-    //     let final_velocity = pass_velocity + acceleration * time_elapsed;
-    //
-    //     final_velocity
-    // }
-
     fn check_boundary_collision(
         &mut self,
         _result: &mut Vec<BallUpdateEvent>,
         context: &mut MatchContext,
     ) {
+        let field_width = context.field_size.width as f32 + 15.0;
+        let field_height = context.field_size.height as f32 + 15.0;
+
         // Check if ball hits the boundary and reverse its velocity if it does
-        if self.position.x <= 0.0 || self.position.x >= context.field_size.width as f32 {
-            self.velocity.x = -self.velocity.x;
+        if self.position.x <= 0.0 || self.position.x >= field_width {
+            self.velocity = Vector3::zeros();
         }
 
-        if self.position.y <= 0.0 || self.position.y >= context.field_size.height as f32 {
-            self.velocity.y = -self.velocity.y;
+        if self.position.y <= 0.0 || self.position.y >= field_height {
+            self.velocity = Vector3::zeros();
         }
     }
 
@@ -136,7 +115,7 @@ impl Ball {
     fn update_velocity(&mut self, _result: &mut Vec<BallUpdateEvent>) {
         let gravity = Vector3::new(0.0, 0.0, -9.81);
 
-        const FRICTION_COEFFICIENT: f32 = 0.1;
+        const FRICTION_COEFFICIENT: f32 = 1.5;
         const BALL_MASS: f32 = 0.43;
         const STOPPING_THRESHOLD: f32 = 0.01;
 
@@ -147,7 +126,7 @@ impl Ball {
             Vector3::zeros()
         };
 
-        let total_force = gravity * BALL_MASS + friction;
+        let total_force = gravity * BALL_MASS - friction;
         let acceleration = total_force / BALL_MASS;
 
         const TIME_STEP: f32 = 0.01;
@@ -157,11 +136,6 @@ impl Ball {
         if self.velocity.norm() < STOPPING_THRESHOLD {
             self.velocity = Vector3::zeros();
         }
-
-        // println!(
-        //     "friction={}, x,y={},{}",
-        //     friction, self.velocity.x, self.velocity.y
-        // )
     }
 
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {

@@ -11,5 +11,5 @@ log = { version = "0.4.20", features = ["release_max_level_error"] }
 tokio = { version = "1.32.0", features = ["full"] }
 tower-http = { version = "0.4.4", features = ["fs"] }
 serde = { version = "1.0.188", features = ["derive"] }
-chrono= "0.4.30"
-itertools = "0.10.5"
+chrono= "0.4.31"
+itertools = "0.11.0"
