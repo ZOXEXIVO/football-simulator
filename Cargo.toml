@@ -9,11 +9,11 @@ core = { path = "src/core" }
 server = { path = "src/server" }
 database = { path = "src/database" }
 serde_json = "1.0.107"
-serde = "1.0.188"
+serde = "1.0.189"
 log = { version = "0.4.20", features = ["release_max_level_error"] }
 env_logger = "0.10.0"
 itertools = "0.11.0"
 chrono = "0.4.31"
 color-eyre = "0.6.2"
-tokio = { version = "1.32.0", features = ["full"] }
+tokio = { version = "1.33.0", features = ["full"] }
 rand = "0.8.5"
