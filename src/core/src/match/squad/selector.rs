@@ -176,7 +176,7 @@ mod tests {
             ),
             TeamReputation::new(0, 0, 0),
             PlayerCollection::new(generate_players()),
-            StaffCollection::new(Vec::new(), Some(StaffStub::default())),
+            StaffCollection::new(Vec::new()),
         );
 
         team.tactics = Some(Tactics::new(TacticsPositioning::T442));
