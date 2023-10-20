@@ -55,6 +55,8 @@ impl LeagueResult {
             (result.home_goals, result.away_goals),
         ));
 
+
+
         let away_team = data.team_mut(result.away_team_id).unwrap();
         away_team.match_history.add(MatchHistoryItem::new(
             now,

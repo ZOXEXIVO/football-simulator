@@ -31,6 +31,7 @@ impl Club {
         name: String,
         location: Location,
         finance: ClubFinances,
+        academy: ClubAcademy,
         status: ClubStatus,
         teams: TeamCollection,
     ) -> Self {
@@ -40,7 +41,7 @@ impl Club {
             location,
             finance,
             status,
-            academy: ClubAcademy::new(10),
+            academy: academy,
             mood: ClubMood::default(),
             board: ClubBoard::new(),
             teams,

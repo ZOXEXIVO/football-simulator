@@ -1,14 +1,30 @@
-use crate::academy::AcademyPlayer;
-use crate::{SimulatorData};
+use crate::{PlayerCollectionResult, PlayerResult, SimulatorData};
 
 pub struct ClubAcademyResult {
-    pub players: Vec<AcademyPlayer>,
+    pub players: PlayerCollectionResult,
+        pub produece_result: ProduceYouthPlayersResult
 }
 
 impl ClubAcademyResult {
-    pub fn new() -> Self {
+    pub fn new(players: PlayerCollectionResult,          produece_result: ProduceYouthPlayersResult) -> Self {
         ClubAcademyResult {
-            players: Vec::new(),
+            players,
+            produece_result
+        }
+    }
+
+    pub fn process(&self, _: &mut SimulatorData) {}
+}
+
+
+pub struct ProduceYouthPlayersResult {
+pub players: Vec<PlayerResult>
+}
+
+impl ProduceYouthPlayersResult {
+    pub fn new(players: Vec<PlayerResult>) -> Self {
+        ProduceYouthPlayersResult {
+            players
         }
     }
 

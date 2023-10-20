@@ -179,9 +179,7 @@ impl DatabaseGenerator {
                                     country_id,
                                 )),
                                 StaffCollection::new(
-                                    Self::generate_staffs(staff_generator, country_id),
-                                    Some(StaffStub::default()),
-                                ),
+                                    Self::generate_staffs(staff_generator, country_id)),
                             )
                         })
                         .collect(),

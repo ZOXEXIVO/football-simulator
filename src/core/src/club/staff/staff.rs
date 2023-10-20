@@ -11,6 +11,7 @@ use crate::{
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
+use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct Staff {
@@ -88,18 +89,15 @@ impl Display for Staff {
 pub struct StaffCollection {
     pub staffs: Vec<Staff>,
 
-    pub manager: Option<Staff>,
-
     pub responsibility: StaffResponsibility,
 
     stub: Staff,
 }
 
 impl StaffCollection {
-    pub fn new(staffs: Vec<Staff>, manager: Option<Staff>) -> Self {
+    pub fn new(staffs: Vec<Staff>) -> Self {
         StaffCollection {
             staffs,
-            manager,
             responsibility: StaffResponsibility::default(),
             stub: StaffStub::default(),
         }
@@ -130,8 +128,19 @@ impl StaffCollection {
         }
     }
 
+    fn manager(&self) -> Option<&Staff> {
+        let manager = self.staffs.iter()
+            .filter(|staff| staff.contract.is_some())
+            .find(|staff| staff.contract.as_ref().unwrap().position == StaffPosition::Manager);
+
+        match manager {
+            Some(_) => manager,
+            None => None,
+        }
+    }
+
     pub fn head_coach(&self) -> &Staff {
-        match self.manager {
+        match self.manager() {
             Some(ref head_coach) => head_coach,
             None => self.get_by_position(StaffPosition::AssistantManager),
         }
@@ -249,8 +258,7 @@ mod tests {
                 training: TrainingResponsibility::default(),
             },
             staffs: vec![staff],
-            stub: StaffStub::default(),
-            manager: Option::None,
+            stub: StaffStub::default()
         }
     }
 
