@@ -30,8 +30,8 @@ impl Ball {
 
         self.update_velocity(&mut result);
         self.move_to(&mut result);
-        self.check_boundary_collision(&mut result, context);
         self.check_goal(&mut result);
+        self.check_boundary_collision(&mut result, context);
 
         result
     }

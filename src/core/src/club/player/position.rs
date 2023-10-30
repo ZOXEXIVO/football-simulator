@@ -34,6 +34,7 @@ impl Display for PlayerPositionType {
 }
 
 impl PlayerPositionType {
+    #[inline]
     pub fn get_short_name(&self) -> &'static str {
         match *self {
             PlayerPositionType::Goalkeeper => "GK",
@@ -61,6 +62,7 @@ impl PlayerPositionType {
         }
     }
 
+    #[inline]
     pub fn position_group(&self) -> PlayerFieldPositionGroup {
         match *self {
             PlayerPositionType::Goalkeeper => PlayerFieldPositionGroup::Goalkeeper,
