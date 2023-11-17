@@ -9,6 +9,8 @@ impl ShootingState {
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
+        // write code for processing shoot state
+
         //         player.velocity = player.skills.running_speed();
         //         // let distance_to_goal = (self.position.x - self.field.width as i16 / 2).abs();
         //         // if distance_to_goal < 50 {

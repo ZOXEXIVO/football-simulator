@@ -5,11 +5,8 @@ pub struct FootballMatchResult {
     pub score: Score,
     pub position_data: MatchPositionData,
 
-    pub home_players: FieldSquad,
-    pub away_players: FieldSquad,
-
     pub match_time_ms: u64,
-    pub additinal_time_ms: u64,
+    pub additional_time_ms: u64,
 }
 
 impl FootballMatchResult {
@@ -17,20 +14,9 @@ impl FootballMatchResult {
         FootballMatchResult {
             score: Score::new(),
             position_data: MatchPositionData::new(),
-            home_players: FieldSquad::new(),
-            away_players: FieldSquad::new(),
             match_time_ms,
-            additinal_time_ms: 0,
+            additional_time_ms: 0,
         }
-    }
-
-    pub fn write_team_players(
-        &mut self,
-        home_team_players: &FieldSquad,
-        away_team_players: &FieldSquad,
-    ) {
-        self.home_players = FieldSquad::from(home_team_players);
-        self.away_players = FieldSquad::from(away_team_players);
     }
 }
 

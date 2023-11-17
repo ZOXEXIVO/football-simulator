@@ -43,21 +43,21 @@ impl Ball {
     ) {
         for event in events {
             match event {
-                BallUpdateEvent::AwayGoal(goal_scorer, goal_assistant) => {
+                BallUpdateEvent::AwayGoal => {
                     context.result.score.away += 1;
-                    context.result.score.details.push(GoalDetail {
-                        player_id: goal_scorer,
-                        assistant: goal_assistant,
-                        minute: (current_time / 1000 / 60) as u8,
-                    })
+                    // context.result.score.details.push(GoalDetail {
+                    //     player_id: goal_scorer,
+                    //     assistant: goal_assistant,
+                    //     minute: (current_time / 1000 / 60) as u8,
+                    // })
                 }
-                BallUpdateEvent::HomeGoal(goal_scorer, goal_assistant) => {
+                BallUpdateEvent::HomeGoal => {
                     context.result.score.home += 1;
-                    context.result.score.details.push(GoalDetail {
-                        player_id: goal_scorer,
-                        assistant: goal_assistant,
-                        minute: (current_time / 1000 / 60) as u8,
-                    })
+                    // context.result.score.details.push(GoalDetail {
+                    //     player_id: goal_scorer,
+                    //     assistant: goal_assistant,
+                    //     minute: (current_time / 1000 / 60) as u8,
+                    // })
                 }
                 BallUpdateEvent::ChangeBallSide(position) => {
                     let ball_state = match position {
@@ -65,7 +65,7 @@ impl Ball {
                         BallPosition::Away => BallState::AwaySide,
                     };
 
-                    context.state.set_ball_state(ball_state)
+                    //context.state.set_ball_state(ball_state)
                 }
             }
         }
@@ -89,7 +89,7 @@ impl Ball {
         }
     }
 
-    fn check_goal(&mut self, _result: &mut Vec<BallUpdateEvent>) {
+    fn check_goal(&mut self, result: &mut Vec<BallUpdateEvent>) {
         let goal_post_width = 6.0;
         let goal_line_x = 140.0;
 
@@ -102,9 +102,9 @@ impl Ball {
                 || (self.start_position.y > goal_line_y && self.position.y <= goal_line_y)
             {
                 if self.start_position.x < goal_line_x {
-                    //result.push(BallUpdateEvent::AwayGoal);
+                    result.push(BallUpdateEvent::AwayGoal);
                 } else {
-                    //result.push(BallUpdateEvent::HomeGoal);
+                    result.push(BallUpdateEvent::HomeGoal);
                 }
 
                 self.reset();
@@ -172,8 +172,8 @@ impl Ball {
 }
 
 pub enum BallUpdateEvent {
-    HomeGoal(u32, Option<u32>),
-    AwayGoal(u32, Option<u32>),
+    HomeGoal,
+    AwayGoal,
     ChangeBallSide(BallPosition),
 }
 

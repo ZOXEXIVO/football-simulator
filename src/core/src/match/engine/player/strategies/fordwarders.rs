@@ -1,4 +1,4 @@
-﻿use crate::r#match::{MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent};
+﻿use crate::r#match::{MatchGameState, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
 use nalgebra::Vector3;
 
 pub struct ForwardStrategies {}
@@ -9,7 +9,7 @@ impl ForwardStrategies {
         _player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
-        _state: &MatchState,
+        _state: &MatchGameState,
     ) -> Vector3<f32> {
         Vector3::new(0.0, 0.0, 0.0)
     }

@@ -1,6 +1,6 @@
 ﻿use crate::r#match::{
-    BallState, MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
-    SteeringOutput,
+    BallState, MatchGameState, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
+    SteeringBehavior, SteeringOutput,
 };
 use nalgebra::Vector3;
 
@@ -12,7 +12,7 @@ impl DefenderStrategies {
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-        state: &MatchState,
+        state: &MatchGameState,
     ) -> Vector3<f32> {
         let behavior = match state.ball_state {
             Some(ball_state) => match ball_state {
@@ -63,7 +63,7 @@ impl DefenderStrategies {
         Vector3::new(steering_output.velocity.x, steering_output.velocity.y, 0.0)
     }
 
-    fn is_on_defending_half(player: &MatchPlayer, state: &MatchState) -> bool {
+    fn is_on_defending_half(player: &MatchPlayer, state: &MatchGameState) -> bool {
         match state.ball_state {
             Some(ball_state) => ball_state == BallState::HomeSide && player.is_home,
             None => false,

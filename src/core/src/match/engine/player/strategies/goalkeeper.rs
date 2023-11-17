@@ -1,9 +1,8 @@
 ﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    MatchObjectsPositions, MatchPlayer, MatchState, PlayerUpdateEvent, SteeringBehavior,
+    MatchGameState, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior,
 };
 use nalgebra::Vector3;
-
 
 pub struct GoalkeeperStrategies {}
 
@@ -13,7 +12,7 @@ impl GoalkeeperStrategies {
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-        _state: &MatchState,
+        _state: &MatchGameState,
     ) -> Vector3<f32> {
         let is_ball_moving =
             objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;

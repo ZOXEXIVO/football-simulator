@@ -2,44 +2,46 @@ use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{FootballMatchResult, GameState, MatchPlayer, MatchState};
+use crate::r#match::{
+    FieldSquad, FootballMatchResult, MatchGameState, MatchPlayer, MatchState, StateManager,
+};
 use nalgebra::Vector3;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
 impl<const W: usize, const H: usize> FootballEngine<W, H> {
-    pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> FootballMatchResult {
-        let mut context = MatchContext::new(FieldSize::new(W, H));
+    pub fn new() -> Self {
+        FootballEngine {}
+    }
 
+    pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> FootballMatchResult {
         let mut field = MatchField::new(W, H);
 
         field.setup(home_squad, away_squad);
 
-        context.result.write_team_players(
+        let mut context = MatchContext::new(FieldSize::new(W, H));
+
+        context.write_team_players(
             field.home_players.as_ref().unwrap(),
             field.away_players.as_ref().unwrap(),
         );
 
-        // First half
-        context.state.set_game_state(GameState::FirstHalf);
-        Self::play_inner(&mut field, &mut context);
+        let mut state_manager = StateManager::new();
+        let mut state: MatchState;
 
-        {
-            field.swap_squads();
-            field.swap_player_positions();
+        loop {
+            state = state_manager.next();
 
-            Self::play_rest_time(&mut field);
-        }
+            if state == MatchState::End {
+                break;
+            }
 
-        // Second half
-        context.state.set_game_state(GameState::SecondHalf);
-        Self::play_inner(&mut field, &mut context);
-
-        if context.result.additinal_time_ms > 0 {
-            // additional time
-            context.state.set_game_state(GameState::ExtraTime);
+            context.state.set_state(state);
 
             Self::play_inner(&mut field, &mut context);
+
+            field.swap_squads();
+            field.swap_player_positions();
         }
 
         context.result
@@ -89,24 +91,38 @@ pub enum MatchEvent {
 }
 
 pub struct MatchContext {
-    pub state: MatchState,
+    pub state: MatchGameState,
     time: MatchTime,
     pub result: FootballMatchResult,
     pub field_size: FieldSize,
+
+    pub home_players: FieldSquad,
+    pub away_players: FieldSquad,
 }
 
 impl MatchContext {
     pub fn new(field_size: FieldSize) -> Self {
         MatchContext {
-            state: MatchState::new(),
+            state: MatchGameState::new(),
             time: MatchTime::new(),
             result: FootballMatchResult::with_match_time(MATCH_HALF_TIME_MS),
             field_size,
+            home_players: FieldSquad::new(),
+            away_players: FieldSquad::new(),
         }
     }
 
     pub fn increment_time(&mut self) -> bool {
         self.time.increment(MATCH_TIME_INCREMENT_MS) < MATCH_HALF_TIME_MS
+    }
+
+    pub fn write_team_players(
+        &mut self,
+        home_team_players: &FieldSquad,
+        away_team_players: &FieldSquad,
+    ) {
+        self.home_players = FieldSquad::from(home_team_players);
+        self.away_players = FieldSquad::from(away_team_players);
     }
 }
 
