@@ -1,8 +1,8 @@
 use crate::league::{LeagueTableResult, ScheduleItem};
-use crate::r#match::game::MatchResult;
 use crate::simulator::SimulatorData;
 use crate::MatchHistoryItem;
 use chrono::NaiveDateTime;
+use crate::r#match::MatchResult;
 
 pub struct LeagueResult {
     pub league_id: u32,

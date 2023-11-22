@@ -1,7 +1,7 @@
 use crate::context::GlobalContext;
 use crate::league::LeagueTableResult;
-use crate::r#match::game::MatchResult;
 use std::cmp::Ordering;
+use crate::r#match::MatchResult;
 
 #[derive(Debug)]
 pub struct LeagueTable {

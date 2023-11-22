@@ -18,6 +18,7 @@ use core::{
     TeamReputation, TeamType, TrainingSchedule,
 };
 use std::str::FromStr;
+use core::league::MatchStorage;
 
 pub struct DatabaseGenerator;
 
@@ -125,7 +126,7 @@ impl DatabaseGenerator {
                             to_month: league.settings.season_ending_half.to_month,
                         },
                     },
-                    match_results: Vec::new(),
+                    matches: MatchStorage::new(),
                     table: LeagueTable::new(&league_clubs),
                     reputation: 0,
                 }

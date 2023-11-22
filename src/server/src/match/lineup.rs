@@ -76,9 +76,8 @@ pub async fn match_lineup_action(
     let league = simulator_data.league(league_id).unwrap();
 
     let match_result = league
-        .match_results
-        .iter()
-        .find(|m| m.id == route_params.match_id)
+        .matches
+        .get(route_params.match_id)
         .unwrap();
 
     let home_team = simulator_data.team(match_result.home_team_id).unwrap();

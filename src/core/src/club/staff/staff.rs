@@ -11,7 +11,6 @@ use crate::{
 };
 use chrono::{NaiveDate, NaiveDateTime};
 use std::fmt::{Display, Formatter, Result};
-use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct Staff {

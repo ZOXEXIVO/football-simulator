@@ -1,9 +1,13 @@
-﻿use crate::r#match::position::MatchPositionData;
+﻿use crate::league::LeagueMatch;
+use crate::r#match::position::MatchPositionData;
 
 #[derive(Debug, Clone)]
 pub struct FootballMatchResult {
     pub score: Score,
     pub position_data: MatchPositionData,
+
+    pub home_players: FieldSquad,
+    pub away_players: FieldSquad,
 
     pub match_time_ms: u64,
     pub additional_time_ms: u64,
@@ -14,9 +18,20 @@ impl FootballMatchResult {
         FootballMatchResult {
             score: Score::new(),
             position_data: MatchPositionData::new(),
+            home_players: FieldSquad::new(),
+            away_players: FieldSquad::new(),
             match_time_ms,
             additional_time_ms: 0,
         }
+    }
+
+    pub fn write_team_players(
+        &mut self,
+        home_team_players: &FieldSquad,
+        away_team_players: &FieldSquad,
+    ) {
+        self.home_players = FieldSquad::from(home_team_players);
+        self.away_players = FieldSquad::from(away_team_players);
     }
 }
 
@@ -69,3 +84,29 @@ impl Score {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct MatchResult {
+    pub id: String,
+    pub league_id: u32,
+    pub result_details: Option<FootballMatchResult>,
+    pub home_team_id: u32,
+    pub home_goals: u8,
+    pub away_team_id: u32,
+    pub away_goals: u8,
+}
+
+impl From<&LeagueMatch> for MatchResult {
+    fn from(m: &LeagueMatch) -> Self {
+        MatchResult {
+            id: m.id.clone(),
+            league_id: m.league_id,
+            result_details: None,
+            home_team_id: m.home_team_id,
+            home_goals: m.result.as_ref().unwrap().home_goals,
+            away_team_id: m.away_team_id,
+            away_goals: m.result.as_ref().unwrap().away_goals,
+        }
+    }
+}
+
