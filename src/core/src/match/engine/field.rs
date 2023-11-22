@@ -1,6 +1,6 @@
 ﻿use crate::r#match::ball::Ball;
 use crate::r#match::{
-    FieldSquad, FootballMatchResult, MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING,
+    FieldSquad, MatchResultRaw, MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING,
 };
 use nalgebra::Vector3;
 
@@ -53,7 +53,7 @@ impl MatchField {
         self.players.iter_mut().for_each(|p| p.is_home = !p.is_home);
     }
 
-    pub fn write_match_positions(&self, result: &mut FootballMatchResult, timestamp: u64) {
+    pub fn write_match_positions(&self, result: &mut MatchResultRaw, timestamp: u64) {
         // player positions
         self.players.iter().for_each(|player| {
             result

@@ -92,8 +92,8 @@ impl League {
             let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
             scheduled_match.result = Some(LeagueMatchResultResult {
-                home_goals: match_result.home_goals,
-                away_goals: match_result.away_goals,
+                home_goals: match_result.score.home,
+                away_goals: match_result.score.away,
             });
 
             result.push(match_result);

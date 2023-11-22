@@ -2,8 +2,9 @@
 use crate::r#match::position::MatchPositionData;
 
 #[derive(Debug, Clone)]
-pub struct FootballMatchResult {
+pub struct MatchResultRaw {
     pub score: Score,
+
     pub position_data: MatchPositionData,
 
     pub home_players: FieldSquad,
@@ -13,9 +14,9 @@ pub struct FootballMatchResult {
     pub additional_time_ms: u64,
 }
 
-impl FootballMatchResult {
+impl MatchResultRaw {
     pub fn with_match_time(match_time_ms: u64) -> Self {
-        FootballMatchResult {
+        MatchResultRaw {
             score: Score::new(),
             position_data: MatchPositionData::new(),
             home_players: FieldSquad::new(),
@@ -89,11 +90,10 @@ impl Score {
 pub struct MatchResult {
     pub id: String,
     pub league_id: u32,
-    pub result_details: Option<FootballMatchResult>,
+    pub result_details: Option<MatchResultRaw>,
+    pub score: Score,
     pub home_team_id: u32,
-    pub home_goals: u8,
     pub away_team_id: u32,
-    pub away_goals: u8,
 }
 
 impl From<&LeagueMatch> for MatchResult {
@@ -101,11 +101,10 @@ impl From<&LeagueMatch> for MatchResult {
         MatchResult {
             id: m.id.clone(),
             league_id: m.league_id,
+            score: Score::new(),
             result_details: None,
             home_team_id: m.home_team_id,
-            home_goals: m.result.as_ref().unwrap().home_goals,
             away_team_id: m.away_team_id,
-            away_goals: m.result.as_ref().unwrap().away_goals,
         }
     }
 }

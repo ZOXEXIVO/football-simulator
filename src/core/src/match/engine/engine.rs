@@ -3,7 +3,7 @@ use crate::r#match::field::MatchField;
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{
-    FieldSquad, FootballMatchResult, MatchGameState, MatchPlayer, MatchState, StateManager,
+    FieldSquad, MatchResultRaw, MatchGameState, MatchPlayer, MatchState, StateManager,
 };
 use nalgebra::Vector3;
 
@@ -14,7 +14,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         FootballEngine {}
     }
 
-    pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> FootballMatchResult {
+    pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> MatchResultRaw {
         let mut field = MatchField::new(W, H);
 
         field.setup(home_squad, away_squad);
@@ -93,7 +93,7 @@ pub enum MatchEvent {
 pub struct MatchContext {
     pub state: MatchGameState,
     time: MatchTime,
-    pub result: FootballMatchResult,
+    pub result: MatchResultRaw,
     pub field_size: FieldSize,
 
     pub home_players: FieldSquad,
@@ -105,7 +105,7 @@ impl MatchContext {
         MatchContext {
             state: MatchGameState::new(),
             time: MatchTime::new(),
-            result: FootballMatchResult::with_match_time(MATCH_HALF_TIME_MS),
+            result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS),
             field_size,
             home_players: FieldSquad::new(),
             away_players: FieldSquad::new(),

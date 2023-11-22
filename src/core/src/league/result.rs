@@ -46,22 +46,20 @@ impl LeagueResult {
 
         league
             .schedule
-            .update_match_result(&result.id, result.home_goals, result.away_goals);
+            .update_match_result(&result.id, result.score.home, result.score.away);
 
         let home_team = data.team_mut(result.home_team_id).unwrap();
         home_team.match_history.add(MatchHistoryItem::new(
             now,
             result.away_team_id,
-            (result.home_goals, result.away_goals),
+            (result.score.home, result.score.away),
         ));
-
-
 
         let away_team = data.team_mut(result.away_team_id).unwrap();
         away_team.match_history.add(MatchHistoryItem::new(
             now,
             result.home_team_id,
-            (result.away_goals, result.home_goals),
+            (result.score.away, result.score.home),
         ));
 
         // process_match_events(result, data);

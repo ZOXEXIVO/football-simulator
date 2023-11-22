@@ -2,7 +2,7 @@
 use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use core::r#match::engine::FootballMatchResult;
+use core::r#match::engine::MatchResultRaw;
 use core::SimulatorData;
 use serde::{Deserialize, Serialize};
 
@@ -144,7 +144,7 @@ pub async fn match_lineup_action(
 
 fn to_lineup_player<'p>(
     player_id: u32,
-    match_details: &'p FootballMatchResult,
+    match_details: &'p MatchResultRaw,
     simulator_data: &'p SimulatorData,
 ) -> Option<LineupPlayer<'p>> {
     let player = simulator_data.player(player_id).unwrap();
