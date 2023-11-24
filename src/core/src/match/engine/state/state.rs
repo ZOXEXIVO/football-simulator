@@ -8,3 +8,9 @@ pub enum MatchState {
     PenaltyShootout,
     End,
 }
+
+impl MatchState {
+    pub fn is_end_state(&self) -> bool {
+        *self == MatchState::End
+    }
+}

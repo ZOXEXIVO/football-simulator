@@ -20,7 +20,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         let mut state_manager = StateManager::new();
         let mut state: MatchState = MatchState::Initial;
 
-        while state != MatchState::End {
+        while !state.is_end_state() {
             state = state_manager.next();
 
             context.state.set(state);
@@ -32,12 +32,6 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         context.result
-    }
-
-    fn play_rest_time(field: &mut MatchField) {
-        field.players.iter_mut().for_each(|p| {
-            p.player_attributes.rest(1000);
-        })
     }
 
     fn play_inner(field: &mut MatchField, context: &mut MatchContext) -> u64 {
@@ -67,6 +61,12 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         additional_time
+    }
+
+    fn play_rest_time(field: &mut MatchField) {
+        field.players.iter_mut().for_each(|p| {
+            p.player_attributes.rest(1000);
+        })
     }
 }
 
