@@ -10,26 +10,26 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^16.2.4",
-    "@angular/common": "^16.2.4",
-    "@angular/compiler": "^16.2.4",
-    "@angular/core": "^16.2.4",
-    "@angular/forms": "^16.2.4",
-    "@angular/platform-browser": "^16.2.4",
-    "@angular/platform-browser-dynamic": "^16.2.4",
-    "@angular/router": "^16.2.4",
+    "@angular/animations": "^17.0.4",
+    "@angular/common": "^17.0.4",
+    "@angular/compiler": "^17.0.4",
+    "@angular/core": "^17.0.4",
+    "@angular/forms": "^17.0.4",
+    "@angular/platform-browser": "^17.0.4",
+    "@angular/platform-browser-dynamic": "^17.0.4",
+    "@angular/router": "^17.0.4",
     "@fortawesome/fontawesome-free": "^6.4.2",
     "@ngneat/until-destroy": "^10.0.0",
-    "bootstrap": "^5.3.1",
-    "pixi.js": "^7.2.4",
+    "bootstrap": "^5.3.2",
+    "pixi.js": "^7.3.2",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.2",
-    "zone.js": "~0.13.1"
+    "zone.js": "~0.14.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.2.1",
-    "@angular/cli": "~16.2.1",
-    "@angular/compiler-cli": "^16.2.4",
-    "typescript": "5.1.6"
+    "@angular-devkit/build-angular": "^17.0.3",
+    "@angular/cli": "~17.0.3",
+    "@angular/compiler-cli": "^17.0.4",
+    "typescript": "5.2.2"
   }
 }

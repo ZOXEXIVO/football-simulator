@@ -67,7 +67,7 @@
         <td style="text-align: center">
           <a [routerLink]="['/match/' + teamSchedule.league_slug + '/' + item.result.match_id]">
             <div *ngIf="item.result">
-              {{ item.result.score.home }} -  {{ item.result.score.away }}
+              {{ item.result.home_goals }} -  {{ item.result.away_goals }}
             </div>
             <div *ngIf="!item.result">
               -
