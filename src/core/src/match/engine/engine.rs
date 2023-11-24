@@ -18,17 +18,15 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         let mut context = MatchContext::new(&field);
 
         let mut state_manager = StateManager::new();
-        let mut state: MatchState = MatchState::Initial;
 
-        while !state.is_end_state() {
-            state = state_manager.next();
+        let mut additional_time= 0;
 
+        while let Some(state) = state_manager.next() {
             context.state.set(state);
 
-            Self::play_inner(&mut field, &mut context);
+            additional_time += Self::play_inner(&mut field, &mut context);
 
-            field.swap_squads();
-            field.swap_player_positions();
+            Self::handle_finish_state(&mut context, &mut field, &mut additional_time);
         }
 
         context.result
@@ -61,6 +59,41 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         additional_time
+    }
+
+    fn handle_finish_state(context: &mut MatchContext, field: &mut MatchField, additional_time: &mut u64){
+        if context.state.match_state.need_swap_squads() {
+            field.swap_squads();
+        }
+
+        match context.state.match_state {
+            MatchState::Initial => {
+
+            }
+            MatchState::FirstHalf => {
+                if *additional_time > 0 {
+                    context.add_time(*additional_time);
+                    *additional_time = 0;
+                }
+            }
+            MatchState::HalfTime => {
+
+            }
+            MatchState::SecondHalf => {
+                if *additional_time > 0 {
+                    context.add_time(*additional_time);
+                }
+            }
+            MatchState::ExtraTime => {
+
+            }
+            MatchState::PenaltyShootout => {
+
+            }
+            _ => {
+
+            }
+        }
     }
 
     fn play_rest_time(field: &mut MatchField) {
@@ -96,6 +129,10 @@ impl MatchContext {
 
     pub fn increment_time(&mut self) -> bool {
         self.time.increment(MATCH_TIME_INCREMENT_MS) < MATCH_HALF_TIME_MS
+    }
+
+    pub fn add_time(&mut self, time: u64) {
+        self.time.increment(time);
     }
 }
 

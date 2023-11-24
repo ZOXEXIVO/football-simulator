@@ -15,33 +15,33 @@ impl StateManager {
         self.current_state
     }
 
-    pub fn next(&mut self) -> MatchState {
+    pub fn next(&mut self) -> Option<MatchState> {
         match self.current_state {
             MatchState::Initial => {
                 self.current_state = MatchState::FirstHalf;
-                self.current_state
+                Some(self.current_state)
             }
             MatchState::FirstHalf => {
                 self.current_state = MatchState::HalfTime;
-                self.current_state
+                Some(self.current_state)
             }
             MatchState::HalfTime => {
                 self.current_state = MatchState::SecondHalf;
-                self.current_state
+                Some(self.current_state)
             }
             MatchState::SecondHalf => {
                 self.current_state = MatchState::ExtraTime;
-                self.current_state
+                Some(self.current_state)
             }
             MatchState::ExtraTime => {
                 self.current_state = MatchState::PenaltyShootout;
-                self.current_state
+                Some(self.current_state)
             }
             MatchState::PenaltyShootout => {
                 self.current_state = MatchState::End;
-                self.current_state
+                Some(self.current_state)
             }
-            MatchState::End => self.current_state,
+            MatchState::End => None
         }
     }
 }

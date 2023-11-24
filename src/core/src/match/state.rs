@@ -1,20 +1,20 @@
 ﻿use crate::r#match::MatchState;
 
 pub struct MatchGameState {
-    pub game_state: Option<MatchState>,
+    pub match_state: MatchState,
     pub ball_state: Option<BallState>,
 }
 
 impl MatchGameState {
     pub fn new() -> Self {
         MatchGameState {
-            game_state: None,
+            match_state: MatchState::Initial,
             ball_state: None,
         }
     }
 
-    pub fn set(&mut self, game_state: MatchState) {
-        self.game_state = Some(game_state);
+    pub fn set(&mut self, match_state: MatchState) {
+        self.match_state = match_state;
     }
 
     pub fn set_ball_state(&mut self, ball_state: BallState) {

@@ -34,9 +34,6 @@ impl MatchField {
 
     pub fn swap_squads(&mut self) {
         std::mem::swap(&mut self.home_players, &mut self.away_players);
-    }
-
-    pub fn swap_player_positions(&mut self) {
         self.players.iter_mut().for_each(|p| p.is_home = !p.is_home);
     }
 

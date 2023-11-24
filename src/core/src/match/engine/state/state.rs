@@ -10,7 +10,11 @@ pub enum MatchState {
 }
 
 impl MatchState {
-    pub fn is_end_state(&self) -> bool {
-        *self == MatchState::End
+    pub fn need_swap_squads(&self) -> bool
+    {
+        match *self {
+            MatchState::SecondHalf | MatchState::ExtraTime  => true,
+            _ => false
+        }
     }
 }
