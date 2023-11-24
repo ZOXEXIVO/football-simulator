@@ -1,4 +1,4 @@
-use crate::r#match::{BallState, GoalDetail, MatchContext};
+use crate::r#match::MatchContext;
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 
@@ -37,7 +37,7 @@ impl Ball {
     }
 
     pub fn handle_events(
-        current_time: u64,
+        _current_time: u64,
         events: Vec<BallUpdateEvent>,
         context: &mut MatchContext,
     ) {
@@ -59,11 +59,11 @@ impl Ball {
                     //     minute: (current_time / 1000 / 60) as u8,
                     // })
                 }
-                BallUpdateEvent::ChangeBallSide(position) => {
-                    let ball_state = match position {
-                        BallPosition::Home => BallState::HomeSide,
-                        BallPosition::Away => BallState::AwaySide,
-                    };
+                BallUpdateEvent::ChangeBallSide(_position) => {
+                    // let ball_state = match position {
+                    //     BallPosition::Home => BallState::HomeSide,
+                    //     BallPosition::Away => BallState::AwaySide,
+                    // };
 
                     //context.state.set_ball_state(ball_state)
                 }

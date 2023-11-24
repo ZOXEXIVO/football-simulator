@@ -1,12 +1,12 @@
 ﻿use crate::r#match::ball::Ball;
 use crate::r#match::{
-    FieldSquad, MatchResultRaw, MatchPlayer, PositionType, TeamSquad, POSITION_POSITIONING,
+    FieldSquad, MatchFieldSize, MatchPlayer, MatchResultRaw, PositionType, TeamSquad,
+    POSITION_POSITIONING,
 };
 use nalgebra::Vector3;
 
 pub struct MatchField {
-    pub width: usize,
-    pub height: usize,
+    pub size: MatchFieldSize,
     pub ball: Ball,
     pub players: Vec<MatchPlayer>,
     pub substitutes: Vec<MatchPlayer>,
@@ -16,33 +16,20 @@ pub struct MatchField {
 }
 
 impl MatchField {
-    pub fn new(width: usize, height: usize) -> Self {
-        MatchField {
-            width,
-            height,
-            ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
-            players: Vec::new(),
-            substitutes: Vec::new(),
-            home_players: None,
-            away_players: None,
-        }
-    }
-
-    pub fn setup(&mut self, home_squad: TeamSquad, away_squad: TeamSquad) {
-        self.home_players = Some(FieldSquad {
-            main: home_squad.main_squad.iter().map(|p| p.player_id).collect(),
-            substitutes: home_squad.substitutes.iter().map(|p| p.player_id).collect(),
-        });
-
-        self.away_players = Some(FieldSquad {
-            main: away_squad.main_squad.iter().map(|p| p.player_id).collect(),
-            substitutes: away_squad.substitutes.iter().map(|p| p.player_id).collect(),
-        });
+    pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
+        let home_team_squad = FieldSquad::from_team(&home_squad);
+        let away_team_squad = FieldSquad::from_team(&away_squad);
 
         let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
 
-        self.players.extend(players_on_field);
-        self.substitutes.extend(substitutes);
+        MatchField {
+            size: MatchFieldSize::new(width, height),
+            ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
+            players: players_on_field,
+            substitutes,
+            home_players: Some(home_team_squad),
+            away_players: Some(away_team_squad),
+        }
     }
 
     pub fn swap_squads(&mut self) {

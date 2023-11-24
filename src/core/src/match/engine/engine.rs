@@ -2,9 +2,7 @@ use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{
-    FieldSquad, MatchResultRaw, MatchGameState, MatchPlayer, MatchState, StateManager,
-};
+use crate::r#match::{MatchGameState, MatchPlayer, MatchResultRaw, MatchState, StateManager};
 use nalgebra::Vector3;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -15,28 +13,17 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> MatchResultRaw {
-        let mut field = MatchField::new(W, H);
+        let mut field = MatchField::new(W, H, home_squad, away_squad);
 
-        field.setup(home_squad, away_squad);
-
-        let mut context = MatchContext::new(FieldSize::new(W, H));
-
-        context.write_team_players(
-            field.home_players.as_ref().unwrap(),
-            field.away_players.as_ref().unwrap(),
-        );
+        let mut context = MatchContext::new(&field);
 
         let mut state_manager = StateManager::new();
-        let mut state: MatchState;
+        let mut state: MatchState = MatchState::Initial;
 
-        loop {
+        while state != MatchState::End {
             state = state_manager.next();
 
-            if state == MatchState::End {
-                break;
-            }
-
-            context.state.set_state(state);
+            context.state.set(state);
 
             Self::play_inner(&mut field, &mut context);
 
@@ -94,46 +81,33 @@ pub struct MatchContext {
     pub state: MatchGameState,
     time: MatchTime,
     pub result: MatchResultRaw,
-    pub field_size: FieldSize,
-
-    pub home_players: FieldSquad,
-    pub away_players: FieldSquad,
+    pub field_size: MatchFieldSize,
 }
 
 impl MatchContext {
-    pub fn new(field_size: FieldSize) -> Self {
+    pub fn new(field: &MatchField) -> Self {
         MatchContext {
             state: MatchGameState::new(),
             time: MatchTime::new(),
             result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS),
-            field_size,
-            home_players: FieldSquad::new(),
-            away_players: FieldSquad::new(),
+            field_size: MatchFieldSize::clone(&field.size),
         }
     }
 
     pub fn increment_time(&mut self) -> bool {
         self.time.increment(MATCH_TIME_INCREMENT_MS) < MATCH_HALF_TIME_MS
     }
-
-    pub fn write_team_players(
-        &mut self,
-        home_team_players: &FieldSquad,
-        away_team_players: &FieldSquad,
-    ) {
-        self.home_players = FieldSquad::from(home_team_players);
-        self.away_players = FieldSquad::from(away_team_players);
-    }
 }
 
-pub struct FieldSize {
+#[derive(Clone)]
+pub struct MatchFieldSize {
     pub width: usize,
     pub height: usize,
 }
 
-impl FieldSize {
+impl MatchFieldSize {
     pub fn new(width: usize, height: usize) -> Self {
-        FieldSize { width, height }
+        MatchFieldSize { width, height }
     }
 }
 

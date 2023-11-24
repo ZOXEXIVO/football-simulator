@@ -1,6 +1,4 @@
 use super::engine::FootballEngine;
-
-use crate::league::LeagueMatch;
 use crate::r#match::{MatchResult, TeamSquad};
 use log::debug;
 
@@ -33,7 +31,10 @@ impl Match {
 
         debug!(
             "match played: {} {}:{} {}",
-            home_team_name, match_raw_result.score.home, away_team_name, match_raw_result.score.away
+            home_team_name,
+            match_raw_result.score.home,
+            away_team_name,
+            match_raw_result.score.away
         );
 
         MatchResult {

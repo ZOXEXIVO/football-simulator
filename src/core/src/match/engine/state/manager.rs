@@ -17,6 +17,10 @@ impl StateManager {
 
     pub fn next(&mut self) -> MatchState {
         match self.current_state {
+            MatchState::Initial => {
+                self.current_state = MatchState::FirstHalf;
+                self.current_state
+            }
             MatchState::FirstHalf => {
                 self.current_state = MatchState::HalfTime;
                 self.current_state

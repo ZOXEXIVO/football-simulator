@@ -1,5 +1,6 @@
 ﻿use crate::league::LeagueMatch;
 use crate::r#match::position::MatchPositionData;
+use crate::r#match::TeamSquad;
 
 #[derive(Debug, Clone)]
 pub struct MatchResultRaw {
@@ -57,6 +58,13 @@ impl FieldSquad {
         }
     }
 
+    pub fn from_team(squad: &TeamSquad) -> Self {
+        FieldSquad {
+            main: squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: squad.substitutes.iter().map(|p| p.player_id).collect(),
+        }
+    }
+
     pub fn count(&self) -> usize {
         self.main.len() + self.substitutes.len()
     }
@@ -108,4 +116,3 @@ impl From<&LeagueMatch> for MatchResult {
         }
     }
 }
-

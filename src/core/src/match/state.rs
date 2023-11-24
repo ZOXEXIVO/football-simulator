@@ -13,7 +13,7 @@ impl MatchGameState {
         }
     }
 
-    pub fn set_state(&mut self, game_state: MatchState) {
+    pub fn set(&mut self, game_state: MatchState) {
         self.game_state = Some(game_state);
     }
 
