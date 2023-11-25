@@ -2,7 +2,7 @@ use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{MatchGameState, MatchPlayer, MatchResultRaw, MatchState, StateManager};
+use crate::r#match::{GameState, MatchPlayer, MatchResultRaw, MatchState, StateManager};
 use nalgebra::Vector3;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -15,25 +15,28 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> MatchResultRaw {
         let mut field = MatchField::new(W, H, home_squad, away_squad);
 
-        let mut context = MatchContext::new(&field);
+        let mut context = MatchContext::new(&field.size);
 
         let mut state_manager = StateManager::new();
-
-        let mut additional_time= 0;
 
         while let Some(state) = state_manager.next() {
             context.state.set(state);
 
-            additional_time += Self::play_inner(&mut field, &mut context);
+            let play_state_result = Self::play_inner(&mut field, &mut context);
 
-            Self::handle_finish_state(&mut context, &mut field, &mut additional_time);
+            StateManager::handle_state_finish(&mut context, &mut field, play_state_result);
         }
+
+        // TODO
+
+        context.result.home_players = field.home_players.unwrap();
+        context.result.away_players = field.away_players.unwrap();
 
         context.result
     }
 
-    fn play_inner(field: &mut MatchField, context: &mut MatchContext) -> u64 {
-        let additional_time: u64 = 0;
+    fn play_inner(field: &mut MatchField, context: &mut MatchContext) -> PlayMatchStateResult {
+        let mut result = PlayMatchStateResult::new();
 
         while context.increment_time() {
             let ball_update_events = field.ball.update(context);
@@ -58,48 +61,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             field.write_match_positions(&mut context.result, context.time.time);
         }
 
-        additional_time
-    }
-
-    fn handle_finish_state(context: &mut MatchContext, field: &mut MatchField, additional_time: &mut u64){
-        if context.state.match_state.need_swap_squads() {
-            field.swap_squads();
-        }
-
-        match context.state.match_state {
-            MatchState::Initial => {
-
-            }
-            MatchState::FirstHalf => {
-                if *additional_time > 0 {
-                    context.add_time(*additional_time);
-                    *additional_time = 0;
-                }
-            }
-            MatchState::HalfTime => {
-
-            }
-            MatchState::SecondHalf => {
-                if *additional_time > 0 {
-                    context.add_time(*additional_time);
-                }
-            }
-            MatchState::ExtraTime => {
-
-            }
-            MatchState::PenaltyShootout => {
-
-            }
-            _ => {
-
-            }
-        }
-    }
-
-    fn play_rest_time(field: &mut MatchField) {
-        field.players.iter_mut().for_each(|p| {
-            p.player_attributes.rest(1000);
-        })
+        result
     }
 }
 
@@ -111,19 +73,19 @@ pub enum MatchEvent {
 }
 
 pub struct MatchContext {
-    pub state: MatchGameState,
+    pub state: GameState,
     time: MatchTime,
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
 }
 
 impl MatchContext {
-    pub fn new(field: &MatchField) -> Self {
+    pub fn new(field_size: &MatchFieldSize) -> Self {
         MatchContext {
-            state: MatchGameState::new(),
+            state: GameState::new(),
             time: MatchTime::new(),
             result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS),
-            field_size: MatchFieldSize::clone(&field.size),
+            field_size: MatchFieldSize::clone(&field_size),
         }
     }
 
@@ -219,5 +181,17 @@ impl MatchObjectsPositions {
         }
 
         closest_teammate
+    }
+}
+
+pub struct PlayMatchStateResult {
+    pub additional_time: u64,
+}
+
+impl PlayMatchStateResult {
+    pub fn new() -> Self {
+        PlayMatchStateResult {
+            additional_time: 0,
+        }
     }
 }

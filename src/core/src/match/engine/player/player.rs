@@ -1,5 +1,5 @@
 ﻿use crate::r#match::{
-    DefenderStrategies, ForwardStrategies, GoalkeeperStrategies, MatchContext, MatchGameState,
+    DefenderStrategies, ForwardStrategies, GoalkeeperStrategies, MatchContext, GameState,
     MatchObjectsPositions, MidfielderStrategies, PassingDecisionState, PassingState,
     ReturningState, RunningState, ShootingState, StandingState, TacklingState, WalkingState,
 };
@@ -46,7 +46,7 @@ impl MatchPlayer {
     pub fn update(
         &mut self,
         current_time: u64,
-        state: &MatchGameState,
+        state: &GameState,
         objects_positions: &MatchObjectsPositions,
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
@@ -145,7 +145,7 @@ impl MatchPlayer {
         current_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-        state: &MatchGameState,
+        state: &GameState,
         _player_state: PlayerState,
     ) {
         let velocity = match self.tactics_position.position_group() {

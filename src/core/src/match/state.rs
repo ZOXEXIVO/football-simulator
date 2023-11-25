@@ -1,13 +1,13 @@
 ﻿use crate::r#match::MatchState;
 
-pub struct MatchGameState {
+pub struct GameState {
     pub match_state: MatchState,
     pub ball_state: Option<BallState>,
 }
 
-impl MatchGameState {
+impl GameState {
     pub fn new() -> Self {
-        MatchGameState {
+        GameState {
             match_state: MatchState::Initial,
             ball_state: None,
         }

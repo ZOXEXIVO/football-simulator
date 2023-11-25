@@ -1,4 +1,4 @@
-﻿use crate::r#match::{MatchGameState, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
+﻿use crate::r#match::{GameState, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
 use nalgebra::Vector3;
 
 pub struct MidfielderStrategies {}
@@ -9,7 +9,7 @@ impl MidfielderStrategies {
         _player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
-        _state: &MatchGameState,
+        _state: &GameState,
     ) -> Vector3<f32> {
         Vector3::new(0.0, 0.0, 0.0)
     }
