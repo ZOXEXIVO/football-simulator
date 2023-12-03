@@ -14,7 +14,7 @@ use core::ClubStatus;
 use core::TeamCollection;
 use core::{
     Club, ClubBoard, ClubFinances, ClubMood, Country, CountryGeneratorData, Player,
-    PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, StaffStub, Team,
+    PlayerCollection, SimulatorData, Staff, StaffCollection, StaffPosition, Team,
     TeamReputation, TeamType, TrainingSchedule,
 };
 use std::str::FromStr;

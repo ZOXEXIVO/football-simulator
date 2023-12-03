@@ -28,7 +28,6 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         // TODO
-
         context.result.home_players = field.home_players.unwrap();
         context.result.away_players = field.away_players.unwrap();
 
@@ -36,7 +35,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     fn play_inner(field: &mut MatchField, context: &mut MatchContext) -> PlayMatchStateResult {
-        let mut result = PlayMatchStateResult::new();
+        let result = PlayMatchStateResult::new();
 
         while context.increment_time() {
             let ball_update_events = field.ball.update(context);
@@ -47,21 +46,31 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             // setup positions
             let objects_positions = MatchObjectsPositions::from(&field);
 
-            let player_update_events = field
-                .players
-                .iter_mut()
-                .flat_map(|player| {
-                    player.update(context.time.time, &context.state, &objects_positions)
-                })
-                .collect();
-
-            // handle player
-            MatchPlayer::handle_events(player_update_events, context);
+            Self::play_players(field, context, objects_positions);
 
             field.write_match_positions(&mut context.result, context.time.time);
         }
 
         result
+    }
+
+    fn play_players(field: &mut MatchField, context: &mut MatchContext, objects_positions: MatchObjectsPositions){
+
+
+            //objects_positions.players_positions.iter().for_each(|p| {
+        //            p.is_home
+        //         });
+
+        let player_update_events = field
+            .players
+            .iter_mut()
+            .flat_map(|player| {
+                player.update(context.time.time, &context.state, &objects_positions)
+            })
+            .collect();
+
+        // handle player
+        MatchPlayer::handle_events(player_update_events, context);
     }
 }
 

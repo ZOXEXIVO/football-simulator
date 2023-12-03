@@ -1,10 +1,10 @@
 mod collection;
 mod context;
 mod league;
-mod result;
+pub mod result;
 pub mod schedule;
 mod season;
-mod table;
+pub mod table;
 pub mod storages;
 
 pub use collection::*;

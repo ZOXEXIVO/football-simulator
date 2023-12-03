@@ -4,7 +4,7 @@ mod context;
 mod matches;
 mod reputation;
 mod result;
-mod tactics;
+pub mod tactics;
 mod team;
 mod training;
 mod transfers;

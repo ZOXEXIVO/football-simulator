@@ -1,10 +1,6 @@
-﻿use crate::r#match::{
-    DefenderStrategies, ForwardStrategies, GoalkeeperStrategies, MatchContext, GameState,
-    MatchObjectsPositions, MidfielderStrategies, PassingDecisionState, PassingState,
-    ReturningState, RunningState, ShootingState, StandingState, TacklingState, WalkingState,
-};
+﻿use crate::r#match::{MatchContext, GameState, MatchObjectsPositions, VelocityStrategy, PlayerStateStrategy};
 use crate::{
-    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
+    PersonAttributes, Player, PlayerAttributes, PlayerPositionType,
     PlayerSkills,
 };
 use nalgebra::Vector3;
@@ -91,32 +87,7 @@ impl MatchPlayer {
     ) -> PlayerState {
         self.in_state_time += 1;
 
-        let changed_state = match self.state {
-            PlayerState::Standing => {
-                StandingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Walking => {
-                WalkingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Running => {
-                RunningState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Tackling => {
-                TacklingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Shooting => {
-                ShootingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Passing => {
-                PassingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::PassingDecision => {
-                PassingDecisionState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Returning => {
-                ReturningState::process(self.in_state_time, self, result, objects_positions)
-            }
-        };
+        let changed_state = self.process(self.in_state_time, result, objects_positions);
 
         if let Some(state) = changed_state {
             self.change_state(state);
@@ -148,36 +119,9 @@ impl MatchPlayer {
         state: &GameState,
         _player_state: PlayerState,
     ) {
-        let velocity = match self.tactics_position.position_group() {
-            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-            PlayerFieldPositionGroup::Defender => DefenderStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-            PlayerFieldPositionGroup::Forward => ForwardStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-        };
+        let velocity = self.tactics_position.position_group().detect_velocity(
+            current_time, &self, result, objects_positions, state
+        );
 
         self.velocity = velocity;
     }
