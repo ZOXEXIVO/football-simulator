@@ -7,10 +7,12 @@ impl PassingState {
         _in_state_time: u64,
         player: &mut MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
-        _objects_positions: &MatchObjectsPositions,
+        objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
         //let pass_direction = objects_positions;
         player.velocity = player.skills.running_speed();
+
+       // let teammates = objects_positions.find_closest_teammate(player. )
 
         // if self.has_ball {
         //     // find closest teammate

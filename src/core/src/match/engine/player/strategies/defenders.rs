@@ -1,20 +1,16 @@
-﻿use crate::r#match::{
-    BallState, GameState, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
-    SteeringBehavior, SteeringOutput,
-};
+﻿use crate::r#match::{BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior, SteeringOutput};
 use nalgebra::Vector3;
 
 pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
     pub fn detect_velocity(
-        _current_time: u64,
+        context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-        state: &GameState,
     ) -> Vector3<f32> {
-        let behavior = match state.ball_state {
+        let behavior = match context.state.ball_state {
             Some(ball_state) => match ball_state {
                 BallState::HomeSide => {
                     if player.is_home {
@@ -36,7 +32,7 @@ impl DefenderStrategies {
 
         let steering_output = match behavior {
             DefenderBehavior::Defend => {
-                if DefenderStrategies::is_on_defending_half(player, state) {
+                if DefenderStrategies::is_on_defending_half(player, &context.state) {
                     SteeringBehavior::Seek {
                         target: objects_positions.ball_positions,
                     }

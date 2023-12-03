@@ -55,17 +55,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     fn play_players(field: &mut MatchField, context: &mut MatchContext, objects_positions: MatchObjectsPositions){
-
-
-            //objects_positions.players_positions.iter().for_each(|p| {
-        //            p.is_home
-        //         });
-
         let player_update_events = field
             .players
             .iter_mut()
             .flat_map(|player| {
-                player.update(context.time.time, &context.state, &objects_positions)
+                player.update(context, &objects_positions)
             })
             .collect();
 
@@ -83,7 +77,7 @@ pub enum MatchEvent {
 
 pub struct MatchContext {
     pub state: GameState,
-    time: MatchTime,
+    pub time: MatchTime,
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
 }
@@ -160,7 +154,7 @@ impl MatchObjectsPositions {
         }
     }
 
-    fn find_closest_teammate(
+    pub fn find_closest_teammate(
         &self,
         current_player: &MatchPlayer,
         _state: &MatchState,

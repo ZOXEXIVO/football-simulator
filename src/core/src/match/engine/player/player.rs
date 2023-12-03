@@ -41,22 +41,19 @@ impl MatchPlayer {
 
     pub fn update(
         &mut self,
-        current_time: u64,
-        state: &GameState,
+        context: &mut MatchContext,
         objects_positions: &MatchObjectsPositions,
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
         // update state
-        let player_state = self.update_state(current_time, &mut result, objects_positions);
+        let player_state = self.update_state(context, &mut result, objects_positions);
 
         // set velocity
         self.update_velocity(
-            current_time,
+            context,
             &mut result,
-            objects_positions,
-            state,
-            player_state,
+            objects_positions
         );
 
         // move
@@ -81,13 +78,13 @@ impl MatchPlayer {
 
     fn update_state(
         &mut self,
-        _current_time: u64,
+        context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> PlayerState {
         self.in_state_time += 1;
 
-        let changed_state = self.process(self.in_state_time, result, objects_positions);
+        let changed_state = self.process(self.in_state_time, context, result, objects_positions);
 
         if let Some(state) = changed_state {
             self.change_state(state);
@@ -113,14 +110,12 @@ impl MatchPlayer {
 
     fn update_velocity(
         &mut self,
-        current_time: u64,
+        context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-        state: &GameState,
-        _player_state: PlayerState,
+        objects_positions: &MatchObjectsPositions
     ) {
-        let velocity = self.tactics_position.position_group().detect_velocity(
-            current_time, &self, result, objects_positions, state
+        let velocity = self.tactics_position.position_group().calculate_velocity(
+            context, &self, result, objects_positions
         );
 
         self.velocity = velocity;

@@ -1,18 +1,15 @@
 ﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    GameState, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior,
-};
+use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
 use nalgebra::Vector3;
 
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
     pub fn detect_velocity(
-        _current_time: u64,
+        context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-        _state: &GameState,
     ) -> Vector3<f32> {
         let is_ball_moving =
             objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
