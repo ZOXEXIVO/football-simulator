@@ -41,7 +41,7 @@ impl PlayerStateStrategy for MatchPlayer {
             PlayerState::Running => RunningState::process(in_state_time, self, result, objects_positions),
             PlayerState::Tackling => TacklingState::process(in_state_time, self, result, objects_positions),
             PlayerState::Shooting => ShootingState::process(in_state_time, self, result, objects_positions),
-            PlayerState::Passing => PassingState::process(in_state_time, self, result, objects_positions),
+            PlayerState::Passing => PassingState::process(in_state_time, self, context, result, objects_positions),
             PlayerState::PassingDecision => PassingDecisionState::process(in_state_time, self, result, objects_positions),
             PlayerState::Returning => ReturningState::process(in_state_time, self, result, objects_positions),
         }

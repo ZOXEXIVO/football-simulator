@@ -64,7 +64,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             .collect();
 
         // handle player
-        MatchPlayer::handle_events(player_update_events, context);
+        MatchPlayer::handle_events(player_update_events, &mut field.ball, context);
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::r#match::{MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
 
 pub struct PassingState {}
 
@@ -6,24 +6,17 @@ impl PassingState {
     pub fn process(
         _in_state_time: u64,
         player: &mut MatchPlayer,
-        _result: &mut Vec<PlayerUpdateEvent>,
+        context: &mut MatchContext,
+        result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        //let pass_direction = objects_positions;
         player.velocity = player.skills.running_speed();
 
-       // let teammates = objects_positions.find_closest_teammate(player. )
+        if let Some(teammate_position) = objects_positions.find_closest_teammate(player, &context.state.match_state) {
+            result.push(PlayerUpdateEvent::PassTo(teammate_position))
+        }
 
-        // if self.has_ball {
-        //     // find closest teammate
-        //     let closest_teammate = self.find_closest_teammate();
-        //     // calculate pass vector
-        //     let pass_vector = self.calculate_pass_vector(&closest_teammate);
-        //     // pass the ball to the teammate
-        //     self.pass_ball(pass_vector);
-        //     // transition to standing state
-        //     self.state = PlayerState::Standing;
-        // }
+        player.state = PlayerState::Standing;
 
         None
     }

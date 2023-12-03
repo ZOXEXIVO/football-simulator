@@ -1,4 +1,4 @@
-﻿use crate::r#match::{MatchContext, GameState, MatchObjectsPositions, VelocityStrategy, PlayerStateStrategy};
+﻿use crate::r#match::{MatchContext, GameState, MatchObjectsPositions, VelocityStrategy, PlayerStateStrategy, MatchField, Ball};
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerPositionType,
     PlayerSkills,
@@ -62,11 +62,16 @@ impl MatchPlayer {
         result
     }
 
-    pub fn handle_events(events: Vec<PlayerUpdateEvent>, _context: &mut MatchContext) {
+    pub fn handle_events(events: Vec<PlayerUpdateEvent>, ball: &mut Ball, context: &mut MatchContext) {
         for event in events {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {}
-                PlayerUpdateEvent::TacklingBall(_player_id) => {}
+                PlayerUpdateEvent::TacklingBall(_player_id) => {},
+                PlayerUpdateEvent::PassTo(pass_target) => {
+                    let ball_pass_vector = pass_target - ball.position;
+
+                    ball.velocity = ball_pass_vector.normalize() * 10.0;
+                }
             }
         }
     }
@@ -141,4 +146,5 @@ pub enum PlayerState {
 pub enum PlayerUpdateEvent {
     Goal(u32),
     TacklingBall(u32),
+    PassTo(Vector3<f32>)
 }
