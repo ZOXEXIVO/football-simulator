@@ -1,4 +1,6 @@
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
+use crate::r#match::{
+    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+};
 
 pub struct PassingState {}
 
@@ -10,10 +12,13 @@ impl PassingState {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        player.velocity = player.skills.running_speed();
-
-        if let Some(teammate_position) = objects_positions.find_closest_teammate(player, &context.state.match_state) {
-            result.push(PlayerUpdateEvent::PassTo(teammate_position))
+        if let Some(teammate_position) =
+            objects_positions.find_closest_teammate(player, &context.state.match_state)
+        {
+            result.push(PlayerUpdateEvent::PassTo(
+                teammate_position,
+                player.skills.running_speed(),
+            ))
         }
 
         player.state = PlayerState::Standing;

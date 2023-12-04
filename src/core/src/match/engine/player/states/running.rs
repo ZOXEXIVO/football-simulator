@@ -1,5 +1,7 @@
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
+use crate::r#match::{
+    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+};
 
 pub struct RunningState {}
 
@@ -7,6 +9,7 @@ impl RunningState {
     pub fn process(
         _in_state_time: u64,
         player: &mut MatchPlayer,
+        context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {

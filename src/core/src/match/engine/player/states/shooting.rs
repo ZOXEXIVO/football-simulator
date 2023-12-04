@@ -1,4 +1,6 @@
-use crate::r#match::{MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
+use crate::r#match::{
+    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+};
 
 pub struct ShootingState {}
 
@@ -6,6 +8,7 @@ impl ShootingState {
     pub fn process(
         _in_state_time: u64,
         _player: &mut MatchPlayer,
+        context: &mut MatchContext,
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {

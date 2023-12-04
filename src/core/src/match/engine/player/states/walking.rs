@@ -1,5 +1,6 @@
 use crate::r#match::{
-    MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior,
+    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 
@@ -9,6 +10,7 @@ impl WalkingState {
     pub fn process(
         _in_state_time: u64,
         player: &mut MatchPlayer,
+        context: &mut MatchContext,
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {

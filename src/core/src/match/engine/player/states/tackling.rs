@@ -1,4 +1,6 @@
-use crate::r#match::{MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
+use crate::r#match::{
+    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+};
 
 pub struct TacklingState {}
 
@@ -6,6 +8,7 @@ impl TacklingState {
     pub fn process(
         _in_state_time: u64,
         player: &mut MatchPlayer,
+        context: &mut MatchContext,
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {

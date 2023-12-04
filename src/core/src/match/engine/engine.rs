@@ -43,10 +43,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             // handle ball
             Ball::handle_events(context.time.time, ball_update_events, context);
 
-            // setup positions
-            let objects_positions = MatchObjectsPositions::from(&field);
-
-            Self::play_players(field, context, objects_positions);
+            Self::play_players(field, context, MatchObjectsPositions::from(&field));
 
             field.write_match_positions(&mut context.result, context.time.time);
         }
@@ -54,13 +51,15 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         result
     }
 
-    fn play_players(field: &mut MatchField, context: &mut MatchContext, objects_positions: MatchObjectsPositions){
+    fn play_players(
+        field: &mut MatchField,
+        context: &mut MatchContext,
+        objects_positions: MatchObjectsPositions,
+    ) {
         let player_update_events = field
             .players
             .iter_mut()
-            .flat_map(|player| {
-                player.update(context, &objects_positions)
-            })
+            .flat_map(|player| player.update(context, &objects_positions))
             .collect();
 
         // handle player
@@ -193,8 +192,6 @@ pub struct PlayMatchStateResult {
 
 impl PlayMatchStateResult {
     pub fn new() -> Self {
-        PlayMatchStateResult {
-            additional_time: 0,
-        }
+        PlayMatchStateResult { additional_time: 0 }
     }
 }

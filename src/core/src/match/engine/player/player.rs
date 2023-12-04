@@ -1,8 +1,8 @@
-﻿use crate::r#match::{MatchContext, GameState, MatchObjectsPositions, VelocityStrategy, PlayerStateStrategy, MatchField, Ball};
-use crate::{
-    PersonAttributes, Player, PlayerAttributes, PlayerPositionType,
-    PlayerSkills,
+﻿use crate::r#match::{
+    Ball, GameState, MatchContext, MatchField, MatchObjectsPositions, PlayerStateStrategy,
+    VelocityStrategy,
 };
+use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 
 #[derive(Debug, Copy, Clone)]
@@ -50,11 +50,7 @@ impl MatchPlayer {
         let player_state = self.update_state(context, &mut result, objects_positions);
 
         // set velocity
-        self.update_velocity(
-            context,
-            &mut result,
-            objects_positions
-        );
+        self.update_velocity(context, &mut result, objects_positions);
 
         // move
         self.move_to();
@@ -62,15 +58,18 @@ impl MatchPlayer {
         result
     }
 
-    pub fn handle_events(events: Vec<PlayerUpdateEvent>, ball: &mut Ball, context: &mut MatchContext) {
+    pub fn handle_events(
+        events: Vec<PlayerUpdateEvent>,
+        ball: &mut Ball,
+        context: &mut MatchContext,
+    ) {
         for event in events {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {}
-                PlayerUpdateEvent::TacklingBall(_player_id) => {},
-                PlayerUpdateEvent::PassTo(pass_target) => {
+                PlayerUpdateEvent::TacklingBall(_player_id) => {}
+                PlayerUpdateEvent::PassTo(pass_target, player_running_speed) => {
                     let ball_pass_vector = pass_target - ball.position;
-
-                    ball.velocity = ball_pass_vector.normalize() * 10.0;
+                    ball.velocity = ball_pass_vector.normalize(); //* player_running_speed;
                 }
             }
         }
@@ -117,10 +116,13 @@ impl MatchPlayer {
         &mut self,
         context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions
+        objects_positions: &MatchObjectsPositions,
     ) {
         let velocity = self.tactics_position.position_group().calculate_velocity(
-            context, &self, result, objects_positions
+            context,
+            &self,
+            result,
+            objects_positions,
         );
 
         self.velocity = velocity;
@@ -146,5 +148,5 @@ pub enum PlayerState {
 pub enum PlayerUpdateEvent {
     Goal(u32),
     TacklingBall(u32),
-    PassTo(Vector3<f32>)
+    PassTo(Vector3<f32>, Vector3<f32>),
 }
