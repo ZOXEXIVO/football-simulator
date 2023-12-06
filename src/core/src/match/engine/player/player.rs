@@ -88,7 +88,7 @@ impl MatchPlayer {
     ) -> PlayerState {
         self.in_state_time += 1;
 
-        let changed_state = self.process(self.in_state_time, context, result, objects_positions);
+        let changed_state = self.process_state(self.in_state_time, context, result, objects_positions);
 
         if let Some(state) = changed_state {
             self.change_state(state);

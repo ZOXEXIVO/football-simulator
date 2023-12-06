@@ -12,7 +12,7 @@ impl StandingState {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        if in_state_time > 1000 {
+        if in_state_time > 100 {
             return Some(PlayerState::Walking);
         }
 

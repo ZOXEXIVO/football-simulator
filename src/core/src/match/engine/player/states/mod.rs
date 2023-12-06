@@ -20,7 +20,7 @@ pub use tackling::*;
 pub use walking::*;
 
 pub trait PlayerStateStrategy {
-    fn process(
+    fn process_state(
         &mut self,
         in_state_time: u64,
         context: &mut MatchContext,
@@ -30,7 +30,7 @@ pub trait PlayerStateStrategy {
 }
 
 impl PlayerStateStrategy for MatchPlayer {
-    fn process(
+    fn process_state(
         &mut self,
         in_state_time: u64,
         context: &mut MatchContext,
