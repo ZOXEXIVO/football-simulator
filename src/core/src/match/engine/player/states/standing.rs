@@ -1,6 +1,5 @@
-use crate::r#match::{
-    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-};
+use nalgebra::Vector3;
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior};
 
 pub struct StandingState {}
 
@@ -12,7 +11,7 @@ impl StandingState {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        if in_state_time > 100 {
+        if in_state_time > 20 {
             return Some(PlayerState::Walking);
         }
 
