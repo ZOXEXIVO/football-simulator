@@ -1,14 +1,11 @@
-use crate::r#match::{
-    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    SteeringBehavior,
-};
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, RunningState, SteeringBehavior};
 use nalgebra::Vector3;
 
 pub struct WalkingState {}
 
 impl WalkingState {
     pub fn process(
-        _in_state_time: u64,
+        in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         _result: &mut Vec<PlayerUpdateEvent>,
@@ -20,6 +17,10 @@ impl WalkingState {
             }.calculate(player);
 
             player.velocity = Vector3::new(direction.velocity.x, direction.velocity.y, 0.0);
+
+            if in_state_time > 30 {
+                player.state = PlayerState::Running;
+            }
 
             // if player.skills.physical.acceleration > 15.0 {
             //     player.state = PlayerState::Running;

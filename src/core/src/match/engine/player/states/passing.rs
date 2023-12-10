@@ -21,8 +21,6 @@ impl PassingState {
             ))
         }
 
-        player.state = PlayerState::Standing;
-
-        None
+        Some(PlayerState::Standing)
     }
 }

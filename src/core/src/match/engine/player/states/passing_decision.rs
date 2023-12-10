@@ -12,17 +12,7 @@ impl PassingDecisionState {
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        player.velocity = player.skills.running_speed();
-        // if self.has_ball {
-        //     // find closest teammate
-        //     let closest_teammate = self.find_closest_teammate();
-        //     // calculate pass vector
-        //     let pass_vector = self.calculate_pass_vector(&closest_teammate);
-        //     // pass the ball to the teammate
-        //     self.pass_ball(pass_vector);
-        //     // transition to standing state
-        //     self.state = PlayerState::Standing;
-        // }
+
 
         None
     }

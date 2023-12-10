@@ -4,6 +4,7 @@
 };
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
+use std::fmt::*;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -88,6 +89,8 @@ impl MatchPlayer {
     ) -> PlayerState {
         self.in_state_time += 1;
 
+        //println!("{}", self.state);
+
         let changed_state = self.process_state(self.in_state_time, context, result, objects_positions);
 
         if let Some(state) = changed_state {
@@ -143,6 +146,21 @@ pub enum PlayerState {
     PassingDecision,
     Passing,
     Returning,
+}
+
+impl std::fmt::Display for PlayerState {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            PlayerState::Standing => write!(f, "Standing"),
+            PlayerState::Walking => write!(f, "Walking"),
+            PlayerState::Running => write!(f, "Running"),
+            PlayerState::Tackling => write!(f, "Tackling"),
+            PlayerState::Shooting => write!(f, "Shooting"),
+            PlayerState::PassingDecision => write!(f, "PassingDecision"),
+            PlayerState::Passing => write!(f, "Passing"),
+            PlayerState::Returning => write!(f, "Returning"),
+        }
+    }
 }
 
 pub enum PlayerUpdateEvent {

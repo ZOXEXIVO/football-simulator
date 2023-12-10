@@ -12,6 +12,7 @@ use database::DatabaseEntity;
 use log::info;
 use std::net::SocketAddr;
 use std::sync::Arc;
+use tokio::net::TcpListener;
 use tokio::sync::{RwLock};
 
 pub struct FootballSimulatorServer {
@@ -24,16 +25,15 @@ impl FootballSimulatorServer {
     }
 
     pub async fn run(&self) {
+        let app = ServerRoutes::create().with_state(self.data.clone());
+
         let addr = SocketAddr::from(([0, 0, 0, 0], 18000));
+
+        let listener = TcpListener::bind(addr).await.unwrap();
 
         info!("listen at: http://localhost:18000");
 
-        let app = ServerRoutes::create().with_state(self.data.clone());
-
-        axum::Server::bind(&addr)
-            .serve(app.into_make_service())
-            .await
-            .unwrap();
+        axum::serve(listener, app).await.unwrap();
     }
 }
 
