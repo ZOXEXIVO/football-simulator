@@ -1,5 +1,13 @@
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, RunningState, SteeringBehavior};
+use crate::common::NeuralNetwork;
+
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, SteeringBehavior};
+
+use crate::r#match::position::VectorExtensions;
 use nalgebra::Vector3;
+
+lazy_static! {
+    static ref PLAYER_WALKING_STATE_NETWORK: NeuralNetwork = PlayerWalkingStateNetLoader::load();
+}
 
 pub struct WalkingState {}
 
@@ -28,5 +36,16 @@ impl WalkingState {
         }
 
         None
+    }
+}
+
+const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_walking_data.json");
+
+#[derive(Debug)]
+pub struct PlayerWalkingStateNetLoader;
+
+impl PlayerWalkingStateNetLoader {
+    pub fn load() -> NeuralNetwork {
+        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }

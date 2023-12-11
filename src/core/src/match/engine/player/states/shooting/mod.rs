@@ -1,6 +1,15 @@
+use crate::common::NeuralNetwork;
+
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };
+
+use crate::r#match::position::VectorExtensions;
+use nalgebra::Vector3;
+
+lazy_static! {
+    static ref PLAYER_SHOOTING_STATE_NETWORK: NeuralNetwork = PlayerShootingStateNetLoader::load();
+}
 
 pub struct ShootingState {}
 
@@ -32,5 +41,17 @@ impl ShootingState {
         // }
 
         None
+    }
+}
+
+
+const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_shooting_data.json");
+
+#[derive(Debug)]
+pub struct PlayerShootingStateNetLoader;
+
+impl PlayerShootingStateNetLoader {
+    pub fn load() -> NeuralNetwork {
+        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }

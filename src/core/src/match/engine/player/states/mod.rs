@@ -1,5 +1,4 @@
 pub mod passing;
-pub mod passing_decision;
 pub mod returning;
 pub mod running;
 pub mod shooting;
@@ -11,13 +10,13 @@ use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };
 pub use passing::*;
-pub use passing_decision::*;
 pub use returning::*;
 pub use running::*;
 pub use shooting::*;
 pub use standing::*;
 pub use tackling::*;
 pub use walking::*;
+use crate::common::NeuralNetwork;
 
 pub trait PlayerStateStrategy {
     fn process_state(
@@ -56,13 +55,6 @@ impl PlayerStateStrategy for MatchPlayer {
             PlayerState::Passing => {
                 PassingState::process(in_state_time, self, context, result, objects_positions)
             }
-            PlayerState::PassingDecision => PassingDecisionState::process(
-                in_state_time,
-                self,
-                context,
-                result,
-                objects_positions,
-            ),
             PlayerState::Returning => {
                 ReturningState::process(in_state_time, self, context, result, objects_positions)
             }

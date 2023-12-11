@@ -143,7 +143,6 @@ pub enum PlayerState {
     Running,
     Tackling,
     Shooting,
-    PassingDecision,
     Passing,
     Returning,
 }
@@ -156,7 +155,6 @@ impl std::fmt::Display for PlayerState {
             PlayerState::Running => write!(f, "Running"),
             PlayerState::Tackling => write!(f, "Tackling"),
             PlayerState::Shooting => write!(f, "Shooting"),
-            PlayerState::PassingDecision => write!(f, "PassingDecision"),
             PlayerState::Passing => write!(f, "Passing"),
             PlayerState::Returning => write!(f, "Returning"),
         }
