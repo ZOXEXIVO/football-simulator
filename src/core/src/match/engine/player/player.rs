@@ -1,4 +1,5 @@
-﻿use crate::r#match::{
+﻿use std::env::var;
+use crate::r#match::{
     Ball, GameState, MatchContext, MatchField, MatchObjectsPositions, PlayerStateStrategy,
     VelocityStrategy,
 };
@@ -127,6 +128,8 @@ impl MatchPlayer {
             result,
             objects_positions,
         );
+
+        //println!("VELOCITY: {} {}", self.position.x, self.position.y);
 
         self.velocity = velocity;
     }

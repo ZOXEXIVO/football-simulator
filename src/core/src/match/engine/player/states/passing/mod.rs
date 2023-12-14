@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use crate::common::NeuralNetwork;
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
@@ -17,6 +18,36 @@ impl PassingState {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions
     ) -> Option<PlayerState> {
+        let mut res_vec = Vec::new();
+
+        res_vec.push(objects_positions.ball_positions.x as f64);
+        res_vec.push(objects_positions.ball_positions.y as f64);
+
+        res_vec.push(objects_positions.ball_velocity.x as f64);
+        res_vec.push(objects_positions.ball_velocity.y as f64);
+
+        let res = PLAYER_PASSING_STATE_NETWORK.run(&res_vec);
+
+        if res[0] > 0.6 {
+            return Some(PlayerState::Standing);
+        }
+        if res[1] > 0.6 {
+            return Some(PlayerState::Walking);
+        }
+        if res[2] > 0.6 {
+            return Some(PlayerState::Running);
+        }
+        if res[3] > 0.6 {
+            return Some(PlayerState::Tackling);
+        }
+        if res[4] > 0.6 {
+            return Some(PlayerState::Shooting);
+        }
+        if res[5] > 0.6 {
+            return Some(PlayerState::Passing);
+        }
+
+
         if let Some(teammate_position) =
             objects_positions.find_closest_teammate(player, &context.state.match_state)
         {

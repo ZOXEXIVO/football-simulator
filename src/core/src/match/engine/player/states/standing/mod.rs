@@ -25,7 +25,34 @@ impl StandingState {
             return Some(PlayerState::Walking);
         }
 
-        if context.time.time % 1000 == 0 {}
+        let mut res_vec = Vec::new();
+
+        res_vec.push(objects_positions.ball_positions.x as f64);
+        res_vec.push(objects_positions.ball_positions.y as f64);
+
+        res_vec.push(objects_positions.ball_velocity.x as f64);
+        res_vec.push(objects_positions.ball_velocity.y as f64);
+
+        let res = PLAYER_STANDING_STATE_NETWORK.run(&res_vec);
+
+        if res[0] > 0.6 {
+            return Some(PlayerState::Standing);
+        }
+        if res[1] > 0.6 {
+            return Some(PlayerState::Walking);
+        }
+        if res[2] > 0.6 {
+            return Some(PlayerState::Running);
+        }
+        if res[3] > 0.6 {
+            return Some(PlayerState::Tackling);
+        }
+        if res[4] > 0.6 {
+            return Some(PlayerState::Shooting);
+        }
+        if res[5] > 0.6 {
+            return Some(PlayerState::Passing);
+        }
 
         None
     }

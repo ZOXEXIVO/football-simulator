@@ -1,5 +1,7 @@
 ﻿use crate::r#match::{BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior, SteeringOutput};
 use nalgebra::Vector3;
+use crate::common::NeuralNetwork;
+use crate::FloatUtils;
 
 pub struct DefenderStrategies {}
 
@@ -39,7 +41,7 @@ impl DefenderStrategies {
                     .calculate(player)
                 } else {
                     SteeringBehavior::Arrive {
-                        target: Vector3::new(0.0, 0.0, 0.0),
+                        target: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
                         slowing_distance: 2.0,
                     }
                     .calculate(player)
@@ -51,7 +53,7 @@ impl DefenderStrategies {
             }
             .calculate(player),
             DefenderBehavior::Idle => SteeringOutput {
-                velocity: Vector3::new(0.0, 0.0, 0.0),
+                velocity: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
                 rotation: 0.0,
             },
         };
@@ -71,4 +73,15 @@ enum DefenderBehavior {
     Defend,
     Support,
     Idle,
+}
+
+const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_running_data.json");
+
+#[derive(Debug)]
+pub struct DefendersNetLoader;
+
+impl DefendersNetLoader {
+    pub fn load() -> NeuralNetwork {
+        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
+    }
 }

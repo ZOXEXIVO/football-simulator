@@ -1,6 +1,7 @@
 ﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
 use nalgebra::Vector3;
+use crate::FloatUtils;
 
 pub struct GoalkeeperStrategies {}
 
@@ -15,7 +16,8 @@ impl GoalkeeperStrategies {
             objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
 
         if !is_ball_moving {
-            return Vector3::zeros();
+            return Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3))
+            //return Vector3::zeros();
         }
 
         let _ball_distance = objects_positions

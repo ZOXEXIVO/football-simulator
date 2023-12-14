@@ -2,16 +2,13 @@
   AfterViewInit, ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   NgZone,
   OnDestroy,
-  Output,
   ViewChild
 } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import {Sprite} from '@pixi/sprite';
-import {ActivatedRoute} from "@angular/router";
 import {Graphics} from "pixi.js";
 import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
@@ -104,7 +101,10 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
               const playerData = data.players[player.id];
 
               if(playerData && playerData.position){
+
                 const playerPosition = data.players[player.id].position;
+
+                console.log(`player move x = ${playerPosition.x}, y = ${playerPosition.y}`);
 
                 if(playerPosition && (playerPosition.x != 0 && playerPosition.y != 0)){
                   let playerTranslatedPositions = this.translateToField(
@@ -112,18 +112,12 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
                     playerPosition.y
                   );
 
-                  if(playerObject.x != playerTranslatedPositions.x && playerObject.y != playerTranslatedPositions.y){
-                    playerObject.x = playerTranslatedPositions.x;
-                    playerObject.y = playerTranslatedPositions.y;
+                  playerObject.x = playerTranslatedPositions.x;
+                  playerObject.y = playerTranslatedPositions.y;
 
-                    const scaleFactor= (playerPosition.z + 20) / 20;
+                  const scaleFactor= (playerPosition.z + 20) / 20;
 
-                    playerObject.scale.set(scaleFactor, scaleFactor);
-
-                    // console.log(`player id=${player.id}, move x = ${playerObject.x}, y = ${playerObject.y}`);
-                  }else {
-                    // console.log(`player id=${player.id} stay`);
-                  }
+                  playerObject.scale.set(scaleFactor, scaleFactor);
                 }
               }
             });

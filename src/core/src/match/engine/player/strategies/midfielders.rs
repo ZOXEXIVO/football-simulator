@@ -1,5 +1,6 @@
 ﻿use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
 use nalgebra::Vector3;
+use crate::FloatUtils;
 
 pub struct MidfielderStrategies {}
 
@@ -10,6 +11,6 @@ impl MidfielderStrategies {
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
-        Vector3::new(0.0, 0.0, 0.0)
+        Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3))
     }
 }
