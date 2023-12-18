@@ -1,11 +1,12 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };
-use crate::r#match::position::VectorExtensions;
 
 lazy_static! {
-    static ref PLAYER_RETURNING_STATE_NETWORK: NeuralNetwork = PlayerReturningStateNetLoader::load();
+    static ref PLAYER_RETURNING_STATE_NETWORK: NeuralNetwork =
+        PlayerReturningStateNetLoader::load();
 }
 
 pub struct ReturningState {}
@@ -18,7 +19,6 @@ impl ReturningState {
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-
         let mut res_vec = Vec::new();
 
         res_vec.push(objects_positions.ball_positions.x as f64);
@@ -47,7 +47,6 @@ impl ReturningState {
         if res[5] > 0.6 {
             return Some(PlayerState::Passing);
         }
-
 
         if player.position.distance_to(&player.start_position) < 10.0 {
             return Some(PlayerState::Standing);

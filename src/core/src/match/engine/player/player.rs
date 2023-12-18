@@ -1,7 +1,5 @@
-﻿use std::env::var;
-use crate::r#match::{
-    Ball, GameState, MatchContext, MatchField, MatchObjectsPositions, PlayerStateStrategy,
-    VelocityStrategy,
+﻿use crate::r#match::{
+    Ball, MatchContext, MatchObjectsPositions, PlayerStateStrategy, VelocityStrategy,
 };
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
@@ -49,7 +47,7 @@ impl MatchPlayer {
         let mut result = Vec::with_capacity(10);
 
         // update state
-        let player_state = self.update_state(context, &mut result, objects_positions);
+        self.update_state(context, &mut result, objects_positions);
 
         // set velocity
         self.update_velocity(context, &mut result, objects_positions);
@@ -87,18 +85,14 @@ impl MatchPlayer {
         context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> PlayerState {
+    ) {
         self.in_state_time += 1;
 
-        //println!("{}", self.state);
-
-        let changed_state = self.process_state(self.in_state_time, context, result, objects_positions);
-
-        if let Some(state) = changed_state {
+        if let Some(state) =
+            self.process_state(self.in_state_time, context, result, objects_positions)
+        {
             self.change_state(state);
         }
-
-        self.state
     }
 
     // fn calculate_pass_vector(&self, teammate: &MatchPlayer) -> Vector {
@@ -150,7 +144,7 @@ pub enum PlayerState {
     Returning,
 }
 
-impl std::fmt::Display for PlayerState {
+impl Display for PlayerState {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             PlayerState::Standing => write!(f, "Standing"),
