@@ -8,7 +8,7 @@ core = { path = "../core" }
 database = { path = "../database" }
 axum = "0.7.2"
 log = { version = "0.4.20", features = ["release_max_level_error"] }
-tokio = { version = "1.35.0", features = ["full"] }
+tokio = { version = "1.35.1", features = ["full"] }
 tower-http = { version = "0.5.0", features = ["fs"] }
 serde = { version = "1.0.193", features = ["derive"] }
 chrono= "0.4.31"

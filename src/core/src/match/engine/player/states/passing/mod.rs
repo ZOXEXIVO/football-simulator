@@ -1,8 +1,8 @@
-use itertools::Itertools;
 use crate::common::NeuralNetwork;
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };
+use itertools::Itertools;
 
 lazy_static! {
     static ref PLAYER_PASSING_STATE_NETWORK: NeuralNetwork = PlayerPassingStateNetLoader::load();
@@ -16,7 +16,7 @@ impl PassingState {
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions
+        objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
         let mut res_vec = Vec::new();
 
@@ -28,36 +28,34 @@ impl PassingState {
 
         let res = PLAYER_PASSING_STATE_NETWORK.run(&res_vec);
 
-        if res[0] > 0.6 {
-            return Some(PlayerState::Standing);
-        }
-        if res[1] > 0.6 {
-            return Some(PlayerState::Walking);
-        }
-        if res[2] > 0.6 {
-            return Some(PlayerState::Running);
-        }
-        if res[3] > 0.6 {
-            return Some(PlayerState::Tackling);
-        }
-        if res[4] > 0.6 {
-            return Some(PlayerState::Shooting);
-        }
-        if res[5] > 0.6 {
-            return Some(PlayerState::Passing);
+        let index_of_max_element = res
+            .iter()
+            .enumerate()
+            .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+            .unwrap()
+            .0;
+
+        match index_of_max_element {
+            0 => Some(PlayerState::Standing),
+            1 => Some(PlayerState::Walking),
+            2 => Some(PlayerState::Running),
+            3 => Some(PlayerState::Tackling),
+            4 => Some(PlayerState::Shooting),
+            5 => Some(PlayerState::Passing),
+            6 => Some(PlayerState::Returning),
+            _ => None,
         }
 
-
-        if let Some(teammate_position) =
-            objects_positions.find_closest_teammate(player, &context.state.match_state)
-        {
-            result.push(PlayerUpdateEvent::PassTo(
-                teammate_position,
-                player.skills.running_speed(),
-            ))
-        }
-
-        Some(PlayerState::Standing)
+        // if let Some(teammate_position) =
+        //     objects_positions.find_closest_teammate(player, &context.state.match_state)
+        // {
+        //     result.push(PlayerUpdateEvent::PassTo(
+        //         teammate_position,
+        //         player.skills.running_speed(),
+        //     ))
+        // }
+        //
+        // Some(PlayerState::Standing)
     }
 }
 

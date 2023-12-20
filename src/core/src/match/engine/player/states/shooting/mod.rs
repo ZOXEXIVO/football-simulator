@@ -16,7 +16,7 @@ pub struct ShootingState {}
 impl ShootingState {
     pub fn process(
         _in_state_time: u64,
-        _player: &mut MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
@@ -31,25 +31,23 @@ impl ShootingState {
 
         let res = PLAYER_SHOOTING_STATE_NETWORK.run(&res_vec);
 
-        if res[0] > 0.6 {
-            return Some(PlayerState::Standing);
-        }
-        if res[1] > 0.6 {
-            return Some(PlayerState::Walking);
-        }
-        if res[2] > 0.6 {
-            return Some(PlayerState::Running);
-        }
-        if res[3] > 0.6 {
-            return Some(PlayerState::Tackling);
-        }
-        if res[4] > 0.6 {
-            return Some(PlayerState::Shooting);
-        }
-        if res[5] > 0.6 {
-            return Some(PlayerState::Passing);
-        }
+        let index_of_max_element = res
+            .iter()
+            .enumerate()
+            .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+            .unwrap()
+            .0;
 
+        match index_of_max_element {
+            0 => Some(PlayerState::Standing),
+            1 => Some(PlayerState::Walking),
+            2 => Some(PlayerState::Running),
+            3 => Some(PlayerState::Tackling),
+            4 => Some(PlayerState::Shooting),
+            5 => Some(PlayerState::Passing),
+            6 => Some(PlayerState::Returning),
+            _ => None,
+        }
 
         // write code for processing shoot state
 
@@ -69,11 +67,8 @@ impl ShootingState {
         //         }
         //     }
         // }
-
-        None
     }
 }
-
 
 const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_shooting_data.json");
 

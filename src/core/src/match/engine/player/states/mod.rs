@@ -16,7 +16,6 @@ pub use shooting::*;
 pub use standing::*;
 pub use tackling::*;
 pub use walking::*;
-use crate::common::NeuralNetwork;
 
 pub trait PlayerStateStrategy {
     fn process_state(
