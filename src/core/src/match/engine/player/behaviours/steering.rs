@@ -36,6 +36,9 @@ impl<'p> SteeringBehavior<'p> {
                 let desired_velocity = (*target - player.position).normalize();
                 let steering = desired_velocity - player.velocity;
 
+                let max_force = 0.3;
+                let steering = Self::limit_magnitude(steering, max_force);
+
                 SteeringOutput {
                     velocity: steering,
                     rotation: 0.0,
@@ -141,6 +144,16 @@ impl<'p> SteeringBehavior<'p> {
                     rotation: 0.0,
                 }
             }
+        }
+    }
+
+    fn limit_magnitude(v: Vector3<f32>, max_magnitude: f32) -> Vector3<f32> {
+        let current_magnitude = v.norm();
+        if current_magnitude > max_magnitude {
+            let ratio = max_magnitude / current_magnitude;
+            v * ratio
+        } else {
+            v
         }
     }
 }

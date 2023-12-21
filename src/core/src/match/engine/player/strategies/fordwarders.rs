@@ -1,16 +1,23 @@
-﻿use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
-use nalgebra::Vector3;
+﻿use crate::r#match::{
+    GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
+    SteeringBehavior,
+};
 use crate::FloatUtils;
+use nalgebra::Vector3;
 
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
     pub fn detect_velocity(
         context: &mut MatchContext,
-        _player: &MatchPlayer,
+        player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
-        _objects_positions: &MatchObjectsPositions,
+        objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
-        Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.1, 0.3), FloatUtils::random(-0.4, 0.3))
+        SteeringBehavior::Seek {
+            target: objects_positions.ball_positions,
+        }
+        .calculate(player)
+        .velocity
     }
 }

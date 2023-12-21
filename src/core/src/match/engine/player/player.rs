@@ -92,6 +92,8 @@ impl MatchPlayer {
             self.process_state(self.in_state_time, context, result, objects_positions)
         {
             self.change_state(state);
+
+            println!("STATE = {}", self.state);
         }
     }
 

@@ -21,47 +21,47 @@ impl TacklingState {
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
-        player.velocity = player.skills.running_speed();
+        // let mut res_vec = Vec::new();
+        //
+        // res_vec.push(objects_positions.ball_positions.x as f64);
+        // res_vec.push(objects_positions.ball_positions.y as f64);
+        //
+        // res_vec.push(objects_positions.ball_velocity.x as f64);
+        // res_vec.push(objects_positions.ball_velocity.y as f64);
+        //
+        // let res = PLAYER_TACKLING_STATE_NETWORK.run(&res_vec);
+        //
+        // let index_of_max_element = res
+        //     .iter()
+        //     .enumerate()
+        //     .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+        //     .unwrap()
+        //     .0;
+        //
+        // //println!("RES = {:?}", res);
+        //
+        // match index_of_max_element {
+        //     0 => Some(PlayerState::Standing),
+        //     1 => Some(PlayerState::Walking),
+        //     2 => Some(PlayerState::Running),
+        //     3 => Some(PlayerState::Tackling),
+        //     4 => Some(PlayerState::Shooting),
+        //     5 => Some(PlayerState::Passing),
+        //     6 => Some(PlayerState::Returning),
+        //     _ => None,
+        // }
 
-        let mut res_vec = Vec::new();
-
-        res_vec.push(objects_positions.ball_positions.x as f64);
-        res_vec.push(objects_positions.ball_positions.y as f64);
-
-        res_vec.push(objects_positions.ball_velocity.x as f64);
-        res_vec.push(objects_positions.ball_velocity.y as f64);
-
-        let res = PLAYER_TACKLING_STATE_NETWORK.run(&res_vec);
-
-        let index_of_max_element = res
-            .iter()
-            .enumerate()
-            .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-            .unwrap()
-            .0;
-
-        //println!("RES = {:?}", res);
-
-        match index_of_max_element {
-            0 => Some(PlayerState::Standing),
-            1 => Some(PlayerState::Walking),
-            2 => Some(PlayerState::Running),
-            3 => Some(PlayerState::Tackling),
-            4 => Some(PlayerState::Shooting),
-            5 => Some(PlayerState::Passing),
-            6 => Some(PlayerState::Returning),
-            _ => None,
-        }
-
-        // Check for transition to standing or walking state
-        // let tackling_success = self.skills.tackling() * self.player_attributes.condition;
+        //Check for transition to standing or walking state
+        // let tackling_success = player.skills.tackling() * player.player_attributes.condition;
         // if tackling_success > 50.0 {
-        //     self.has_ball = true;
+        //     player.has_ball = true;
         // }
         // // Check for transition to standing state
-        // if self.player_attributes.condition < 20.0 {
-        //     self.state = PlayerState::Standing;
+        // if player.player_attributes.condition < 20 {
+        //     return Some(PlayerState::Standing);
         // }
+
+        None
     }
 }
 

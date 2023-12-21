@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Backend" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+  <configuration default="false" name="Testing" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="run" />
-    <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-    <option name="emulateTerminal" value="false" />
+    <option name="workingDirectory" value="file://$PROJECT_DIR$/src/testing" />
+    <option name="emulateTerminal" value="true" />
     <option name="channel" value="DEFAULT" />
     <option name="requiredFeatures" value="true" />
     <option name="allFeatures" value="false" />

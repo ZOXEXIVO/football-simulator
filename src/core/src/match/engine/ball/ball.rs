@@ -15,9 +15,9 @@ pub struct Ball {
 impl Ball {
     pub fn with_coord(x: f32, y: f32) -> Self {
         Ball {
-            position: Vector3::new(x, y, 0.0),
-            start_position: Vector3::new(x, y, 0.0),
-            velocity: Vector3::new(1.3, 0.2, 0.1),
+            position: Vector3::new(20.0, 20.0, 0.0),
+            start_position: Vector3::new(20.0, 20.0, 0.0),
+            velocity: Vector3::new(0.1, 0.01, 0.1),
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
