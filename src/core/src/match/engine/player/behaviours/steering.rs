@@ -1,9 +1,9 @@
-﻿use crate::r#match::position::VectorExtensions;
+﻿use std::f32::NAN;
+use crate::r#match::position::VectorExtensions;
 use crate::r#match::MatchPlayer;
 use nalgebra::Vector3;
-use std::f32::NAN;
 
-pub enum SteeringBehavior<'p> {
+pub enum SteeringBehavior {
     Seek {
         target: Vector3<f32>,
     },
@@ -12,10 +12,12 @@ pub enum SteeringBehavior<'p> {
         slowing_distance: f32,
     },
     Pursuit {
-        target: &'p MatchPlayer,
+        target: Vector3<f32>,
+        velocity: Vector3<f32>,
     },
     Evade {
-        target: &'p MatchPlayer,
+        target: Vector3<f32>,
+        velocity: Vector3<f32>,
     },
     Wander {
         target: Vector3<f32>,
@@ -29,15 +31,19 @@ pub enum SteeringBehavior<'p> {
     },
 }
 
-impl<'p> SteeringBehavior<'p> {
+impl SteeringBehavior {
     pub fn calculate(&self, player: &MatchPlayer) -> SteeringOutput {
         match self {
             SteeringBehavior::Seek { target } => {
                 let desired_velocity = (*target - player.position).normalize();
+
                 let steering = desired_velocity - player.velocity;
 
-                let max_force = 0.3;
+                let max_force = player.skills.physical.acceleration / 20.0;
                 let steering = Self::limit_magnitude(steering, max_force);
+
+                println!("TARGET: ({}, {})", target.x, target.y);
+                //println!("Steering: {:?}", steering);
 
                 SteeringOutput {
                     velocity: steering,
@@ -51,20 +57,15 @@ impl<'p> SteeringBehavior<'p> {
                 let distance = (*target - player.position).length();
                 let desired_velocity = (*target - player.position).normalize()
                     * (distance / *slowing_distance * player.skills.max_speed());
+
                 let steering = desired_velocity - player.velocity;
                 let max_acceleration = player.skills.max_speed();
                 let steering_length = steering.norm();
 
-                // println!(
-                //     "max_acceleration = {}, steering_length = {} ",
-                //     max_acceleration, steering_length
-                // );
-
-                // Limit the steering to the maximum acceleration
                 let steering_ratio = max_acceleration / steering_length;
                 let mut limited_steering = steering * steering_ratio;
 
-                if limited_steering.x == NAN || limited_steering.x == NAN {
+                if limited_steering.x == f32::NAN || limited_steering.x == f32::NAN {
                     limited_steering = Vector3::zeros();
                 }
 
@@ -73,10 +74,10 @@ impl<'p> SteeringBehavior<'p> {
                     rotation: 0.0,
                 }
             }
-            SteeringBehavior::Pursuit { target } => {
-                let distance = (target.position - player.position).length();
+            SteeringBehavior::Pursuit { target, velocity } => {
+                let distance = (target - player.position).length();
                 let prediction = distance / player.skills.max_speed();
-                let target_position = target.position + (target.velocity * prediction);
+                let target_position = target + (velocity * prediction);
                 let desired_velocity =
                     (target_position - player.position).normalize() * player.skills.max_speed();
                 let mut steering = desired_velocity - player.velocity;
@@ -90,10 +91,10 @@ impl<'p> SteeringBehavior<'p> {
                     rotation: 0.0,
                 }
             }
-            SteeringBehavior::Evade { target } => {
-                let distance = (target.position - player.position).length();
+            SteeringBehavior::Evade { target, velocity } => {
+                let distance = (target - player.position).length();
                 let prediction = distance / player.skills.max_speed();
-                let target_position = target.position + target.velocity * prediction;
+                let target_position = target + velocity * prediction;
                 let desired_velocity =
                     (player.position - target_position).normalize() * player.skills.max_speed();
                 let mut steering = desired_velocity - player.velocity;
@@ -114,16 +115,14 @@ impl<'p> SteeringBehavior<'p> {
                 distance,
                 angle: _,
             } => {
-                let rand_vec = Vector3::random_in_unit_circle() * *jitter;
-                let target = rand_vec + *target;
-                let target_offset = target - player.position;
-                let mut target_offset = target_offset.normalize() * *distance;
-                target_offset = target_offset.add_scalar(player.heading() * *radius);
-                let mut steering = target_offset - player.velocity;
+                let rand_vec = Vector3::random_in_unit_circle().normalize() * *jitter;
 
-                if steering.x == NAN || steering.x == NAN {
-                    steering = Vector3::zeros();
-                }
+                let target_position = *target + rand_vec;
+
+                let target_offset = target_position - player.position;
+
+                let adjusted_offset = target_offset.normalize() * *distance;
+                let steering = adjusted_offset.add_scalar(player.heading() * *radius);
 
                 SteeringOutput {
                     velocity: steering,
@@ -131,13 +130,11 @@ impl<'p> SteeringBehavior<'p> {
                 }
             }
             SteeringBehavior::Flee { target } => {
-                let desired_velocity =
-                    (player.position - *target).normalize() * player.skills.max_speed();
-                let mut steering = desired_velocity - player.velocity;
+                let target_direction = (player.position - *target).normalize();
 
-                if steering.x == NAN || steering.x == NAN {
-                    steering = Vector3::zeros();
-                }
+                let desired_velocity = target_direction * player.skills.max_speed();
+
+                let steering = desired_velocity - player.velocity;
 
                 SteeringOutput {
                     velocity: steering,

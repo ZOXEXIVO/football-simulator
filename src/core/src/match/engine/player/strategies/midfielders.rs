@@ -1,4 +1,4 @@
-﻿use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
+﻿use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
 use nalgebra::Vector3;
 use crate::FloatUtils;
 
@@ -7,10 +7,15 @@ pub struct MidfielderStrategies {}
 impl MidfielderStrategies {
     pub fn detect_velocity(
         context: &mut MatchContext,
-        _player: &MatchPlayer,
+        player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
-        _objects_positions: &MatchObjectsPositions,
+        objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
-        Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3))
+        SteeringBehavior::Arrive {
+            target: objects_positions.ball_position,
+            slowing_distance: 10.0
+        }
+            .calculate(player)
+            .velocity
     }
 }

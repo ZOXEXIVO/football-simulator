@@ -12,6 +12,7 @@ impl GoalkeeperStrategies {
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
+
         let is_ball_moving =
             objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
 
@@ -21,11 +22,11 @@ impl GoalkeeperStrategies {
         }
 
         let _ball_distance = objects_positions
-            .ball_positions
+            .ball_position
             .distance_to(&player.position);
 
         let test = SteeringBehavior::Arrive {
-            target: objects_positions.ball_positions,
+            target: objects_positions.ball_position,
             slowing_distance: 10.0,
         }
         .calculate(player)

@@ -1,4 +1,6 @@
-﻿use crate::r#match::{
+﻿use std::thread;
+use std::time::Duration;
+use crate::r#match::{
     GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
     SteeringBehavior,
 };
@@ -14,10 +16,16 @@ impl ForwardStrategies {
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
-        SteeringBehavior::Seek {
-            target: objects_positions.ball_positions,
+
+        let vel = SteeringBehavior::Arrive {
+            target: objects_positions.ball_position,
+            slowing_distance: 10.0
         }
         .calculate(player)
-        .velocity
+        .velocity;
+
+        //println!("ball_position = ({}, {})", objects_positions.ball_position.x,  objects_positions.ball_position.y);
+
+        vel
     }
 }

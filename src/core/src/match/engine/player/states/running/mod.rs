@@ -23,8 +23,8 @@ impl RunningState {
 
         let mut res_vec = Vec::new();
 
-        res_vec.push(objects_positions.ball_positions.x as f64);
-        res_vec.push(objects_positions.ball_positions.y as f64);
+        res_vec.push(objects_positions.ball_position.x as f64);
+        res_vec.push(objects_positions.ball_position.y as f64);
 
         res_vec.push(objects_positions.ball_velocity.x as f64);
         res_vec.push(objects_positions.ball_velocity.y as f64);
@@ -56,7 +56,7 @@ impl RunningState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) {
         if objects_positions
-            .ball_positions
+            .ball_position
             .distance_to(&player.position)
             < 5.0
         {

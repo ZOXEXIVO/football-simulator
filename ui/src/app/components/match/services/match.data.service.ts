@@ -141,10 +141,11 @@ export class MatchDataService {
     // ball
     this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2], data[3])));
 
+
     // players
     for (const playerData of this.matchData.players) {
       for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
-        if (playerData.id != Number(playerId)) {
+        if (playerData.id == Number(playerId)) {
           let newPlayerData = data as number[][];
           playerData.data.push(...newPlayerData.map(pd => new ObjectPositionDto(pd[0], pd[1], pd[2], pd[3])));
         }

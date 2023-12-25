@@ -96,17 +96,19 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
               ballObject.scale.set(scaleFactor, scaleFactor);
             }
 
-            this.matchDataService.matchData.players.forEach(player => {
+            this.matchDataService.matchData.players.forEach((player, index) => {
               const playerObject = player.obj!;
-              const playerData = data.players[player.id];
+              const playerData = data.players.find(p => p.playerId == player.id);
 
               if(playerData && playerData.position){
 
-                const playerPosition = data.players[player.id].position;
+                const playerPosition = playerData.position;
 
-                console.log(`player move x = ${playerPosition.x}, y = ${playerPosition.y}`);
+                if(index == 0){
+                  console.log(`time = ${this.currentTime}: player position = (${playerPosition.x}, ${playerPosition.y})`);
+                }
 
-                if(playerPosition && (playerPosition.x != 0 && playerPosition.y != 0)){
+                if(playerPosition){
                   let playerTranslatedPositions = this.translateToField(
                     playerPosition.x,
                     playerPosition.y

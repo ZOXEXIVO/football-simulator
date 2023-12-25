@@ -20,8 +20,8 @@ impl PassingState {
     ) -> Option<PlayerState> {
         let mut res_vec = Vec::new();
 
-        res_vec.push(objects_positions.ball_positions.x as f64);
-        res_vec.push(objects_positions.ball_positions.y as f64);
+        res_vec.push(objects_positions.ball_position.x as f64);
+        res_vec.push(objects_positions.ball_position.y as f64);
 
         res_vec.push(objects_positions.ball_velocity.x as f64);
         res_vec.push(objects_positions.ball_velocity.y as f64);

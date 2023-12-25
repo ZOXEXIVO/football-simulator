@@ -23,11 +23,11 @@ async fn main() {
     let height = screen_height();
 
     //840, 545
-    let mut ball = Ball::with_coord(width / 2.0, height / 2.0);
+    let mut ball = Ball::with_coord(500.0, 500.0);
 
     let player = PlayerGenerator::generate(
         1,
-        NaiveDate::from_ymd(2021, 1, 1),
+        NaiveDate::from_ymd(2023, 1, 1),
         PlayerPositionType::Striker,
         1,
     );
@@ -51,6 +51,9 @@ async fn main() {
 
     let mut context = MatchContext::new(&field.size);
 
+    player.position.x = 250.0;
+    player.position.y = 250.0;
+
     loop {
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
 
@@ -59,9 +62,28 @@ async fn main() {
 
         ball.update(&mut context);
 
+        if ball.position.x < 10.0 {
+            ball.velocity.x = -ball.velocity.x;
+        }
+
+        if ball.position.x > 800.0 {
+            ball.velocity.x = -ball.velocity.x;
+        }
+
+        if ball.position.y < 10.0 {
+            ball.velocity.y = -ball.velocity.y;
+        }
+
+        if ball.position.y > 400.0 {
+            ball.velocity.y = -ball.velocity.y;
+        }
+
         player.update(&mut context, &MatchObjectsPositions::from(&field));
 
-        println!("player: {:?}", player.position);
+        field.ball.position = ball.position;
+        field.ball.velocity = ball.velocity;
+
+        //println!("player: {:?}", player.position);
 
         next_frame().await
     }

@@ -69,7 +69,7 @@ impl MatchPlayer {
                 PlayerUpdateEvent::TacklingBall(_player_id) => {}
                 PlayerUpdateEvent::PassTo(pass_target, player_running_speed) => {
                     let ball_pass_vector = pass_target - ball.position;
-                    ball.velocity = ball_pass_vector.normalize(); //* player_running_speed;
+                    //ball.velocity = ball_pass_vector.normalize(); //* player_running_speed;
                 }
             }
         }
@@ -92,18 +92,8 @@ impl MatchPlayer {
             self.process_state(self.in_state_time, context, result, objects_positions)
         {
             self.change_state(state);
-
-            println!("STATE = {}", self.state);
         }
     }
-
-    // fn calculate_pass_vector(&self, teammate: &MatchPlayer) -> Vector {
-    //     // code to calculate pass vector
-    // }
-    //
-    // fn pass_ball(&mut self, pass_vector: Vector) {
-    //     // code to pass the ball to the teammate
-    // }
 
     fn check_collisions(&mut self) {}
 

@@ -131,7 +131,7 @@ impl MatchTime {
 }
 
 pub struct MatchObjectsPositions {
-    pub ball_positions: Vector3<f32>,
+    pub ball_position: Vector3<f32>,
     pub ball_velocity: Vector3<f32>,
     pub players_positions: Vec<PlayerFieldPosition>,
 }
@@ -139,7 +139,7 @@ pub struct MatchObjectsPositions {
 impl MatchObjectsPositions {
     pub fn from(field: &MatchField) -> Self {
         MatchObjectsPositions {
-            ball_positions: field.ball.position,
+            ball_position: field.ball.position,
             ball_velocity: field.ball.velocity,
             players_positions: field
                 .players
