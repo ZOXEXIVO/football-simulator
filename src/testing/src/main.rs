@@ -1,3 +1,4 @@
+use core::r#match::FootballEngine;
 use core::r#match::ball::Ball;
 use core::r#match::player::MatchPlayer;
 use core::r#match::MatchContext;
@@ -33,17 +34,20 @@ async fn main() {
     loop {
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
 
-        draw_circle(ball.position.x, ball.position.y, 5.0, GREEN);
+        draw_circle(ball.position.x, ball.position.y, 5.0, BLACK);
 
-        field.players.iter_mut().for_each(|player| {
-            player.update(&mut context, &MatchObjectsPositions::from(&field));
-            draw_circle(player.position.x, player.position.y, 10.0, RED);
+        FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
+
+        field.players.iter().for_each(|player| {
+            let color = if player.is_home {
+                GREEN
+            } else {
+                RED
+            };
+
+            draw_circle(player.position.x, player.position.y, 10.0, color);
         });
 
-        // away_squad.main_squad.iter_mut().for_each(|player| {
-        //     player.update(&mut context, &MatchObjectsPositions::from(&field));
-        //     draw_circle(player.position.x, player.position.y, 10.0, YELLOW);
-        // });
 
         ball.update(&mut context);
 
@@ -135,5 +139,5 @@ pub fn get_away_squad() -> TeamSquad {
 }
 
 fn get_player(position: PlayerPositionType) -> Player {
-    PlayerGenerator::generate(1, NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), position, 1)
+    PlayerGenerator::generate(1, NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), position, 20)
 }

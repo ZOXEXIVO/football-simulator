@@ -38,17 +38,21 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         let result = PlayMatchStateResult::new();
 
         while context.increment_time() {
-            let ball_update_events = field.ball.update(context);
-
-            // handle ball
-            Ball::handle_events(context.time.time, ball_update_events, context);
-
-            Self::play_players(field, context, MatchObjectsPositions::from(&field));
-
-            field.write_match_positions(&mut context.result, context.time.time);
+            Self::game_tick(field, context);
         }
 
         result
+    }
+
+    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext){
+        let ball_update_events = field.ball.update(context);
+
+        // handle ball
+        Ball::handle_events(context.time.time, ball_update_events, context);
+
+        Self::play_players(field, context, MatchObjectsPositions::from(&field));
+
+        field.write_match_positions(&mut context.result, context.time.time);
     }
 
     fn play_players(

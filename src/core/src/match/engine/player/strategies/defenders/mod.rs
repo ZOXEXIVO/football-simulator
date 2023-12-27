@@ -14,7 +14,7 @@ impl DefenderStrategies {
     ) -> Vector3<f32> {
         SteeringBehavior::Arrive {
             target: objects_positions.ball_position,
-            slowing_distance: 10.0
+            slowing_distance: 30.0
         }
             .calculate(player)
             .velocity
