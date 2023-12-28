@@ -1,10 +1,7 @@
-﻿use std::thread;
-use std::time::Duration;
-use crate::r#match::{
-    GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
+﻿use crate::r#match::{
+    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
     SteeringBehavior,
 };
-use crate::FloatUtils;
 use nalgebra::Vector3;
 
 pub struct ForwardStrategies {}
@@ -21,10 +18,8 @@ impl ForwardStrategies {
             target: objects_positions.ball_position,
             slowing_distance: 10.0
         }
-        .calculate(player)
-        .velocity;
-
-        //println!("ball_position = ({}, {})", objects_positions.ball_position.x,  objects_positions.ball_position.y);
+            .calculate(player)
+            .velocity;
 
         vel
     }

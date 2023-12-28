@@ -34,7 +34,7 @@ async fn main() {
     loop {
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
 
-        draw_circle(ball.position.x, ball.position.y, 5.0, BLACK);
+        draw_circle(ball.position.x, ball.position.y, 7.0, BLACK);
 
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
 

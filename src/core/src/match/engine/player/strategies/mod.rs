@@ -1,12 +1,13 @@
-﻿pub mod defenders;
-pub mod fordwarders;
-pub mod goalkeeper;
-pub mod midfielders;
+﻿mod goalkeepers;
+mod defenders;
+mod midfielders;
+mod forwarders;
 
+pub use goalkeepers::*;
 pub use defenders::*;
-pub use fordwarders::*;
-pub use goalkeeper::*;
 pub use midfielders::*;
+pub use forwarders::*;
+
 use nalgebra::Vector3;
 use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
 

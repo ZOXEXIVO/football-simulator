@@ -12,60 +12,57 @@ impl DefenderStrategies {
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
-        SteeringBehavior::Arrive {
-            target: objects_positions.ball_position,
-            slowing_distance: 30.0
+        if context.time.time % 10 != 0 {
+            return player.velocity;
         }
-            .calculate(player)
-            .velocity
 
-        // let behavior = match context.state.ball_state {
-        //     Some(ball_state) => match ball_state {
-        //         BallState::HomeSide => {
-        //             if player.is_home {
-        //                 DefenderBehavior::Defend
-        //             } else {
-        //                 DefenderBehavior::Support
-        //             }
-        //         }
-        //         BallState::AwaySide => {
-        //             if player.is_home {
-        //                 DefenderBehavior::Support
-        //             } else {
-        //                 DefenderBehavior::Defend
-        //             }
-        //         }
-        //     },
-        //     None => DefenderBehavior::Idle,
-        // };
-        //
-        // let steering_output = match behavior {
-        //     DefenderBehavior::Defend => {
-        //         if DefenderStrategies::is_on_defending_half(player, &context.state) {
-        //             SteeringBehavior::Seek {
-        //                 target: objects_positions.ball_position,
-        //             }
-        //             .calculate(player)
-        //         } else {
-        //             SteeringBehavior::Arrive {
-        //                 target: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
-        //                 slowing_distance: 2.0,
-        //             }
-        //             .calculate(player)
-        //         }
-        //     }
-        //     DefenderBehavior::Support => SteeringBehavior::Arrive {
-        //         target: player.start_position,
-        //         slowing_distance: 2.0,
-        //     }
-        //     .calculate(player),
-        //     DefenderBehavior::Idle => SteeringOutput {
-        //         velocity: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
-        //         rotation: 0.0,
-        //     },
-        // };
-        //
-        // Vector3::new(steering_output.velocity.x, steering_output.velocity.y, 0.0)
+        let behavior = match context.state.ball_state {
+            Some(ball_state) => match ball_state {
+                BallState::HomeSide => {
+                    if player.is_home {
+                        DefenderBehavior::Defend
+                    } else {
+                        DefenderBehavior::Support
+                    }
+                }
+                BallState::AwaySide => {
+                    if player.is_home {
+                        DefenderBehavior::Support
+                    } else {
+                        DefenderBehavior::Defend
+                    }
+                }
+            },
+            None => DefenderBehavior::Idle,
+        };
+
+        let steering_output = match behavior {
+            DefenderBehavior::Defend => {
+                if DefenderStrategies::is_on_defending_half(player, &context.state) {
+                    SteeringBehavior::Seek {
+                        target: objects_positions.ball_position,
+                    }
+                    .calculate(player)
+                } else {
+                    SteeringBehavior::Arrive {
+                        target: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
+                        slowing_distance: 2.0,
+                    }
+                    .calculate(player)
+                }
+            }
+            DefenderBehavior::Support => SteeringBehavior::Arrive {
+                target: player.start_position,
+                slowing_distance: 2.0,
+            }
+            .calculate(player),
+            DefenderBehavior::Idle => SteeringOutput {
+                velocity: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
+                rotation: 0.0,
+            },
+        };
+
+        steering_output.velocity
     }
 
     fn is_on_defending_half(player: &MatchPlayer, state: &GameState) -> bool {

@@ -13,26 +13,29 @@ impl GoalkeeperStrategies {
         objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
 
-        let is_ball_moving =
-            objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
+        // let is_ball_moving =
+        //     objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
+        //
+        // if !is_ball_moving {
+        //     return Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3))
+        // }
 
-        if !is_ball_moving {
-            return Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3))
-            //return Vector3::zeros();
-        }
-
-        let _ball_distance = objects_positions
+        let ball_distance = objects_positions
             .ball_position
             .distance_to(&player.position);
 
-        let test = SteeringBehavior::Arrive {
-            target: objects_positions.ball_position,
-            slowing_distance: 10.0,
-        }
-        .calculate(player)
-        .velocity;
+        //println!("ball_distance={}", ball_distance);
 
-        return test;
+        if ball_distance < 10.0 {
+            return SteeringBehavior::Arrive {
+                target: objects_positions.ball_position,
+                slowing_distance: 10.0,
+            }
+                .calculate(player)
+                .velocity;
+        }
+
+        return Vector3::new(0.0, 0.0, 0.0);
 
         // if ball_distance < 300.0 {
         //     return SteeringBehavior::Arrive {

@@ -42,7 +42,7 @@ impl SteeringBehavior {
                 let max_force = player.skills.physical.acceleration / 20.0;
                 let steering = Self::limit_magnitude(steering, max_force);
 
-                println!("TARGET: ({}, {})", target.x, target.y);
+                //println!("TARGET: ({}, {})", target.x, target.y);
                 //println!("Steering: {:?}", steering);
 
                 SteeringOutput {
