@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Testing" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+  <configuration default="false" name="Dev:Neural" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="run" />
-    <option name="workingDirectory" value="file://$PROJECT_DIR$/src/testing" />
+    <option name="workingDirectory" value="file://$PROJECT_DIR$/src/dev/neural_network" />
     <option name="emulateTerminal" value="true" />
     <option name="channel" value="DEFAULT" />
     <option name="requiredFeatures" value="true" />
