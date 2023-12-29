@@ -85,7 +85,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
             let coord = this.translateToField(data.ball.x, data.ball.y);
 
-            if(ballObject.x != coord.x && ballObject.y != coord.y){
+            //if(ballObject.x != coord.x && ballObject.y != coord.y){
               //console.log(`ball move x = ${ballObject.x}, y = ${ballObject.y}`);
 
               ballObject.x = coord.x;
@@ -94,7 +94,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
               const scaleFactor= (data.ball.z + 20) / 20;
 
               ballObject.scale.set(scaleFactor, scaleFactor);
-            }
+            //}
 
             this.matchDataService.matchData.players.forEach((player, index) => {
               const playerObject = player.obj!;
@@ -105,7 +105,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
                 const playerPosition = playerData.position;
 
                 if(index == 0){
-                  console.log(`time = ${this.currentTime}: player position = (${playerPosition.x}, ${playerPosition.y})`);
+                  //console.log(`time = ${this.currentTime}: player position = (${playerPosition.x}, ${playerPosition.y})`);
                 }
 
                 if(playerPosition){

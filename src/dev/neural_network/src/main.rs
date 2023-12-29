@@ -14,9 +14,9 @@ fn main() {
     // let mut net_configurations = Vec::new();
     //
     // let max_length = 2u32;
-
-    // for momentum in &[0.1f64] {
-    //     for rate in &[0.01] {
+    //
+    // for momentum in &[0.1f64, 0.15f64] {
+    //     for rate in &[0.01,0.02,0.03,0.04] {
     //         for epochs in &[50000] {
     //             for first in 0..max_length {
     //                 for second in 0..max_length {
@@ -103,8 +103,8 @@ fn main() {
 
     let json_net = net.save_json();
 
-    let mut f = File::create("out.json").expect("Unable to create file");
-    f.write_all(json_net.as_bytes()).expect("Unable to write data");
+    // let mut f = File::create("training_result.json").expect("Unable to create file");
+    // f.write_all(json_net.as_bytes()).expect("Unable to write data");
 
     // for (input, output) in training_data {
     //     let results = net.run(&input);
