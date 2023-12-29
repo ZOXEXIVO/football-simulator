@@ -12,7 +12,6 @@ impl GoalkeeperStrategies {
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Vector3<f32> {
-
         // let is_ball_moving =
         //     objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
         //
