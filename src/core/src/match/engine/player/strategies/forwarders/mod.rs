@@ -7,12 +7,12 @@ use nalgebra::Vector3;
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
-    pub fn detect_velocity(
-        context: &mut MatchContext,
+    pub fn calculate_velocity(
+        _context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Vector3<f32> {
+    ) -> Option<Vector3<f32>> {
 
         let vel = SteeringBehavior::Arrive {
             target: objects_positions.ball_position,
@@ -21,6 +21,6 @@ impl ForwardStrategies {
             .calculate(player)
             .velocity;
 
-        vel
+        Some(vel)
     }
 }

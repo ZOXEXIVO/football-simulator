@@ -1,5 +1,4 @@
-﻿use std::f32::NAN;
-use crate::r#match::position::VectorExtensions;
+﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::MatchPlayer;
 use nalgebra::Vector3;
 
@@ -42,9 +41,6 @@ impl SteeringBehavior {
                 let max_force = player.skills.physical.acceleration / 20.0;
                 let steering = Self::limit_magnitude(steering, max_force);
 
-                //println!("TARGET: ({}, {})", target.x, target.y);
-                //println!("Steering: {:?}", steering);
-
                 SteeringOutput {
                     velocity: steering,
                     rotation: 0.0,
@@ -65,7 +61,7 @@ impl SteeringBehavior {
                 let steering_ratio = max_acceleration / steering_length;
                 let mut limited_steering = steering * steering_ratio;
 
-                if limited_steering.x == f32::NAN || limited_steering.x == f32::NAN {
+                if limited_steering.x.is_nan() || limited_steering.y.is_nan() {
                     limited_steering = Vector3::zeros();
                 }
 
@@ -82,7 +78,7 @@ impl SteeringBehavior {
                     (target_position - player.position).normalize() * player.skills.max_speed();
                 let mut steering = desired_velocity - player.velocity;
 
-                if steering.x == NAN || steering.x == NAN {
+                if steering.x.is_nan() || steering.y.is_nan() {
                     steering = Vector3::zeros();
                 }
 
@@ -99,7 +95,7 @@ impl SteeringBehavior {
                     (player.position - target_position).normalize() * player.skills.max_speed();
                 let mut steering = desired_velocity - player.velocity;
 
-                if steering.x == NAN || steering.x == NAN {
+                if steering.x.is_nan() || steering.y.is_nan() {
                     steering = Vector3::zeros();
                 }
 

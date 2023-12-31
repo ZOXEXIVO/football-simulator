@@ -61,14 +61,14 @@ impl MatchPlayer {
     pub fn handle_events(
         events: Vec<PlayerUpdateEvent>,
         ball: &mut Ball,
-        context: &mut MatchContext,
+        _context: &mut MatchContext,
     ) {
         for event in events {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {}
                 PlayerUpdateEvent::TacklingBall(_player_id) => {}
-                PlayerUpdateEvent::PassTo(pass_target, player_running_speed) => {
-                    let ball_pass_vector = pass_target - ball.position;
+                PlayerUpdateEvent::PassTo(_pass_target, _player_running_speed) => {
+                    //let ball_pass_vector = _pass_target - ball.position;
                     //ball.velocity = ball_pass_vector.normalize(); //* player_running_speed;
                 }
             }
@@ -108,16 +108,14 @@ impl MatchPlayer {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) {
-        let velocity = self.tactics_position.position_group().calculate_velocity(
+        if let Some(changed_velocity) = self.tactics_position.position_group().calculate_velocity(
             context,
             &self,
             result,
             objects_positions,
-        );
-
-        //println!("VELOCITY: {} {}", self.position.x, self.position.y);
-
-        self.velocity = velocity;
+        ) {
+            self.velocity = changed_velocity;
+        }
     }
 
     pub fn heading(&self) -> f32 {

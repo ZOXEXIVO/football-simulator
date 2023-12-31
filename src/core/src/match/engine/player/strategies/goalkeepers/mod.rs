@@ -1,17 +1,16 @@
 ﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
 use nalgebra::Vector3;
-use crate::FloatUtils;
 
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
-    pub fn detect_velocity(
-        context: &mut MatchContext,
+    pub fn calculate_velocity(
+        _context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Vector3<f32> {
+    ) -> Option<Vector3<f32>> {
         // let is_ball_moving =
         //     objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
         //
@@ -26,15 +25,15 @@ impl GoalkeeperStrategies {
         //println!("ball_distance={}", ball_distance);
 
         if ball_distance < 10.0 {
-            return SteeringBehavior::Arrive {
+            return Some(SteeringBehavior::Arrive {
                 target: objects_positions.ball_position,
                 slowing_distance: 10.0,
             }
                 .calculate(player)
-                .velocity;
+                .velocity);
         }
 
-        return Vector3::new(0.0, 0.0, 0.0);
+        return Some(Vector3::new(0.0, 0.0, 0.0));
 
         // if ball_distance < 300.0 {
         //     return SteeringBehavior::Arrive {

@@ -6,15 +6,16 @@ use crate::FloatUtils;
 pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
-    pub fn detect_velocity(
+    pub fn calculate_velocity(
         context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Vector3<f32> {
+    ) -> Option<Vector3<f32>> {
         if context.time.time % 10 != 0 {
-            return player.velocity;
+            return None;
         }
+
 
         let behavior = match context.state.ball_state {
             Some(ball_state) => match ball_state {
@@ -62,7 +63,7 @@ impl DefenderStrategies {
             },
         };
 
-        steering_output.velocity
+        Some(steering_output.velocity)
     }
 
     fn is_on_defending_half(player: &MatchPlayer, state: &GameState) -> bool {

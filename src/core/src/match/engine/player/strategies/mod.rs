@@ -20,31 +20,31 @@ pub trait VelocityStrategy {
         player: &MatchPlayer,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Vector3<f32>;
+    ) -> Option<Vector3<f32>>;
 }
 
 impl VelocityStrategy for PlayerFieldPositionGroup {
-    fn calculate_velocity(&self, context: &mut MatchContext, player: &MatchPlayer, result: &mut Vec<PlayerUpdateEvent>, objects_positions: &MatchObjectsPositions) -> Vector3<f32> {
+    fn calculate_velocity(&self, context: &mut MatchContext, player: &MatchPlayer, result: &mut Vec<PlayerUpdateEvent>, objects_positions: &MatchObjectsPositions) -> Option<Vector3<f32>> {
         match self {
-            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::detect_velocity(
+            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate_velocity(
                 context,
                 player,
                 result,
                 objects_positions
             ),
-            PlayerFieldPositionGroup::Defender => DefenderStrategies::detect_velocity(
+            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate_velocity(
                 context,
                 player,
                 result,
                 objects_positions
             ),
-            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::detect_velocity(
+            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate_velocity(
                 context,
                 player,
                 result,
                 objects_positions
             ),
-            PlayerFieldPositionGroup::Forward => ForwardStrategies::detect_velocity(
+            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate_velocity(
                 context,
                 player,
                 result,

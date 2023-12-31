@@ -103,8 +103,8 @@ fn main() {
 
     let json_net = net.save_json();
 
-    // let mut f = File::create("training_result.json").expect("Unable to create file");
-    // f.write_all(json_net.as_bytes()).expect("Unable to write data");
+    let mut f = File::create("training_result.json").expect("Unable to create file");
+    f.write_all(json_net.as_bytes()).expect("Unable to write data");
 
     // for (input, output) in training_data {
     //     let results = net.run(&input);
