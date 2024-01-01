@@ -1,5 +1,6 @@
 ﻿use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
 use nalgebra::Vector3;
+use crate::common::NeuralNetwork;
 
 pub struct MidfielderStrategies {}
 
@@ -16,5 +17,16 @@ impl MidfielderStrategies {
         }
             .calculate(player)
             .velocity)
+    }
+}
+
+const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_running_data.json");
+
+#[derive(Debug)]
+pub struct MidfieldersNetLoader;
+
+impl MidfieldersNetLoader {
+    pub fn load() -> NeuralNetwork {
+        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }

@@ -3,6 +3,7 @@
     SteeringBehavior,
 };
 use nalgebra::Vector3;
+use crate::common::NeuralNetwork;
 
 pub struct ForwardStrategies {}
 
@@ -22,5 +23,16 @@ impl ForwardStrategies {
             .velocity;
 
         Some(vel)
+    }
+}
+
+const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_running_data.json");
+
+#[derive(Debug)]
+pub struct ForwardersNetLoader;
+
+impl crate::r#match::ForwardersNetLoader {
+    pub fn load() -> NeuralNetwork {
+        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }

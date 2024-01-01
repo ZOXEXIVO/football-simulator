@@ -16,7 +16,6 @@ impl DefenderStrategies {
             return None;
         }
 
-
         let behavior = match context.state.ball_state {
             Some(ball_state) => match ball_state {
                 BallState::HomeSide => {
