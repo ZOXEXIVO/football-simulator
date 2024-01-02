@@ -2,71 +2,71 @@
 use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
 use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
+use crate::FloatUtils;
 
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
     pub fn calculate_velocity(
-        _context: &mut MatchContext,
+        context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<Vector3<f32>> {
-        // let is_ball_moving =
-        //     objects_positions.ball_velocity.x > 0.0 && objects_positions.ball_velocity.y > 0.0;
-        //
-        // if !is_ball_moving {
-        //     return Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3))
-        // }
+        let is_ball_heading_towards_goal =
+            ball_heading_towards_goal(objects_positions.ball_position, player.start_position);
 
         let ball_distance = objects_positions
             .ball_position
             .distance_to(&player.position);
 
-        //println!("ball_distance={}", ball_distance);
-
-        if ball_distance < 100.0 {
-            return Some(SteeringBehavior::Arrive {
-                target: objects_positions.ball_position,
-                slowing_distance: 10.0,
+        return match (ball_distance, is_ball_heading_towards_goal) {
+            (0.0..=3.0, _) => {
+               return Some( Vector3::new(0.0, 0.0, 0.0));
             }
-                .calculate(player)
-                .velocity);
-        }
+            (0.0..=10.0, _) => {
+                let clear_target = Vector3::new(0.0, if player.position.y > 0.0 { 100.0 } else { -100.0 }, 0.0);
+                return Some(SteeringBehavior::Arrive {
+                    target: clear_target,
+                    slowing_distance: 5.0,
+                }
+                    .calculate(player)
+                    .velocity);
+            }
+            (10.0..=100.0, true) => {
+                Some(SteeringBehavior::Arrive {
+                    target: objects_positions.ball_position,
+                    slowing_distance: 10.0 + ball_distance * 0.1,
+                }.calculate(player)
+                    .velocity)
+            }
+            _ => {
+                let wander_velocity = SteeringBehavior::Wander {
+                    target: player.start_position,
+                    radius: 20.0,
+                    jitter: 100.0,
+                    distance: 60.0,
+                    angle: FloatUtils::random(5.0, 90.0),
+                }
+                    .calculate(player)
+                    .velocity;
 
-        return Some(Vector3::new(0.0, 0.0, 0.0));
+                //println!("wander = {}", wander_velocity);
 
-        // if ball_distance < 300.0 {
-        //     return SteeringBehavior::Arrive {
-        //         target: objects_positions.ball_positions,
-        //         slowing_distance: 10.0,
-        //     }
-        //     .calculate(player)
-        //     .velocity;
-        // } else {
-        //     return Vector3::zeros();
-        //
-        //     let x_position = match player.is_home {
-        //         true => 30.0,
-        //         false => -30.0,
-        //     };
-        //
-        //     let output = SteeringBehavior::Wander {
-        //         target: Vector3::new(
-        //             player.start_position.x + x_position,
-        //             player.start_position.y,
-        //             0.0,
-        //         ),
-        //         radius: 50.0,
-        //         jitter: 5.0,
-        //         distance: 30.0,
-        //         angle: 54.0,
-        //     }
-        //     .calculate(player);
-        //
-        //     Vector3::new(output.velocity.x, output.velocity.y, 0.0)
-        // }
+                Some(wander_velocity)
+            }
+        };
     }
+}
+
+fn ball_heading_towards_goal(ball_position: Vector3<f32>, goal_position: Vector3<f32>) -> bool {
+    let ball_to_goal = goal_position - ball_position;
+
+    let ball_forward = Vector3::new(1.0, 0.0, 0.0);
+
+    let dot_product = ball_to_goal.normalize().dot(&ball_forward);
+
+    dot_product > 0.8
 }
 
 const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_running_data.json");

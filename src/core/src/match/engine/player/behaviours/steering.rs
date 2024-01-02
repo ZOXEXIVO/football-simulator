@@ -121,7 +121,7 @@ impl SteeringBehavior {
                 let steering = adjusted_offset.add_scalar(player.heading() * *radius);
 
                 SteeringOutput {
-                    velocity: steering,
+                    velocity: steering.normalize(),
                     rotation: 0.0,
                 }
             }

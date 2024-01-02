@@ -44,15 +44,22 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         result
     }
 
-    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext){
-        let ball_update_events = field.ball.update(context);
-
-        // handle ball
-        Ball::handle_events(context.time.time, ball_update_events, context);
-
+    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext) {
+        Self::play_ball(field, context, MatchObjectsPositions::from(&field));
         Self::play_players(field, context, MatchObjectsPositions::from(&field));
 
         field.write_match_positions(&mut context.result, context.time.time);
+    }
+
+    fn play_ball(
+        field: &mut MatchField,
+        context: &mut MatchContext,
+        objects_positions: MatchObjectsPositions,
+    ) {
+        let ball_update_events = field.ball.update(context);
+
+        // handle events
+        Ball::handle_events(context.time.time, ball_update_events, context);
     }
 
     fn play_players(
@@ -66,7 +73,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             .flat_map(|player| player.update(context, &objects_positions))
             .collect();
 
-        // handle player
+        // handle events
         MatchPlayer::handle_events(player_update_events, &mut field.ball, context);
     }
 }
