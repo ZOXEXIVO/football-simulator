@@ -35,6 +35,8 @@ impl PlayerStateStrategy for MatchPlayer {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
+        self.in_state_time += 1;
+
         match self.state {
             PlayerState::Standing => {
                 StandingState::process(in_state_time, self, context, result, objects_positions)

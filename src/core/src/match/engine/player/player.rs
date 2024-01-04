@@ -46,13 +46,9 @@ impl MatchPlayer {
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        // update state
         self.update_state(context, &mut result, objects_positions);
-
-        // set velocity
         self.update_velocity(context, &mut result, objects_positions);
 
-        // move
         self.move_to();
 
         result
@@ -86,8 +82,6 @@ impl MatchPlayer {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) {
-        self.in_state_time += 1;
-
         if let Some(state) =
             self.process_state(self.in_state_time, context, result, objects_positions)
         {
