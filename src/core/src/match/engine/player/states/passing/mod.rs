@@ -2,7 +2,6 @@ use crate::common::NeuralNetwork;
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };
-use itertools::Itertools;
 
 lazy_static! {
     static ref PLAYER_PASSING_STATE_NETWORK: NeuralNetwork = PlayerPassingStateNetLoader::load();

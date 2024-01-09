@@ -5,7 +5,6 @@ use crate::r#match::{
     SteeringBehavior,
 };
 
-use crate::r#match::position::VectorExtensions;
 use nalgebra::Vector3;
 
 lazy_static! {

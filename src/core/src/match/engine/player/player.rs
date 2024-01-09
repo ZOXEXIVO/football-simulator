@@ -48,7 +48,12 @@ impl MatchPlayer {
 
         let changed_state = self.update_state(context, &mut result, objects_positions);
 
-        self.update_velocity(changed_state.is_some(), context, &mut result, objects_positions);
+        self.update_velocity(
+            changed_state.is_some(),
+            context,
+            &mut result,
+            objects_positions,
+        );
 
         self.move_to();
 
@@ -87,8 +92,8 @@ impl MatchPlayer {
             Some(state) => {
                 self.change_state(state);
                 Some(state)
-            },
-            None => None
+            }
+            None => None,
         }
     }
 
@@ -107,13 +112,16 @@ impl MatchPlayer {
         objects_positions: &MatchObjectsPositions,
     ) {
         if state_changed {
-            if let Some(changed_velocity) = self.tactics_position.position_group().calculate_velocity(
-                context,
-                &self,
-                result,
-                objects_positions,
-            ) {
-                self.velocity = changed_velocity;
+            if let Some(changed_velocity) = self
+                .tactics_position
+                .position_group()
+                .calculate_velocity(context, &self, result, objects_positions)
+            {
+                // let condition_factor = (self.player_attributes.condition / 10000) as usize;
+                //
+                // let decreased_velocity = self.velocity * condition_factor;
+                //
+                // self.velocity = decreased_velocity.normalize();
             }
         }
     }

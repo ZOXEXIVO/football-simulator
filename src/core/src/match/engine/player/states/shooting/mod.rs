@@ -4,9 +4,6 @@ use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };
 
-use crate::r#match::position::VectorExtensions;
-use nalgebra::Vector3;
-
 lazy_static! {
     static ref PLAYER_SHOOTING_STATE_NETWORK: NeuralNetwork = PlayerShootingStateNetLoader::load();
 }
@@ -16,8 +13,8 @@ pub struct ShootingState {}
 impl ShootingState {
     pub fn process(
         _in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
+        _player: &mut MatchPlayer,
+        _context: &mut MatchContext,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {

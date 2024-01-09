@@ -4,9 +4,6 @@ use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };
 
-use crate::r#match::position::VectorExtensions;
-use nalgebra::Vector3;
-
 lazy_static! {
     static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
 }
@@ -16,9 +13,9 @@ pub struct StandingState {}
 impl StandingState {
     pub fn process(
         in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        _player: &mut MatchPlayer,
+        _context: &mut MatchContext,
+        _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> Option<PlayerState> {
         if in_state_time > 20 {

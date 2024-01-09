@@ -1,5 +1,4 @@
 use crate::common::NeuralNetwork;
-use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
 };

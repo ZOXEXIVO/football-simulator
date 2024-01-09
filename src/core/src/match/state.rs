@@ -1,5 +1,4 @@
-﻿use std::fmt::{Display, Formatter};
-use crate::r#match::MatchState;
+﻿use crate::r#match::MatchState;
 
 pub struct GameState {
     pub match_state: MatchState,
