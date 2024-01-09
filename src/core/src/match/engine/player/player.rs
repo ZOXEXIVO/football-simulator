@@ -46,8 +46,9 @@ impl MatchPlayer {
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        self.update_state(context, &mut result, objects_positions);
-        self.update_velocity(context, &mut result, objects_positions);
+        let changed_state = self.update_state(context, &mut result, objects_positions);
+
+        self.update_velocity(changed_state.is_some(), context, &mut result, objects_positions);
 
         self.move_to();
 
@@ -81,11 +82,13 @@ impl MatchPlayer {
         context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) {
-        if let Some(state) =
-            self.process_state(self.in_state_time, context, result, objects_positions)
-        {
-            self.change_state(state);
+    ) -> Option<PlayerState> {
+        match self.process_state(self.in_state_time, context, result, objects_positions) {
+            Some(state) => {
+                self.change_state(state);
+                Some(state)
+            },
+            None => None
         }
     }
 
@@ -98,17 +101,20 @@ impl MatchPlayer {
 
     fn update_velocity(
         &mut self,
+        state_changed: bool,
         context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) {
-        if let Some(changed_velocity) = self.tactics_position.position_group().calculate_velocity(
-            context,
-            &self,
-            result,
-            objects_positions,
-        ) {
-            self.velocity = changed_velocity;
+        if state_changed {
+            if let Some(changed_velocity) = self.tactics_position.position_group().calculate_velocity(
+                context,
+                &self,
+                result,
+                objects_positions,
+            ) {
+                self.velocity = changed_velocity;
+            }
         }
     }
 
