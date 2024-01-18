@@ -1,5 +1,5 @@
 ﻿use crate::r#match::{
-    Ball, MatchContext, MatchObjectsPositions, PlayerStateStrategy, VelocityStrategy,
+    Ball, MatchContext, MatchObjectsPositions, PlayerStateStrategy, StateStrategy,
 };
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
@@ -46,14 +46,7 @@ impl MatchPlayer {
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        let changed_state = self.update_state(context, &mut result, objects_positions);
-
-        self.update_velocity(
-            changed_state.is_some(),
-            context,
-            &mut result,
-            objects_positions,
-        );
+        self.update_state(context, &mut result, objects_positions);
 
         self.move_to();
 
@@ -87,13 +80,17 @@ impl MatchPlayer {
         context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Option<PlayerState> {
-        match self.process_state(self.in_state_time, context, result, objects_positions) {
-            Some(state) => {
-                self.change_state(state);
-                Some(state)
-            }
-            None => None,
+    ) {
+        let state_result = self.tactics_position
+            .position_group()
+            .calculate(context, self, result, objects_positions);
+
+        if let Some(state) = state_result.state {
+            self.state = state;
+        }
+
+        if let Some(velocity) = state_result.velocity {
+            self.velocity = velocity;
         }
     }
 
@@ -102,28 +99,6 @@ impl MatchPlayer {
     fn move_to(&mut self) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
-    }
-
-    fn update_velocity(
-        &mut self,
-        state_changed: bool,
-        context: &mut MatchContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-    ) {
-        if state_changed {
-            if let Some(changed_velocity) = self
-                .tactics_position
-                .position_group()
-                .calculate_velocity(context, &self, result, objects_positions)
-            {
-                // let condition_factor = (self.player_attributes.condition / 10000) as usize;
-                //
-                // let decreased_velocity = self.velocity * condition_factor;
-                //
-                // self.velocity = decreased_velocity.normalize();
-            }
-        }
     }
 
     pub fn heading(&self) -> f32 {

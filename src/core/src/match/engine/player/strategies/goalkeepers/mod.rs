@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior};
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
 use crate::FloatUtils;
@@ -7,12 +7,12 @@ use crate::FloatUtils;
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
-    pub fn calculate_velocity(
+    pub fn calculate(
         context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Option<Vector3<f32>> {
+    ) -> StateChangeResult {
         let is_ball_heading_towards_goal =
             ball_heading_towards_goal(objects_positions.ball_position, player.start_position);
 
@@ -22,11 +22,11 @@ impl GoalkeeperStrategies {
 
         return match (ball_distance, is_ball_heading_towards_goal) {
             (0.0..=3.0, _) => {
-               return Some( Vector3::new(0.0, 0.0, 0.0));
+               return StateChangeResult::with_velocity( Vector3::new(0.0, 0.0, 0.0));
             }
             (0.0..=10.0, _) => {
                 let clear_target = Vector3::new(0.0, if player.position.y > 0.0 { 100.0 } else { -100.0 }, 0.0);
-                return Some(SteeringBehavior::Arrive {
+                return StateChangeResult::with_velocity(SteeringBehavior::Arrive {
                     target: clear_target,
                     slowing_distance: 5.0,
                 }
@@ -34,7 +34,7 @@ impl GoalkeeperStrategies {
                     .velocity);
             }
             (10.0..=100.0, true) => {
-                Some(SteeringBehavior::Arrive {
+                StateChangeResult::with_velocity(SteeringBehavior::Arrive {
                     target: objects_positions.ball_position,
                     slowing_distance: 10.0 + ball_distance * 0.1,
                 }.calculate(player)
@@ -53,7 +53,7 @@ impl GoalkeeperStrategies {
 
                 //println!("wander = {}", wander_velocity);
 
-                Some(wander_velocity)
+                StateChangeResult::with_velocity(wander_velocity)
             }
         };
     }

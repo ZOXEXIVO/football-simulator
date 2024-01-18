@@ -1,4 +1,4 @@
-﻿use crate::r#match::{BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, SteeringBehavior, SteeringOutput};
+﻿use crate::r#match::{BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior, SteeringOutput};
 use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
 use crate::FloatUtils;
@@ -6,14 +6,14 @@ use crate::FloatUtils;
 pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
-    pub fn calculate_velocity(
+    pub fn calculate(
         context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Option<Vector3<f32>> {
+    ) -> StateChangeResult {
         if context.time.time % 10 != 0 {
-            return None;
+            return StateChangeResult::none();
         }
 
         let behavior = match context.state.ball_state {
@@ -62,7 +62,7 @@ impl DefenderStrategies {
             },
         };
 
-        Some(steering_output.velocity)
+        StateChangeResult::with_velocity(steering_output.velocity)
     }
 
     fn is_on_defending_half(player: &MatchPlayer, state: &GameState) -> bool {

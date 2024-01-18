@@ -84,7 +84,7 @@ fn main() {
     // ];
     //
 
-    let mut net = NeuralNetwork::new(&[4, 4, 6, 6], ActivationFunction::Sigmoid);
+    let mut net = NeuralNetwork::new(&[4, 12, 32, 6], ActivationFunction::Sigmoid);
 
     let training_data = [
         (vec![211f64, 12f64, 12f64, 12f64], vec![0f64, 0f64, 0f64, 0f64, 1f64,0f64]),
@@ -99,12 +99,14 @@ fn main() {
         (vec![1f64, 12f64, 122f64, 112f64], vec![0f64, 0f64, 0f64, 0f64, 0f64,1f64])
     ];
 
-    NeuralNetwork::train(&mut net, &training_data, 0.02, 0.1, 100000);
+    let error = NeuralNetwork::train(&mut net, &training_data, 0.06, 0.1, 100000);
 
-    let json_net = net.save_json();
+    println!("error: {}", error);
 
-    let mut f = File::create("training_result.json").expect("Unable to create file");
-    f.write_all(json_net.as_bytes()).expect("Unable to write data");
+    // let json_net = net.save_json();
+    //
+    // let mut f = File::create("training_result.json").expect("Unable to create file");
+    // f.write_all(json_net.as_bytes()).expect("Unable to write data");
 
     // for (input, output) in training_data {
     //     let results = net.run(&input);

@@ -1,19 +1,16 @@
-﻿use crate::r#match::{
-    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
-    SteeringBehavior,
-};
+﻿use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
 
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
-    pub fn calculate_velocity(
+    pub fn calculate(
         _context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Option<Vector3<f32>> {
+    ) -> StateChangeResult {
 
         let vel = SteeringBehavior::Arrive {
             target: objects_positions.ball_position,
@@ -22,7 +19,7 @@ impl ForwardStrategies {
             .calculate(player)
             .velocity;
 
-        Some(vel)
+        StateChangeResult::with_velocity(vel)
     }
 }
 

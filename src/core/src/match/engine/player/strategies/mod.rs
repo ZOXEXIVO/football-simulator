@@ -9,42 +9,77 @@ pub use midfielders::*;
 pub use forwarders::*;
 
 use nalgebra::Vector3;
-use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent};
+use crate::r#match::{GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent};
 
 use crate::{PlayerFieldPositionGroup};
 
-pub trait VelocityStrategy {
-    fn calculate_velocity(
+pub trait StateStrategy {
+    fn calculate(
         &self,
         context: &mut MatchContext,
         player: &MatchPlayer,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> Option<Vector3<f32>>;
+    ) -> StateChangeResult;
 }
 
-impl VelocityStrategy for PlayerFieldPositionGroup {
-    fn calculate_velocity(&self, context: &mut MatchContext, player: &MatchPlayer, result: &mut Vec<PlayerUpdateEvent>, objects_positions: &MatchObjectsPositions) -> Option<Vector3<f32>> {
+pub struct StateChangeResult {
+    pub state: Option<PlayerState>,
+    pub velocity: Option<Vector3<f32>>
+}
+
+impl StateChangeResult {
+    pub fn with(state: PlayerState, velocity: Vector3<f32>) -> Self {
+        StateChangeResult {
+            state: Some(state),
+            velocity: Some(velocity)
+        }
+    }
+
+    pub fn none() -> Self {
+        StateChangeResult {
+            state: None,
+            velocity: None
+        }
+    }
+
+    pub fn with_state(state: PlayerState) -> Self {
+        StateChangeResult {
+            state: Some(state),
+            velocity: None
+        }
+    }
+
+    pub fn with_velocity(velocity: Vector3<f32>) -> Self {
+        StateChangeResult {
+            state: None,
+            velocity: Some(velocity)
+        }
+    }
+}
+
+impl StateStrategy for PlayerFieldPositionGroup {
+    fn calculate(&self, context: &mut MatchContext, player: &MatchPlayer, result: &mut Vec<PlayerUpdateEvent>, objects_positions: &MatchObjectsPositions) -> StateChangeResult {
         match self {
-            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate_velocity(
+            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate(
                 context,
                 player,
                 result,
                 objects_positions
             ),
-            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate_velocity(
+            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate(
                 context,
                 player,
                 result,
                 objects_positions
             ),
-            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate_velocity(
+            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate(
                 context,
                 player,
                 result,
                 objects_positions
             ),
-            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate_velocity(
+            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate(
                 context,
                 player,
                 result,
