@@ -1,5 +1,5 @@
 ﻿use crate::r#match::{
-    Ball, MatchContext, MatchObjectsPositions, PlayerStateStrategy, StateStrategy,
+    Ball, MatchContext, MatchObjectsPositions, StateStrategy,
 };
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;

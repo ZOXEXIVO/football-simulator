@@ -1,5 +1,7 @@
-﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
+﻿mod states;
+
+use crate::r#match::position::VectorExtensions;
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
 use crate::FloatUtils;
@@ -20,9 +22,33 @@ impl GoalkeeperStrategies {
             .ball_position
             .distance_to(&player.position);
 
+        // match player.state {
+        //     PlayerState::Standing => {
+        //         //GoalkeeperStandingState::process(in_state_time, self, context, result, objects_positions)
+        //     }
+        //     PlayerState::Walking => {
+        //         WalkingState::process(in_state_time, self, context, result, objects_positions)
+        //     }
+        //     PlayerState::Running => {
+        //         RunningState::process(in_state_time, self, context, result, objects_positions)
+        //     }
+        //     PlayerState::Tackling => {
+        //         TacklingState::process(in_state_time, self, context, result, objects_positions)
+        //     }
+        //     PlayerState::Shooting => {
+        //         ShootingState::process(in_state_time, self, context, result, objects_positions)
+        //     }
+        //     PlayerState::Passing => {
+        //         PassingState::process(in_state_time, self, context, result, objects_positions)
+        //     }
+        //     PlayerState::Returning => {
+        //         ReturningState::process(in_state_time, self, context, result, objects_positions)
+        //     }
+        // }
+
         return match (ball_distance, is_ball_heading_towards_goal) {
             (0.0..=3.0, _) => {
-               return StateChangeResult::with_velocity( Vector3::new(0.0, 0.0, 0.0));
+                return StateChangeResult::with_velocity(Vector3::new(0.0, 0.0, 0.0));
             }
             (0.0..=10.0, _) => {
                 let clear_target = Vector3::new(0.0, if player.position.y > 0.0 { 100.0 } else { -100.0 }, 0.0);

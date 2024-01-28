@@ -1,4 +1,6 @@
-﻿use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
+﻿pub mod states;
+
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 use crate::common::NeuralNetwork;
 
 pub struct MidfielderStrategies {}

@@ -84,7 +84,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
                 player,
                 result,
                 objects_positions
-            ),
+            )
         }
     }
 }

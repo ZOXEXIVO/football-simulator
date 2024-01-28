@@ -1,4 +1,6 @@
-﻿use crate::r#match::{BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior, SteeringOutput};
+﻿pub mod states;
+
+use crate::r#match::{BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior, SteeringOutput};
 use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
 use crate::FloatUtils;
