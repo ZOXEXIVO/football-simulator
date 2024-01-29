@@ -1,7 +1,8 @@
 use crate::common::NeuralNetwork;
 
 use crate::r#match::{
-    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+    StateChangeResult,
 };
 
 lazy_static! {
@@ -13,11 +14,14 @@ pub struct GoalkeeperTacklingState {}
 impl GoalkeeperTacklingState {
     pub fn process(
         _in_state_time: u64,
-        _player: &mut MatchPlayer,
+        ball_metadata: BallMetadata,
+        _player: &MatchPlayer,
         _context: &mut MatchContext,
         _result: &mut Vec<PlayerUpdateEvent>,
         _objects_positions: &MatchObjectsPositions,
-    ) -> Option<PlayerState> {
+    ) -> StateChangeResult {
+        StateChangeResult::none()
+
         // let mut res_vec = Vec::new();
         //
         // res_vec.push(objects_positions.ball_positions.x as f64);
@@ -57,8 +61,6 @@ impl GoalkeeperTacklingState {
         // if player.player_attributes.condition < 20 {
         //     return Some(PlayerState::Standing);
         // }
-
-        None
     }
 }
 

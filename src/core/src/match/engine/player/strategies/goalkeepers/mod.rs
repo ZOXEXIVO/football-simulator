@@ -1,87 +1,96 @@
 ﻿mod states;
 
-use crate::r#match::position::VectorExtensions;
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
-use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
-use crate::FloatUtils;
+use crate::r#match::position::VectorExtensions;
+use crate::r#match::strategies::goalkeepers::states::{
+    GoalkeeperPassingState, GoalkeeperReturningState, GoalkeeperRunningState,
+    GoalkeeperShootingState, GoalkeeperStandingState, GoalkeeperTacklingState,
+    GoalkeeperWalkingState,
+};
+use crate::r#match::{
+    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+    StateChangeResult, SteeringBehavior,
+};
+use nalgebra::Vector3;
 
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
     pub fn calculate(
+        in_state_time: u64,
         context: &mut MatchContext,
         player: &MatchPlayer,
-        _result: &mut Vec<PlayerUpdateEvent>,
+        result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> StateChangeResult {
-        let is_ball_heading_towards_goal =
-            ball_heading_towards_goal(objects_positions.ball_position, player.start_position);
-
-        let ball_distance = objects_positions
-            .ball_position
-            .distance_to(&player.position);
-
-        // match player.state {
-        //     PlayerState::Standing => {
-        //         //GoalkeeperStandingState::process(in_state_time, self, context, result, objects_positions)
-        //     }
-        //     PlayerState::Walking => {
-        //         WalkingState::process(in_state_time, self, context, result, objects_positions)
-        //     }
-        //     PlayerState::Running => {
-        //         RunningState::process(in_state_time, self, context, result, objects_positions)
-        //     }
-        //     PlayerState::Tackling => {
-        //         TacklingState::process(in_state_time, self, context, result, objects_positions)
-        //     }
-        //     PlayerState::Shooting => {
-        //         ShootingState::process(in_state_time, self, context, result, objects_positions)
-        //     }
-        //     PlayerState::Passing => {
-        //         PassingState::process(in_state_time, self, context, result, objects_positions)
-        //     }
-        //     PlayerState::Returning => {
-        //         ReturningState::process(in_state_time, self, context, result, objects_positions)
-        //     }
-        // }
-
-        return match (ball_distance, is_ball_heading_towards_goal) {
-            (0.0..=3.0, _) => {
-                return StateChangeResult::with_velocity(Vector3::new(0.0, 0.0, 0.0));
-            }
-            (0.0..=10.0, _) => {
-                let clear_target = Vector3::new(0.0, if player.position.y > 0.0 { 100.0 } else { -100.0 }, 0.0);
-                return StateChangeResult::with_velocity(SteeringBehavior::Arrive {
-                    target: clear_target,
-                    slowing_distance: 5.0,
-                }
-                    .calculate(player)
-                    .velocity);
-            }
-            (10.0..=100.0, true) => {
-                StateChangeResult::with_velocity(SteeringBehavior::Arrive {
-                    target: objects_positions.ball_position,
-                    slowing_distance: 10.0 + ball_distance * 0.1,
-                }.calculate(player)
-                    .velocity)
-            }
-            _ => {
-                let wander_velocity = SteeringBehavior::Wander {
-                    target: player.start_position,
-                    radius: 20.0,
-                    jitter: 100.0,
-                    distance: 60.0,
-                    angle: FloatUtils::random(5.0, 90.0),
-                }
-                    .calculate(player)
-                    .velocity;
-
-                //println!("wander = {}", wander_velocity);
-
-                StateChangeResult::with_velocity(wander_velocity)
-            }
+        let ball_metadata = BallMetadata {
+            is_ball_heading_towards_goal: ball_heading_towards_goal(
+                objects_positions.ball_position,
+                player.start_position,
+            ),
+            ball_distance: objects_positions
+                .ball_position
+                .distance_to(&player.position),
         };
+
+        match player.state {
+            PlayerState::Standing => GoalkeeperStandingState::process(
+                in_state_time,
+                ball_metadata,
+                player,
+                context,
+                result,
+                objects_positions,
+            ),
+            PlayerState::Walking => GoalkeeperWalkingState::process(
+                in_state_time,
+                ball_metadata,
+                player,
+                context,
+                result,
+                objects_positions,
+            ),
+            PlayerState::Running => GoalkeeperRunningState::process(
+                in_state_time,
+                ball_metadata,
+                player,
+                context,
+                result,
+                objects_positions,
+            ),
+            PlayerState::Tackling => GoalkeeperTacklingState::process(
+                in_state_time,
+                ball_metadata,
+                player,
+                context,
+                result,
+                objects_positions,
+            ),
+            PlayerState::Shooting => GoalkeeperShootingState::process(
+                in_state_time,
+                ball_metadata,
+                player,
+                context,
+                result,
+                objects_positions,
+            ),
+            PlayerState::Passing => GoalkeeperPassingState::process(
+                in_state_time,
+                ball_metadata,
+                player,
+                context,
+                result,
+                objects_positions,
+            ),
+            PlayerState::Returning => GoalkeeperReturningState::process(
+                in_state_time,
+                ball_metadata,
+                player,
+                context,
+                result,
+                objects_positions,
+            ),
+        }
     }
 }
 

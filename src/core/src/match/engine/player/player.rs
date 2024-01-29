@@ -1,6 +1,4 @@
-﻿use crate::r#match::{
-    Ball, MatchContext, MatchObjectsPositions, StateStrategy,
-};
+﻿use crate::r#match::{Ball, MatchContext, MatchObjectsPositions, StateStrategy};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
@@ -81,9 +79,13 @@ impl MatchPlayer {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) {
-        let state_result = self.tactics_position
-            .position_group()
-            .calculate(context, self, result, objects_positions);
+        let state_result = self.tactics_position.position_group().calculate(
+            self.in_state_time,
+            context,
+            self,
+            result,
+            objects_positions,
+        );
 
         if let Some(state) = state_result.state {
             self.state = state;

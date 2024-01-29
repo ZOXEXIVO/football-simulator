@@ -1,14 +1,18 @@
 ﻿pub mod states;
 
-use crate::r#match::{BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult, SteeringBehavior, SteeringOutput};
-use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
+use crate::r#match::{
+    BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
+    StateChangeResult, SteeringBehavior, SteeringOutput,
+};
 use crate::FloatUtils;
+use nalgebra::Vector3;
 
 pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
     pub fn calculate(
+        in_state_time: u64,
         context: &mut MatchContext,
         player: &MatchPlayer,
         _result: &mut Vec<PlayerUpdateEvent>,
@@ -47,7 +51,11 @@ impl DefenderStrategies {
                     .calculate(player)
                 } else {
                     SteeringBehavior::Arrive {
-                        target: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
+                        target: Vector3::new(
+                            FloatUtils::random(-0.4, 0.3),
+                            FloatUtils::random(-0.4, 0.3),
+                            FloatUtils::random(-0.4, 0.3),
+                        ),
                         slowing_distance: 2.0,
                     }
                     .calculate(player)
@@ -59,7 +67,11 @@ impl DefenderStrategies {
             }
             .calculate(player),
             DefenderBehavior::Idle => SteeringOutput {
-                velocity: Vector3::new(FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3), FloatUtils::random(-0.4, 0.3)),
+                velocity: Vector3::new(
+                    FloatUtils::random(-0.4, 0.3),
+                    FloatUtils::random(-0.4, 0.3),
+                    FloatUtils::random(-0.4, 0.3),
+                ),
                 rotation: 0.0,
             },
         };
