@@ -47,6 +47,14 @@ async fn main() {
 
             draw_circle(player.position.x, player.position.y, 10.0, color);
             draw_text(
+                &player.tactics_position.get_short_name(),
+                player.position.x - 7.0,
+                player.position.y + 3.0,
+                15.0,
+                BLACK,
+            );
+
+            draw_text(
                 &player.state.to_string(),
                 player.position.x - 20.0,
                 player.position.y + 20.0,
