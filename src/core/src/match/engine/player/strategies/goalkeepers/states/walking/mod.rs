@@ -15,13 +15,31 @@ pub struct GoalkeeperWalkingState {}
 
 impl GoalkeeperWalkingState {
     pub fn process(
-        in_state_time: u64,
-        ball_metadata: BallMetadata,
         player: &MatchPlayer,
         context: &mut MatchContext,
-        _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
+        ball_metadata: BallMetadata,
+        in_state_time: u64,
+        result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
+        if ball_metadata.ball_is_on_player_home_side {
+            return StateChangeResult::with_state(PlayerState::Returning);
+        }
+
+        if in_state_time % 10 == 0 {
+            let wander_velocity = SteeringBehavior::Wander {
+                target: objects_positions.ball_position, // TODO random point
+                radius: 10.0,
+                jitter: 0.0,
+                distance: 5.0,
+                angle: 40.0,
+            }
+            .calculate(player)
+            .velocity;
+
+            return StateChangeResult::with_velocity(wander_velocity);
+        }
+
         StateChangeResult::none()
 
         // if context.time.time % 1000 == 0 {

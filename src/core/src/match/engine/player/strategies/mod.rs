@@ -106,4 +106,5 @@ impl StateStrategy for PlayerFieldPositionGroup {
 pub struct BallMetadata {
     is_ball_heading_towards_goal: bool,
     ball_distance: f32,
+    ball_is_on_player_home_side: bool,
 }

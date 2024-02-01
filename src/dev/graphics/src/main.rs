@@ -1,6 +1,6 @@
-use core::r#match::FootballEngine;
 use core::r#match::ball::Ball;
 use core::r#match::player::MatchPlayer;
+use core::r#match::FootballEngine;
 use core::r#match::MatchContext;
 use core::r#match::MatchField;
 use macroquad::prelude::*;
@@ -39,19 +39,21 @@ async fn main() {
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
 
         field.players.iter().for_each(|player| {
-            let mut color = if player.is_home {
-                GREEN
-            } else {
-                RED
-            };
+            let mut color = if player.is_home { GREEN } else { RED };
 
             if player.tactics_position == PlayerPositionType::Goalkeeper {
-               color = YELLOW;
+                color = YELLOW;
             }
 
             draw_circle(player.position.x, player.position.y, 10.0, color);
+            draw_text(
+                &player.state.to_string(),
+                player.position.x - 20.0,
+                player.position.y + 20.0,
+                10.0,
+                DARKGRAY,
+            );
         });
-
 
         ball.update(&mut context);
 
@@ -143,5 +145,10 @@ pub fn get_away_squad() -> TeamSquad {
 }
 
 fn get_player(position: PlayerPositionType) -> Player {
-    PlayerGenerator::generate(1, NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(), position, 20)
+    PlayerGenerator::generate(
+        1,
+        NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
+        position,
+        20,
+    )
 }

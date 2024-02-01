@@ -13,12 +13,12 @@ pub struct GoalkeeperShootingState {}
 
 impl GoalkeeperShootingState {
     pub fn process(
-        _in_state_time: u64,
-        ball_metadata: BallMetadata,
-        _player: &MatchPlayer,
-        _context: &mut MatchContext,
-        _result: &mut Vec<PlayerUpdateEvent>,
+        player: &MatchPlayer,
+        context: &mut MatchContext,
         objects_positions: &MatchObjectsPositions,
+        ball_metadata: BallMetadata,
+        in_state_time: u64,
+        result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         StateChangeResult::none()
 

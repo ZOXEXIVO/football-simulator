@@ -8,8 +8,8 @@ use crate::r#match::strategies::goalkeepers::states::{
     GoalkeeperWalkingState,
 };
 use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    StateChangeResult, SteeringBehavior,
+    BallMetadata, BallState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
 };
 use nalgebra::Vector3;
 
@@ -23,72 +23,81 @@ impl GoalkeeperStrategies {
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
     ) -> StateChangeResult {
+        let is_ball_home_size = match context.state.ball_state {
+            Some(ball_state) => ball_state == BallState::HomeSide,
+            None => false,
+        };
+
         let ball_metadata = BallMetadata {
+            // ball moving towards goal
             is_ball_heading_towards_goal: ball_heading_towards_goal(
                 objects_positions.ball_position,
                 player.start_position,
             ),
+            // distance to ball
             ball_distance: objects_positions
                 .ball_position
                 .distance_to(&player.position),
+            // is ball on the home side?
+            ball_is_on_player_home_side: player.is_home && is_ball_home_size,
         };
 
         match player.state {
             PlayerState::Standing => GoalkeeperStandingState::process(
-                in_state_time,
-                ball_metadata,
                 player,
                 context,
-                result,
                 objects_positions,
+                ball_metadata,
+                in_state_time,
+                result,
             ),
             PlayerState::Walking => GoalkeeperWalkingState::process(
-                in_state_time,
-                ball_metadata,
                 player,
                 context,
-                result,
                 objects_positions,
+                ball_metadata,
+                in_state_time,
+                result,
             ),
             PlayerState::Running => GoalkeeperRunningState::process(
-                in_state_time,
-                ball_metadata,
                 player,
                 context,
-                result,
                 objects_positions,
+                ball_metadata,
+                in_state_time,
+                result,
             ),
             PlayerState::Tackling => GoalkeeperTacklingState::process(
-                in_state_time,
-                ball_metadata,
                 player,
                 context,
-                result,
                 objects_positions,
+                ball_metadata,
+                in_state_time,
+                result,
             ),
             PlayerState::Shooting => GoalkeeperShootingState::process(
-                in_state_time,
-                ball_metadata,
                 player,
                 context,
-                result,
                 objects_positions,
+                ball_metadata,
+                in_state_time,
+                result,
             ),
             PlayerState::Passing => GoalkeeperPassingState::process(
-                in_state_time,
-                ball_metadata,
                 player,
                 context,
-                result,
                 objects_positions,
+                ball_metadata,
+                in_state_time,
+                result,
             ),
             PlayerState::Returning => GoalkeeperReturningState::process(
-                in_state_time,
-                ball_metadata,
                 player,
                 context,
-                result,
                 objects_positions,
+                ball_metadata,
+                in_state_time,
+                result,
             ),
         }
     }

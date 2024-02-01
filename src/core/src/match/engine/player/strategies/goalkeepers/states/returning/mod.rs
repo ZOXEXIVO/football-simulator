@@ -1,7 +1,8 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::strategies::goalkeepers::ball_heading_towards_goal;
 use crate::r#match::{
     BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    StateChangeResult,
+    StateChangeResult, SteeringBehavior,
 };
 
 lazy_static! {
@@ -13,14 +14,25 @@ pub struct GoalkeeperReturningState {}
 
 impl GoalkeeperReturningState {
     pub fn process(
-        _in_state_time: u64,
-        ball_metadata: BallMetadata,
         player: &MatchPlayer,
         context: &mut MatchContext,
-        _result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
+        ball_metadata: BallMetadata,
+        in_state_time: u64,
+        result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        StateChangeResult::none()
+        if !ball_metadata.ball_is_on_player_home_side {
+            return StateChangeResult::with_state(PlayerState::Walking);
+        }
+
+        let returning_velocity = SteeringBehavior::Arrive {
+            target: player.start_position,
+            slowing_distance: 10.0,
+        }
+        .calculate(player)
+        .velocity;
+
+        StateChangeResult::with_velocity(returning_velocity)
 
         // let mut res_vec = Vec::new();
         //

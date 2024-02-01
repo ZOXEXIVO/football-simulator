@@ -60,9 +60,10 @@ impl MatchPlayer {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {}
                 PlayerUpdateEvent::TacklingBall(_player_id) => {}
-                PlayerUpdateEvent::PassTo(_pass_target, _player_running_speed) => {
-                    //let ball_pass_vector = _pass_target - ball.position;
-                    //ball.velocity = ball_pass_vector.normalize(); //* player_running_speed;
+                PlayerUpdateEvent::PassTo(pass_target, pass_power) => {
+                    let ball_pass_vector = pass_target - ball.position;
+
+                    ball.velocity = ball_pass_vector.normalize();
                 }
             }
         }
@@ -136,5 +137,5 @@ impl Display for PlayerState {
 pub enum PlayerUpdateEvent {
     Goal(u32),
     TacklingBall(u32),
-    PassTo(Vector3<f32>, Vector3<f32>),
+    PassTo(Vector3<f32>, f64),
 }

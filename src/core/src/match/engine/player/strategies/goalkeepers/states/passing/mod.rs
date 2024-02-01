@@ -1,8 +1,10 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::PlayerState::Returning;
 use crate::r#match::{
     BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
     StateChangeResult,
 };
+use serde::__private::ser::constrain;
 
 lazy_static! {
     static ref PLAYER_PASSING_STATE_NETWORK: NeuralNetwork = PlayerPassingStateNetLoader::load();
@@ -12,13 +14,34 @@ pub struct GoalkeeperPassingState {}
 
 impl GoalkeeperPassingState {
     pub fn process(
-        _in_state_time: u64,
-        ball_metadata: BallMetadata,
         player: &MatchPlayer,
         context: &mut MatchContext,
-        result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
+        ball_metadata: BallMetadata,
+        in_state_time: u64,
+        result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
+        if player.skills.mental.decisions > 10.0 {
+        } else {
+            if in_state_time > 3 {
+                if let Some(nearest_teammate) =
+                    objects_positions.find_closest_teammate(player, &context.state.match_state)
+                {
+                    let pass_modifier = if player.skills.technical.passing > 10.0 {
+                        1.0
+                    } else {
+                        0.5
+                    };
+
+                    let pass_power = 100.0 * pass_modifier;
+
+                    result.push(PlayerUpdateEvent::PassTo(nearest_teammate, pass_power))
+                }
+
+                return StateChangeResult::with_state(Returning);
+            }
+        }
+
         StateChangeResult::none()
 
         // let mut res_vec = Vec::new();
