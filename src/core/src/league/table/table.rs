@@ -127,6 +127,7 @@ impl Default for LeagueTable {
 
 #[cfg(test)]
 mod tests {
+    use crate::r#match::Score;
     use super::*;
 
     #[test]
@@ -143,8 +144,11 @@ mod tests {
             id: "123".to_string(),
             home_team_id: 1,
             away_team_id: 2,
-            home_goals: 3,
-            away_goals: 3,
+            score: Score{
+                home: 3,
+                away: 3,
+                details: vec![],
+            },
             result_details: None,
         }];
 
@@ -190,8 +194,11 @@ mod tests {
             id: "123".to_string(),
             home_team_id,
             away_team_id,
-            home_goals: 3,
-            away_goals: 0,
+            score: Score{
+                home: 3,
+                away: 0,
+                details: vec![],
+            },
             result_details: None,
         }];
 
@@ -245,8 +252,11 @@ mod tests {
             id: "123".to_string(),
             home_team_id,
             away_team_id,
-            home_goals: 0,
-            away_goals: 3,
+            score: Score{
+                home: 0,
+                away: 3,
+                details: vec![],
+            },
             result_details: None,
         }];
 
