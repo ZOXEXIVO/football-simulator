@@ -39,13 +39,17 @@ async fn main() {
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
 
         field.players.iter().for_each(|player| {
-            let mut color = if player.is_home { GREEN } else { RED };
+            let mut color = if player.is_home {
+                Color::from_rgba(0, 184, 186, 255)
+            } else {
+                Color::from_rgba(208, 139, 255, 255)
+            };
 
             if player.tactics_position == PlayerPositionType::Goalkeeper {
                 color = YELLOW;
             }
 
-            draw_circle(player.position.x, player.position.y, 10.0, color);
+            draw_circle(player.position.x, player.position.y, 13.0, color);
             draw_text(
                 &player.tactics_position.get_short_name(),
                 player.position.x - 7.0,
