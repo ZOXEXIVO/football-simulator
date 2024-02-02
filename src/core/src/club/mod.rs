@@ -1,16 +1,16 @@
 pub mod academy;
-mod board;
+pub mod board;
 pub mod club;
-mod context;
-mod finance;
-mod mood;
+pub mod context;
+pub mod finance;
+pub mod mood;
 pub mod person;
 pub mod player;
-mod relations;
-mod result;
+pub mod relations;
+pub mod result;
 pub mod staff;
 pub mod status;
-mod team;
+pub mod team;
 
 pub use board::*;
 pub use club::*;

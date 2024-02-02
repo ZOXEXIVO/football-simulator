@@ -1,4 +1,4 @@
-use crate::r#match::{BallState, GoalDetail, MatchContext};
+use crate::r#match::{BallState, MatchContext};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 
@@ -15,9 +15,9 @@ pub struct Ball {
 impl Ball {
     pub fn with_coord(x: f32, y: f32) -> Self {
         Ball {
-            position: Vector3::new(x, y, 0.0),
-            start_position: Vector3::new(x, y, 0.0),
-            velocity: Vector3::new(1.3, 0.2, 0.1),
+            position: Vector3::new(300.0, 300.0, 0.0),
+            start_position: Vector3::new(300.0, 300.0, 0.0),
+            velocity: Vector3::new(0.2, 0.02, 0.1),
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
@@ -33,39 +33,45 @@ impl Ball {
         self.check_goal(&mut result);
         self.check_boundary_collision(&mut result, context);
 
+        if self.position.x < self.center_field_position {
+            context.state.set_ball_state(BallState::HomeSide);
+        }else {
+            context.state.set_ball_state(BallState::AwaySide);
+        }
+
         result
     }
 
     pub fn handle_events(
-        current_time: u64,
+        _current_time: u64,
         events: Vec<BallUpdateEvent>,
         context: &mut MatchContext,
     ) {
         for event in events {
             match event {
-                BallUpdateEvent::AwayGoal(goal_scorer, goal_assistant) => {
+                BallUpdateEvent::AwayGoal => {
                     context.result.score.away += 1;
-                    context.result.score.details.push(GoalDetail {
-                        player_id: goal_scorer,
-                        assistant: goal_assistant,
-                        minute: (current_time / 1000 / 60) as u8,
-                    })
+                    // context.result.score.details.push(GoalDetail {
+                    //     player_id: goal_scorer,
+                    //     assistant: goal_assistant,
+                    //     minute: (current_time / 1000 / 60) as u8,
+                    // })
                 }
-                BallUpdateEvent::HomeGoal(goal_scorer, goal_assistant) => {
+                BallUpdateEvent::HomeGoal => {
                     context.result.score.home += 1;
-                    context.result.score.details.push(GoalDetail {
-                        player_id: goal_scorer,
-                        assistant: goal_assistant,
-                        minute: (current_time / 1000 / 60) as u8,
-                    })
+                    // context.result.score.details.push(GoalDetail {
+                    //     player_id: goal_scorer,
+                    //     assistant: goal_assistant,
+                    //     minute: (current_time / 1000 / 60) as u8,
+                    // })
                 }
-                BallUpdateEvent::ChangeBallSide(position) => {
-                    let ball_state = match position {
-                        BallPosition::Home => BallState::HomeSide,
-                        BallPosition::Away => BallState::AwaySide,
-                    };
+                BallUpdateEvent::ChangeBallSide(_position) => {
+                    // let ball_state = match position {
+                    //     BallPosition::Home => BallState::HomeSide,
+                    //     BallPosition::Away => BallState::AwaySide,
+                    // };
 
-                    context.state.set_ball_state(ball_state)
+                    //context.state.set_ball_state(ball_state)
                 }
             }
         }
@@ -81,15 +87,15 @@ impl Ball {
 
         // Check if ball hits the boundary and reverse its velocity if it does
         if self.position.x <= 0.0 || self.position.x >= field_width {
-            self.velocity = Vector3::zeros();
+            self.velocity = -self.velocity;
         }
 
         if self.position.y <= 0.0 || self.position.y >= field_height {
-            self.velocity = Vector3::zeros();
+            self.velocity =-self.velocity;
         }
     }
 
-    fn check_goal(&mut self, _result: &mut Vec<BallUpdateEvent>) {
+    fn check_goal(&mut self, result: &mut Vec<BallUpdateEvent>) {
         let goal_post_width = 6.0;
         let goal_line_x = 140.0;
 
@@ -102,9 +108,9 @@ impl Ball {
                 || (self.start_position.y > goal_line_y && self.position.y <= goal_line_y)
             {
                 if self.start_position.x < goal_line_x {
-                    //result.push(BallUpdateEvent::AwayGoal);
+                    result.push(BallUpdateEvent::AwayGoal);
                 } else {
-                    //result.push(BallUpdateEvent::HomeGoal);
+                    result.push(BallUpdateEvent::HomeGoal);
                 }
 
                 self.reset();
@@ -172,8 +178,8 @@ impl Ball {
 }
 
 pub enum BallUpdateEvent {
-    HomeGoal(u32, Option<u32>),
-    AwayGoal(u32, Option<u32>),
+    HomeGoal,
+    AwayGoal,
     ChangeBallSide(BallPosition),
 }
 

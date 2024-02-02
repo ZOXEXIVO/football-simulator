@@ -2,7 +2,7 @@
 use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use core::r#match::engine::FootballMatchResult;
+use core::r#match::engine::MatchResultRaw;
 use core::SimulatorData;
 use serde::{Deserialize, Serialize};
 
@@ -76,9 +76,8 @@ pub async fn match_lineup_action(
     let league = simulator_data.league(league_id).unwrap();
 
     let match_result = league
-        .match_results
-        .iter()
-        .find(|m| m.id == route_params.match_id)
+        .matches
+        .get(route_params.match_id)
         .unwrap();
 
     let home_team = simulator_data.team(match_result.home_team_id).unwrap();
@@ -145,7 +144,7 @@ pub async fn match_lineup_action(
 
 fn to_lineup_player<'p>(
     player_id: u32,
-    match_details: &'p FootballMatchResult,
+    match_details: &'p MatchResultRaw,
     simulator_data: &'p SimulatorData,
 ) -> Option<LineupPlayer<'p>> {
     let player = simulator_data.player(player_id).unwrap();

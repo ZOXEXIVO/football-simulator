@@ -1,8 +1,5 @@
 use super::engine::FootballEngine;
-use crate::r#match::engine::FootballMatchResult;
-
-use crate::league::LeagueMatch;
-use crate::r#match::TeamSquad;
+use crate::r#match::{MatchResult, TeamSquad};
 use log::debug;
 
 #[derive(Debug, Clone)]
@@ -30,46 +27,23 @@ impl Match {
         let away_team_id = self.away_squad.team_id;
         let away_team_name = String::from(&self.away_squad.team_name);
 
-        let match_results = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
+        let match_raw_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
 
         debug!(
             "match played: {} {}:{} {}",
-            home_team_name, match_results.score.home, away_team_name, match_results.score.away
+            home_team_name,
+            match_raw_result.score.home,
+            away_team_name,
+            match_raw_result.score.away
         );
 
         MatchResult {
             id: String::from(self.id),
             league_id: self.league_id,
+            score: match_raw_result.score.clone(),
             home_team_id,
-            home_goals: match_results.score.home,
             away_team_id,
-            away_goals: match_results.score.away,
-            result_details: Some(match_results),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct MatchResult {
-    pub id: String,
-    pub league_id: u32,
-    pub result_details: Option<FootballMatchResult>,
-    pub home_team_id: u32,
-    pub home_goals: u8,
-    pub away_team_id: u32,
-    pub away_goals: u8,
-}
-
-impl From<&LeagueMatch> for MatchResult {
-    fn from(m: &LeagueMatch) -> Self {
-        MatchResult {
-            id: m.id.clone(),
-            league_id: m.league_id,
-            result_details: None,
-            home_team_id: m.home_team_id,
-            home_goals: m.result.as_ref().unwrap().home_goals,
-            away_team_id: m.away_team_id,
-            away_goals: m.result.as_ref().unwrap().away_goals,
+            result_details: Some(match_raw_result),
         }
     }
 }

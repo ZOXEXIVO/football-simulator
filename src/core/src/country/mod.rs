@@ -1,5 +1,5 @@
 mod context;
-mod country;
+pub mod country;
 mod result;
 
 pub use context::*;

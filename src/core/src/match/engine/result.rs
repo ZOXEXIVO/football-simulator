@@ -1,26 +1,29 @@
-﻿use crate::r#match::position::MatchPositionData;
+﻿use crate::league::LeagueMatch;
+use crate::r#match::position::MatchPositionData;
+use crate::r#match::TeamSquad;
 
 #[derive(Debug, Clone)]
-pub struct FootballMatchResult {
+pub struct MatchResultRaw {
     pub score: Score,
+
     pub position_data: MatchPositionData,
 
     pub home_players: FieldSquad,
     pub away_players: FieldSquad,
 
     pub match_time_ms: u64,
-    pub additinal_time_ms: u64,
+    pub additional_time_ms: u64,
 }
 
-impl FootballMatchResult {
+impl MatchResultRaw {
     pub fn with_match_time(match_time_ms: u64) -> Self {
-        FootballMatchResult {
+        MatchResultRaw {
             score: Score::new(),
             position_data: MatchPositionData::new(),
             home_players: FieldSquad::new(),
             away_players: FieldSquad::new(),
             match_time_ms,
-            additinal_time_ms: 0,
+            additional_time_ms: 0,
         }
     }
 
@@ -55,6 +58,13 @@ impl FieldSquad {
         }
     }
 
+    pub fn from_team(squad: &TeamSquad) -> Self {
+        FieldSquad {
+            main: squad.main_squad.iter().map(|p| p.player_id).collect(),
+            substitutes: squad.substitutes.iter().map(|p| p.player_id).collect(),
+        }
+    }
+
     pub fn count(&self) -> usize {
         self.main.len() + self.substitutes.len()
     }
@@ -80,6 +90,29 @@ impl Score {
             home: 0,
             away: 0,
             details: Vec::new(),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct MatchResult {
+    pub id: String,
+    pub league_id: u32,
+    pub result_details: Option<MatchResultRaw>,
+    pub score: Score,
+    pub home_team_id: u32,
+    pub away_team_id: u32,
+}
+
+impl From<&LeagueMatch> for MatchResult {
+    fn from(m: &LeagueMatch) -> Self {
+        MatchResult {
+            id: m.id.clone(),
+            league_id: m.league_id,
+            score: Score::new(),
+            result_details: None,
+            home_team_id: m.home_team_id,
+            away_team_id: m.away_team_id,
         }
     }
 }

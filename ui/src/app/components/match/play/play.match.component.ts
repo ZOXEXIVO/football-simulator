@@ -2,16 +2,13 @@
   AfterViewInit, ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   NgZone,
   OnDestroy,
-  Output,
   ViewChild
 } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import {Sprite} from '@pixi/sprite';
-import {ActivatedRoute} from "@angular/router";
 import {Graphics} from "pixi.js";
 import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
@@ -88,7 +85,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
             let coord = this.translateToField(data.ball.x, data.ball.y);
 
-            if(ballObject.x != coord.x && ballObject.y != coord.y){
+            //if(ballObject.x != coord.x && ballObject.y != coord.y){
               //console.log(`ball move x = ${ballObject.x}, y = ${ballObject.y}`);
 
               ballObject.x = coord.x;
@@ -97,33 +94,32 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
               const scaleFactor= (data.ball.z + 20) / 20;
 
               ballObject.scale.set(scaleFactor, scaleFactor);
-            }
+            //}
 
-            this.matchDataService.matchData.players.forEach(player => {
+            this.matchDataService.matchData.players.forEach((player, index) => {
               const playerObject = player.obj!;
-              const playerData = data.players[player.id];
+              const playerData = data.players.find(p => p.playerId == player.id);
 
               if(playerData && playerData.position){
-                const playerPosition = data.players[player.id].position;
 
-                if(playerPosition && (playerPosition.x != 0 && playerPosition.y != 0)){
+                const playerPosition = playerData.position;
+
+                if(index == 0){
+                  //console.log(`time = ${this.currentTime}: player position = (${playerPosition.x}, ${playerPosition.y})`);
+                }
+
+                if(playerPosition){
                   let playerTranslatedPositions = this.translateToField(
                     playerPosition.x,
                     playerPosition.y
                   );
 
-                  if(playerObject.x != playerTranslatedPositions.x && playerObject.y != playerTranslatedPositions.y){
-                    playerObject.x = playerTranslatedPositions.x;
-                    playerObject.y = playerTranslatedPositions.y;
+                  playerObject.x = playerTranslatedPositions.x;
+                  playerObject.y = playerTranslatedPositions.y;
 
-                    const scaleFactor= (playerPosition.z + 20) / 20;
+                  const scaleFactor= (playerPosition.z + 20) / 20;
 
-                    playerObject.scale.set(scaleFactor, scaleFactor);
-
-                    // console.log(`player id=${player.id}, move x = ${playerObject.x}, y = ${playerObject.y}`);
-                  }else {
-                    // console.log(`player id=${player.id} stay`);
-                  }
+                  playerObject.scale.set(scaleFactor, scaleFactor);
                 }
               }
             });

@@ -56,7 +56,6 @@ export interface LeagueTourScheduleMatchDto {
    result: LeagueTourScheduleMatchResultDto
 }
 
-
 export interface LeagueTourScheduleMatchResultDto {
    home_goals: number,
    away_goals: number

@@ -1,7 +1,7 @@
 use crate::context::GlobalContext;
 use crate::league::LeagueTableResult;
-use crate::r#match::game::MatchResult;
 use std::cmp::Ordering;
+use crate::r#match::MatchResult;
 
 #[derive(Debug)]
 pub struct LeagueTable {
@@ -81,18 +81,18 @@ impl LeagueTable {
 
     pub fn update_from_results(&mut self, match_result: &Vec<MatchResult>) {
         for result in match_result {
-            match Ord::cmp(&result.home_goals, &result.away_goals) {
+            match Ord::cmp(&result.score.home, &result.score.away) {
                 Ordering::Equal => {
-                    self.draft(result.home_team_id, result.home_goals, result.away_goals);
-                    self.draft(result.away_team_id, result.away_goals, result.away_goals);
+                    self.draft(result.home_team_id, result.score.home, result.score.away);
+                    self.draft(result.away_team_id, result.score.away, result.score.away);
                 }
                 Ordering::Greater => {
-                    self.winner(result.home_team_id, result.home_goals, result.away_goals);
-                    self.looser(result.away_team_id, result.away_goals, result.home_goals);
+                    self.winner(result.home_team_id, result.score.home, result.score.away);
+                    self.looser(result.away_team_id, result.score.away, result.score.home);
                 }
                 Ordering::Less => {
-                    self.looser(result.home_team_id, result.home_goals, result.away_goals);
-                    self.winner(result.away_team_id, result.away_goals, result.home_goals);
+                    self.looser(result.home_team_id, result.score.home, result.score.away);
+                    self.winner(result.away_team_id, result.score.away, result.score.home);
                 }
             }
         }

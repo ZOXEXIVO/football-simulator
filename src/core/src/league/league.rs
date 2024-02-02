@@ -1,5 +1,5 @@
 use crate::context::{GlobalContext, SimulationContext};
-use crate::league::{LeagueMatch, LeagueMatchResultResult, LeagueResult, LeagueTable, Schedule};
+use crate::league::{LeagueMatch, LeagueMatchResultResult, LeagueResult, LeagueTable, MatchStorage, Schedule};
 use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, Team};
@@ -14,7 +14,7 @@ pub struct League {
     pub schedule: Schedule,
     pub table: LeagueTable,
     pub settings: LeagueSettings,
-    pub match_results: Vec<MatchResult>,
+    pub matches: MatchStorage,
     pub reputation: u16,
 }
 
@@ -34,7 +34,7 @@ impl League {
             country_id,
             schedule: Schedule::default(),
             table: LeagueTable::default(),
-            match_results: Vec::new(),
+            matches: MatchStorage::new(),
             settings,
             reputation,
         }
@@ -57,7 +57,7 @@ impl League {
             self.table.update_from_results(&match_results);
 
             match_results.clone().into_iter().for_each(|m| {
-                self.match_results.push(m);
+                self.matches.push(m);
             });
 
             return LeagueResult::with_match_result(self.id, table_result, match_results);
@@ -71,10 +71,9 @@ impl League {
         scheduled_matches: &mut Vec<LeagueMatch>,
         clubs: &[Club],
     ) -> Vec<MatchResult> {
-        let mut result = Vec::new(); //TODO capacity
+        let mut result = Vec::with_capacity(scheduled_matches.len());
 
-        for scheduled_match in scheduled_matches.iter_mut().take(1) {
-            // TODO take 1
+        scheduled_matches.iter_mut().for_each(|scheduled_match| {
             let home_team = self.get_team(clubs, scheduled_match.home_team_id);
             let away_team = self.get_team(clubs, scheduled_match.away_team_id);
 
@@ -93,12 +92,12 @@ impl League {
             let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
             scheduled_match.result = Some(LeagueMatchResultResult {
-                home_goals: match_result.home_goals,
-                away_goals: match_result.away_goals,
+                home_goals: match_result.score.home,
+                away_goals: match_result.score.away,
             });
 
             result.push(match_result);
-        }
+        });
 
         result
     }

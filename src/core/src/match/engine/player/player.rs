@@ -1,13 +1,7 @@
-﻿use crate::r#match::{
-    DefenderStrategies, ForwardStrategies, GoalkeeperStrategies, MatchContext,
-    MatchObjectsPositions, MatchState, MidfielderStrategies, PassingDecisionState, PassingState,
-    ReturningState, RunningState, ShootingState, StandingState, TacklingState, WalkingState,
-};
-use crate::{
-    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
-    PlayerSkills,
-};
+﻿use crate::r#match::{Ball, MatchContext, MatchObjectsPositions, StateStrategy};
+use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
+use std::fmt::*;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -45,35 +39,32 @@ impl MatchPlayer {
 
     pub fn update(
         &mut self,
-        current_time: u64,
-        state: &MatchState,
+        context: &mut MatchContext,
         objects_positions: &MatchObjectsPositions,
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        // update state
-        let player_state = self.update_state(current_time, &mut result, objects_positions);
+        self.update_state(context, &mut result, objects_positions);
 
-        // set velocity
-        self.update_velocity(
-            current_time,
-            &mut result,
-            objects_positions,
-            state,
-            player_state,
-        );
-
-        // move
         self.move_to();
 
         result
     }
 
-    pub fn handle_events(events: Vec<PlayerUpdateEvent>, _context: &mut MatchContext) {
+    pub fn handle_events(
+        events: Vec<PlayerUpdateEvent>,
+        ball: &mut Ball,
+        _context: &mut MatchContext,
+    ) {
         for event in events {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {}
                 PlayerUpdateEvent::TacklingBall(_player_id) => {}
+                PlayerUpdateEvent::PassTo(pass_target, pass_power) => {
+                    let ball_pass_vector = pass_target - ball.position;
+
+                    ball.velocity = ball_pass_vector.normalize();
+                }
             }
         }
     }
@@ -85,101 +76,32 @@ impl MatchPlayer {
 
     fn update_state(
         &mut self,
-        _current_time: u64,
+        context: &mut MatchContext,
         result: &mut Vec<PlayerUpdateEvent>,
         objects_positions: &MatchObjectsPositions,
-    ) -> PlayerState {
-        self.in_state_time += 1;
+    ) {
+        let state_result = self.tactics_position.position_group().calculate(
+            self.in_state_time,
+            context,
+            self,
+            result,
+            objects_positions,
+        );
 
-        let changed_state = match self.state {
-            PlayerState::Standing => {
-                StandingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Walking => {
-                WalkingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Running => {
-                RunningState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Tackling => {
-                TacklingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Shooting => {
-                ShootingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Passing => {
-                PassingState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::PassingDecision => {
-                PassingDecisionState::process(self.in_state_time, self, result, objects_positions)
-            }
-            PlayerState::Returning => {
-                ReturningState::process(self.in_state_time, self, result, objects_positions)
-            }
-        };
-
-        if let Some(state) = changed_state {
-            self.change_state(state);
+        if let Some(state) = state_result.state {
+            self.state = state;
         }
 
-        self.state
+        if let Some(velocity) = state_result.velocity {
+            self.velocity = velocity;
+        }
     }
-
-    // fn calculate_pass_vector(&self, teammate: &MatchPlayer) -> Vector {
-    //     // code to calculate pass vector
-    // }
-    //
-    // fn pass_ball(&mut self, pass_vector: Vector) {
-    //     // code to pass the ball to the teammate
-    // }
 
     fn check_collisions(&mut self) {}
 
     fn move_to(&mut self) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
-    }
-
-    fn update_velocity(
-        &mut self,
-        current_time: u64,
-        result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-        state: &MatchState,
-        _player_state: PlayerState,
-    ) {
-        let velocity = match self.tactics_position.position_group() {
-            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-            PlayerFieldPositionGroup::Defender => DefenderStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-            PlayerFieldPositionGroup::Forward => ForwardStrategies::detect_velocity(
-                current_time,
-                self,
-                result,
-                objects_positions,
-                state,
-            ),
-        };
-
-        self.velocity = velocity;
     }
 
     pub fn heading(&self) -> f32 {
@@ -194,12 +116,26 @@ pub enum PlayerState {
     Running,
     Tackling,
     Shooting,
-    PassingDecision,
     Passing,
     Returning,
+}
+
+impl Display for PlayerState {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            PlayerState::Standing => write!(f, "Standing"),
+            PlayerState::Walking => write!(f, "Walking"),
+            PlayerState::Running => write!(f, "Running"),
+            PlayerState::Tackling => write!(f, "Tackling"),
+            PlayerState::Shooting => write!(f, "Shooting"),
+            PlayerState::Passing => write!(f, "Passing"),
+            PlayerState::Returning => write!(f, "Returning"),
+        }
+    }
 }
 
 pub enum PlayerUpdateEvent {
     Goal(u32),
     TacklingBall(u32),
+    PassTo(Vector3<f32>, f64),
 }

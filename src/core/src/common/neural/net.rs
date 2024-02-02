@@ -79,6 +79,7 @@ impl NeuralNetwork {
     fn activate(&self, x: f64) -> f64 {
         match self.activation_func {
             ActivationFunction::Sigmoid => sigmoid(x),
+            ActivationFunction::Relu => relu(x)
         }
     }
 }
@@ -131,9 +132,15 @@ fn random_f64() -> f64 {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum ActivationFunction {
     Sigmoid,
+    Relu
 }
 
 #[inline]
 pub fn sigmoid(x: f64) -> f64 {
     1f64 / (1f64 + (-x).exp())
+}
+
+#[inline]
+pub fn relu(x: f64) -> f64 {
+    f64::max(0.0, x)
 }

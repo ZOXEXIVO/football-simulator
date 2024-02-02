@@ -139,12 +139,13 @@ export class MatchDataService {
 
   updateMatchData(matchDtaDto: MatchDto) {
     // ball
-    this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2], data[3])));
+    //this.matchData.ball.data.push(...matchDtaDto.ball_data.map(data => new ObjectPositionDto(data[0], data[1], data[2], data[3])));
+
 
     // players
     for (const playerData of this.matchData.players) {
       for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
-        if (playerData.id != Number(playerId)) {
+        if (playerData.id == Number(playerId)) {
           let newPlayerData = data as number[][];
           playerData.data.push(...newPlayerData.map(pd => new ObjectPositionDto(pd[0], pd[1], pd[2], pd[3])));
         }
@@ -186,19 +187,21 @@ export class MatchDataService {
   }
 
   getData(timestamp: number): Observable<MatchDataResultModel> {
-    if (this.lastLoadedTimestamp + 100 < timestamp) {
+    console.log(`lastLoadedTimestamp = ${this.lastLoadedTimestamp / 10}, timestamp = ${timestamp / 10}`);
+
+    if (this.lastLoadedTimestamp / 100 < timestamp / 10) {
       if (!this.isBusy) {
         this.isBusy = true;
-
+        // console.log(`lastLoadedTimestamp = ${this.lastLoadedTimestamp}, timestamp = ${timestamp}, load new`);
         return this.loadData().pipe(
-          finalize(() => {
-            this.isBusy = false;
-          }),
           switchMap(() => {
-            return this.getLocalData(timestamp);
+            return this.getLocalData(timestamp).pipe(finalize(() => {
+              this.isBusy = false;
+            }));
           })
         );
       } else {
+        //console.log(`lastLoadedTimestamp = ${this.lastLoadedTimestamp}, timestamp = ${timestamp}, get local`);
         return this.getLocalData(timestamp);
       }
     }
