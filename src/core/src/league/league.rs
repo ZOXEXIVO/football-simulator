@@ -73,7 +73,7 @@ impl League {
     ) -> Vec<MatchResult> {
         let mut result = Vec::with_capacity(scheduled_matches.len());
 
-        scheduled_matches.iter_mut().take(1).for_each(|scheduled_match| {
+        scheduled_matches.iter_mut().for_each(|scheduled_match| {
             let home_team = self.get_team(clubs, scheduled_match.home_team_id);
             let away_team = self.get_team(clubs, scheduled_match.away_team_id);
 
