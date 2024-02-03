@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use crate::common::NeuralNetwork;
 
 use crate::r#match::strategies::goalkeepers::ball_heading_towards_goal;
@@ -5,6 +6,7 @@ use crate::r#match::{
     BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
     StateChangeResult, SteeringBehavior,
 };
+use crate::r#match::position::VectorExtensions;
 
 lazy_static! {
     static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
@@ -33,7 +35,31 @@ impl GoalkeeperStandingState {
             return StateChangeResult::with_state(PlayerState::Tackling);
         }
 
+        if Self::is_dangerous(player, objects_positions) {
+            return StateChangeResult::with_state(PlayerState::Running);
+        }
+
         StateChangeResult::none()
+    }
+
+    fn is_dangerous(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) -> bool {
+        let mut nearest_home_count: f32 = 0.0;
+        let mut nearest_away_count: f32 = 0.0;
+
+        let nearest_players = objects_positions.players_positions
+            .iter()
+            .filter(|x| x.position.distance_to(&player.position) < 100.0)
+            .map(|p| p.is_home);
+
+        for (is_home, grouped_items)   in &nearest_players.group_by(|p| *p) {
+            if is_home {
+                nearest_home_count = grouped_items.count() as f32;
+            }else {
+                nearest_away_count = grouped_items.count()  as f32;
+            }
+        }
+
+        (nearest_home_count + 1.0) / (nearest_away_count + 1.0) < 0.5
     }
 }
 
