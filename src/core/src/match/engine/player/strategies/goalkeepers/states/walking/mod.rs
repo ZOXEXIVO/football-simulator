@@ -5,8 +5,6 @@ use crate::r#match::{
     StateChangeResult, SteeringBehavior,
 };
 
-use nalgebra::Vector3;
-
 lazy_static! {
     static ref PLAYER_WALKING_STATE_NETWORK: NeuralNetwork = PlayerWalkingStateNetLoader::load();
 }

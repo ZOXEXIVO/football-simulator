@@ -23,6 +23,11 @@ impl GoalkeeperStandingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
+
+        if Self::is_dangerous(player, objects_positions) {
+            return StateChangeResult::with_state(PlayerState::Running);
+        }
+
         if !ball_metadata.ball_is_on_player_home_side {
             return StateChangeResult::with_state(PlayerState::Walking);
         }
@@ -35,9 +40,6 @@ impl GoalkeeperStandingState {
             return StateChangeResult::with_state(PlayerState::Tackling);
         }
 
-        if Self::is_dangerous(player, objects_positions) {
-            return StateChangeResult::with_state(PlayerState::Running);
-        }
 
         StateChangeResult::none()
     }
