@@ -1,12 +1,10 @@
-use itertools::Itertools;
 use crate::common::NeuralNetwork;
 
-use crate::r#match::strategies::goalkeepers::ball_heading_towards_goal;
+use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::{
     BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    StateChangeResult, SteeringBehavior,
+    StateChangeResult,
 };
-use crate::r#match::position::VectorExtensions;
 
 lazy_static! {
     static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
@@ -23,13 +21,17 @@ impl GoalkeeperStandingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-
-        if Self::is_dangerous(player, objects_positions) {
+        if ball_metadata.ball_is_on_player_home_side
+            && Self::is_dangerous(player, objects_positions)
+        {
             return StateChangeResult::with_state(PlayerState::Running);
         }
 
-        if !ball_metadata.ball_is_on_player_home_side {
-            return StateChangeResult::with_state(PlayerState::Walking);
+        if let Some(nearest_opponent) = Self::nearest_opponent(player, objects_positions) {
+            let distance_to_opponent = nearest_opponent.position.distance_to(&player.position);
+            if distance_to_opponent < 50.0 {
+                return StateChangeResult::with_state(PlayerState::Running);
+            }
         }
 
         if ball_metadata.ball_distance > 100.0 {
@@ -40,28 +42,59 @@ impl GoalkeeperStandingState {
             return StateChangeResult::with_state(PlayerState::Tackling);
         }
 
+        return if ball_metadata.is_ball_heading_towards_goal {
+            if Self::should_rush_out(player, objects_positions, ball_metadata) {
+                StateChangeResult::with_state(PlayerState::Running)
+            } else {
+                StateChangeResult::with_state(PlayerState::Walking)
+            }
+        } else {
+            StateChangeResult::none()
+        };
+    }
 
-        StateChangeResult::none()
+    fn should_rush_out(
+        player: &MatchPlayer,
+        objects_positions: &MatchObjectsPositions,
+        ball_metadata: BallMetadata,
+    ) -> bool {
+        objects_positions.ball_position.y.abs() < 10.0
+            && objects_positions
+                .ball_position
+                .distance_to(&player.position)
+                < 50.0
     }
 
     fn is_dangerous(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) -> bool {
-        let mut nearest_home_count: f32 = 0.0;
-        let mut nearest_away_count: f32 = 0.0;
-
-        let nearest_players = objects_positions.players_positions
+        let (nearest_home_count, nearest_away_count) = objects_positions
+            .players_positions
             .iter()
-            .filter(|x| x.position.distance_to(&player.position) < 100.0)
-            .map(|p| p.is_home);
+            .filter(|p| p.position.distance_to(&player.position) < 100.0)
+            .map(|p| p.is_home)
+            .partition::<Vec<_>, _>(|&is_home| is_home);
 
-        for (is_home, grouped_items)   in &nearest_players.group_by(|p| *p) {
-            if is_home {
-                nearest_home_count = grouped_items.count() as f32;
-            }else {
-                nearest_away_count = grouped_items.count()  as f32;
-            }
-        }
+        let nearest_home_count = nearest_home_count.len() as f32;
+        let nearest_away_count = nearest_away_count.len() as f32;
 
         (nearest_home_count + 1.0) / (nearest_away_count + 1.0) < 0.5
+    }
+
+    fn nearest_opponent<'p>(
+        player: &MatchPlayer,
+        objects_positions: &'p MatchObjectsPositions,
+    ) -> Option<&'p PlayerFieldPosition> {
+        objects_positions
+            .players_positions
+            .iter()
+            .filter(|p| p.is_home != player.is_home && p.player_id != player.player_id) // Consider only opponents and exclude the current player
+            .min_by(|a, b| {
+                let distance_a_squared = (a.position - player.position).norm_squared();
+                let distance_b_squared = (b.position - player.position).norm_squared();
+
+                distance_a_squared
+                    .partial_cmp(&distance_b_squared)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
     }
 }
 
