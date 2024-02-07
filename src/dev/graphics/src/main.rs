@@ -10,6 +10,7 @@ use core::club::player::PlayerPositionType;
 use core::club::team::tactics::{Tactics, TacticsPositioning};
 use core::r#match::squad::TeamSquad;
 use core::r#match::MatchObjectsPositions;
+use core::r#match::MatchPlayerCollection;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
@@ -25,11 +26,13 @@ async fn main() {
     let home_squad = get_home_squad();
     let away_squad = get_away_squad();
 
+    let players = MatchPlayerCollection::from_squads(&home_squad, &away_squad);
+
     let mut field = MatchField::new(width as usize, height as usize, home_squad, away_squad);
 
     let field_size = field.size.clone();
 
-    let mut context = MatchContext::new(&field_size);
+    let mut context = MatchContext::new(&field_size, players);
 
     loop {
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));

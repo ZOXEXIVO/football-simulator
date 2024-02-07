@@ -1,5 +1,7 @@
 use crate::common::NeuralNetwork;
+use crate::PlayerPositionType;
 
+use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
     StateChangeResult,
@@ -20,47 +22,38 @@ impl GoalkeeperTacklingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        StateChangeResult::none()
+        let mut nearest_players: Vec<_> = objects_positions
+            .players_positions
+            .iter()
+            .filter(|p| {
+                p.position.distance_to(&objects_positions.ball_position) < 30.0
+                    && p.player_id != player.player_id
+            })
+            .map(|p| p.player_id)
+            .collect();
 
-        // let mut res_vec = Vec::new();
-        //
-        // res_vec.push(objects_positions.ball_positions.x as f64);
-        // res_vec.push(objects_positions.ball_positions.y as f64);
-        //
-        // res_vec.push(objects_positions.ball_velocity.x as f64);
-        // res_vec.push(objects_positions.ball_velocity.y as f64);
-        //
-        // let res = PLAYER_TACKLING_STATE_NETWORK.run(&res_vec);
-        //
-        // let index_of_max_element = res
-        //     .iter()
-        //     .enumerate()
-        //     .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-        //     .unwrap()
-        //     .0;
-        //
-        // //println!("RES = {:?}", res);
-        //
-        // match index_of_max_element {
-        //     0 => Some(PlayerState::Standing),
-        //     1 => Some(PlayerState::Walking),
-        //     2 => Some(PlayerState::Running),
-        //     3 => Some(PlayerState::Tackling),
-        //     4 => Some(PlayerState::Shooting),
-        //     5 => Some(PlayerState::Passing),
-        //     6 => Some(PlayerState::Returning),
-        //     _ => None,
-        // }
+        if !nearest_players.is_empty() {
+            nearest_players.sort_by(|left_player_id, right_player_id| {
+                let left_player = context.players.get(*left_player_id).unwrap();
+                let right_player = context.players.get(*left_player_id).unwrap();
 
-        //Check for transition to standing or walking state
-        // let tackling_success = player.skills.tackling() * player.player_attributes.condition;
-        // if tackling_success > 50.0 {
-        //     player.has_ball = true;
-        // }
-        // // Check for transition to standing state
-        // if player.player_attributes.condition < 20 {
-        //     return Some(PlayerState::Standing);
-        // }
+                left_player
+                    .skills
+                    .technical
+                    .tackling
+                    .partial_cmp(&right_player.skills.technical.tackling)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
+
+            let opponent_to_tackle = nearest_players.first().unwrap();
+
+            result.push(PlayerUpdateEvent::TacklingBall(*opponent_to_tackle));
+
+            // TODO Own strategy
+            return StateChangeResult::with_state(PlayerState::Running);
+        } else {
+            return StateChangeResult::none();
+        }
     }
 }
 

@@ -3,7 +3,9 @@ use crate::r#match::field::MatchField;
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, MatchPlayer, MatchResultRaw, MatchState, StateManager};
+use itertools::Itertools;
 use nalgebra::Vector3;
+use std::collections::HashMap;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -13,9 +15,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> MatchResultRaw {
+        let players = MatchPlayerCollection::from_squads(&home_squad, &away_squad);
+
         let mut field = MatchField::new(W, H, home_squad, away_squad);
 
-        let mut context = MatchContext::new(&field.size);
+        let mut context = MatchContext::new(&field.size, players);
 
         let mut state_manager = StateManager::new();
 
@@ -90,15 +94,17 @@ pub struct MatchContext {
     pub time: MatchTime,
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
+    pub players: MatchPlayerCollection,
 }
 
 impl MatchContext {
-    pub fn new(field_size: &MatchFieldSize) -> Self {
+    pub fn new(field_size: &MatchFieldSize, players: MatchPlayerCollection) -> Self {
         MatchContext {
             state: GameState::new(),
             time: MatchTime::new(),
             result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS),
             field_size: MatchFieldSize::clone(&field_size),
+            players,
         }
     }
 
@@ -120,6 +126,42 @@ pub struct MatchFieldSize {
 impl MatchFieldSize {
     pub fn new(width: usize, height: usize) -> Self {
         MatchFieldSize { width, height }
+    }
+}
+
+pub struct MatchPlayerCollection {
+    players: HashMap<u32, MatchPlayer>,
+}
+
+impl MatchPlayerCollection {
+    pub fn from_squads(home_squad: &TeamSquad, away_squad: &TeamSquad) -> Self {
+        let mut result = HashMap::new();
+
+        // home_main
+        for hs_m in &home_squad.main_squad {
+            result.insert(hs_m.player_id, hs_m.clone());
+        }
+
+        // home_subs
+        for hs_s in &home_squad.substitutes {
+            result.insert(hs_s.player_id, hs_s.clone());
+        }
+
+        // home_main
+        for as_m in &away_squad.main_squad {
+            result.insert(as_m.player_id, as_m.clone());
+        }
+
+        // home_subs
+        for as_s in &away_squad.substitutes {
+            result.insert(as_s.player_id, as_s.clone());
+        }
+
+        MatchPlayerCollection { players: result }
+    }
+
+    pub fn get<'p>(&self, player_id: u32) -> Option<&'p MatchPlayer> {
+        self.get(player_id)
     }
 }
 
