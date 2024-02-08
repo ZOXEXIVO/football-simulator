@@ -205,38 +205,6 @@ impl MatchObjectsPositions {
                 .collect(),
         }
     }
-
-    pub fn find_closest_teammate(
-        &self,
-        current_player: &MatchPlayer,
-        _state: &MatchState,
-    ) -> Option<Vector3<f32>> {
-        let max_pass_distance = 30.0;
-
-        let mut closest_teammate = None;
-        let mut closest_distance = f32::MAX;
-
-        for teammate_player_position in self.players_positions.iter() {
-            if teammate_player_position.player_id == current_player.player_id {
-                continue;
-            }
-
-            if teammate_player_position.is_home != current_player.is_home {
-                continue;
-            }
-
-            let distance = current_player
-                .position
-                .distance_to(&teammate_player_position.position);
-
-            if distance < closest_distance && distance < max_pass_distance {
-                closest_teammate = Some(teammate_player_position.position);
-                closest_distance = distance;
-            }
-        }
-
-        closest_teammate
-    }
 }
 
 pub struct PlayMatchStateResult {

@@ -1,6 +1,7 @@
 use crate::common::NeuralNetwork;
 
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
+use crate::r#match::strategies::common::MatchPlayerLogic;
 use crate::r#match::{
     BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
     StateChangeResult,
@@ -27,7 +28,9 @@ impl GoalkeeperStandingState {
             return StateChangeResult::with_state(PlayerState::Running);
         }
 
-        if let Some(nearest_opponent) = Self::nearest_opponent(player, objects_positions) {
+        if let Some(nearest_opponent) =
+            MatchPlayerLogic::closest_opponent(player, &objects_positions.players_positions)
+        {
             let distance_to_opponent = nearest_opponent.position.distance_to(&player.position);
             if distance_to_opponent < 50.0 {
                 return StateChangeResult::with_state(PlayerState::Running);
@@ -77,24 +80,6 @@ impl GoalkeeperStandingState {
         let nearest_away_count = nearest_away_count.len() as f32;
 
         (nearest_home_count + 1.0) / (nearest_away_count + 1.0) < 0.5
-    }
-
-    fn nearest_opponent<'p>(
-        player: &MatchPlayer,
-        objects_positions: &'p MatchObjectsPositions,
-    ) -> Option<&'p PlayerFieldPosition> {
-        objects_positions
-            .players_positions
-            .iter()
-            .filter(|p| p.is_home != player.is_home && p.player_id != player.player_id) // Consider only opponents and exclude the current player
-            .min_by(|a, b| {
-                let distance_a_squared = (a.position - player.position).norm_squared();
-                let distance_b_squared = (b.position - player.position).norm_squared();
-
-                distance_a_squared
-                    .partial_cmp(&distance_b_squared)
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            })
     }
 }
 
