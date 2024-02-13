@@ -1,8 +1,8 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
-use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
+use crate::r#match::position::PlayerFieldPosition;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, MatchPlayer, MatchResultRaw, MatchState, StateManager};
+use crate::r#match::{GameState, MatchPlayer, MatchResultRaw, StateManager};
 use itertools::Itertools;
 use nalgebra::Vector3;
 use std::collections::HashMap;

@@ -1,5 +1,4 @@
 use crate::common::NeuralNetwork;
-use crate::PlayerPositionType;
 
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
@@ -32,7 +31,7 @@ impl GoalkeeperTacklingState {
             .map(|p| p.player_id)
             .collect();
 
-        if !nearest_players.is_empty() {
+        return if !nearest_players.is_empty() {
             nearest_players.sort_by(|left_player_id, right_player_id| {
                 let left_player = context.players.get(*left_player_id).unwrap();
                 let right_player = context.players.get(*left_player_id).unwrap();
@@ -50,10 +49,10 @@ impl GoalkeeperTacklingState {
             result.push(PlayerUpdateEvent::TacklingBall(*opponent_to_tackle));
 
             // TODO Own strategy
-            return StateChangeResult::with_state(PlayerState::Running);
+            StateChangeResult::with_state(PlayerState::Running)
         } else {
-            return StateChangeResult::none();
-        }
+            StateChangeResult::none()
+        };
     }
 }
 

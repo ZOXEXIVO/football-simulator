@@ -1,7 +1,7 @@
 use crate::common::NeuralNetwork;
 
 use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
     StateChangeResult,
 };
 

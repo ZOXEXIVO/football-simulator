@@ -2,10 +2,9 @@ use crate::common::NeuralNetwork;
 use crate::r#match::strategies::common::MatchPlayerLogic;
 use crate::r#match::PlayerState::Returning;
 use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
     StateChangeResult,
 };
-use serde::__private::ser::constrain;
 
 lazy_static! {
     static ref PLAYER_PASSING_STATE_NETWORK: NeuralNetwork = PlayerPassingStateNetLoader::load();

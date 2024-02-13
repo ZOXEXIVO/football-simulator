@@ -1,5 +1,4 @@
 use crate::common::NeuralNetwork;
-use crate::r#match::strategies::goalkeepers::ball_heading_towards_goal;
 use crate::r#match::{
     BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
     StateChangeResult, SteeringBehavior,

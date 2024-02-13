@@ -9,7 +9,7 @@ use crate::r#match::strategies::goalkeepers::states::{
 };
 use crate::r#match::{
     BallMetadata, BallState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    PlayerUpdateEvent, StateChangeResult,
 };
 use nalgebra::Vector3;
 
