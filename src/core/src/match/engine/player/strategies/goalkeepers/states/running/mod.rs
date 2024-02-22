@@ -1,6 +1,6 @@
 use crate::common::NeuralNetwork;
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
+use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 
 lazy_static! {
     static ref PLAYER_RUNNING_STATE_NETWORK: NeuralNetwork = PlayerRunningStateNetLoader::load();
@@ -12,15 +12,15 @@ impl GoalkeeperRunningState {
     pub fn process(
         player: &MatchPlayer,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: BallMetadata,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        Self::check_collision(player, objects_positions, result);
+        Self::check_collision(player, &tick_context.objects_positions, result);
 
         let to_ball_velocity = SteeringBehavior::Seek {
-            target: objects_positions.ball_position,
+            target: tick_context.objects_positions.ball_position,
         }.calculate(player).velocity;
 
         StateChangeResult::with_velocity(to_ball_velocity)

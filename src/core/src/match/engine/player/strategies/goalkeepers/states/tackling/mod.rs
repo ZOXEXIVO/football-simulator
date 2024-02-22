@@ -1,10 +1,7 @@
 use crate::common::NeuralNetwork;
 
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    StateChangeResult,
-};
+use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
 
 lazy_static! {
     static ref PLAYER_TACKLING_STATE_NETWORK: NeuralNetwork = PlayerTacklingStateNetLoader::load();
@@ -16,16 +13,16 @@ impl GoalkeeperTacklingState {
     pub fn process(
         player: &MatchPlayer,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: BallMetadata,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        let mut nearest_players: Vec<_> = objects_positions
+        let mut nearest_players: Vec<_> = tick_context.objects_positions
             .players_positions
             .iter()
             .filter(|p| {
-                p.position.distance_to(&objects_positions.ball_position) < 30.0
+                p.position.distance_to(&tick_context.objects_positions.ball_position) < 30.0
                     && p.player_id != player.player_id
             })
             .map(|p| p.player_id)

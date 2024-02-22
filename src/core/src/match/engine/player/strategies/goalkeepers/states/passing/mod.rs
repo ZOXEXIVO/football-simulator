@@ -1,10 +1,7 @@
 use crate::common::NeuralNetwork;
 use crate::r#match::strategies::common::MatchPlayerLogic;
 use crate::r#match::PlayerState::Returning;
-use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
-    StateChangeResult,
-};
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
 
 lazy_static! {
     static ref PLAYER_PASSING_STATE_NETWORK: NeuralNetwork = PlayerPassingStateNetLoader::load();
@@ -16,8 +13,8 @@ impl GoalkeeperPassingState {
     pub fn process(
         player: &MatchPlayer,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: BallMetadata,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
@@ -25,7 +22,7 @@ impl GoalkeeperPassingState {
         } else {
             if in_state_time > 3 {
                 if let Some(closest_teammate) = MatchPlayerLogic::closest_teammate(
-                    &objects_positions.players_positions,
+                    &tick_context.objects_positions.players_positions,
                     player,
                     &context.state.match_state,
                 ) {

@@ -8,10 +8,9 @@ pub use defenders::*;
 pub use forwarders::*;
 pub use goalkeepers::*;
 pub use midfielders::*;
+pub use common::*;
 
-use crate::r#match::{
-    GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-};
+use crate::r#match::{GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent};
 use nalgebra::Vector3;
 
 use crate::PlayerFieldPositionGroup;
@@ -20,10 +19,11 @@ pub trait StateStrategy {
     fn calculate(
         &self,
         in_state_time: u64,
-        context: &mut MatchContext,
         player: &MatchPlayer,
+        context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
     ) -> StateChangeResult;
 }
 
@@ -66,46 +66,45 @@ impl StateStrategy for PlayerFieldPositionGroup {
     fn calculate(
         &self,
         in_state_time: u64,
-        context: &mut MatchContext,
         player: &MatchPlayer,
+        context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
     ) -> StateChangeResult {
         match self {
             PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate(
                 in_state_time,
-                context,
                 player,
-                result,
-                objects_positions,
+                context,
+                tick_context,
+                player_context,
+                result
             ),
             PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate(
                 in_state_time,
-                context,
                 player,
-                result,
-                objects_positions,
+                context,
+                tick_context,
+                player_context,
+                result
             ),
             PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate(
                 in_state_time,
-                context,
                 player,
-                result,
-                objects_positions,
+                context,
+                tick_context,
+                player_context,
+                result
             ),
             PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate(
                 in_state_time,
-                context,
                 player,
-                result,
-                objects_positions,
+                context,
+                tick_context,
+                player_context,
+                result
             ),
         }
     }
-}
-
-pub struct BallMetadata {
-    is_ball_heading_towards_goal: bool,
-    ball_distance: f32,
-    ball_is_on_player_home_side: bool,
 }

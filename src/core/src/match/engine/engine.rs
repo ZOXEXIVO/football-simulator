@@ -2,7 +2,7 @@ use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::position::PlayerFieldPosition;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, MatchPlayer, MatchResultRaw, StateManager};
+use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, PlayerDistanceClosure, StateManager};
 use itertools::Itertools;
 use nalgebra::Vector3;
 use std::collections::HashMap;
@@ -49,8 +49,12 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn game_tick(field: &mut MatchField, context: &mut MatchContext) {
-        Self::play_ball(field, context, MatchObjectsPositions::from(&field));
-        Self::play_players(field, context, MatchObjectsPositions::from(&field));
+        let game_tick_context = GameTickContext {
+            objects_positions: MatchObjectsPositions::from(&field)
+        };
+
+        Self::play_ball(field, context, &game_tick_context);
+        Self::play_players(field, context, &game_tick_context);
 
         field.write_match_positions(&mut context.result, context.time.time);
     }
@@ -58,7 +62,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_ball(
         field: &mut MatchField,
         context: &mut MatchContext,
-        objects_positions: MatchObjectsPositions,
+        tick_context: &GameTickContext
     ) {
         let ball_update_events = field.ball.update(context);
 
@@ -69,12 +73,12 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
-        objects_positions: MatchObjectsPositions,
+        tick_context: &GameTickContext
     ) {
         let player_update_events = field
             .players
             .iter_mut()
-            .flat_map(|player| player.update(context, &objects_positions))
+            .flat_map(|player| player.update(context, tick_context))
             .collect();
 
         // handle events
@@ -180,30 +184,6 @@ impl MatchTime {
     pub fn increment(&mut self, val: u64) -> u64 {
         self.time += val;
         self.time
-    }
-}
-
-pub struct MatchObjectsPositions {
-    pub ball_position: Vector3<f32>,
-    pub ball_velocity: Vector3<f32>,
-    pub players_positions: Vec<PlayerFieldPosition>,
-}
-
-impl MatchObjectsPositions {
-    pub fn from(field: &MatchField) -> Self {
-        MatchObjectsPositions {
-            ball_position: field.ball.position,
-            ball_velocity: field.ball.velocity,
-            players_positions: field
-                .players
-                .iter()
-                .map(|p| PlayerFieldPosition {
-                    player_id: p.player_id,
-                    is_home: p.is_home,
-                    position: p.position,
-                })
-                .collect(),
-        }
     }
 }
 

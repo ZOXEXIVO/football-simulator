@@ -1,23 +1,21 @@
 ﻿pub mod states;
 
 use crate::common::NeuralNetwork;
-use crate::r#match::{
-    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent, StateChangeResult,
-    SteeringBehavior,
-};
+use crate::r#match::{GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 
 pub struct MidfielderStrategies {}
 
 impl MidfielderStrategies {
     pub fn calculate(
         in_state_time: u64,
-        _context: &mut MatchContext,
         player: &MatchPlayer,
-        _result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
+        context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
+        result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let new_velocity = SteeringBehavior::Arrive {
-            target: objects_positions.ball_position,
+            target: tick_context.objects_positions.ball_position,
             slowing_distance: 10.0,
         }
         .calculate(player)

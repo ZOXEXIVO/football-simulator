@@ -1,10 +1,7 @@
 ﻿pub mod states;
 
 use crate::common::NeuralNetwork;
-use crate::r#match::{
-    BallState, GameState, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
-    StateChangeResult, SteeringBehavior, SteeringOutput,
-};
+use crate::r#match::{BallState, GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior, SteeringOutput};
 use crate::FloatUtils;
 use nalgebra::Vector3;
 
@@ -13,10 +10,11 @@ pub struct DefenderStrategies {}
 impl DefenderStrategies {
     pub fn calculate(
         in_state_time: u64,
-        context: &mut MatchContext,
         player: &MatchPlayer,
-        _result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
+        context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
+        result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         if context.time.time % 10 != 0 {
             return StateChangeResult::none();
@@ -46,7 +44,7 @@ impl DefenderStrategies {
             DefenderBehavior::Defend => {
                 if DefenderStrategies::is_on_defending_half(player, &context.state) {
                     SteeringBehavior::Seek {
-                        target: objects_positions.ball_position,
+                        target: tick_context.objects_positions.ball_position,
                     }
                     .calculate(player)
                 } else {

@@ -4,10 +4,7 @@ use std::collections::HashMap;
 
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::strategies::common::MatchPlayerLogic;
-use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    StateChangeResult,
-};
+use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
 
 lazy_static! {
     static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
@@ -19,19 +16,19 @@ impl GoalkeeperStandingState {
     pub fn process(
         player: &MatchPlayer,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: BallMetadata,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        if ball_metadata.ball_is_on_player_home_side
-            && Self::is_dangerous(player, objects_positions)
+        if player_tick_context.ball_context.ball_is_on_player_home_side
+            && Self::is_dangerous(player, &tick_context.objects_positions)
         {
             return StateChangeResult::with_state(PlayerState::Running);
         }
 
         if let Some(nearest_opponent) =
-            MatchPlayerLogic::closest_opponent(player, &objects_positions.players_positions)
+            MatchPlayerLogic::closest_opponent(player, &tick_context.objects_positions.players_positions)
         {
             let distance_to_opponent = nearest_opponent.position.distance_to(&player.position);
             if distance_to_opponent < 50.0 {
@@ -39,30 +36,30 @@ impl GoalkeeperStandingState {
             }
         }
 
-        if ball_metadata.ball_distance > 100.0 {
+        if player_tick_context.ball_context.ball_distance > 100.0 {
             return StateChangeResult::none();
         }
 
-        if ball_metadata.ball_distance < 20.0 {
+        if player_tick_context.ball_context.ball_distance < 20.0 {
             return StateChangeResult::with_state(PlayerState::Tackling);
         }
 
-        if Self::should_sweep(player, objects_positions, &ball_metadata) {
+        if Self::should_sweep(player, &tick_context.objects_positions, &player_tick_context.ball_context) {
             // Perform sweeping action
             // Add sweeping logic here...
         }
 
         // 2. Organize defense based on player positions
-        Self::organize_defense(player, objects_positions);
+        Self::organize_defense(player, &tick_context.objects_positions);
 
         // 3. Communicate with defenders
-        Self::communicate_with_defenders(player, context, objects_positions, &ball_metadata);
+        Self::communicate_with_defenders(player, context, &tick_context.objects_positions, &player_tick_context.ball_context);
 
         // 4. Make critical decisions
-        Self::make_critical_decisions(player, context, objects_positions, &ball_metadata);
+        Self::make_critical_decisions(player, context, &tick_context.objects_positions, &player_tick_context.ball_context);
 
-        return if ball_metadata.is_ball_heading_towards_goal {
-            if Self::should_rush_out(player, objects_positions, &ball_metadata) {
+        return if player_tick_context.ball_context.is_ball_heading_towards_goal {
+            if Self::should_rush_out(player, &tick_context.objects_positions, &player_tick_context.ball_context) {
                 StateChangeResult::with_state(PlayerState::Running)
             } else {
                 StateChangeResult::with_state(PlayerState::Walking)
@@ -75,13 +72,13 @@ impl GoalkeeperStandingState {
     fn should_rush_out(
         player: &MatchPlayer,
         objects_positions: &MatchObjectsPositions,
-        ball_metadata: &BallMetadata,
+        ball_metadata: &BallContext,
     ) -> bool {
         objects_positions.ball_position.y.abs() < 10.0
             && objects_positions
-                .ball_position
-                .distance_to(&player.position)
-                < 50.0
+            .ball_position
+            .distance_to(&player.position)
+            < 50.0
     }
 
     fn is_dangerous(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) -> bool {
@@ -101,7 +98,7 @@ impl GoalkeeperStandingState {
     fn should_sweep(
         player: &MatchPlayer,
         objects_positions: &MatchObjectsPositions,
-        ball_metadata: &BallMetadata,
+        ball_metadata: &BallContext,
     ) -> bool {
         // Check if the ball is behind the defensive line
         let ball_behind_defense = objects_positions.ball_position.y.abs() > 30.0; // Adjust the threshold as needed
@@ -119,8 +116,8 @@ impl GoalkeeperStandingState {
                 // Check if any player (except the goalkeeper) is closer to the ball
                 p.position.distance_to(&objects_positions.ball_position)
                     >= player
-                        .position
-                        .distance_to(&objects_positions.ball_position)
+                    .position
+                    .distance_to(&objects_positions.ball_position)
             });
 
         // Return true if the goalkeeper is closest to the ball and the ball is behind the defense
@@ -231,7 +228,7 @@ impl GoalkeeperStandingState {
         player: &MatchPlayer,
         context: &mut MatchContext,
         objects_positions: &MatchObjectsPositions,
-        ball_metadata: &BallMetadata,
+        ball_metadata: &BallContext,
     ) {
         // Logic to communicate with defenders based on game situations
         // Add communication logic here...
@@ -241,7 +238,7 @@ impl GoalkeeperStandingState {
         player: &MatchPlayer,
         context: &mut MatchContext,
         objects_positions: &MatchObjectsPositions,
-        ball_metadata: &BallMetadata,
+        ball_metadata: &BallContext,
     ) {
         // Logic to make critical decisions (e.g., leaving goal line, claiming crosses)
         // Add decision-making logic here...

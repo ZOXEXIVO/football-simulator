@@ -1,8 +1,5 @@
 use crate::common::NeuralNetwork;
-use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    StateChangeResult, SteeringBehavior,
-};
+use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 
 lazy_static! {
     static ref PLAYER_RETURNING_STATE_NETWORK: NeuralNetwork =
@@ -15,12 +12,12 @@ impl GoalkeeperReturningState {
     pub fn process(
         player: &MatchPlayer,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: BallMetadata,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        if !ball_metadata.ball_is_on_player_home_side {
+        if !player_tick_context.ball_context.ball_is_on_player_home_side {
             return StateChangeResult::with_state(PlayerState::Walking);
         }
 

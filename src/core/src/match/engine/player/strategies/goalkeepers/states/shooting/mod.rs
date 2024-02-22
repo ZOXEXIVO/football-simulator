@@ -1,9 +1,6 @@
 use crate::common::NeuralNetwork;
 
-use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerUpdateEvent,
-    StateChangeResult,
-};
+use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
 
 lazy_static! {
     static ref PLAYER_SHOOTING_STATE_NETWORK: NeuralNetwork = PlayerShootingStateNetLoader::load();
@@ -15,8 +12,8 @@ impl GoalkeeperShootingState {
     pub fn process(
         player: &MatchPlayer,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: BallMetadata,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {

@@ -1,7 +1,8 @@
-﻿use crate::r#match::{Ball, MatchContext, MatchObjectsPositions, StateStrategy};
+﻿use crate::r#match::{Ball, BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, MatchObjectsPositions, PlayerTickContext, StateStrategy};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
+use crate::r#match::position::VectorExtensions;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -40,11 +41,30 @@ impl MatchPlayer {
     pub fn update(
         &mut self,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
+        tick_context: &GameTickContext,
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        self.update_state(context, &mut result, objects_positions);
+        let is_ball_home_size = match context.state.ball_state {
+            Some(ball_state) => ball_state == BallState::HomeSide,
+            None => false,
+        };
+
+        let player_context = PlayerTickContext {
+            ball_context: BallContext {
+                // ball moving towards goal
+                is_ball_heading_towards_goal: MatchBallLogic::ball_heading_towards_goal(
+                    &tick_context.objects_positions.ball_position,
+                    &self.start_position,
+                ),
+                ball_is_on_player_home_side: self.is_home && is_ball_home_size,
+                ball_distance: tick_context.objects_positions
+                    .ball_position
+                    .distance_to(&self.position),
+            }
+        };
+
+        self.update_state(context, tick_context, player_context, &mut result);
 
         self.move_to();
 
@@ -77,15 +97,17 @@ impl MatchPlayer {
     fn update_state(
         &mut self,
         context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
     ) {
         let state_result = self.tactics_position.position_group().calculate(
             self.in_state_time,
-            context,
             self,
-            result,
-            objects_positions,
+            context,
+            tick_context,
+            player_context,
+            result
         );
 
         if let Some(state) = state_result.state {
