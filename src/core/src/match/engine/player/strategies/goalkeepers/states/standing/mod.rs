@@ -27,14 +27,14 @@ impl GoalkeeperStandingState {
             return StateChangeResult::with_state(PlayerState::Running);
         }
 
-        if let Some(nearest_opponent) =
-            MatchPlayerLogic::closest_opponent(player, &tick_context.objects_positions.players_positions)
-        {
-            let distance_to_opponent = nearest_opponent.position.distance_to(&player.position);
-            if distance_to_opponent < 50.0 {
-                return StateChangeResult::with_state(PlayerState::Running);
-            }
-        }
+        // if let Some(nearest_opponent) =
+        //     MatchPlayerLogic::closest_opponent(player, &tick_context.objects_positions.players_positions)
+        // {
+        //     let distance_to_opponent = nearest_opponent.position.distance_to(&player.position);
+        //     if distance_to_opponent < 50.0 {
+        //         return StateChangeResult::with_state(PlayerState::Running);
+        //     }
+        // }
 
         if player_tick_context.ball_context.ball_distance > 100.0 {
             return StateChangeResult::none();

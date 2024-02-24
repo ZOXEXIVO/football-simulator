@@ -114,7 +114,7 @@ pub fn get_home_squad() -> TeamSquad {
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(player, player.position()))
+        .map(|player| MatchPlayer::from_player(1, player, player.position()))
         .collect();
 
     let home_squad = TeamSquad {
@@ -145,7 +145,7 @@ pub fn get_away_squad() -> TeamSquad {
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(player, player.position()))
+        .map(|player| MatchPlayer::from_player(2, player, player.position()))
         .collect();
 
     let away_squad = TeamSquad {

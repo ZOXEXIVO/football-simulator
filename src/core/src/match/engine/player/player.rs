@@ -10,6 +10,7 @@ pub struct MatchPlayer {
     pub position: Vector3<f32>,
     pub start_position: Vector3<f32>,
     pub attributes: PersonAttributes,
+    pub team_id: u32,
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
@@ -21,12 +22,13 @@ pub struct MatchPlayer {
 }
 
 impl MatchPlayer {
-    pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
+    pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType) -> Self {
         MatchPlayer {
             player_id: player.id,
             position: Vector3::new(0.0, 0.0, 0.0),
             start_position: Vector3::new(0.0, 0.0, 0.0),
             attributes: player.attributes.clone(),
+            team_id,
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,

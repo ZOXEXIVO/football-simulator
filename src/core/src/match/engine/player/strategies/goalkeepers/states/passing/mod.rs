@@ -21,11 +21,8 @@ impl GoalkeeperPassingState {
         if player.skills.mental.decisions > 10.0 {
         } else {
             if in_state_time > 3 {
-                if let Some(closest_teammate) = MatchPlayerLogic::closest_teammate(
-                    &tick_context.objects_positions.players_positions,
-                    player,
-                    &context.state.match_state,
-                ) {
+                if let Some(closest_teammates) = &tick_context.objects_positions
+                    .player_distances.closest_teammate(&tick_context.objects_positions, player, 30.0) {
                     let pass_modifier = if player.skills.technical.passing > 10.0 {
                         1.0
                     } else {
@@ -34,7 +31,7 @@ impl GoalkeeperPassingState {
 
                     let pass_power = 100.0 * pass_modifier;
 
-                    result.push(PlayerUpdateEvent::PassTo(closest_teammate, pass_power))
+                    //result.push(PlayerUpdateEvent::PassTo(closest_teammates, pass_power))
                 }
 
                 return StateChangeResult::with_state(Returning);
