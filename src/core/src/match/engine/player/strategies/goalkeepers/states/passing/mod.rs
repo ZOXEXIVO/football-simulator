@@ -1,5 +1,4 @@
 use crate::common::NeuralNetwork;
-use crate::r#match::strategies::common::MatchPlayerLogic;
 use crate::r#match::PlayerState::Returning;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
 
@@ -21,18 +20,27 @@ impl GoalkeeperPassingState {
         if player.skills.mental.decisions > 10.0 {
         } else {
             if in_state_time > 3 {
-                if let Some(closest_teammates) = &tick_context.objects_positions
-                    .player_distances.closest_teammate(&tick_context.objects_positions, player, 30.0) {
-                    let pass_modifier = if player.skills.technical.passing > 10.0 {
-                        1.0
-                    } else {
-                        0.5
-                    };
+                let max_distance: f32 = 30.0;
 
-                    let pass_power = 100.0 * pass_modifier;
+                let (teammates, opponents) = &tick_context.objects_positions
+                    .player_distances.players_within_distance(player, max_distance);
 
-                    //result.push(PlayerUpdateEvent::PassTo(closest_teammates, pass_power))
+                if !teammates.is_empty() {
+                    // let min = teammates.iter().min_by(|(pid, distance)| *distance);
+
                 }
+
+                // {
+                //     let pass_modifier = if player.skills.technical.passing > 10.0 {
+                //         1.0
+                //     } else {
+                //         0.5
+                //     };
+                //
+                //     let pass_power = 100.0 * pass_modifier;
+                //
+                //     //result.push(PlayerUpdateEvent::PassTo(closest_teammates, pass_power))
+                // }
 
                 return StateChangeResult::with_state(Returning);
             }

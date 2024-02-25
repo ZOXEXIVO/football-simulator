@@ -2,7 +2,7 @@ use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::{MatchField, MatchPlayer, MatchState};
 use itertools::Itertools;
 use nalgebra::Vector3;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 pub struct GameTickContext {
     pub objects_positions: MatchObjectsPositions,
@@ -69,6 +69,16 @@ pub struct PlayerDistanceItem {
     distance: f32,
 }
 
+impl PartialEq for PlayerDistanceItem {
+    fn eq(&self, other: &Self) -> bool {
+        self.player_from_id == other.player_from_id &&
+            self.player_from_team == other.player_from_team &&
+            self.player_to_id == other.player_to_id &&
+            self.player_to_team == other.player_to_team &&
+            self.distance == other.distance
+    }
+}
+
 impl PlayerDistanceClosure {
     pub fn new() -> Self {
         PlayerDistanceClosure {
@@ -104,30 +114,27 @@ impl PlayerDistanceClosure {
             .map(|dist| dist.distance)
     }
 
-    pub fn closest_teammate(
+    pub fn players_within_distance(
         &self,
-        positions: &MatchObjectsPositions,
         current_player: &MatchPlayer,
         max_distance: f32
-    ) -> Option<Vec<u32>> {
-        let filtered_players: Vec<&PlayerDistanceItem> = positions.player_distances.distances.iter()
-            .filter(|&p| p.player_from_team == current_player.team_id)
+    ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
+        let (mut teammates, mut opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self.distances.iter()
             .filter(|&p| p.distance < max_distance)
-            .collect();
+            .fold((Vec::new(), Vec::new()), |(mut teammates, mut opponents), distance| {
+                if distance.player_from_team == current_player.team_id {
+                    if distance.player_from_id != current_player.player_id {
+                        teammates.push((distance.player_from_id, distance.distance));
+                    }
+                } else {
+                    if distance.player_to_id != current_player.player_id {
+                        opponents.push((distance.player_from_id, distance.distance));
+                    }
+                }
+                (teammates, opponents)
+            });
 
-        let forward_players: Vec<u32> = filtered_players
-            .iter()
-            .filter(|distance| distance.player_from_id == current_player.player_id)
-            .map(|d| d.player_to_id)
-            .collect();
-
-        let backward_players: Vec<u32> = filtered_players
-            .iter()
-            .filter(|distance| distance.player_from_id == current_player.player_id)
-            .map(|d| d.player_to_id)
-            .collect();
-
-        Some([forward_players, backward_players].concat())
+        (teammates, opponents)
     }
 }
 
