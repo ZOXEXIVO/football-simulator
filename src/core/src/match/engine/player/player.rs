@@ -1,8 +1,11 @@
-﻿use crate::r#match::{Ball, BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, MatchObjectsPositions, PlayerTickContext, StateStrategy};
+﻿use crate::r#match::position::VectorExtensions;
+use crate::r#match::{
+    Ball, BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext,
+    MatchObjectsPositions, PlayerTickContext, StateStrategy,
+};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
-use crate::r#match::position::VectorExtensions;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -60,10 +63,11 @@ impl MatchPlayer {
                     &self.start_position,
                 ),
                 ball_is_on_player_home_side: self.is_home && is_ball_home_size,
-                ball_distance: tick_context.objects_positions
+                ball_distance: tick_context
+                    .objects_positions
                     .ball_position
                     .distance_to(&self.position),
-            }
+            },
         };
 
         self.update_state(context, tick_context, player_context, &mut result);
@@ -87,6 +91,8 @@ impl MatchPlayer {
 
                     ball.velocity = ball_pass_vector.normalize();
                 }
+                PlayerUpdateEvent::RushOut(_) => {}
+                PlayerUpdateEvent::StayInGoal(_) => {}
             }
         }
     }
@@ -109,7 +115,7 @@ impl MatchPlayer {
             context,
             tick_context,
             player_context,
-            result
+            result,
         );
 
         if let Some(state) = state_result.state {
@@ -162,4 +168,6 @@ pub enum PlayerUpdateEvent {
     Goal(u32),
     TacklingBall(u32),
     PassTo(Vector3<f32>, f64),
+    RushOut(u32),
+    StayInGoal(u32),
 }

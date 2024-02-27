@@ -1,8 +1,6 @@
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
-use crate::r#match::{MatchField, MatchPlayer, MatchState};
-use itertools::Itertools;
+use crate::r#match::{MatchField, MatchPlayer};
 use nalgebra::Vector3;
-use std::collections::{HashMap, HashSet};
 
 pub struct GameTickContext {
     pub objects_positions: MatchObjectsPositions,
@@ -10,6 +8,13 @@ pub struct GameTickContext {
 
 pub struct PlayerTickContext {
     pub ball_context: BallContext,
+}
+
+pub struct BallContext {
+    pub is_ball_heading_towards_goal: bool,
+    pub ball_is_on_player_home_side: bool,
+
+    pub ball_distance: f32,
 }
 
 pub struct MatchObjectsPositions {
@@ -42,7 +47,13 @@ impl MatchObjectsPositions {
             .for_each(|(i, outer_player)| {
                 field.players.iter().skip(i + 1).for_each(|inner_player| {
                     let distance = outer_player.position.distance_to(&inner_player.position);
-                    distances.add(outer_player.player_id, outer_player.team_id, inner_player.player_id, inner_player.team_id, distance);
+                    distances.add(
+                        outer_player.player_id,
+                        outer_player.team_id,
+                        inner_player.player_id,
+                        inner_player.team_id,
+                        distance,
+                    );
                 });
             });
 
@@ -71,11 +82,11 @@ pub struct PlayerDistanceItem {
 
 impl PartialEq for PlayerDistanceItem {
     fn eq(&self, other: &Self) -> bool {
-        self.player_from_id == other.player_from_id &&
-            self.player_from_team == other.player_from_team &&
-            self.player_to_id == other.player_to_id &&
-            self.player_to_team == other.player_to_team &&
-            self.distance == other.distance
+        self.player_from_id == other.player_from_id
+            && self.player_from_team == other.player_from_team
+            && self.player_to_id == other.player_to_id
+            && self.player_to_team == other.player_to_team
+            && self.distance == other.distance
     }
 }
 
@@ -117,30 +128,76 @@ impl PlayerDistanceClosure {
     pub fn players_within_distance(
         &self,
         current_player: &MatchPlayer,
-        max_distance: f32
+        max_distance: f32,
     ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
-        let (mut teammates, mut opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self.distances.iter()
+        let (mut teammates, mut opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self
+            .distances
+            .iter()
             .filter(|&p| p.distance < max_distance)
-            .fold((Vec::new(), Vec::new()), |(mut teammates, mut opponents), distance| {
-                if distance.player_from_team == current_player.team_id {
-                    if distance.player_from_id != current_player.player_id {
-                        teammates.push((distance.player_from_id, distance.distance));
+            .fold(
+                (Vec::new(), Vec::new()),
+                |(mut teammates, mut opponents), distance| {
+                    if distance.player_from_team == current_player.team_id {
+                        if distance.player_from_id != current_player.player_id {
+                            teammates.push((distance.player_from_id, distance.distance));
+                        }
+                    } else {
+                        if distance.player_to_id != current_player.player_id {
+                            opponents.push((distance.player_from_id, distance.distance));
+                        }
                     }
-                } else {
-                    if distance.player_to_id != current_player.player_id {
-                        opponents.push((distance.player_from_id, distance.distance));
-                    }
-                }
-                (teammates, opponents)
-            });
+                    (teammates, opponents)
+                },
+            );
 
         (teammates, opponents)
     }
-}
 
-pub struct BallContext {
-    pub is_ball_heading_towards_goal: bool,
-    pub ball_is_on_player_home_side: bool,
+    pub fn players_within_distance_count(
+        &self,
+        current_player: &MatchPlayer,
+        max_distance: f32,
+    ) -> (usize, usize) {
+        let (teammates_count, opponents_count) = self
+            .distances
+            .iter()
+            .filter(|&p| p.distance < max_distance)
+            .fold(
+                (0, 0),
+                |(mut teammates_count, mut opponents_count), distance| {
+                    if distance.player_from_team == current_player.team_id
+                        && distance.player_from_id != current_player.player_id
+                    {
+                        teammates_count += 1;
+                    } else if distance.player_to_team == current_player.team_id
+                        && distance.player_to_id != current_player.player_id
+                    {
+                        opponents_count += 1;
+                    }
+                    (teammates_count, opponents_count)
+                },
+            );
 
-    pub ball_distance: f32,
+        (teammates_count, opponents_count)
+    }
+
+    pub fn find_closest_opponent(&self, player: &MatchPlayer) -> Option<(u32, f32)> {
+        self.distances
+            .iter()
+            .filter(|distance| {
+                distance.player_from_id == player.player_id
+                    || distance.player_to_id == player.player_id
+            })
+            .filter(|distance| distance.player_from_id != player.player_id)
+            .filter_map(|distance| {
+                let opponent_id = if distance.player_from_id == player.player_id {
+                    distance.player_to_id
+                } else {
+                    distance.player_from_id
+                };
+                let distance_to_opponent = self.get(player.player_id, opponent_id)?;
+                Some((opponent_id, distance_to_opponent))
+            })
+            .min_by(|&(_, distance1), &(_, distance2)| distance1.partial_cmp(&distance2).unwrap())
+    }
 }

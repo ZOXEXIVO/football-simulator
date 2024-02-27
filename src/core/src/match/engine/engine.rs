@@ -1,10 +1,10 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
-use crate::r#match::position::PlayerFieldPosition;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, PlayerDistanceClosure, StateManager};
+use crate::r#match::{
+    GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager,
+};
 use itertools::Itertools;
-use nalgebra::Vector3;
 use std::collections::HashMap;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -50,7 +50,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
     pub fn game_tick(field: &mut MatchField, context: &mut MatchContext) {
         let game_tick_context = GameTickContext {
-            objects_positions: MatchObjectsPositions::from(&field)
+            objects_positions: MatchObjectsPositions::from(&field),
         };
 
         Self::play_ball(field, context, &game_tick_context);
@@ -62,7 +62,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_ball(
         field: &mut MatchField,
         context: &mut MatchContext,
-        tick_context: &GameTickContext
+        tick_context: &GameTickContext,
     ) {
         let ball_update_events = field.ball.update(context);
 
@@ -73,7 +73,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
-        tick_context: &GameTickContext
+        tick_context: &GameTickContext,
     ) {
         let player_update_events = field
             .players

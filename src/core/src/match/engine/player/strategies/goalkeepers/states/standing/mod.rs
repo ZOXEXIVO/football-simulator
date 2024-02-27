@@ -1,10 +1,13 @@
 use crate::common::NeuralNetwork;
-use crate::PlayerPositionType;
+use crate::{PlayerFieldPositionGroup, PlayerPositionType};
 use std::collections::HashMap;
 
-use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
-use crate::r#match::strategies::common::MatchPlayerLogic;
-use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
+use crate::r#match::position::PlayerFieldPosition;
+
+use crate::r#match::{
+    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+};
 
 lazy_static! {
     static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
@@ -27,14 +30,15 @@ impl GoalkeeperStandingState {
             return StateChangeResult::with_state(PlayerState::Running);
         }
 
-        // if let Some(nearest_opponent) =
-        //     MatchPlayerLogic::closest_opponent(player, &tick_context.objects_positions.players_positions)
-        // {
-        //     let distance_to_opponent = nearest_opponent.position.distance_to(&player.position);
-        //     if distance_to_opponent < 50.0 {
-        //         return StateChangeResult::with_state(PlayerState::Running);
-        //     }
-        // }
+        if let Some((nearest_opponent_id, distance)) = tick_context
+            .objects_positions
+            .player_distances
+            .find_closest_opponent(player)
+        {
+            if distance < 50.0 {
+                return StateChangeResult::with_state(PlayerState::Running);
+            }
+        }
 
         if player_tick_context.ball_context.ball_distance > 100.0 {
             return StateChangeResult::none();
@@ -44,7 +48,7 @@ impl GoalkeeperStandingState {
             return StateChangeResult::with_state(PlayerState::Tackling);
         }
 
-        if Self::should_sweep(player, &tick_context.objects_positions, &player_tick_context.ball_context) {
+        if Self::should_sweep(player, &tick_context.objects_positions) {
             // Perform sweeping action
             // Add sweeping logic here...
         }
@@ -53,13 +57,27 @@ impl GoalkeeperStandingState {
         Self::organize_defense(player, &tick_context.objects_positions);
 
         // 3. Communicate with defenders
-        Self::communicate_with_defenders(player, context, &tick_context.objects_positions, &player_tick_context.ball_context);
+        Self::communicate_with_defenders(
+            player,
+            context,
+            &tick_context.objects_positions,
+            &player_tick_context.ball_context,
+        );
 
         // 4. Make critical decisions
-        Self::make_critical_decisions(player, context, &tick_context.objects_positions, &player_tick_context.ball_context);
+        Self::make_critical_decisions(
+            player,
+            context,
+            &tick_context.objects_positions,
+            &player_tick_context.ball_context,
+            result,
+        );
 
-        return if player_tick_context.ball_context.is_ball_heading_towards_goal {
-            if Self::should_rush_out(player, &tick_context.objects_positions, &player_tick_context.ball_context) {
+        return if player_tick_context
+            .ball_context
+            .is_ball_heading_towards_goal
+        {
+            if Self::should_rush_out(&player_tick_context.ball_context) {
                 StateChangeResult::with_state(PlayerState::Running)
             } else {
                 StateChangeResult::with_state(PlayerState::Walking)
@@ -69,59 +87,34 @@ impl GoalkeeperStandingState {
         };
     }
 
-    fn should_rush_out(
-        player: &MatchPlayer,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: &BallContext,
-    ) -> bool {
-        objects_positions.ball_position.y.abs() < 10.0
-            && objects_positions
-            .ball_position
-            .distance_to(&player.position)
-            < 50.0
+    fn should_rush_out(ball_context: &BallContext) -> bool {
+        ball_context.ball_distance < 50.0
     }
 
     fn is_dangerous(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) -> bool {
-        let (nearest_home_count, nearest_away_count) = objects_positions
-            .players_positions
-            .iter()
-            .filter(|p| p.position.distance_to(&player.position) < 100.0)
-            .map(|p| p.is_home)
-            .partition::<Vec<_>, _>(|&is_home| is_home);
+        let max_distance = 100.0;
 
-        let nearest_home_count = nearest_home_count.len() as f32;
-        let nearest_away_count = nearest_away_count.len() as f32;
+        let (nearest_teammates_count, nearest_opponents_count) = objects_positions
+            .player_distances
+            .players_within_distance_count(player, max_distance);
 
-        (nearest_home_count + 1.0) / (nearest_away_count + 1.0) < 0.5
+        ((nearest_teammates_count as f32) + 1.0) / ((nearest_opponents_count as f32) + 1.0) < 0.5
     }
 
-    fn should_sweep(
-        player: &MatchPlayer,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: &BallContext,
-    ) -> bool {
-        // Check if the ball is behind the defensive line
-        let ball_behind_defense = objects_positions.ball_position.y.abs() > 30.0; // Adjust the threshold as needed
+    fn should_sweep(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) -> bool {
+        let ball_behind_defense = objects_positions.ball_position.y.abs() > 30.0;
 
         if !ball_behind_defense {
-            return false; // Ball is not behind the defense, no need to sweep
+            return false;
         }
 
-        // Check if the goalkeeper is closest to the ball
-        let goalkeeper_closest_to_ball = objects_positions
-            .players_positions
-            .iter()
-            .filter(|p| p.is_home == player.is_home) // Consider only players from the same team
-            .all(|p| {
-                // Check if any player (except the goalkeeper) is closer to the ball
-                p.position.distance_to(&objects_positions.ball_position)
-                    >= player
-                    .position
-                    .distance_to(&objects_positions.ball_position)
-            });
+        let (teammates, opponents) = objects_positions
+            .player_distances
+            .players_within_distance(player, 30.0);
 
-        // Return true if the goalkeeper is closest to the ball and the ball is behind the defense
-        goalkeeper_closest_to_ball
+        let teammate_closer_to_ball = teammates.iter().any(|(_, distance)| *distance < 0.0);
+
+        !teammate_closer_to_ball
     }
 
     fn organize_defense(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) {
@@ -230,8 +223,42 @@ impl GoalkeeperStandingState {
         objects_positions: &MatchObjectsPositions,
         ball_metadata: &BallContext,
     ) {
-        // Logic to communicate with defenders based on game situations
-        // Add communication logic here...
+        // Get the list of defenders
+        let defenders: Vec<&MatchPlayer> = objects_positions
+            .players_positions
+            .iter()
+            .filter(|p| {
+                p.is_home == player.is_home
+                    && player.tactics_position.position_group()
+                        == PlayerFieldPositionGroup::Defender
+            })
+            .map(|p| context.players.get(p.player_id))
+            .flatten()
+            .collect();
+
+        for defender in defenders {
+            if Self::is_opponent_near_goal(defender, objects_positions) {
+                // println!(
+                //     "Defender {} mark the opponent near the goal!",
+                //     defender.player_id
+                // );
+            } else {
+                // println!(
+                //     "Defender {} maintain defensive position!",
+                //     defender.player_id
+                // );
+            }
+        }
+    }
+
+    fn is_opponent_near_goal(
+        defender: &MatchPlayer,
+        objects_positions: &MatchObjectsPositions,
+    ) -> bool {
+        let max_distance_to_goal = 20.0;
+        objects_positions.players_positions.iter().any(|p| {
+            p.is_home != defender.is_home && p.position.y.abs() > (50.0 - max_distance_to_goal)
+        })
     }
 
     fn make_critical_decisions(
@@ -239,9 +266,17 @@ impl GoalkeeperStandingState {
         context: &mut MatchContext,
         objects_positions: &MatchObjectsPositions,
         ball_metadata: &BallContext,
+        result: &mut Vec<PlayerUpdateEvent>,
     ) {
-        // Logic to make critical decisions (e.g., leaving goal line, claiming crosses)
-        // Add decision-making logic here...
+        if ball_metadata.ball_distance > 10.0 {
+            return;
+        }
+
+        if ball_metadata.is_ball_heading_towards_goal {
+            result.push(PlayerUpdateEvent::RushOut(player.player_id));
+        } else {
+            result.push(PlayerUpdateEvent::StayInGoal(player.player_id));
+        }
     }
 }
 
