@@ -31,7 +31,7 @@ impl GoalkeeperTacklingState {
         return if !nearest_players.is_empty() {
             nearest_players.sort_by(|left_player_id, right_player_id| {
                 let left_player = context.players.get(*left_player_id).unwrap();
-                let right_player = context.players.get(*left_player_id).unwrap();
+                let right_player = context.players.get(*right_player_id).unwrap();
 
                 left_player
                     .skills
