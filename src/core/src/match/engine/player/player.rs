@@ -1,7 +1,7 @@
 ﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    Ball, BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext,
-    MatchObjectsPositions, PlayerTickContext, StateStrategy,
+    Ball, BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, PlayerTickContext,
+    StateStrategy,
 };
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
@@ -119,7 +119,9 @@ impl MatchPlayer {
         );
 
         if let Some(state) = state_result.state {
-            self.state = state;
+            self.change_state(state);
+        } else {
+            self.in_state_time += 1;
         }
 
         if let Some(velocity) = state_result.velocity {

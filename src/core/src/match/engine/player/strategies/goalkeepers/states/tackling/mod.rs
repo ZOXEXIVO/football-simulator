@@ -1,7 +1,10 @@
 use crate::common::NeuralNetwork;
 
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent,
+    StateChangeResult,
+};
 
 lazy_static! {
     static ref PLAYER_TACKLING_STATE_NETWORK: NeuralNetwork = PlayerTacklingStateNetLoader::load();
@@ -18,18 +21,15 @@ impl GoalkeeperTacklingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        let mut nearest_players: Vec<_> = tick_context.objects_positions
-            .players_positions
-            .iter()
-            .filter(|p| {
-                p.position.distance_to(&tick_context.objects_positions.ball_position) < 30.0
-                    && p.player_id != player.player_id
-            })
-            .map(|p| p.player_id)
-            .collect();
+        let minimal_distance = 30.0;
 
-        return if !nearest_players.is_empty() {
-            nearest_players.sort_by(|left_player_id, right_player_id| {
+        let (_, mut nearest_opponents) = tick_context
+            .objects_positions
+            .player_distances
+            .players_within_distance(player, minimal_distance);
+
+        return if !nearest_opponents.is_empty() {
+            nearest_opponents.sort_by(|(left_player_id, _), (right_player_id, _)| {
                 let left_player = context.players.get(*left_player_id).unwrap();
                 let right_player = context.players.get(*right_player_id).unwrap();
 
@@ -41,7 +41,7 @@ impl GoalkeeperTacklingState {
                     .unwrap_or(std::cmp::Ordering::Equal)
             });
 
-            let opponent_to_tackle = nearest_players.first().unwrap();
+            let (opponent_to_tackle, _) = nearest_opponents.first().unwrap();
 
             result.push(PlayerUpdateEvent::TacklingBall(*opponent_to_tackle));
 

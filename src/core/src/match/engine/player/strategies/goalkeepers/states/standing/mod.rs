@@ -6,7 +6,7 @@ use crate::r#match::position::PlayerFieldPosition;
 
 use crate::r#match::{
     BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
 };
 
 lazy_static! {
@@ -27,25 +27,31 @@ impl GoalkeeperStandingState {
         if player_tick_context.ball_context.ball_is_on_player_home_side
             && Self::is_dangerous(player, &tick_context.objects_positions)
         {
-            return StateChangeResult::with_state(PlayerState::Running);
+            // go to own goals
+            let velocity = SteeringBehavior::Arrive {
+                target: player.start_position,
+                slowing_distance: 5.0,
+            }
+            .calculate(player)
+            .velocity;
+
+            return StateChangeResult::with(PlayerState::Running, velocity);
         }
 
-        if let Some((nearest_opponent_id, distance)) = tick_context
+        if let Some((_, opponent_distance)) = tick_context
             .objects_positions
             .player_distances
             .find_closest_opponent(player)
         {
-            if distance < 50.0 {
-                return StateChangeResult::with_state(PlayerState::Running);
+            if opponent_distance < 50.0 {
+                let velocity = SteeringBehavior::Flee {
+                    target: player.start_position,
+                }
+                .calculate(player)
+                .velocity;
+
+                return StateChangeResult::with(PlayerState::Running, velocity);
             }
-        }
-
-        if player_tick_context.ball_context.ball_distance > 100.0 {
-            return StateChangeResult::none();
-        }
-
-        if player_tick_context.ball_context.ball_distance < 20.0 {
-            return StateChangeResult::with_state(PlayerState::Tackling);
         }
 
         if Self::should_sweep(player, &tick_context.objects_positions) {
@@ -72,6 +78,18 @@ impl GoalkeeperStandingState {
             &player_tick_context.ball_context,
             result,
         );
+
+        if player_tick_context.ball_context.ball_distance > 100.0 {
+            return if in_state_time > 10 {
+                StateChangeResult::with_state(PlayerState::Walking)
+            } else {
+                StateChangeResult::none()
+            };
+        }
+
+        if player_tick_context.ball_context.ball_distance < 20.0 {
+            return StateChangeResult::with_state(PlayerState::Tackling);
+        }
 
         return if player_tick_context
             .ball_context
@@ -112,7 +130,7 @@ impl GoalkeeperStandingState {
             .player_distances
             .players_within_distance(player, 30.0);
 
-        let teammate_closer_to_ball = teammates.iter().any(|(_, distance)| *distance < 0.0);
+        let teammate_closer_to_ball = teammates.iter().any(|(_, distance)| *distance < 5.0);
 
         !teammate_closer_to_ball
     }

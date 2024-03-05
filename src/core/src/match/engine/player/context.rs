@@ -135,7 +135,7 @@ impl PlayerDistanceClosure {
             .iter()
             .filter(|&p| p.distance < max_distance)
             .fold(
-                (Vec::new(), Vec::new()),
+                (Vec::with_capacity(10), Vec::with_capacity(10)),
                 |(mut teammates, mut opponents), distance| {
                     if distance.player_from_team == current_player.team_id {
                         if distance.player_from_id != current_player.player_id {
