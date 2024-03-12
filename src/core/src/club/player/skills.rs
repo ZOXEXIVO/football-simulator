@@ -18,12 +18,12 @@ impl PlayerSkills {
 
     pub fn walking_speed(&self) -> Vector3<f32> {
         let walking_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.1;
-        Vector3::new(walking_speed, walking_speed, 0.0)
+        Vector3::new(walking_speed, walking_speed, 0.0).normalize()
     }
 
     pub fn running_speed(&self) -> Vector3<f32> {
         let running_speed = (self.physical.acceleration + self.physical.stamina) / 2.0 * 0.15;
-        Vector3::new(running_speed, running_speed, 0.0)
+        Vector3::new(running_speed, running_speed, 0.0).normalize()
     }
 }
 

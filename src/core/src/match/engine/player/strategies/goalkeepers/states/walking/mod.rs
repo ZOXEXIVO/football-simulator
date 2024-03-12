@@ -1,6 +1,9 @@
 use crate::common::NeuralNetwork;
 
-use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
+use crate::r#match::{
+    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+};
 
 lazy_static! {
     static ref PLAYER_WALKING_STATE_NETWORK: NeuralNetwork = PlayerWalkingStateNetLoader::load();
@@ -17,16 +20,18 @@ impl GoalkeeperWalkingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        if player_tick_context.ball_context.ball_is_on_player_home_side {
-            return StateChangeResult::with_state(PlayerState::Returning);
+        if player_tick_context.ball_context.ball_is_on_player_home_side
+            && player_tick_context.ball_context.ball_distance < 100.0
+        {
+            return StateChangeResult::with(PlayerState::Returning, player.skills.running_speed());
         }
 
-        if in_state_time % 10 == 0 {
+        if in_state_time > 100 {
             let wander_velocity = SteeringBehavior::Wander {
-                target: tick_context.objects_positions.ball_position, // TODO random point
+                target: tick_context.objects_positions.ball_position,
                 radius: 10.0,
                 jitter: 0.0,
-                distance: 5.0,
+                distance: 15.0,
                 angle: 40.0,
             }
             .calculate(player)

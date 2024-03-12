@@ -35,7 +35,7 @@ impl MatchPlayer {
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            velocity: Vector3::new(1.0, 1.0, 0.0),
+            velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
             is_home: false,
             state: PlayerState::Standing,
