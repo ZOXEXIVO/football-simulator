@@ -24,7 +24,7 @@ impl GoalkeeperStandingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        if player_tick_context.ball_context.ball_is_on_player_home_side
+        if player_tick_context.ball_context.is_on_home_side
             && Self::is_dangerous(player, &tick_context.objects_positions)
         {
             // go to own goals
@@ -93,7 +93,7 @@ impl GoalkeeperStandingState {
 
         return if player_tick_context
             .ball_context
-            .is_ball_heading_towards_goal
+            .is_heading_towards_goal
         {
             if Self::should_rush_out(&player_tick_context.ball_context) {
                 StateChangeResult::with_state(PlayerState::Running)
@@ -290,7 +290,7 @@ impl GoalkeeperStandingState {
             return;
         }
 
-        if ball_metadata.is_ball_heading_towards_goal {
+        if ball_metadata.is_heading_towards_goal {
             result.push(PlayerUpdateEvent::RushOut(player.player_id));
         } else {
             result.push(PlayerUpdateEvent::StayInGoal(player.player_id));

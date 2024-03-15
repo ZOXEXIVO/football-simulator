@@ -11,8 +11,8 @@ pub struct PlayerTickContext {
 }
 
 pub struct BallContext {
-    pub is_ball_heading_towards_goal: bool,
-    pub ball_is_on_player_home_side: bool,
+    pub is_heading_towards_goal: bool,
+    pub is_on_home_side: bool,
 
     pub ball_distance: f32,
 }

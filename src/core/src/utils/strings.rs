@@ -29,4 +29,12 @@ mod tests {
 
         assert_eq!(10, random_string.len());
     }
+
+    #[test]
+    fn random_string_not_equals() {
+        let random_string_a = StringUtils::random_string(10);
+        let random_string_b = StringUtils::random_string(10);
+
+        assert_ne!(random_string_a, random_string_b);
+    }
 }
