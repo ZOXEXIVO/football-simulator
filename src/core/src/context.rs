@@ -137,7 +137,11 @@ mod tests {
     #[test]
     fn test_simulation_context() {
         // Create a new simulation context
-        let date = NaiveDate::from_ymd(2024, 3, 16).and_hms(12, 30, 0);
+        let date = NaiveDate::from_ymd_opt(2024, 3, 16)
+            .unwrap()
+            .and_hms_opt(12, 30, 0)
+            .unwrap();
+
         let sim_ctx = SimulationContext::new(date);
 
         // Test if the date and time are set correctly
@@ -152,28 +156,44 @@ mod tests {
         assert!(!sim_ctx.check_contract_expiration()); // Not midnight
 
         // Create a new simulation context at the beginning of the week
-        let monday_date = NaiveDate::from_ymd(2024, 3, 18).and_hms(0, 0, 0);
+        let monday_date = NaiveDate::from_ymd_opt(2024, 3, 18)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+
         let monday_sim_ctx = SimulationContext::new(monday_date);
 
         // Test if the week beginning is detected correctly
         assert!(monday_sim_ctx.is_week_beginning());
 
         // Create a new simulation context at the beginning of the month
-        let first_of_month_date = NaiveDate::from_ymd(2024, 3, 1).and_hms(12, 30, 0);
+        let first_of_month_date = NaiveDate::from_ymd_opt(2024, 3, 1)
+            .unwrap()
+            .and_hms_opt(12, 30, 0)
+            .unwrap();
+
         let first_of_month_sim_ctx = SimulationContext::new(first_of_month_date);
 
         // Test if the month beginning is detected correctly
         assert!(first_of_month_sim_ctx.is_month_beginning());
 
         // Create a new simulation context at the beginning of the year
-        let first_of_year_date = NaiveDate::from_ymd(2024, 1, 1).and_hms(12, 30, 0);
+        let first_of_year_date = NaiveDate::from_ymd_opt(2024, 1, 1)
+            .unwrap()
+            .and_hms_opt(12, 30, 0)
+            .unwrap();
+
         let first_of_year_sim_ctx = SimulationContext::new(first_of_year_date);
 
         // Test if the year beginning is detected correctly
         assert!(first_of_year_sim_ctx.is_year_beginning());
 
         // Create a new simulation context at midnight
-        let midnight_date = NaiveDate::from_ymd(2024, 3, 16).and_hms(0, 0, 0);
+        let midnight_date = NaiveDate::from_ymd_opt(2024, 3, 16)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+
         let midnight_sim_ctx = SimulationContext::new(midnight_date);
 
         // Test if contract expiration is checked correctly at midnight
@@ -183,7 +203,7 @@ mod tests {
     #[test]
     fn test_global_context() {
         // Create a new simulation context
-        let date = NaiveDate::from_ymd(2024, 3, 16).and_hms(12, 30, 0);
+        let date = NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(12, 30, 0).unwrap();
         let sim_ctx = SimulationContext::new(date);
 
         // Create a global context with the simulation context

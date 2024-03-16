@@ -116,3 +116,9 @@ impl From<&LeagueMatch> for MatchResult {
         }
     }
 }
+
+impl PartialEq for MatchResult {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}

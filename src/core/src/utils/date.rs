@@ -32,43 +32,43 @@ mod tests {
 
     #[test]
     fn test_is_birthday() {
-        let birth_date = NaiveDate::from_ymd(1990, 3, 16);
-        let current_date = NaiveDate::from_ymd(2024, 3, 16);
+        let birth_date = NaiveDate::from_ymd_opt(1990, 3, 16).unwrap();
+        let current_date = NaiveDate::from_ymd_opt(2024, 3, 16).unwrap();
         assert!(DateUtils::is_birthday(birth_date, current_date));
 
-        let birth_date = NaiveDate::from_ymd(1990, 3, 16);
-        let current_date = NaiveDate::from_ymd(2024, 3, 17);
+        let birth_date = NaiveDate::from_ymd_opt(1990, 3, 16).unwrap();
+        let current_date = NaiveDate::from_ymd_opt(2024, 3, 17).unwrap();
         assert!(!DateUtils::is_birthday(birth_date, current_date));
     }
 
     #[test]
     fn test_age() {
-        let birth_date = NaiveDate::from_ymd(1990, 3, 16);
-        let current_date = NaiveDate::from_ymd(2024, 3, 16);
+        let birth_date = NaiveDate::from_ymd_opt(1990, 3, 16).unwrap();
+        let current_date = NaiveDate::from_ymd_opt(2024, 3, 16).unwrap();
 
         assert_eq!(DateUtils::age(birth_date, current_date), 34);
 
-        let birth_date = NaiveDate::from_ymd(1990, 3, 16);
-        let current_date = NaiveDate::from_ymd(2024, 3, 15);
+        let birth_date = NaiveDate::from_ymd_opt(1990, 3, 16).unwrap();
+        let current_date = NaiveDate::from_ymd_opt(2024, 3, 15).unwrap();
 
         assert_eq!(DateUtils::age(birth_date, current_date), 34);
     }
 
     #[test]
     fn test_next_saturday() {
-        let date = NaiveDate::from_ymd(2024, 3, 12); // A Tuesday
+        let date = NaiveDate::from_ymd_opt(2024, 3, 12).unwrap(); // A Tuesday
         let next_saturday = DateUtils::next_saturday(date);
 
-        assert_eq!(next_saturday, NaiveDate::from_ymd(2024, 3, 16));
+        assert_eq!(next_saturday, NaiveDate::from_ymd_opt(2024, 3, 16).unwrap());
 
-        let date = NaiveDate::from_ymd(2024, 3, 17); // A Saturday
+        let date = NaiveDate::from_ymd_opt(2024, 3, 17).unwrap(); // A Saturday
         let next_saturday = DateUtils::next_saturday(date);
 
-        assert_eq!(next_saturday, NaiveDate::from_ymd(2024, 3, 23));
+        assert_eq!(next_saturday, NaiveDate::from_ymd_opt(2024, 3, 23).unwrap());
 
-        let date = NaiveDate::from_ymd(2024, 3, 18); // A Sunday
+        let date = NaiveDate::from_ymd_opt(2024, 3, 18).unwrap(); // A Sunday
         let next_saturday = DateUtils::next_saturday(date);
 
-        assert_eq!(next_saturday, NaiveDate::from_ymd(2024, 3, 23));
+        assert_eq!(next_saturday, NaiveDate::from_ymd_opt(2024, 3, 23).unwrap());
     }
 }

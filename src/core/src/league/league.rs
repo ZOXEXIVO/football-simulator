@@ -112,12 +112,6 @@ impl League {
 }
 
 #[derive(Debug)]
-pub struct LeagueSettings {
-    pub season_starting_half: DayMonthPeriod,
-    pub season_ending_half: DayMonthPeriod,
-}
-
-#[derive(Debug)]
 pub struct DayMonthPeriod {
     pub from_day: u8,
     pub from_month: u8,
@@ -137,6 +131,13 @@ impl DayMonthPeriod {
     }
 }
 
+
+#[derive(Debug)]
+pub struct LeagueSettings {
+    pub season_starting_half: DayMonthPeriod,
+    pub season_ending_half: DayMonthPeriod,
+}
+
 impl LeagueSettings {
     pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool {
         let season_starting_date = &self.season_starting_half;
@@ -151,21 +152,60 @@ impl LeagueSettings {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::prelude::*;
+    use chrono::NaiveDate;
+
 
     #[test]
-    fn is_time_for_new_schedule_is_correct() {
-        //        let mut settings = LeagueSettings {
-        //            season_starting: (1, 3),
-        //            season_ending: (4, 5),
-        //        };
-        //
-        //        let mut context = SimulationContext::new(
-        //            date: NaiveDate::from_ymd_opt(2020, 3, 1)
-        //        );
-        //
-        //        let result = settings.is_time_for_new_schedule(&mut context);
-        //
-        //        assert_eq!(true, result);
+    fn test_is_time_for_new_schedule_true() {
+        let settings = LeagueSettings {
+            season_starting_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 1,
+                to_day: 0,
+                to_month: 0,
+            },
+            season_ending_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 7,
+                to_day: 0,
+                to_month: 0,
+            },
+        };
+
+        let context = SimulationContext {
+            date: NaiveDate::from_ymd_opt(2024, 1, 1).unwrap().and_hms_opt(0, 0, 0).unwrap(), // Season starting date
+            // Add other fields as needed
+            day: 0,
+            hour: 0,
+        };
+
+        assert!(settings.is_time_for_new_schedule(&context));
+    }
+
+    #[test]
+    fn test_is_time_for_new_schedule_false() {
+        let settings = LeagueSettings {
+            season_starting_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 1,
+                to_day: 0,
+                to_month: 0,
+            },
+            season_ending_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 7,
+                to_day: 0,
+                to_month: 0,
+            },
+        };
+
+        let context = SimulationContext {
+            date: NaiveDate::from_ymd_opt(2024, 7, 1).unwrap().and_hms_opt(0, 0, 0).unwrap(), // Not season starting date
+            // Add other fields as needed
+            day: 0,
+            hour: 0,
+        };
+
+        assert!(!settings.is_time_for_new_schedule(&context));
     }
 }

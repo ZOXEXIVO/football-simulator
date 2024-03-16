@@ -22,3 +22,58 @@ impl MatchStorage {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::r#match::{MatchResult, Score};
+
+    #[test]
+    fn test_match_storage_new() {
+        let match_storage = MatchStorage::new();
+        assert!(match_storage.results.is_empty());
+    }
+
+    #[test]
+    fn test_match_storage_push() {
+        let mut match_storage = MatchStorage::new();
+        let match_result = MatchResult {
+            id: "match_1".to_string(),
+            // Fill in other fields as needed
+            league_id: 0,
+            result_details: None,
+            score: Score {
+                home: 0,
+                away: 0,
+                details: vec![],
+            },
+            home_team_id: 0,
+            away_team_id: 0,
+        };
+        match_storage.push(match_result.clone());
+        assert_eq!(match_storage.results.len(), 1);
+        assert_eq!(match_storage.results.get(&match_result.id), Some(&match_result));
+    }
+
+    #[test]
+    fn test_match_storage_get() {
+        let mut match_storage = MatchStorage::new();
+        let match_result = MatchResult {
+            id: "match_1".to_string(),
+
+            league_id: 0,
+            result_details: None,
+            score: Score {
+                home: 0,
+                away: 0,
+                details: vec![],
+            },
+            home_team_id: 0,
+            away_team_id: 0,
+        };
+
+        match_storage.push(match_result.clone());
+
+        assert_eq!(match_storage.get("match_1".to_string()), Some(&match_result));
+        assert_eq!(match_storage.get("nonexistent_id".to_string()), None);
+    }
+}

@@ -213,3 +213,131 @@ impl ScheduleTour {
             .date()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::NaiveDate;
+
+    #[test]
+    fn test_schedule_tour_new() {
+        let schedule_tour = ScheduleTour::new(1, 5);
+        assert_eq!(schedule_tour.num, 1);
+        assert_eq!(schedule_tour.items.capacity(), 5);
+    }
+
+    #[test]
+    fn test_schedule_tour_played() {
+        let item1 = ScheduleItem {
+            id: "".to_string(),
+            league_id: 0,
+            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            home_team_id: 0,
+            away_team_id: 0,
+            result: Some(ScheduleItemResult {
+                home_goals: 0,
+                away_goals: 0,
+            }),
+        };
+        let item2 = ScheduleItem {
+            id: "".to_string(),
+            league_id: 0,
+            date: NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            home_team_id: 0,
+            away_team_id: 0,
+            result: Some(ScheduleItemResult {
+                home_goals: 0,
+                away_goals: 0,
+            }),
+        };
+        let mut items_with_results = Vec::new();
+        items_with_results.push(item1.clone());
+        items_with_results.push(item2.clone());
+
+        let schedule_tour_with_results = ScheduleTour {
+            num: 1,
+            items: items_with_results,
+        };
+        assert!(schedule_tour_with_results.played());
+
+        let item3 = ScheduleItem {
+            id: "".to_string(),
+            league_id: 0,
+            date: NaiveDate::from_ymd_opt(2024, 3, 17).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            home_team_id: 0,
+            away_team_id: 0,
+            result: None,
+        };
+        let mut items_without_results = Vec::new();
+        items_without_results.push(item1);
+        items_without_results.push(item3);
+
+        let schedule_tour_without_results = ScheduleTour {
+            num: 1,
+            items: items_without_results,
+        };
+        assert!(!schedule_tour_without_results.played());
+    }
+
+    #[test]
+    fn test_schedule_tour_start_date() {
+        let item1 = ScheduleItem {
+            id: "".to_string(),
+            league_id: 0,
+            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0,0,0).unwrap(),
+            home_team_id: 0,
+            away_team_id: 0,
+            result: Some(ScheduleItemResult {
+                home_goals: 0,
+                away_goals: 0,
+            }),
+        };
+        let item2 = ScheduleItem {
+            id: "".to_string(),
+            league_id: 0,
+            date: NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(0,0,0).unwrap(),
+            home_team_id: 0,
+            away_team_id: 0,
+            result: Some(ScheduleItemResult {
+                home_goals: 0,
+                away_goals: 0,
+            }),
+        };
+        let schedule_tour = ScheduleTour {
+            num: 1,
+            items: vec![item1.clone(), item2.clone()],
+        };
+        assert_eq!(schedule_tour.start_date(), item1.date.date());
+    }
+
+    #[test]
+    fn test_schedule_tour_end_date() {
+        let item1 = ScheduleItem {
+            id: "".to_string(),
+            league_id: 0,
+            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0,0,0).unwrap(),
+            home_team_id: 0,
+            away_team_id: 0,
+            result: Some(ScheduleItemResult {
+                home_goals: 0,
+                away_goals: 0,
+            }),
+        };
+        let item2 = ScheduleItem {
+            id: "".to_string(),
+            league_id: 0,
+            date: NaiveDate::from_ymd(2024, 3, 16).and_hms_opt(0,0,0).unwrap(),
+            home_team_id: 0,
+            away_team_id: 0,
+            result: Some(ScheduleItemResult {
+                home_goals: 0,
+                away_goals: 0,
+            }),
+        };
+        let schedule_tour = ScheduleTour {
+            num: 1,
+            items: vec![item1.clone(), item2.clone()],
+        };
+        assert_eq!(schedule_tour.end_date(), item2.date.date());
+    }
+}
