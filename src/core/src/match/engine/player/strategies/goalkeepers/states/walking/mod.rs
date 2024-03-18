@@ -1,8 +1,8 @@
 use crate::common::NeuralNetwork;
 
 use crate::r#match::{
-    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent,
+    StateChangeResult, SteeringBehavior,
 };
 
 lazy_static! {

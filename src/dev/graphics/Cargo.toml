@@ -7,6 +7,6 @@ edition = "2021"
 macroquad = "0.4.5"
 core = { path = "../../core" }
 rand = "0.8.5"
-rayon = "1.8.1"
+rayon = "1.9.0"
 serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.114"
