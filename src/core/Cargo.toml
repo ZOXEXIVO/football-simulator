@@ -5,7 +5,7 @@ authors = ["ZOXEXIVO <zoxexivo@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-chrono = "0.4.37"
+chrono = "0.4.38"
 rand = "0.8.5"
 rayon = "1.10.0"
 rand_distr = "0.4.3"
