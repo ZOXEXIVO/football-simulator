@@ -1,9 +1,6 @@
 use crate::common::NeuralNetwork;
 
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent,
-    StateChangeResult,
-};
+use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
 
 lazy_static! {
     static ref PLAYER_TACKLING_STATE_NETWORK: NeuralNetwork = PlayerTacklingStateNetLoader::load();
@@ -50,6 +47,35 @@ impl GoalkeeperTacklingState {
             StateChangeResult::none()
         };
     }
+
+    // fn select_opponent_to_tackle<'mp>(
+    //     player: &MatchPlayer,
+    //     context: &MatchContext,
+    //     nearest_opponents: &'mp [(u32, f32)],
+    //     objects_positions: &MatchObjectsPositions,
+    //     ball_context: &BallContext,
+    // ) -> &'mp MatchPlayer {
+    //     let opponent_analysis: Vec<_> = nearest_opponents
+    //         .iter()
+    //         .map(|(opponent_id, _)| {
+    //             let opponent = context.players.get(*opponent_id).unwrap();
+    //             let analysis = GOALKEEPER_TACKLING_NETWORK.analyze(&TacklingAnalysisInput {
+    //                 player: player,
+    //                 opponent: opponent,
+    //                 objects_positions: objects_positions,
+    //                 ball_context: ball_context,
+    //             });
+    //             (*opponent_id, analysis)
+    //         })
+    //         .collect();
+    //
+    //     let (best_opponent_id, _) = opponent_analysis
+    //         .iter()
+    //         .max_by(|(_, analysis_a), (_, analysis_b)| analysis_a.partial_cmp(analysis_b).unwrap())
+    //         .unwrap();
+    //
+    //     context.players.get(best_opponent_id).unwrap()
+    // }
 }
 
 const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_tackling_data.json");

@@ -11,7 +11,7 @@ pub struct FootballSimulator;
 
 impl FootballSimulator {
     pub fn simulate(data: &mut SimulatorData) {
-        let message = &format!("simulate date {}", data.date);
+        let current_data = data.date;
 
         Logging::estimate(
             || {
@@ -29,7 +29,7 @@ impl FootballSimulator {
 
                 data.next_date();
             },
-            message,
+            &format!("simulate date {}", current_data),
         );
     }
 }

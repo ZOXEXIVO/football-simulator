@@ -93,6 +93,7 @@ impl MatchPlayer {
                 }
                 PlayerUpdateEvent::RushOut(_) => {}
                 PlayerUpdateEvent::StayInGoal(_) => {}
+                _ => {}
             }
         }
     }
@@ -172,4 +173,5 @@ pub enum PlayerUpdateEvent {
     PassTo(Vector3<f32>, f64),
     RushOut(u32),
     StayInGoal(u32),
+    CommunicateMessage(u32, &'static str)
 }

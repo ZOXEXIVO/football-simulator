@@ -1,6 +1,6 @@
 ﻿mod states;
 
-use crate::common::NeuralNetwork;
+use std::ops::Deref;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::strategies::goalkeepers::states::{
     GoalkeeperPassingState, GoalkeeperReturningState, GoalkeeperRunningState,
@@ -81,13 +81,25 @@ impl GoalkeeperStrategies {
     }
 }
 
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_running_data.json");
+pub struct GameSituationInput<'p> {
+    objects_positions: &'p MatchObjectsPositions
+}
 
-#[derive(Debug)]
-pub struct GoalkeepersNetLoader;
-
-impl GoalkeepersNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
+impl<'p> GameSituationInput<'p> {
+    pub fn from_contexts(context: &MatchContext,
+                         player: &MatchPlayer,
+                         tick_context: &'p GameTickContext) -> Self {
+        GameSituationInput {
+            objects_positions: &tick_context.objects_positions
+        }
     }
 }
+
+impl Deref for GameSituationInput<'_> {
+    type Target = [f64];
+
+    fn deref(&self) -> &Self::Target {
+        &[]
+    }
+}
+
