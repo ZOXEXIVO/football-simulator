@@ -10,6 +10,7 @@ use crate::r#match::{
     MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
     SteeringBehavior,
 };
+use crate::r#match::strategies::goalkeepers::decision::GoalkeeperDecision;
 
 lazy_static! {
     static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
@@ -27,11 +28,11 @@ impl GoalkeeperStandingState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         // Analyze the game situation using the neural network
-        let nn_results = PLAYER_STANDING_STATE_NETWORK
-            .run(&GameSituationInput::from_contexts(context, player, tick_context).to_input());
+        let nn_input = GameSituationInput::from_contexts(context, player, tick_context).to_input();
+        let nn_result = PLAYER_STANDING_STATE_NETWORK.run(&nn_input);
 
         // Make decisions based on the analysis
-        if let Some(decision) = Self::analyze(player, nn_results, tick_context, player_tick_context)
+        if let Some(decision) = Self::analyze_results(nn_result, player, tick_context, player_tick_context)
         {
             return Self::execute_decision(
                 player,
@@ -43,6 +44,36 @@ impl GoalkeeperStandingState {
         }
 
         StateChangeResult::none()
+    }
+
+    fn analyze_results(
+        nn_analysis: Vec<f64>,
+        player: &MatchPlayer,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
+    ) -> Option<GoalkeeperDecision> {
+        if Self::is_big_opponents_concentration(player, &tick_context.objects_positions) {
+            return Some(GoalkeeperDecision::Run);
+        }
+
+        if player_tick_context.ball_context.ball_distance < 100.0 {
+            if let Some((_, opponent_distance)) = tick_context
+                .objects_positions
+                .player_distances
+                .find_closest_opponent(player)
+            {
+                if opponent_distance < 50.0 {
+                    return Some(GoalkeeperDecision::Run);
+                }
+            }
+        }
+
+        if Self::should_sweep(player, &tick_context.objects_positions) {
+            // Perform sweeping action
+            // Add sweeping logic here...
+        }
+
+        None
     }
 
     fn should_rush_out(ball_context: &BallContext) -> bool {
@@ -138,48 +169,6 @@ impl GoalkeeperStandingState {
         }
     }
 
-    fn analyze(
-        player: &MatchPlayer,
-        analysis: Vec<f64>,
-        tick_context: &GameTickContext,
-        player_tick_context: PlayerTickContext,
-    ) -> Option<GoalkeeperDecision> {
-        if Self::is_big_opponents_concentration(player, &tick_context.objects_positions) {
-            return Some(GoalkeeperDecision::Run);
-        }
-
-        if player_tick_context.ball_context.ball_distance < 100.0 {
-            if let Some((_, opponent_distance)) = tick_context
-                .objects_positions
-                .player_distances
-                .find_closest_opponent(player)
-            {
-                if opponent_distance < 50.0 {
-                    return Some(GoalkeeperDecision::Run);
-                }
-            }
-        }
-
-        if Self::should_sweep(player, &tick_context.objects_positions) {
-            // Perform sweeping action
-            // Add sweeping logic here...
-        }
-
-        // Use the neural network analysis and game context to determine the appropriate decision
-        // Example implementation:
-        // if analysis.is_goal_scoring_opportunity {
-        //     GoalkeeperDecision::RushOut
-        // } else if analysis.is_defensive_reorganization_needed {
-        //     GoalkeeperDecision::OrganizeDefense
-        // } else if player_tick_context.ball_context.ball_distance < 20.0 {
-        //     GoalkeeperDecision::Tackle
-        // } else {
-        //     GoalkeeperDecision::PositionYourself
-        // }
-
-        None
-    }
-
     fn execute_decision(
         player: &MatchPlayer,
         context: &mut MatchContext,
@@ -266,7 +255,7 @@ impl GoalkeeperStandingState {
         }
 
         // Adjust the position based on the positions of other players
-        let mut closest_opponent_distance = std::f32::MAX;
+        let mut closest_opponent_distance = f32::MAX;
         let mut closest_opponent_position = Vector3::<f32>::zeros();
 
         for opponent in objects_positions
@@ -353,14 +342,6 @@ impl GoalkeeperStandingState {
             result.push(PlayerUpdateEvent::StayInGoal(player.player_id));
         }
     }
-}
-
-enum GoalkeeperDecision {
-    Run,
-    RushOut,
-    OrganizeDefense,
-    Tackle,
-    PositionYourself,
 }
 
 const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_standing_data.json");
