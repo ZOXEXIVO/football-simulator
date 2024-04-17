@@ -1,6 +1,7 @@
 ﻿mod states;
 
 use std::ops::Deref;
+use itertools::Itertools;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::strategies::goalkeepers::states::{
     GoalkeeperPassingState, GoalkeeperReturningState, GoalkeeperRunningState,
@@ -93,13 +94,15 @@ impl<'p> GameSituationInput<'p> {
             objects_positions: &tick_context.objects_positions
         }
     }
-}
 
-impl Deref for GameSituationInput<'_> {
-    type Target = [f64];
+    pub fn to_input(&self) -> Vec<f64> {
+        let players_positions: Vec<f64> = self.objects_positions.players_positions.iter()
+            .sorted_by_key(|m| m.player_id)
+            .flat_map(|p| p.position.as_slice().to_vec())
+            .map(|m| m as f64)
+            .collect();
 
-    fn deref(&self) -> &Self::Target {
-        &[]
+        players_positions
     }
 }
 

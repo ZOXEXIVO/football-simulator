@@ -1,11 +1,15 @@
 use crate::common::NeuralNetwork;
 use crate::{PlayerFieldPositionGroup, PlayerPositionType};
+use nalgebra::Vector3;
 use std::collections::HashMap;
-use nalgebra::{Vector2, Vector3};
 
 use crate::r#match::position::PlayerFieldPosition;
 
-use crate::r#match::{BallContext, GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
+use crate::r#match::{
+    BallContext, GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions,
+    MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    SteeringBehavior,
+};
 
 lazy_static! {
     static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
@@ -23,75 +27,32 @@ impl GoalkeeperStandingState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         // Analyze the game situation using the neural network
-        let analysis = PLAYER_STANDING_STATE_NETWORK.run(
-            &GameSituationInput::from_contexts(context, player, tick_context)
-        );
+        let nn_results = PLAYER_STANDING_STATE_NETWORK
+            .run(&GameSituationInput::from_contexts(context, player, tick_context).to_input());
 
         // Make decisions based on the analysis
-        if let Some(decision) = Self::analyze(player, analysis, tick_context, player_tick_context) {
-            return Self::execute_decision(player, context, &tick_context.objects_positions, decision, result);
+        if let Some(decision) = Self::analyze(player, nn_results, tick_context, player_tick_context)
+        {
+            return Self::execute_decision(
+                player,
+                context,
+                &tick_context.objects_positions,
+                decision,
+                result,
+            );
         }
 
         StateChangeResult::none()
-
-        // Update player state and execute actions
-
-        // Communicate with defenders
-        // Self::communicate_with_defenders(player, context, &tick_context.objects_positions);
-        //
-        //
-        //
-        // // 2. Organize defense based on player positions
-        // Self::organize_defense(player, &tick_context.objects_positions);
-        //
-        // // 3. Communicate with defenders
-        // Self::communicate_with_defenders(
-        //     player,
-        //     context,
-        //     &tick_context.objects_positions,
-        //     &player_tick_context.ball_context,
-        // );
-        //
-        // // 4. Make critical decisions
-        // Self::make_critical_decisions(
-        //     player,
-        //     context,
-        //     &tick_context.objects_positions,
-        //     &player_tick_context.ball_context,
-        //     result,
-        // );
-        //
-        // if player_tick_context.ball_context.ball_distance > 100.0 {
-        //     return if in_state_time > 10 {
-        //         StateChangeResult::with_state(PlayerState::Walking)
-        //     } else {
-        //         StateChangeResult::none()
-        //     };
-        // }
-        //
-        // if player_tick_context.ball_context.ball_distance < 20.0 {
-        //     return StateChangeResult::with_state(PlayerState::Tackling);
-        // }
-        //
-        // return if player_tick_context
-        //     .ball_context
-        //     .is_heading_towards_goal
-        // {
-        //     if Self::should_rush_out(&player_tick_context.ball_context) {
-        //         StateChangeResult::with_state(PlayerState::Running)
-        //     } else {
-        //         StateChangeResult::with_state(PlayerState::Walking)
-        //     }
-        // } else {
-        //     StateChangeResult::none()
-        // };
     }
 
     fn should_rush_out(ball_context: &BallContext) -> bool {
         ball_context.ball_distance < 50.0
     }
 
-    fn is_big_opponents_concentration(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) -> bool {
+    fn is_big_opponents_concentration(
+        player: &MatchPlayer,
+        objects_positions: &MatchObjectsPositions,
+    ) -> bool {
         let max_distance = 150.0;
 
         let (nearest_teammates_count, nearest_opponents_count) = objects_positions
@@ -219,7 +180,6 @@ impl GoalkeeperStandingState {
         None
     }
 
-
     fn execute_decision(
         player: &MatchPlayer,
         context: &mut MatchContext,
@@ -234,13 +194,13 @@ impl GoalkeeperStandingState {
                     target: match_objects_positions.ball_position,
                     slowing_distance: 5.0,
                 }
-                    .calculate(player)
-                    .velocity;
+                .calculate(player)
+                .velocity;
 
                 return StateChangeResult::with(PlayerState::Running, velocity);
             }
             GoalkeeperDecision::OrganizeDefense => {
-               // Self::organize_defensive_line(player, context);
+                // Self::organize_defensive_line(player, context);
                 return StateChangeResult::with_state(PlayerState::Walking);
             }
             GoalkeeperDecision::Tackle => {
@@ -254,8 +214,8 @@ impl GoalkeeperStandingState {
                     target: target_position,
                     slowing_distance: 5.0,
                 }
-                    .calculate(player)
-                    .velocity;
+                .calculate(player)
+                .velocity;
 
                 return StateChangeResult::with(PlayerState::Walking, velocity);
             }
@@ -266,120 +226,14 @@ impl GoalkeeperStandingState {
                         target: player.start_position,
                         slowing_distance: 5.0,
                     }
-                        .calculate(player)
-                        .velocity;
+                    .calculate(player)
+                    .velocity;
 
                     return StateChangeResult::with(PlayerState::Running, velocity);
                 }
             }
         }
     }
-
-    // fn organize_defensive_line(player: &MatchPlayer, context: &mut MatchContext) {
-    //     // Analyze defensive player positions
-    //     let defensive_players = get_defensive_players(player, &context.objects_positions);
-    //
-    //     // Adjust defensive positions based on the game situation
-    //     let new_positions = calculate_defensive_positions(defensive_players, &context.ball_context);
-    //
-    //     // Communicate new positions to defensive players
-    //     for (player, new_position) in defensive_players.iter().zip(new_positions.iter()) {
-    //         let velocity = SteeringBehavior::Arrive {
-    //             target: *new_position,
-    //             slowing_distance: 5.0,
-    //         }
-    //             .calculate(player)
-    //             .velocity;
-    //
-    //         context.events.push(PlayerUpdateEvent::SetVelocity(
-    //             player.player_id,
-    //             velocity,
-    //         ));
-    //     }
-    // }
-
-    // fn get_defensive_players(
-    //     player: &MatchPlayer,
-    //     objects_positions: &MatchObjectsPositions,
-    // ) -> Vec<&MatchPlayer> {
-    //     objects_positions
-    //         .players_positions
-    //         .iter()
-    //         .filter(|p| {
-    //             p.is_home == player.is_home
-    //                 && p.player_id != player.player_id
-    //                 && p.tactics_position.position_group().is_defender()
-    //         })
-    //         .map(|p| context.players.get(p.player_id))
-    //         .flatten()
-    //         .collect()
-    // }
-    //
-    // fn calculate_fullback_positions(ball_context: &BallContext) -> (Vector3<f32>, Vector3<f32>) {
-    //     let left_back_position = if ball_context.x < -20.0 {
-    //         // Ball is on the left side, left-back moves wider
-    //         Vector2::new(-30.0, -20.0)
-    //     } else {
-    //         Vector2::new(-20.0, -20.0)
-    //     };
-    //
-    //     let right_back_position = if ball_context.ball_position.x > 20.0 {
-    //         // Ball is on the right side, right-back moves wider
-    //         Vector2::new(30.0, -20.0)
-    //     } else {
-    //         Vector2::new(20.0, -20.0)
-    //     };
-    //
-    //     (left_back_position, right_back_position)
-    // }
-
-    // fn calculate_defensive_positions(
-    //     defensive_players: Vec<&MatchPlayer>,
-    //     ball_context: &BallContext,
-    // ) -> Vector3<f32> {
-    //     let num_defenders = defensive_players.len();
-    //
-    //     match num_defenders {
-    //         4 => {
-    //             // 4 defenders: 2 center-backs, 1 left-back, 1 right-back
-    //             let mut positions = Vec::with_capacity(4);
-    //
-    //             // Center-backs
-    //             let center_back_1_position = Vector2::new(-10.0, -25.0);
-    //             let center_back_2_position = Vector2::new(10.0, -25.0);
-    //             positions.push(center_back_1_position);
-    //             positions.push(center_back_2_position);
-    //
-    //             // Left-back and right-back positions
-    //             let (left_back_position, right_back_position) =
-    //                 Self::calculate_fullback_positions(ball_context);
-    //             positions.push(left_back_position);
-    //             positions.push(right_back_position);
-    //
-    //             positions
-    //         }
-    //         3 => {
-    //             // 3 defenders: 1 center-back, 1 left-back, 1 right-back
-    //             let mut positions = Vec::with_capacity(3);
-    //
-    //             // Center-back
-    //             let center_back_position = Vector2::new(0.0, -30.0);
-    //             positions.push(center_back_position);
-    //
-    //             // Left-back and right-back positions
-    //             let (left_back_position, right_back_position) =
-    //                 calculate_fullback_positions(ball_context);
-    //             positions.push(left_back_position);
-    //             positions.push(right_back_position);
-    //
-    //             positions
-    //         }
-    //         _ => {
-    //             // Handle other defender configurations if needed
-    //             Vec::new()
-    //         }
-    //     }
-    // }
 
     fn calculate_goalkeeper_position(
         player: &MatchPlayer,
@@ -440,7 +294,7 @@ impl GoalkeeperStandingState {
         context: &mut MatchContext,
         objects_positions: &MatchObjectsPositions,
         ball_metadata: &BallContext,
-        result: &mut Vec<PlayerUpdateEvent>
+        result: &mut Vec<PlayerUpdateEvent>,
     ) {
         // Get the list of defenders
         let defenders: Vec<&MatchPlayer> = objects_positions
@@ -459,12 +313,14 @@ impl GoalkeeperStandingState {
             if Self::is_opponent_near_goal(defender, objects_positions) {
                 // Communicate to the defender to mark the opponent near the goal
                 result.push(PlayerUpdateEvent::CommunicateMessage(
-                    defender.player_id, "Mark the opponent near the goal!",
+                    defender.player_id,
+                    "Mark the opponent near the goal!",
                 ));
             } else {
                 // Communicate to the defender to maintain defensive position
                 result.push(PlayerUpdateEvent::CommunicateMessage(
-                    defender.player_id, "Maintain defensive position!",
+                    defender.player_id,
+                    "Maintain defensive position!",
                 ));
             }
         }
@@ -498,7 +354,6 @@ impl GoalkeeperStandingState {
         }
     }
 }
-
 
 enum GoalkeeperDecision {
     Run,
