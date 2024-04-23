@@ -1,8 +1,14 @@
-﻿pub mod states;
-
+﻿pub mod decision;
+pub mod states;
 use crate::common::NeuralNetwork;
-use crate::r#match::{BallState, GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior, SteeringOutput};
-use crate::r#match::strategies::defenders::states::{DefenderPassingState, DefenderReturningState, DefenderRunningState, DefenderShootingState, DefenderStandingState, DefenderTacklingState, DefenderWalkingState};
+use crate::r#match::strategies::defenders::states::{
+    DefenderPassingState, DefenderReturningState, DefenderRunningState, DefenderShootingState,
+    DefenderStandingState, DefenderTacklingState, DefenderWalkingState,
+};
+use crate::r#match::{
+    BallState, GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+};
 
 pub struct DefenderStrategies {}
 
@@ -71,7 +77,7 @@ impl DefenderStrategies {
                 player_context,
                 in_state_time,
                 result,
-            )
+            ),
         }
     }
 
