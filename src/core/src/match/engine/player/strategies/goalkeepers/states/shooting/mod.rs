@@ -1,9 +1,14 @@
 use crate::common::NeuralNetwork;
 
-use crate::r#match::{BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
+use crate::r#match::{
+    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+};
 
 lazy_static! {
-    static ref PLAYER_SHOOTING_STATE_NETWORK: NeuralNetwork = PlayerShootingStateNetLoader::load();
+    static ref GOALKEEPER_SHOOTING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_shooting_data.json"));
 }
 
 pub struct GoalkeeperShootingState {}
@@ -65,16 +70,5 @@ impl GoalkeeperShootingState {
         //         }
         //     }
         // }
-    }
-}
-
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_shooting_data.json");
-
-#[derive(Debug)]
-pub struct PlayerShootingStateNetLoader;
-
-impl PlayerShootingStateNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }

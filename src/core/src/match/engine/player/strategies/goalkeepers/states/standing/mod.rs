@@ -5,15 +5,18 @@ use std::collections::HashMap;
 
 use crate::r#match::position::PlayerFieldPosition;
 
+use crate::r#match::strategies::goalkeepers::decision::GoalkeeperDecision;
+
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     BallContext, GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions,
     MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
     SteeringBehavior,
 };
-use crate::r#match::strategies::goalkeepers::decision::GoalkeeperDecision;
 
 lazy_static! {
-    static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
+    static ref GOALKEEPER_STANDING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json"));
 }
 
 pub struct GoalkeeperStandingState {}
@@ -29,10 +32,11 @@ impl GoalkeeperStandingState {
     ) -> StateChangeResult {
         // Analyze the game situation using the neural network
         let nn_input = GameSituationInput::from_contexts(context, player, tick_context).to_input();
-        let nn_result = PLAYER_STANDING_STATE_NETWORK.run(&nn_input);
+        let nn_result = GOALKEEPER_STANDING_STATE_NETWORK.run(&nn_input);
 
         // Make decisions based on the analysis
-        if let Some(decision) = Self::analyze_results(nn_result, player, tick_context, player_tick_context)
+        if let Some(decision) =
+            Self::analyze_results(nn_result, player, tick_context, player_tick_context)
         {
             return Self::execute_decision(
                 player,
@@ -341,17 +345,6 @@ impl GoalkeeperStandingState {
         } else {
             result.push(PlayerUpdateEvent::StayInGoal(player.player_id));
         }
-    }
-}
-
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_standing_data.json");
-
-#[derive(Debug)]
-pub struct PlayerStandingStateNetLoader;
-
-impl PlayerStandingStateNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }
 

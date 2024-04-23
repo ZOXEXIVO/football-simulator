@@ -1,9 +1,14 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::PlayerState::Returning;
-use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent,
+    StateChangeResult,
+};
 
 lazy_static! {
-    static ref PLAYER_PASSING_STATE_NETWORK: NeuralNetwork = PlayerPassingStateNetLoader::load();
+    static ref GOALKEEPER_PASSING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json"));
 }
 
 pub struct GoalkeeperPassingState {}
@@ -22,17 +27,19 @@ impl GoalkeeperPassingState {
             if in_state_time > 3 {
                 let max_distance: f32 = 30.0;
 
-                let (mut teammates, opponents) = tick_context.objects_positions
-                    .player_distances.players_within_distance(player, max_distance);
+                let (mut teammates, opponents) = tick_context
+                    .objects_positions
+                    .player_distances
+                    .players_within_distance(player, max_distance);
 
                 if !teammates.is_empty() {
                     // Find the closest teammate
 
-                    teammates.sort_by(|(_, distance_left), (_, distance_right)|
+                    teammates.sort_by(|(_, distance_left), (_, distance_right)| {
                         distance_left.partial_cmp(distance_right).unwrap()
-                    );
+                    });
 
-                    if let Some((closest_teammate_id, _)) =  teammates.first() {
+                    if let Some((closest_teammate_id, _)) = teammates.first() {
                         if let Some(teammate) = context.players.get(*closest_teammate_id) {
                             // Example logic: If the closest teammate is open, pass the ball to them
                             if teammate.has_ball == false {
@@ -45,22 +52,10 @@ impl GoalkeeperPassingState {
                     }
                 }
 
-
                 return StateChangeResult::with_state(Returning);
             }
         }
 
         StateChangeResult::none()
-    }
-}
-
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_passing_data.json");
-
-#[derive(Debug)]
-pub struct PlayerPassingStateNetLoader;
-
-impl PlayerPassingStateNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }

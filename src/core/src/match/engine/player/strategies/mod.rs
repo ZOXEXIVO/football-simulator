@@ -2,15 +2,19 @@
 mod defenders;
 mod forwarders;
 mod goalkeepers;
+mod loader;
 mod midfielders;
 
+pub use common::*;
 pub use defenders::*;
 pub use forwarders::*;
 pub use goalkeepers::*;
 pub use midfielders::*;
-pub use common::*;
 
-use crate::r#match::{GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent};
+use crate::r#match::{
+    GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    PlayerTickContext, PlayerUpdateEvent,
+};
 use nalgebra::Vector3;
 
 use crate::PlayerFieldPositionGroup;
@@ -79,7 +83,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
                 context,
                 tick_context,
                 player_context,
-                result
+                result,
             ),
             PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate(
                 in_state_time,
@@ -87,7 +91,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
                 context,
                 tick_context,
                 player_context,
-                result
+                result,
             ),
             PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate(
                 in_state_time,
@@ -95,7 +99,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
                 context,
                 tick_context,
                 player_context,
-                result
+                result,
             ),
             PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate(
                 in_state_time,
@@ -103,7 +107,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
                 context,
                 tick_context,
                 player_context,
-                result
+                result,
             ),
         }
     }

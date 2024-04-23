@@ -1,9 +1,14 @@
 use crate::common::NeuralNetwork;
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext,
+    PlayerUpdateEvent, StateChangeResult,
+};
 
 lazy_static! {
-    static ref PLAYER_RUNNING_STATE_NETWORK: NeuralNetwork = PlayerRunningStateNetLoader::load();
+    static ref FORWARD_RUNNING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json"));
 }
 
 pub struct ForwardRunningState {}
@@ -61,16 +66,5 @@ impl ForwardRunningState {
         {
             result.push(PlayerUpdateEvent::TacklingBall(player.player_id))
         }
-    }
-}
-
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_running_data.json");
-
-#[derive(Debug)]
-pub struct PlayerRunningStateNetLoader;
-
-impl PlayerRunningStateNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }

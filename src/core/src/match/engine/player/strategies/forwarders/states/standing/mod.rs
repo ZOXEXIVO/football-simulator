@@ -1,9 +1,13 @@
 use crate::common::NeuralNetwork;
-
-use crate::r#match::{GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent,
+    StateChangeResult,
+};
 
 lazy_static! {
-    static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
+    static ref FORWARD_STANDING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json"));
 }
 
 pub struct ForwardStandingState {}

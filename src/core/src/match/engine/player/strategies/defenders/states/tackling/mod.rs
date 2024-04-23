@@ -1,9 +1,14 @@
 use crate::common::NeuralNetwork;
 
-use crate::r#match::{GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult};
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+};
 
 lazy_static! {
-    static ref PLAYER_TACKLING_STATE_NETWORK: NeuralNetwork = PlayerTacklingStateNetLoader::load();
+    static ref DEFENDER_TACKLING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_tackling_data.json"));
 }
 
 pub struct DefenderTacklingState {}
@@ -57,16 +62,5 @@ impl DefenderTacklingState {
         // if player.player_attributes.condition < 20 {
         //     return Some(PlayerState::Standing);
         // }
-    }
-}
-
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_tackling_data.json");
-
-#[derive(Debug)]
-pub struct PlayerTacklingStateNetLoader;
-
-impl PlayerTacklingStateNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
     }
 }
