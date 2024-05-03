@@ -1,3 +1,4 @@
+use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
 
 use crate::r#match::decision::DefenderDecision;
@@ -61,6 +62,25 @@ impl DefenderStandingState {
             }
         }
 
+        // If no immediate threat, analyze the neural network output
+        if nn_analysis[0] > 0.7 {
+            // If the neural network suggests a high probability of maintaining position,
+            // stand still and wait for the next opportunity
+            return Some(DefenderDecision::StandStill);
+        } else if nn_analysis[1] > 0.6 {
+            // If the neural network suggests a moderate probability of needing to move,
+            // adjust position to a more strategic location
+            return Some(DefenderDecision::AdjustPosition);
+        } else if nn_analysis[2] > 0.5 {
+            // If the neural network suggests a moderate probability of needing to run,
+            // run towards the goal to defend
+            return Some(DefenderDecision::RunTowardsGoal);
+        } else if nn_analysis[3] > 0.4 {
+            // If the neural network suggests a moderate probability of needing to mark an opponent,
+            // mark the closest opponent
+            return Some(DefenderDecision::MarkOpponent);
+        }
+
         None
     }
 
@@ -72,19 +92,78 @@ impl DefenderStandingState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         match decision {
-            DefenderDecision::Run => {
-                {
-                    // go to own goals
-                    let velocity = SteeringBehavior::Arrive {
-                        target: player.start_position,
-                        slowing_distance: 5.0,
-                    }
+            DefenderDecision::RunTowardsBall => {
+                let ball_position = match_objects_positions.ball_position;
+                let velocity = SteeringBehavior::Arrive {
+                    target: ball_position,
+                    slowing_distance: 10.0,
+                }
                     .calculate(player)
                     .velocity;
 
-                    return StateChangeResult::with(PlayerState::Running, velocity);
+                StateChangeResult::with(PlayerState::Running, velocity)
+            }
+            DefenderDecision::StandStill => {
+                StateChangeResult::none()
+            }
+            DefenderDecision::AdjustPosition => {
+                let velocity = SteeringBehavior::Arrive {
+                    target: player.start_position,
+                    slowing_distance: 5.0,
                 }
+                    .calculate(player)
+                    .velocity;
+
+                StateChangeResult::with(PlayerState::Walking, velocity)
+            }
+            DefenderDecision::RunTowardsGoal => {
+                // Run towards the goal to defend
+                let goal_position = calculate_goal_position(player, context);
+                let velocity = SteeringBehavior::Arrive {
+                    target: goal_position,
+                    slowing_distance: 10.0,
+                }
+                    .calculate(player)
+                    .velocity;
+
+                StateChangeResult::with(PlayerState::Running, velocity)
+            }
+            DefenderDecision::MarkOpponent => {
+                // Mark the closest opponent
+                let opponent_position = find_closest_opponent_position(player, context);
+                let velocity = SteeringBehavior::Arrive {
+                    target: opponent_position,
+                    slowing_distance: 5.0,
+                }
+                    .calculate(player)
+                    .velocity;
+
+                StateChangeResult::with(PlayerState::Walking, velocity)
+            }
+            _ => {
+                StateChangeResult::none()
             }
         }
     }
+}
+
+
+// Helper function to calculate the goal position based on the player and game context
+fn calculate_goal_position(player: &MatchPlayer, context: &MatchContext) -> Vector3<f32> {
+    // Implement your goal position calculation logic here
+    // This could involve determining the position of the player's own goal
+    // based on the player's team and the field dimensions
+
+    // For simplicity, this example returns the player's starting position
+    player.start_position
+}
+
+// Helper function to find the position of the closest opponent
+fn find_closest_opponent_position(player: &MatchPlayer, context: &MatchContext) -> Vector3<f32> {
+    // Implement your logic to find the position of the closest opponent
+    // This could involve iterating through the positions of all opponents
+    // and finding the closest one to the player
+
+    // For simplicity, this example returns the player's starting position
+    player.start_position
 }

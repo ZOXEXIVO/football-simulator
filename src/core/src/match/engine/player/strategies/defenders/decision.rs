@@ -1,3 +1,8 @@
 pub enum DefenderDecision {
-    Run,
+    RunTowardsBall,
+    StandStill,
+    AdjustPosition,
+    RunTowardsGoal,
+    MarkOpponent,
+    Run
 }
