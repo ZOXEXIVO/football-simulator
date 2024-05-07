@@ -8,7 +8,7 @@
     ViewChild
 } from '@angular/core';
 import * as PIXI from 'pixi.js';
-import {Graphics, Sprite} from "pixi.js";
+import {Assets, Graphics, Sprite} from "pixi.js";
 import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
@@ -41,17 +41,18 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
     initGraphics() {
         this.zone.runOutsideAngular(
-            (): void => {
-                this.application = new PIXI.Application({
+            async (): Promise<void> => {
+                this.application = new PIXI.Application();
+
+                await this.application.init({
                     antialias: true,
-                    //resizeTo: this.matchContainer.nativeElement
                 });
 
-                this.matchContainer.nativeElement.appendChild(this.application.view);
+                this.matchContainer.nativeElement.appendChild(this.application.canvas);
 
-                this.application.stage.addChild(this.createBackground(this.application));
+                this.application.stage.addChild(await this.createBackground(this.application));
 
-                const ball = this.createBall();
+                const ball = await this.createBall();
                 this.matchDataService.matchData.ball.obj = ball;
                 this.application.stage.addChild(ball);
 
@@ -147,34 +148,29 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
         const circle: Graphics = new PIXI.Graphics();
 
-        circle.beginFill(isHome ? homeColor : awayColor);
-        circle.drawCircle(x, y, 6);
-        circle.endFill();
+        circle
+            .fill(isHome ? homeColor : awayColor)
+            .circle(x, y, 6);
 
         return circle;
     }
 
-    createBackground(app: PIXI.Application) {
-        // Background
-        const landscapeTexture = PIXI.Texture.from('assets/images/match/field.svg');
-
+    async createBackground(app: PIXI.Application) {
+        const landscapeTexture = await Assets.load('assets/images/match/field.svg');
         const background = new PIXI.Sprite(landscapeTexture);
+
         background.width = app.screen.width;
         background.height = app.screen.height;
 
         return background;
     }
 
-    createBall(): Sprite {
-        let center_x = POLE_COORDS.tl.x + ((POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 2);
-        let center_y = POLE_COORDS.tl.y + ((POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 2);
+    async createBall(): Promise<Sprite> {
+        const texture = await Assets.load('assets/images/match/ball.png');
+        const ball: PIXI.Sprite = new Sprite(texture);
 
-        const ball: PIXI.Sprite = PIXI.Sprite.from(
-            'assets/images/match/ball.png'
-        );
-
-        ball.x = center_x;
-        ball.y = center_y;
+        ball.x = POLE_COORDS.tl.x + ((POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 2);
+        ball.y = POLE_COORDS.tl.y + ((POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 2);
 
         return ball;
     }
