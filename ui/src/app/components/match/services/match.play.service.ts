@@ -1,42 +1,64 @@
 import {Injectable} from "@angular/core";
-import {Observable, Subject} from "rxjs";
-import {MatchDataResultModel} from "./match.data.service";
+import {ReplaySubject, Subject} from "rxjs";
+import {MatchDataResultModel, MatchDataService} from "./match.data.service";
+import {MatchLineupSetupCompleted} from "../play/models/models";
 
 @Injectable({
     providedIn: 'root',
 })
 export class MatchPlayService {
-    matchEvents= new Subject<MatchEvent>();
-    matchDataChanged= new Subject<MatchDataResultModel>();
+    currentState: MatchEvent = MatchEvent.None;
+
+    matchEvents = new Subject<MatchEvent>();
+    public matchEvents$ = this.matchEvents.asObservable();
+
+    lineupCompleted = new ReplaySubject<MatchLineupSetupCompleted>();
+    public lineupCompleted$ = this.lineupCompleted.asObservable();
+
+    public objectPositionChanged$ = new Subject<MatchDataResultModel>();
 
     currentTime = 0;
+    changeTimeStamp = 10;
 
-    constructor() {
+    constructor(private matchDataService: MatchDataService) {
     }
 
-    start(){
-        this.matchEvents.next(MatchEvent.Started);
+    init(leagueSlug: string, matchId: string){
+        this.matchDataService.init(leagueSlug, matchId).subscribe(lineupData => {
+            this.lineupCompleted.next(lineupData);
+        });
     }
 
-    pause(){
+    tick() {
+        this.incrementTime();
+
+        this.matchDataService.getData(this.currentTime).subscribe(data => {
+            this.objectPositionChanged$.next(data);
+        });
+    }
+
+    incrementTime(){
+        if (this.currentState === MatchEvent.InProcess) {
+            this.currentTime += this.changeTimeStamp;
+        }
+    }
+
+    start() {
+        this.matchEvents.next(MatchEvent.InProcess);
+    }
+
+    pause() {
         this.matchEvents.next(MatchEvent.Paused);
     }
 
-    stop(){
+    stop() {
         this.matchEvents.next(MatchEvent.Ended);
-    }
-
-    getMatchEventsSubscriptions(): Observable<MatchEvent> {
-        return this.matchEvents.asObservable();
-    }
-
-    getMatchDataChangedSubscriptions(): Observable<MatchEvent> {
-        return this.matchEvents.asObservable();
     }
 }
 
 export enum MatchEvent {
-    Started,
+    None,
+    InProcess,
     Paused,
     Ended
 }

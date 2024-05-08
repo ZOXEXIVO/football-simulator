@@ -1,41 +1,90 @@
 ﻿import {
-    AfterViewInit, ChangeDetectorRef,
+    AfterViewInit,
     Component,
-    ElementRef, EventEmitter,
+    ElementRef,
     NgZone,
-    OnDestroy, Output,
+    OnDestroy, OnInit,
     ViewChild
 } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import {Assets, Container, Graphics, Sprite, TextStyle} from "pixi.js";
-import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {UntilDestroy} from "@ngneat/until-destroy";
 import {PlayerModel} from "./models/models";
 import {MatchPlayService} from "../services/match.play.service";
+import {TitleService} from "../../../shared/services/title.service";
+import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
+import {MatchDataService} from "../services/match.data.service";
 
 @UntilDestroy()
 @Component({
     selector: 'play-match',
-    template: '<div #matchContainer style="min-height: 500px;"></div>'
+    templateUrl: './play.match.component.html',
+    styleUrls: ['./play.match.component.scss']
 })
-export class MatchPlayComponent implements AfterViewInit, OnDestroy {
+export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('matchContainer') matchContainer!: ElementRef;
 
     application: PIXI.Application | null = null;
 
     isDisposed = false;
 
+    lineupLoaded: boolean = false;
+
+    currentTime: number = 0;
+    matchTimeMs: number = -1;
+
     constructor(private zone: NgZone,
-                private matchDataService: MatchDataService,
                 private matchPlayService: MatchPlayService,
-                private changeDetectorRef: ChangeDetectorRef) {
-        console.log(PIXI.VERSION);
+                public matchDataService: MatchDataService,
+                private titleService: TitleService,
+                private topHeaderService: TopHeaderService) {
+    }
+
+    ngOnInit(): void {
+        this.matchPlayService.lineupCompleted$.subscribe(lineupData => {
+            this.matchTimeMs = lineupData.matchTimeMs;
+
+            const data = this.matchDataService.matchData;
+
+            this.titleService.setTitle(`${data.home_team.name} : ${data.away_team.name}`)
+            this.topHeaderService.setContent(`${data.home_team.name} ${data.score.home_goals} : ${data.score.away_goals} ${data.away_team.name}`, '', '/', false);
+            this.lineupLoaded = true;
+        });
     }
 
     public ngAfterViewInit(): void {
+        this.matchPlayService.lineupCompleted$.subscribe(lineupData => {
+            this.initGraphics();
+        });
 
-        this.initGraphics();
+        this.matchPlayService.objectPositionChanged$.subscribe(data => {
+            const ballObject = this.matchDataService.matchData.ball.obj!;
+
+            let ballCoord = this.translateToField(data.ball.x, data.ball.y);
+
+            ballObject.x = ballCoord.x;
+            ballObject.y = ballCoord.y;
+
+            this.matchDataService.matchData.players.forEach((player, index) => {
+                const playerObject = player.obj!;
+                const playerData = data.players.find(p => p.playerId == player.id);
+
+                if (playerData && playerData.position) {
+                    const playerPosition = playerData.position;
+
+                    if (playerPosition) {
+                        let playerTranslatedPositions = this.translateToField(
+                            playerPosition.x,
+                            playerPosition.y
+                        );
+
+                        playerObject.x = playerTranslatedPositions.x;
+                        playerObject.y = playerTranslatedPositions.y;
+                    }
+                }
+            });
+        });
     }
 
     initGraphics() {
@@ -74,47 +123,7 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
                         return;
                     }
 
-                    return;
-
-                    // this.matchDataService.matchData.players.forEach((player, index) => {
-                    //     const playerObject = player.obj!;
-                    //
-                    //     if (Number.isNaN(playerObject.y)) {
-                    //         playerObject.y = 0;
-                    //     }
-                    //     console.log("Id = " + player.id + ', xy= (' + playerObject.x, +',' + playerObject.y + ')')
-                    // });
-
-                    // this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
-                    //     const ballObject = this.matchDataService.matchData.ball.obj!;
-                    //
-                    //     let coord = this.translateToField(data.ball.x, data.ball.y);
-                    //
-                    //     ballObject.x = coord.x;
-                    //     ballObject.y = coord.y;
-                    //
-                    //     this.matchDataService.matchData.players.forEach((player, index) => {
-                    //         const playerObject = player.obj!;
-                    //         const playerData = data.players.find(p => p.playerId == player.id);
-                    //
-                    //         if (playerData && playerData.position) {
-                    //             const playerPosition = playerData.position;
-                    //
-                    //             if (playerPosition) {
-                    //                 let playerTranslatedPositions = this.translateToField(
-                    //                     playerPosition.x,
-                    //                     playerPosition.y
-                    //                 );
-                    //
-                    //                 playerObject.x = playerTranslatedPositions.x;
-                    //                 playerObject.y = playerTranslatedPositions.y;
-                    //             }
-                    //         }
-                    //     });
-                    //
-                    //     this.currentTime += 10;
-                    //     this.currentTimeChanged.next(this.currentTime);
-                    // });
+                    this.matchPlayService.tick();
                 });
 
                 this.application.render();
