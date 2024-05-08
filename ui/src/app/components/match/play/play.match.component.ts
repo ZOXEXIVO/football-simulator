@@ -12,6 +12,7 @@ import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {PlayerModel} from "./models/models";
+import {MatchPlayService} from "../services/match.play.service";
 
 @UntilDestroy()
 @Component({
@@ -25,13 +26,9 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
     isDisposed = false;
 
-    @Output()
-    @Output() currentTimeChanged = new EventEmitter<number>();
-
-    currentTime = 0;
-
     constructor(private zone: NgZone,
                 private matchDataService: MatchDataService,
+                private matchPlayService: MatchPlayService,
                 private changeDetectorRef: ChangeDetectorRef) {
         console.log(PIXI.VERSION);
     }
@@ -65,7 +62,6 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
                 this.matchDataService.matchData.players.forEach(player => {
                     let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
 
-                    debugger;
                     const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
 
                     player.obj = playerObj;

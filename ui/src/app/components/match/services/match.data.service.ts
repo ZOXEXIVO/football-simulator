@@ -77,12 +77,13 @@ export class MatchDataService {
                 let playerPosition = new ObjectPositionDto(0,
                     player.start_position[0],
                     player.start_position[1],
-                    0
+                    player.start_position[2],
                 );
 
                 const displayName = player.last_name;
 
-                this.matchData.players.push(new PlayerModel(player.id, displayName, false, [playerPosition]));
+                this.matchData.players.push(new PlayerModel(
+                    player.id, displayName, false, [playerPosition]));
             }
 
             // Squad
