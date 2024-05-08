@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {ReplaySubject, Subject} from "rxjs";
 import {MatchDataResultModel, MatchDataService} from "./match.data.service";
-import {MatchLineupSetupCompleted} from "../play/models/models";
+import {MatchLineupModel} from "../play/models/models";
 
 @Injectable({
     providedIn: 'root',
@@ -12,10 +12,14 @@ export class MatchPlayService {
     matchEvents = new Subject<MatchEvent>();
     public matchEvents$ = this.matchEvents.asObservable();
 
-    lineupCompleted = new ReplaySubject<MatchLineupSetupCompleted>();
+    lineupCompleted = new ReplaySubject<MatchLineupModel>();
     public lineupCompleted$ = this.lineupCompleted.asObservable();
 
-    public objectPositionChanged$ = new Subject<MatchDataResultModel>();
+    timeChanged = new Subject<number>();
+    public timeChanged$ = this.timeChanged.asObservable();
+
+    public objectPositionChanged = new Subject<MatchDataResultModel>();
+    public objectPositionChanged$ = this.objectPositionChanged.asObservable();
 
     currentTime = 0;
     changeTimeStamp = 10;
@@ -23,27 +27,29 @@ export class MatchPlayService {
     constructor(private matchDataService: MatchDataService) {
     }
 
-    init(leagueSlug: string, matchId: string){
+    init(leagueSlug: string, matchId: string) {
         this.matchDataService.init(leagueSlug, matchId).subscribe(lineupData => {
             this.lineupCompleted.next(lineupData);
         });
     }
 
     tick() {
-        this.incrementTime();
-
-        this.matchDataService.getData(this.currentTime).subscribe(data => {
-            this.objectPositionChanged$.next(data);
-        });
-    }
-
-    incrementTime(){
         if (this.currentState === MatchEvent.InProcess) {
-            this.currentTime += this.changeTimeStamp;
+            this.incrementTime();
+
+            this.matchDataService.getData(this.currentTime).subscribe(data => {
+                this.objectPositionChanged.next(data);
+            });
         }
     }
 
-    start() {
+    incrementTime() {
+        this.currentTime += this.changeTimeStamp;
+        this.timeChanged.next(this.currentTime);
+    }
+
+    startMatch() {
+        this.currentState = MatchEvent.InProcess;
         this.matchEvents.next(MatchEvent.InProcess);
     }
 

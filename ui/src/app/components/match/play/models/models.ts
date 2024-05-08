@@ -112,10 +112,14 @@ export class SquadPlayerModel {
     public team_slug: string;
 }
 
-export class MatchLineupSetupCompleted {
-    constructor(matchTimeMs: number) {
+export class MatchLineupModel {
+    constructor(matchTimeMs: number, ball: BallModel, players: PlayerModel[]) {
         this.matchTimeMs = matchTimeMs;
+        this.ball = ball;
+        this.players = players;
     }
 
     public matchTimeMs: number;
+    public ball: BallModel;
+    public players: PlayerModel[];
 }

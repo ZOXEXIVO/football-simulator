@@ -10,7 +10,7 @@ import * as PIXI from 'pixi.js';
 import {Assets, Container, Graphics, Sprite, TextStyle} from "pixi.js";
 import {POLE_COORDS} from "./models/constants";
 import {UntilDestroy} from "@ngneat/until-destroy";
-import {PlayerModel} from "./models/models";
+import {MatchLineupModel, PlayerModel} from "./models/models";
 import {MatchPlayService} from "../services/match.play.service";
 import {TitleService} from "../../../shared/services/title.service";
 import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
@@ -31,26 +31,55 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     lineupLoaded: boolean = false;
 
-    currentTime: number = 0;
     matchTimeMs: number = -1;
 
+    currentTime = 0;
+
     constructor(private zone: NgZone,
-                private matchPlayService: MatchPlayService,
+                public matchPlayService: MatchPlayService,
                 public matchDataService: MatchDataService,
                 private titleService: TitleService,
                 private topHeaderService: TopHeaderService) {
     }
 
     ngOnInit(): void {
-        this.matchPlayService.lineupCompleted$.subscribe(lineupData => {
+        this.matchPlayService.lineupCompleted$.subscribe(async lineupData => {
             this.matchTimeMs = lineupData.matchTimeMs;
 
             const data = this.matchDataService.matchData;
 
             this.titleService.setTitle(`${data.home_team.name} : ${data.away_team.name}`)
             this.topHeaderService.setContent(`${data.home_team.name} ${data.score.home_goals} : ${data.score.away_goals} ${data.away_team.name}`, '', '/', false);
+
             this.lineupLoaded = true;
+
+            await this.initLineupGraphics(lineupData);
         });
+
+        this.matchPlayService.timeChanged$.subscribe(time => {
+            this.currentTime = time;
+        });
+    }
+
+    async initLineupGraphics(lineupData: MatchLineupModel){
+        // create ball
+
+        const ball = await this.createBall(lineupData);
+        this.matchDataService.matchData.ball.obj = ball;
+        this.application!.stage.addChild(ball);
+
+        // create players
+        lineupData.players.forEach(player => {
+            let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
+
+            const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
+
+            this.matchDataService.setPlayerGraphicsObject(player.id, playerObj);
+
+            this.application!.stage.addChild(playerObj);
+        });
+
+       // this.matchPlayService.startMatch();
     }
 
     public ngAfterViewInit(): void {
@@ -68,6 +97,11 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
             this.matchDataService.matchData.players.forEach((player, index) => {
                 const playerObject = player.obj!;
+
+                if(!playerObject){
+                    return;
+                }
+
                 const playerData = data.players.find(p => p.playerId == player.id);
 
                 if (playerData && playerData.position) {
@@ -99,24 +133,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                 this.matchContainer.nativeElement.appendChild(this.application.canvas);
 
                 this.application.stage.addChild(await this.createBackground(this.application));
-
-                const ball = await this.createBall();
-
-                this.matchDataService.matchData.ball.obj = ball;
-
-                this.application.stage.addChild(ball);
-
-                const app = this.application;
-
-                this.matchDataService.matchData.players.forEach(player => {
-                    let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
-
-                    const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
-
-                    player.obj = playerObj;
-
-                    app.stage.addChild(playerObj);
-                });
 
                 this.application.ticker.add((delta) => {
                     if (this.isDisposed) {
@@ -188,12 +204,12 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         return background;
     }
 
-    async createBall(): Promise<Sprite> {
+    async createBall(lineupData: MatchLineupModel): Promise<Sprite> {
         const texture = await Assets.load('assets/images/match/ball.png');
         const ball: PIXI.Sprite = new Sprite(texture);
 
-        ball.x = POLE_COORDS.tl.x + ((POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 2);
-        ball.y = POLE_COORDS.tl.y + ((POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 2);
+        ball.x = lineupData.ball.data[0].x;
+        ball.y = lineupData.ball.data[0].y;
 
         return ball;
     }

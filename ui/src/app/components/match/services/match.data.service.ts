@@ -3,12 +3,13 @@ import {finalize, Observable, of, Subject, switchMap} from "rxjs";
 import {MatchDto, MatchService, ObjectPositionDto} from "./match.api.service";
 import {
     BallModel,
-    MatchLineupSetupCompleted,
+    MatchLineupModel,
     MatchModel,
     PlayerModel,
     SquadPlayerModel,
     TeamModel
 } from "../play/models/models";
+import {Container} from "pixi.js";
 
 @Injectable({
     providedIn: 'root',
@@ -30,11 +31,11 @@ export class MatchDataService {
 
     }
 
-    init(leagueSlug: string, matchId: string): Observable<MatchLineupSetupCompleted> {
+    init(leagueSlug: string, matchId: string): Observable<MatchLineupModel> {
         this.leagueSlug = leagueSlug;
         this.matchId = matchId;
 
-        const subject = new Subject<MatchLineupSetupCompleted>();
+        const subject = new Subject<MatchLineupModel>();
 
         this.matchService.lineup(this.leagueSlug, this.matchId).subscribe(matchLineupData => {
             this.matchData.score.home_goals = matchLineupData.score.home_goals;
@@ -51,7 +52,8 @@ export class MatchDataService {
             );
 
             // setup ball
-            this.matchData.ball = new BallModel([
+            const ballData =
+             new BallModel([
                 new ObjectPositionDto(0,
                     matchLineupData.ball.start_position[0],
                     matchLineupData.ball.start_position[1],
@@ -59,7 +61,10 @@ export class MatchDataService {
                 )
             ]);
 
+            this.matchData.ball = ballData;
+
             // setup players
+            const playersData: PlayerModel[] = [];
 
             for (const player of matchLineupData.home_squad.main) {
                 let playerPosition = new ObjectPositionDto(0,
@@ -70,8 +75,12 @@ export class MatchDataService {
 
                 const displayName = player.last_name;
 
-                this.matchData.players.push(new PlayerModel(player.id, displayName, true, [playerPosition]));
+                playersData.push(new PlayerModel(player.id, displayName, true, [playerPosition]));
             }
+
+            this.matchData.players = playersData;
+
+            subject.next(new MatchLineupModel(matchLineupData.match_time_ms, ballData, playersData));
 
             for (const player of matchLineupData.away_squad.main) {
                 let playerPosition = new ObjectPositionDto(0,
@@ -135,14 +144,21 @@ export class MatchDataService {
                     awaySubsSquadPlayer.team_slug
                 ));
             }
-
-            subject.next(new MatchLineupSetupCompleted(matchLineupData.match_time_ms));
         });
 
         return subject.asObservable();
     }
 
-    updateMatchData(matchDtaDto: MatchDto) {
+    setPlayerGraphicsObject(playerId: number, container: Container){
+        const player = this.matchData.players.find((player) => player.id == playerId);
+        if(player) {
+            player.obj = container;
+        } else {
+            console.error('player not found, playerId = ' + playerId);
+        }
+    }
+
+    updateLocalData(matchDtaDto: MatchDto) {
         // players
         for (const playerData of this.matchData.players) {
             for (const [playerId, data] of Object.entries(matchDtaDto.player_data)) {
@@ -161,7 +177,7 @@ export class MatchDataService {
         }
     }
 
-    loadData(): Observable<any> {
+    loadRemoteData(): Observable<any> {
         const subject = new Subject<any>();
 
         if (this.loadDataFinished) {
@@ -176,7 +192,7 @@ export class MatchDataService {
                 this.loadDataFinished = true;
             }
 
-            this.updateMatchData(matchData);
+            this.updateLocalData(matchData);
 
             this.lastLoadedTimestamp = end_timestamp;
 
@@ -190,7 +206,7 @@ export class MatchDataService {
         if (timestamp + 100 > this.lastLoadedTimestamp) {
             if (!this.isBusy) {
                 this.isBusy = true;
-                return this.loadData().pipe(
+                return this.loadRemoteData().pipe(
                     switchMap(() => {
                         return this.getLocalData(timestamp).pipe(finalize(() => {
                             this.isBusy = false;
