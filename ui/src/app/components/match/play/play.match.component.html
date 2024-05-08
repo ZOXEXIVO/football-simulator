@@ -45,10 +45,6 @@
                         {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
                     </a>
                 </li>
-                <li class="list-group-item bg-transparent"
-                    *ngFor="let player of this.matchDataService.matchData.players">
-                   ### {{ player.data[0].x }} {{ player.data[0].y }}
-                </li>
             </ul>
             <hr/>
             <ul class="list-group squad-list">
