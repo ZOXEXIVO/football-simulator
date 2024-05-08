@@ -79,7 +79,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
             this.application!.stage.addChild(playerObj);
         });
 
-       // this.matchPlayService.startMatch();
+        this.matchPlayService.startMatch();
     }
 
     public ngAfterViewInit(): void {
@@ -148,11 +148,11 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     translateToField(x: number, y: number) {
-        let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 840;
-        let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 545;
+        let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 1730;
+        let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 1400;
 
         return {
-            x: POLE_COORDS.tl.x + (x * scaleX),
+            x: POLE_COORDS.tl.x + (x * scaleX) - 20,
             y: POLE_COORDS.tl.y + (y * scaleY)
         }
     }
@@ -169,14 +169,14 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         const circle: Graphics = new PIXI.Graphics();
 
         circle
-            .circle(x, y, 10)
+            .circle(x, y, 12)
             .fill(player.isHome ? homeColor : awayColor);
 
         container.addChild(circle);
 
         const style = new TextStyle({
             fontFamily: 'Arial',
-            fontSize: 12,
+            fontSize: 13,
             fill: 'white',
             wordWrap: false,
             align: "center"
@@ -184,7 +184,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
         const text = new PIXI.Text({text: player.displayName, style});
 
-        text.x = x - 30;
+        text.x = x - 40;
         text.y = y + 10;
 
         text.anchor.set(-0.2);

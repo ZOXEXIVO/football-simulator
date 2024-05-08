@@ -80,6 +80,7 @@ export class MatchDataService {
 
             this.matchData.players = playersData;
 
+            // push event to ui
             subject.next(new MatchLineupModel(matchLineupData.match_time_ms, ballData, playersData));
 
             for (const player of matchLineupData.away_squad.main) {

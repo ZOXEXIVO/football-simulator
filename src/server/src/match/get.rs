@@ -47,11 +47,6 @@ pub async fn match_get_action(
 
     let result_details = match_result.result_details.as_ref().unwrap();
 
-    println!(
-        "Query, {} {}",
-        query_params.start_timestamp, query_params.end_timestamp
-    );
-
     let result = MatchDetailsResponse {
         player_data: result_details
             .position_data
