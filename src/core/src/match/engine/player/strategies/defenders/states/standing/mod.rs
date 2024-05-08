@@ -1,5 +1,5 @@
-use nalgebra::Vector3;
 use crate::common::NeuralNetwork;
+use nalgebra::Vector3;
 
 use crate::r#match::decision::DefenderDecision;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
@@ -24,6 +24,15 @@ impl DefenderStandingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
+        let test = SteeringBehavior::Arrive {
+            target: tick_context.objects_positions.ball_position,
+            slowing_distance: 10.0,
+        }
+        .calculate(player)
+        .velocity;
+
+        return StateChangeResult::with_velocity(test);
+
         // Analyze the game situation using the neural network
         let nn_input = GameSituationInput::from_contexts(context, player, tick_context).to_input();
         let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
@@ -98,21 +107,19 @@ impl DefenderStandingState {
                     target: ball_position,
                     slowing_distance: 10.0,
                 }
-                    .calculate(player)
-                    .velocity;
+                .calculate(player)
+                .velocity;
 
                 StateChangeResult::with(PlayerState::Running, velocity)
             }
-            DefenderDecision::StandStill => {
-                StateChangeResult::none()
-            }
+            DefenderDecision::StandStill => StateChangeResult::none(),
             DefenderDecision::AdjustPosition => {
                 let velocity = SteeringBehavior::Arrive {
                     target: player.start_position,
                     slowing_distance: 5.0,
                 }
-                    .calculate(player)
-                    .velocity;
+                .calculate(player)
+                .velocity;
 
                 StateChangeResult::with(PlayerState::Walking, velocity)
             }
@@ -123,8 +130,8 @@ impl DefenderStandingState {
                     target: goal_position,
                     slowing_distance: 10.0,
                 }
-                    .calculate(player)
-                    .velocity;
+                .calculate(player)
+                .velocity;
 
                 StateChangeResult::with(PlayerState::Running, velocity)
             }
@@ -135,18 +142,15 @@ impl DefenderStandingState {
                     target: opponent_position,
                     slowing_distance: 5.0,
                 }
-                    .calculate(player)
-                    .velocity;
+                .calculate(player)
+                .velocity;
 
                 StateChangeResult::with(PlayerState::Walking, velocity)
             }
-            _ => {
-                StateChangeResult::none()
-            }
+            _ => StateChangeResult::none(),
         }
     }
 }
-
 
 // Helper function to calculate the goal position based on the player and game context
 fn calculate_goal_position(player: &MatchPlayer, context: &MatchContext) -> Vector3<f32> {

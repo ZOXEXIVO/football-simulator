@@ -42,8 +42,11 @@ impl MatchPositionData {
     pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, position: Vector3<f32>) {
         if let Some(player_data) = self.player_positions.get_mut(&player_id) {
             let last_data = player_data.last().unwrap();
-            let position_data = PositionDataItem::new(timestamp, position);
-            if *last_data != position_data {
+            if last_data.position.x != position.x
+                || last_data.position.y != position.y
+                || last_data.position.z != position.z
+            {
+                let position_data = PositionDataItem::new(timestamp, position);
                 player_data.push(position_data);
             }
         } else {

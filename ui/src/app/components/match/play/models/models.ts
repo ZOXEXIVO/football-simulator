@@ -1,5 +1,5 @@
 ﻿import {ObjectPositionDto} from "../../services/match.api.service";
-import {Graphics, Sprite} from "pixi.js";
+import {Container, Graphics, Sprite} from "pixi.js";
 
 export class MatchModel {
     constructor() {
@@ -45,8 +45,9 @@ export class ScoreModel {
 }
 
 export class PlayerModel {
-    constructor(id: number, idHome: boolean, data: ObjectPositionDto[]) {
+    constructor(id: number, displayName: string, idHome: boolean, data: ObjectPositionDto[]) {
         this.id = id;
+        this.displayName = displayName;
         this.isHome = idHome;
         this.obj = null;
         this.currentCoordIdx = 0;
@@ -54,8 +55,9 @@ export class PlayerModel {
     }
 
     public id: number;
+    public displayName: string;
     public isHome: boolean;
-    public obj: Graphics | null;
+    public obj: Container | null;
     public currentCoordIdx: number;
     public data: ObjectPositionDto[];
 }

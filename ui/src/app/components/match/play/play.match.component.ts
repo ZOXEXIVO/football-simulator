@@ -1,17 +1,17 @@
 ﻿import {
     AfterViewInit, ChangeDetectorRef,
     Component,
-    ElementRef,
-    Input,
+    ElementRef, EventEmitter,
     NgZone,
-    OnDestroy,
+    OnDestroy, Output,
     ViewChild
 } from '@angular/core';
 import * as PIXI from 'pixi.js';
-import {Assets, Graphics, Sprite} from "pixi.js";
+import {Assets, Container, Graphics, Sprite, TextStyle} from "pixi.js";
 import {MatchDataService} from "../services/match.data.service";
 import {POLE_COORDS} from "./models/constants";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {PlayerModel} from "./models/models";
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,9 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
 
     isDisposed = false;
 
-    @Input()
+    @Output()
+    @Output() currentTimeChanged = new EventEmitter<number>();
+
     currentTime = 0;
 
     constructor(private zone: NgZone,
@@ -53,81 +55,73 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
                 this.application.stage.addChild(await this.createBackground(this.application));
 
                 const ball = await this.createBall();
+
                 this.matchDataService.matchData.ball.obj = ball;
+
                 this.application.stage.addChild(ball);
+
+                const app = this.application;
 
                 this.matchDataService.matchData.players.forEach(player => {
                     let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
-                    const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player.isHome)
+
+                    debugger;
+                    const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
 
                     player.obj = playerObj;
 
-                    this.application?.stage.addChild(playerObj);
+                    app.stage.addChild(playerObj);
                 });
-
-                // console.log('players count = ' + this.matchDataService.matchData.players.length);
-
-                // DEBUG
-                // this.application.stage.addChild(this.createPlayer(POLE_COORDS.tl.x, POLE_COORDS.tl.y));
-                // this.application.stage.addChild(this.createPlayer(POLE_COORDS.tr.x, POLE_COORDS.tr.y));
-                // this.application.stage.addChild(this.createPlayer(POLE_COORDS.bl.x, POLE_COORDS.bl.y));
-                // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
 
                 this.application.ticker.add((delta) => {
                     if (this.isDisposed) {
                         return;
                     }
 
-                    // console.log('time=' + this.currentTime);
+                    return;
 
-                    this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
-                        const ballObject = this.matchDataService.matchData.ball.obj!;
+                    // this.matchDataService.matchData.players.forEach((player, index) => {
+                    //     const playerObject = player.obj!;
+                    //
+                    //     if (Number.isNaN(playerObject.y)) {
+                    //         playerObject.y = 0;
+                    //     }
+                    //     console.log("Id = " + player.id + ', xy= (' + playerObject.x, +',' + playerObject.y + ')')
+                    // });
 
-                        let coord = this.translateToField(data.ball.x, data.ball.y);
-
-                        //if(ballObject.x != coord.x && ballObject.y != coord.y){
-                        //console.log(`ball move x = ${ballObject.x}, y = ${ballObject.y}`);
-
-                        ballObject.x = coord.x;
-                        ballObject.y = coord.y;
-
-                        const scaleFactor = (data.ball.z + 20) / 20;
-
-                        ballObject.scale.set(scaleFactor, scaleFactor);
-                        //}
-
-                        this.matchDataService.matchData.players.forEach((player, index) => {
-                            const playerObject = player.obj!;
-                            const playerData = data.players.find(p => p.playerId == player.id);
-
-                            if (playerData && playerData.position) {
-
-                                const playerPosition = playerData.position;
-
-                                if (index == 0) {
-                                    //console.log(`time = ${this.currentTime}: player position = (${playerPosition.x}, ${playerPosition.y})`);
-                                }
-
-                                if (playerPosition) {
-                                    let playerTranslatedPositions = this.translateToField(
-                                        playerPosition.x,
-                                        playerPosition.y
-                                    );
-
-                                    playerObject.x = playerTranslatedPositions.x;
-                                    playerObject.y = playerTranslatedPositions.y;
-
-                                    const scaleFactor = (playerPosition.z + 20) / 20;
-
-                                    playerObject.scale.set(scaleFactor, scaleFactor);
-                                }
-                            }
-                        });
-                    });
+                    // this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
+                    //     const ballObject = this.matchDataService.matchData.ball.obj!;
+                    //
+                    //     let coord = this.translateToField(data.ball.x, data.ball.y);
+                    //
+                    //     ballObject.x = coord.x;
+                    //     ballObject.y = coord.y;
+                    //
+                    //     this.matchDataService.matchData.players.forEach((player, index) => {
+                    //         const playerObject = player.obj!;
+                    //         const playerData = data.players.find(p => p.playerId == player.id);
+                    //
+                    //         if (playerData && playerData.position) {
+                    //             const playerPosition = playerData.position;
+                    //
+                    //             if (playerPosition) {
+                    //                 let playerTranslatedPositions = this.translateToField(
+                    //                     playerPosition.x,
+                    //                     playerPosition.y
+                    //                 );
+                    //
+                    //                 playerObject.x = playerTranslatedPositions.x;
+                    //                 playerObject.y = playerTranslatedPositions.y;
+                    //             }
+                    //         }
+                    //     });
+                    //
+                    //     this.currentTime += 10;
+                    //     this.currentTimeChanged.next(this.currentTime);
+                    // });
                 });
 
                 this.application.render();
-                //this.changeDetectorRef.detectChanges();
             }
         );
     }
@@ -142,17 +136,41 @@ export class MatchPlayComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    createPlayer(x: number, y: number, isHome: boolean): Graphics {
-        const homeColor = 0x0000ff;
-        const awayColor = 0xff0000;
+    createPlayer(x: number, y: number, player: PlayerModel): Container {
+        const container = new Container();
+
+        container.x = x;
+        container.y = y;
+
+        const homeColor = 0x6d02f7;
+        const awayColor = 0xc93ecf;
 
         const circle: Graphics = new PIXI.Graphics();
 
         circle
-            .fill(isHome ? homeColor : awayColor)
-            .circle(x, y, 6);
+            .circle(x, y, 10)
+            .fill(player.isHome ? homeColor : awayColor);
 
-        return circle;
+        container.addChild(circle);
+
+        const style = new TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fill: 'white',
+            wordWrap: false,
+            align: "center"
+        });
+
+        const text = new PIXI.Text({text: player.displayName, style});
+
+        text.x = x - 30;
+        text.y = y + 10;
+
+        text.anchor.set(-0.2);
+
+        container.addChild(text);
+
+        return container;
     }
 
     async createBackground(app: PIXI.Application) {

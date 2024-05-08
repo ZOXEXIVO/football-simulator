@@ -91,8 +91,6 @@ async fn main() {
         field.ball.position = ball.position;
         field.ball.velocity = ball.velocity;
 
-        //println!("player: {:?}", player.position);
-
         next_frame().await
     }
 }
