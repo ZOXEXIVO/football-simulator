@@ -1,5 +1,5 @@
 # BUILD FRONTEND
-FROM node:19-alpine3.18 AS build-frontend
+FROM node:22-alpine3.19 AS build-frontend
 
 WORKDIR /app
 
