@@ -99,7 +99,7 @@ fn main() {
         (vec![1f64, 12f64, 122f64, 112f64], vec![0f64, 0f64, 0f64, 0f64, 0f64,1f64])
     ];
 
-    let error = NeuralNetwork::train(&mut net, &training_data, 0.06, 0.1, 100000);
+    let error = NeuralNetwork::train(&mut net, &training_data, 0.06, 0.1, 1000000);
 
     println!("error: {}", error);
 

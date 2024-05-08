@@ -10,6 +10,7 @@ use core::club::player::PlayerPositionType;
 use core::club::team::tactics::{Tactics, TacticsPositioning};
 use core::r#match::squad::TeamSquad;
 use core::r#match::MatchObjectsPositions;
+use core::r#match::MatchPlayerCollection;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
@@ -25,11 +26,13 @@ async fn main() {
     let home_squad = get_home_squad();
     let away_squad = get_away_squad();
 
+    let players = MatchPlayerCollection::from_squads(&home_squad, &away_squad);
+
     let mut field = MatchField::new(width as usize, height as usize, home_squad, away_squad);
 
     let field_size = field.size.clone();
 
-    let mut context = MatchContext::new(&field_size);
+    let mut context = MatchContext::new(&field_size, players);
 
     loop {
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
@@ -88,8 +91,6 @@ async fn main() {
         field.ball.position = ball.position;
         field.ball.velocity = ball.velocity;
 
-        //println!("player: {:?}", player.position);
-
         next_frame().await
     }
 }
@@ -111,7 +112,7 @@ pub fn get_home_squad() -> TeamSquad {
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(player, player.position()))
+        .map(|player| MatchPlayer::from_player(1, player, player.position()))
         .collect();
 
     let home_squad = TeamSquad {
@@ -142,7 +143,7 @@ pub fn get_away_squad() -> TeamSquad {
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(player, player.position()))
+        .map(|player| MatchPlayer::from_player(2, player, player.position()))
         .collect();
 
     let away_squad = TeamSquad {

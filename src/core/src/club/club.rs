@@ -41,7 +41,7 @@ impl Club {
             location,
             finance,
             status,
-            academy: academy,
+            academy,
             mood: ClubMood::default(),
             board: ClubBoard::new(),
             teams,

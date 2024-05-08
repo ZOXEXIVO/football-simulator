@@ -1,187 +1,221 @@
 ﻿import {
-  AfterViewInit, ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  NgZone,
-  OnDestroy,
-  ViewChild
+    AfterViewInit,
+    Component,
+    ElementRef,
+    NgZone,
+    OnDestroy, OnInit,
+    ViewChild
 } from '@angular/core';
 import * as PIXI from 'pixi.js';
-import {Sprite} from '@pixi/sprite';
-import {Graphics} from "pixi.js";
-import {MatchDataService} from "../services/match.data.service";
+import {Assets, Container, Graphics, Sprite, TextStyle} from "pixi.js";
 import {POLE_COORDS} from "./models/constants";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {UntilDestroy} from "@ngneat/until-destroy";
+import {MatchLineupModel, PlayerModel} from "./models/models";
+import {MatchPlayService} from "../services/match.play.service";
+import {TitleService} from "../../../shared/services/title.service";
+import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
+import {MatchDataService} from "../services/match.data.service";
 
 @UntilDestroy()
 @Component({
-  selector: 'play-match',
-  template: '<div #matchContainer style="min-height: 500px;"></div>'
+    selector: 'play-match',
+    templateUrl: './play.match.component.html',
+    styleUrls: ['./play.match.component.scss']
 })
-export class MatchPlayComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('matchContainer') matchContainer!: ElementRef;
+export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
+    @ViewChild('matchContainer') matchContainer!: ElementRef;
 
-  application: PIXI.Application | null = null;
+    application: PIXI.Application | null = null;
 
-  isDisposed = false;
+    isDisposed = false;
 
-  @Input()
-  currentTime = 0;
+    lineupLoaded: boolean = false;
 
-  constructor(private zone: NgZone,
-              private matchDataService: MatchDataService,
-              private changeDetectorRef: ChangeDetectorRef) {
-    console.log(PIXI.VERSION);
-  }
+    matchTimeMs: number = -1;
 
-  public ngAfterViewInit(): void {
+    currentTime = 0;
 
-    this.initGraphics();
-  }
+    constructor(private zone: NgZone,
+                public matchPlayService: MatchPlayService,
+                public matchDataService: MatchDataService,
+                private titleService: TitleService,
+                private topHeaderService: TopHeaderService) {
+    }
 
-  initGraphics() {
-    this.zone.runOutsideAngular(
-      (): void => {
-        this.application = new PIXI.Application({
-          antialias: true,
-          //resizeTo: this.matchContainer.nativeElement
+    ngOnInit(): void {
+        this.matchPlayService.lineupCompleted$.subscribe(async lineupData => {
+            this.matchTimeMs = lineupData.matchTimeMs;
+
+            const data = this.matchDataService.matchData;
+
+            this.titleService.setTitle(`${data.home_team.name} : ${data.away_team.name}`)
+            this.topHeaderService.setContent(`${data.home_team.name} ${data.score.home_goals} : ${data.score.away_goals} ${data.away_team.name}`, '', '/', false);
+
+            this.lineupLoaded = true;
+
+            await this.initLineupGraphics(lineupData);
         });
 
-        this.matchContainer.nativeElement.appendChild(this.application.view);
+        this.matchPlayService.timeChanged$.subscribe(time => {
+            this.currentTime = time;
+        });
+    }
 
-        this.application.stage.addChild(this.createBackground(this.application));
+    async initLineupGraphics(lineupData: MatchLineupModel){
+        // create ball
 
-        const ball = this.createBall();
+        const ball = await this.createBall(lineupData);
         this.matchDataService.matchData.ball.obj = ball;
-        this.application.stage.addChild(ball);
+        this.application!.stage.addChild(ball);
 
-        this.matchDataService.matchData.players.forEach(player => {
-          let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
-          const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player.isHome)
+        // create players
+        lineupData.players.forEach(player => {
+            let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
 
-          player.obj = playerObj;
+            const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
 
-          this.application?.stage.addChild(playerObj);
+            this.matchDataService.setPlayerGraphicsObject(player.id, playerObj);
+
+            this.application!.stage.addChild(playerObj);
         });
 
-        // console.log('players count = ' + this.matchDataService.matchData.players.length);
+        this.matchPlayService.startMatch();
+    }
 
-        // DEBUG
-        // this.application.stage.addChild(this.createPlayer(POLE_COORDS.tl.x, POLE_COORDS.tl.y));
-        // this.application.stage.addChild(this.createPlayer(POLE_COORDS.tr.x, POLE_COORDS.tr.y));
-        // this.application.stage.addChild(this.createPlayer(POLE_COORDS.bl.x, POLE_COORDS.bl.y));
-        // this.application.stage.addChild(this.createPlayer(POLE_COORDS.br.x, POLE_COORDS.br.y));
+    public ngAfterViewInit(): void {
+        this.matchPlayService.lineupCompleted$.subscribe(lineupData => {
+            this.initGraphics();
+        });
 
-        this.application.ticker.add((delta) => {
-          if(this.isDisposed){
-            return;
-          }
-
-          // console.log('time=' + this.currentTime);
-
-          this.matchDataService.getData(this.currentTime).pipe(untilDestroyed(this)).subscribe(data => {
+        this.matchPlayService.objectPositionChanged$.subscribe(data => {
             const ballObject = this.matchDataService.matchData.ball.obj!;
 
-            let coord = this.translateToField(data.ball.x, data.ball.y);
+            let ballCoord = this.translateToField(data.ball.x, data.ball.y);
 
-            //if(ballObject.x != coord.x && ballObject.y != coord.y){
-              //console.log(`ball move x = ${ballObject.x}, y = ${ballObject.y}`);
-
-              ballObject.x = coord.x;
-              ballObject.y = coord.y;
-
-              const scaleFactor= (data.ball.z + 20) / 20;
-
-              ballObject.scale.set(scaleFactor, scaleFactor);
-            //}
+            ballObject.x = ballCoord.x;
+            ballObject.y = ballCoord.y;
 
             this.matchDataService.matchData.players.forEach((player, index) => {
-              const playerObject = player.obj!;
-              const playerData = data.players.find(p => p.playerId == player.id);
+                const playerObject = player.obj!;
 
-              if(playerData && playerData.position){
-
-                const playerPosition = playerData.position;
-
-                if(index == 0){
-                  //console.log(`time = ${this.currentTime}: player position = (${playerPosition.x}, ${playerPosition.y})`);
+                if(!playerObject){
+                    return;
                 }
 
-                if(playerPosition){
-                  let playerTranslatedPositions = this.translateToField(
-                    playerPosition.x,
-                    playerPosition.y
-                  );
+                const playerData = data.players.find(p => p.playerId == player.id);
 
-                  playerObject.x = playerTranslatedPositions.x;
-                  playerObject.y = playerTranslatedPositions.y;
+                if (playerData && playerData.position) {
+                    const playerPosition = playerData.position;
 
-                  const scaleFactor= (playerPosition.z + 20) / 20;
+                    if (playerPosition) {
+                        let playerTranslatedPositions = this.translateToField(
+                            playerPosition.x,
+                            playerPosition.y
+                        );
 
-                  playerObject.scale.set(scaleFactor, scaleFactor);
+                        playerObject.x = playerTranslatedPositions.x;
+                        playerObject.y = playerTranslatedPositions.y;
+                    }
                 }
-              }
             });
-          });
+        });
+    }
+
+    initGraphics() {
+        this.zone.runOutsideAngular(
+            async (): Promise<void> => {
+                this.application = new PIXI.Application();
+
+                await this.application.init({
+                    antialias: true,
+                });
+
+                this.matchContainer.nativeElement.appendChild(this.application.canvas);
+
+                this.application.stage.addChild(await this.createBackground(this.application));
+
+                this.application.ticker.add((delta) => {
+                    if (this.isDisposed) {
+                        return;
+                    }
+
+                    this.matchPlayService.tick();
+                });
+
+                this.application.render();
+            }
+        );
+    }
+
+    translateToField(x: number, y: number) {
+        let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 1730;
+        let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 1400;
+
+        return {
+            x: POLE_COORDS.tl.x + (x * scaleX) - 20,
+            y: POLE_COORDS.tl.y + (y * scaleY)
+        }
+    }
+
+    createPlayer(x: number, y: number, player: PlayerModel): Container {
+        const container = new Container();
+
+        container.x = x;
+        container.y = y;
+
+        const homeColor = 0x6d02f7;
+        const awayColor = 0xc93ecf;
+
+        const circle: Graphics = new PIXI.Graphics();
+
+        circle
+            .circle(x, y, 12)
+            .fill(player.isHome ? homeColor : awayColor);
+
+        container.addChild(circle);
+
+        const style = new TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 13,
+            fill: 'white',
+            wordWrap: false,
+            align: "center"
         });
 
-        this.application.render();
-        //this.changeDetectorRef.detectChanges();
-      }
-    );
-  }
+        const text = new PIXI.Text({text: player.displayName, style});
 
-  translateToField(x: number, y: number) {
-    let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 840;
-    let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 545;
+        text.x = x - 40;
+        text.y = y + 10;
 
-    return {
-      x: POLE_COORDS.tl.x + (x * scaleX),
-      y: POLE_COORDS.tl.y + (y * scaleY)
+        text.anchor.set(-0.2);
+
+        container.addChild(text);
+
+        return container;
     }
-  }
 
-  createPlayer(x: number, y: number, isHome: boolean) : Graphics {
-    const homeColor = 0x0000ff;
-    const awayColor = 0xff0000;
+    async createBackground(app: PIXI.Application) {
+        const landscapeTexture = await Assets.load('assets/images/match/field.svg');
+        const background = new PIXI.Sprite(landscapeTexture);
 
-    const circle: Graphics = new PIXI.Graphics();
+        background.width = app.screen.width;
+        background.height = app.screen.height;
 
-    circle.beginFill(isHome? homeColor : awayColor);
-    circle.drawCircle(x, y, 6);
-    circle.endFill();
+        return background;
+    }
 
-    return circle;
-  }
+    async createBall(lineupData: MatchLineupModel): Promise<Sprite> {
+        const texture = await Assets.load('assets/images/match/ball.png');
+        const ball: PIXI.Sprite = new Sprite(texture);
 
-  createBackground(app: PIXI.Application) {
-    // Background
-    const landscapeTexture = PIXI.Texture.from('assets/images/match/field.svg');
+        ball.x = lineupData.ball.data[0].x;
+        ball.y = lineupData.ball.data[0].y;
 
-    const background = new PIXI.Sprite(landscapeTexture);
-    background.width = app.screen.width;
-    background.height = app.screen.height;
+        return ball;
+    }
 
-    return background;
-  }
-
-  createBall(): Sprite {
-    let center_x = POLE_COORDS.tl.x + ((POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 2);
-    let center_y = POLE_COORDS.tl.y + ((POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 2);
-
-    const ball: PIXI.Sprite = PIXI.Sprite.from(
-      'assets/images/match/ball.png'
-    );
-
-    ball.x = center_x;
-    ball.y = center_y;
-
-    return ball;
-  }
-
-  ngOnDestroy(): void {
-    this.isDisposed = true;
-    this.application?.ticker.stop();
-  }
+    ngOnDestroy(): void {
+        this.isDisposed = true;
+        this.application?.ticker.stop();
+    }
 }

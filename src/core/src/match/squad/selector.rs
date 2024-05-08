@@ -27,11 +27,13 @@ impl SquadSelector {
 
         PlayerSelectionResult {
             main_squad: SquadSelector::select_main_squad(
+                team.id,
                 &mut players,
                 staff,
                 current_tactics.borrow(),
             ),
             substitutes: SquadSelector::select_substitutes(
+                team.id,
                 &mut players,
                 staff,
                 current_tactics.borrow(),
@@ -40,6 +42,7 @@ impl SquadSelector {
     }
 
     pub fn select_main_squad(
+        team_id: u32,
         players: &mut Vec<&Player>,
         staff: &Staff,
         tactics: &Tactics,
@@ -64,7 +67,7 @@ impl SquadSelector {
             }
 
             if let Some(player) = best_player {
-                squad.push(MatchPlayer::from_player(player, *player_position));
+                squad.push(MatchPlayer::from_player(team_id, player, *player_position));
                 players.retain(|p| p.id != player.id);
             }
         }
@@ -73,6 +76,7 @@ impl SquadSelector {
     }
 
     pub fn select_substitutes(
+        team_id: u32,
         players: &mut Vec<&Player>,
         staff: &Staff,
         tactics: &Tactics,
@@ -85,6 +89,7 @@ impl SquadSelector {
 
         if let Some(goalkeeper) = goalkeeper {
             squad.push(MatchPlayer::from_player(
+                team_id,
                 goalkeeper,
                 PlayerPositionType::Goalkeeper,
             ));
@@ -106,7 +111,7 @@ impl SquadSelector {
             }
 
             if let Some(player) = best_player {
-                squad.push(MatchPlayer::from_player(player, *player_position));
+                squad.push(MatchPlayer::from_player(team_id, player, *player_position));
                 players.retain(|p| p.id != player.id);
             }
         }

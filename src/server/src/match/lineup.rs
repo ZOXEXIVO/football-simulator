@@ -75,10 +75,7 @@ pub async fn match_lineup_action(
 
     let league = simulator_data.league(league_id).unwrap();
 
-    let match_result = league
-        .matches
-        .get(route_params.match_id)
-        .unwrap();
+    let match_result = league.matches.get(route_params.match_id).unwrap();
 
     let home_team = simulator_data.team(match_result.home_team_id).unwrap();
     let away_team = simulator_data.team(match_result.away_team_id).unwrap();
@@ -153,7 +150,7 @@ fn to_lineup_player<'p>(
 
     match position {
         Some(position) => {
-            let position = position.first().unwrap();
+            let first_position = position.first().unwrap();
 
             Some(LineupPlayer {
                 id: player.id,
@@ -161,7 +158,10 @@ fn to_lineup_player<'p>(
                 last_name: &player.full_name.last_name,
                 middle_name: player.full_name.middle_name.as_deref(),
                 position: player.position().get_short_name(),
-                start_position: (position.position.x as i16, position.position.y as i16),
+                start_position: (
+                    first_position.position.x as i16,
+                    first_position.position.y as i16,
+                ),
             })
         }
         None => None,

@@ -1,5 +1,7 @@
 use crate::context::{GlobalContext, SimulationContext};
-use crate::league::{LeagueMatch, LeagueMatchResultResult, LeagueResult, LeagueTable, MatchStorage, Schedule};
+use crate::league::{
+    LeagueMatch, LeagueMatchResultResult, LeagueResult, LeagueTable, MatchStorage, Schedule,
+};
 use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, Team};
@@ -73,31 +75,33 @@ impl League {
     ) -> Vec<MatchResult> {
         let mut result = Vec::with_capacity(scheduled_matches.len());
 
-        scheduled_matches.iter_mut().for_each(|scheduled_match| {
-            let home_team = self.get_team(clubs, scheduled_match.home_team_id);
-            let away_team = self.get_team(clubs, scheduled_match.away_team_id);
+        scheduled_matches
+            .iter_mut()
+            .for_each(|scheduled_match| {
+                let home_team = self.get_team(clubs, scheduled_match.home_team_id);
+                let away_team = self.get_team(clubs, scheduled_match.away_team_id);
 
-            let match_to_play = Match::make(
-                scheduled_match.id.clone(),
-                scheduled_match.league_id,
-                home_team.get_match_squad(),
-                away_team.get_match_squad(),
-            );
+                let match_to_play = Match::make(
+                    scheduled_match.id.clone(),
+                    scheduled_match.league_id,
+                    home_team.get_match_squad(),
+                    away_team.get_match_squad(),
+                );
 
-            let message = &format!(
-                "play match: {} - {}",
-                &match_to_play.home_squad.team_name, &match_to_play.away_squad.team_name
-            );
+                let message = &format!(
+                    "play match: {} - {}",
+                    &match_to_play.home_squad.team_name, &match_to_play.away_squad.team_name
+                );
 
-            let match_result = Logging::estimate_result(|| match_to_play.play(), message);
+                let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
-            scheduled_match.result = Some(LeagueMatchResultResult {
-                home_goals: match_result.score.home,
-                away_goals: match_result.score.away,
+                scheduled_match.result = Some(LeagueMatchResultResult {
+                    home_goals: match_result.score.home,
+                    away_goals: match_result.score.away,
+                });
+
+                result.push(match_result);
             });
-
-            result.push(match_result);
-        });
 
         result
     }
@@ -109,12 +113,6 @@ impl League {
             .find(|team| team.id == id)
             .unwrap()
     }
-}
-
-#[derive(Debug)]
-pub struct LeagueSettings {
-    pub season_starting_half: DayMonthPeriod,
-    pub season_ending_half: DayMonthPeriod,
 }
 
 #[derive(Debug)]
@@ -137,6 +135,12 @@ impl DayMonthPeriod {
     }
 }
 
+#[derive(Debug)]
+pub struct LeagueSettings {
+    pub season_starting_half: DayMonthPeriod,
+    pub season_ending_half: DayMonthPeriod,
+}
+
 impl LeagueSettings {
     pub fn is_time_for_new_schedule(&self, context: &SimulationContext) -> bool {
         let season_starting_date = &self.season_starting_half;
@@ -151,21 +155,65 @@ impl LeagueSettings {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::prelude::*;
+    use chrono::NaiveDate;
 
     #[test]
-    fn is_time_for_new_schedule_is_correct() {
-        //        let mut settings = LeagueSettings {
-        //            season_starting: (1, 3),
-        //            season_ending: (4, 5),
-        //        };
-        //
-        //        let mut context = SimulationContext::new(
-        //            date: NaiveDate::from_ymd_opt(2020, 3, 1)
-        //        );
-        //
-        //        let result = settings.is_time_for_new_schedule(&mut context);
-        //
-        //        assert_eq!(true, result);
+    fn test_is_time_for_new_schedule_true() {
+        let settings = LeagueSettings {
+            season_starting_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 1,
+                to_day: 0,
+                to_month: 0,
+            },
+            season_ending_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 7,
+                to_day: 0,
+                to_month: 0,
+            },
+        };
+
+        let context = SimulationContext {
+            date: NaiveDate::from_ymd_opt(2024, 1, 1)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(), // Season starting date
+            // Add other fields as needed
+            day: 0,
+            hour: 0,
+        };
+
+        assert!(settings.is_time_for_new_schedule(&context));
+    }
+
+    #[test]
+    fn test_is_time_for_new_schedule_false() {
+        let settings = LeagueSettings {
+            season_starting_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 1,
+                to_day: 0,
+                to_month: 0,
+            },
+            season_ending_half: DayMonthPeriod {
+                from_day: 1,
+                from_month: 7,
+                to_day: 0,
+                to_month: 0,
+            },
+        };
+
+        let context = SimulationContext {
+            date: NaiveDate::from_ymd_opt(2024, 7, 1)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(), // Not season starting date
+            // Add other fields as needed
+            day: 0,
+            hour: 0,
+        };
+
+        assert!(!settings.is_time_for_new_schedule(&context));
     }
 }

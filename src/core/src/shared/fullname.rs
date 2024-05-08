@@ -35,3 +35,40 @@ impl Display for FullName {
         write!(f, "{}", name)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_new_fullname() {
+        let fullname = FullName::new("John".to_string(), "Doe".to_string());
+
+        assert_eq!(fullname.first_name, "John");
+        assert_eq!(fullname.last_name, "Doe");
+        assert_eq!(fullname.middle_name, None);
+    }
+
+    #[test]
+    fn test_with_full_fullname() {
+        let fullname = FullName::with_full("John".to_string(), "Doe".to_string(), "Smith".to_string());
+
+        assert_eq!(fullname.first_name, "John");
+        assert_eq!(fullname.last_name, "Doe");
+        assert_eq!(fullname.middle_name, Some("Smith".to_string()));
+    }
+
+    #[test]
+    fn test_display_without_middle_name() {
+        let fullname = FullName::new("John".to_string(), "Doe".to_string());
+
+        assert_eq!(format!("{}", fullname), "Doe John");
+    }
+
+    #[test]
+    fn test_display_with_middle_name() {
+        let fullname = FullName::with_full("John".to_string(), "Doe".to_string(), "Smith".to_string());
+
+        assert_eq!(format!("{}", fullname), "Doe John Smith");
+    }
+}

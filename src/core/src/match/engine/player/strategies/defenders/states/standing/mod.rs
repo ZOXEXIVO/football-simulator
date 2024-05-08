@@ -1,64 +1,173 @@
 use crate::common::NeuralNetwork;
+use nalgebra::Vector3;
 
+use crate::r#match::decision::DefenderDecision;
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
+    GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
 };
 
 lazy_static! {
-    static ref PLAYER_STANDING_STATE_NETWORK: NeuralNetwork = PlayerStandingStateNetLoader::load();
+    static ref DEFENDER_STANDING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json"));
 }
 
 pub struct DefenderStandingState {}
 
 impl DefenderStandingState {
     pub fn process(
+        player: &MatchPlayer,
+        context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
-        _player: &mut MatchPlayer,
-        _context: &mut MatchContext,
-        _result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
-    ) -> Option<PlayerState> {
-        if in_state_time > 20 {
-            return Some(PlayerState::Walking);
+        result: &mut Vec<PlayerUpdateEvent>,
+    ) -> StateChangeResult {
+        let test = SteeringBehavior::Arrive {
+            target: tick_context.objects_positions.ball_position,
+            slowing_distance: 10.0,
+        }
+        .calculate(player)
+        .velocity;
+
+        return StateChangeResult::with_velocity(test);
+
+        // Analyze the game situation using the neural network
+        let nn_input = GameSituationInput::from_contexts(context, player, tick_context).to_input();
+        let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
+
+        // Make decisions based on the analysis
+        if let Some(decision) =
+            Self::analyze_results(nn_result, player, tick_context, player_tick_context)
+        {
+            return Self::execute_decision(
+                player,
+                context,
+                &tick_context.objects_positions,
+                decision,
+                result,
+            );
         }
 
-        let mut res_vec = Vec::new();
+        StateChangeResult::none()
+    }
 
-        res_vec.push(objects_positions.ball_position.x as f64);
-        res_vec.push(objects_positions.ball_position.y as f64);
+    fn analyze_results(
+        nn_analysis: Vec<f64>,
+        player: &MatchPlayer,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
+    ) -> Option<DefenderDecision> {
+        if player_tick_context.ball_context.ball_distance < 100.0 {
+            if let Some((_, opponent_distance)) = tick_context
+                .objects_positions
+                .player_distances
+                .find_closest_opponent(player)
+            {
+                if opponent_distance < 50.0 {
+                    return Some(DefenderDecision::Run);
+                }
+            }
+        }
 
-        res_vec.push(objects_positions.ball_velocity.x as f64);
-        res_vec.push(objects_positions.ball_velocity.y as f64);
+        // If no immediate threat, analyze the neural network output
+        if nn_analysis[0] > 0.7 {
+            // If the neural network suggests a high probability of maintaining position,
+            // stand still and wait for the next opportunity
+            return Some(DefenderDecision::StandStill);
+        } else if nn_analysis[1] > 0.6 {
+            // If the neural network suggests a moderate probability of needing to move,
+            // adjust position to a more strategic location
+            return Some(DefenderDecision::AdjustPosition);
+        } else if nn_analysis[2] > 0.5 {
+            // If the neural network suggests a moderate probability of needing to run,
+            // run towards the goal to defend
+            return Some(DefenderDecision::RunTowardsGoal);
+        } else if nn_analysis[3] > 0.4 {
+            // If the neural network suggests a moderate probability of needing to mark an opponent,
+            // mark the closest opponent
+            return Some(DefenderDecision::MarkOpponent);
+        }
 
-        let res = PLAYER_STANDING_STATE_NETWORK.run(&res_vec);
+        None
+    }
 
-        let index_of_max_element = res
-            .iter()
-            .enumerate()
-            .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-            .unwrap()
-            .0;
+    fn execute_decision(
+        player: &MatchPlayer,
+        context: &mut MatchContext,
+        match_objects_positions: &MatchObjectsPositions,
+        decision: DefenderDecision,
+        result: &mut Vec<PlayerUpdateEvent>,
+    ) -> StateChangeResult {
+        match decision {
+            DefenderDecision::RunTowardsBall => {
+                let ball_position = match_objects_positions.ball_position;
+                let velocity = SteeringBehavior::Arrive {
+                    target: ball_position,
+                    slowing_distance: 10.0,
+                }
+                .calculate(player)
+                .velocity;
 
-        match index_of_max_element {
-            0 => Some(PlayerState::Standing),
-            1 => Some(PlayerState::Walking),
-            2 => Some(PlayerState::Running),
-            3 => Some(PlayerState::Tackling),
-            4 => Some(PlayerState::Shooting),
-            5 => Some(PlayerState::Passing),
-            6 => Some(PlayerState::Returning),
-            _ => None,
+                StateChangeResult::with(PlayerState::Running, velocity)
+            }
+            DefenderDecision::StandStill => StateChangeResult::none(),
+            DefenderDecision::AdjustPosition => {
+                let velocity = SteeringBehavior::Arrive {
+                    target: player.start_position,
+                    slowing_distance: 5.0,
+                }
+                .calculate(player)
+                .velocity;
+
+                StateChangeResult::with(PlayerState::Walking, velocity)
+            }
+            DefenderDecision::RunTowardsGoal => {
+                // Run towards the goal to defend
+                let goal_position = calculate_goal_position(player, context);
+                let velocity = SteeringBehavior::Arrive {
+                    target: goal_position,
+                    slowing_distance: 10.0,
+                }
+                .calculate(player)
+                .velocity;
+
+                StateChangeResult::with(PlayerState::Running, velocity)
+            }
+            DefenderDecision::MarkOpponent => {
+                // Mark the closest opponent
+                let opponent_position = find_closest_opponent_position(player, context);
+                let velocity = SteeringBehavior::Arrive {
+                    target: opponent_position,
+                    slowing_distance: 5.0,
+                }
+                .calculate(player)
+                .velocity;
+
+                StateChangeResult::with(PlayerState::Walking, velocity)
+            }
+            _ => StateChangeResult::none(),
         }
     }
 }
 
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_standing_data.json");
+// Helper function to calculate the goal position based on the player and game context
+fn calculate_goal_position(player: &MatchPlayer, context: &MatchContext) -> Vector3<f32> {
+    // Implement your goal position calculation logic here
+    // This could involve determining the position of the player's own goal
+    // based on the player's team and the field dimensions
 
-#[derive(Debug)]
-pub struct PlayerStandingStateNetLoader;
+    // For simplicity, this example returns the player's starting position
+    player.start_position
+}
 
-impl PlayerStandingStateNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
-    }
+// Helper function to find the position of the closest opponent
+fn find_closest_opponent_position(player: &MatchPlayer, context: &MatchContext) -> Vector3<f32> {
+    // Implement your logic to find the position of the closest opponent
+    // This could involve iterating through the positions of all opponents
+    // and finding the closest one to the player
+
+    // For simplicity, this example returns the player's starting position
+    player.start_position
 }

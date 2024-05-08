@@ -107,7 +107,7 @@ pub async fn team_get_action(
                 country_name: &country.name,
                 last_name: &p.full_name.last_name,
                 conditions: get_conditions(p),
-                value: FormattingUtils::short_money_str(p.value(now)),
+                value: FormattingUtils::format_money(p.value(now)),
                 current_ability: get_current_ability_stars(p),
                 potential_ability: get_potential_ability_stars(p),
                 status: PlayerStatusDto::new(p.statuses.get()),

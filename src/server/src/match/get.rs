@@ -13,8 +13,8 @@ pub struct MatchDetailsRequest {
 
 #[derive(Deserialize)]
 pub struct MatchDetailsRequestQuery {
-    pub offset: u32,
-    pub limit: u32,
+    pub start_timestamp: u64,
+    pub end_timestamp: u64,
 }
 
 #[derive(Serialize)]
@@ -43,10 +43,7 @@ pub async fn match_get_action(
 
     let league = simulator_data.league(league_id).unwrap();
 
-    let match_result = league
-        .matches
-        .get(route_params.match_id)
-        .unwrap();
+    let match_result = league.matches.get(route_params.match_id).unwrap();
 
     let result_details = match_result.result_details.as_ref().unwrap();
 
@@ -59,8 +56,10 @@ pub async fn match_get_action(
                 (
                     player_id,
                     data.iter()
-                        .skip(query_params.offset as usize)
-                        .take(query_params.limit as usize)
+                        .filter(|pp| {
+                            pp.timestamp >= query_params.start_timestamp
+                                && pp.timestamp < query_params.end_timestamp
+                        })
                         .map(|item| {
                             (
                                 item.timestamp,
@@ -78,8 +77,10 @@ pub async fn match_get_action(
             .position_data
             .ball_positions
             .iter()
-            .skip(query_params.offset as usize)
-            .take(query_params.limit as usize)
+            .filter(|pp| {
+                pp.timestamp >= query_params.start_timestamp
+                    && pp.timestamp < query_params.end_timestamp
+            })
             .map(|item| {
                 (
                     item.timestamp,

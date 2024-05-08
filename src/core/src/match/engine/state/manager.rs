@@ -67,3 +67,26 @@ impl StateManager {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::r#match::{MatchContext, MatchField, MatchState, PlayMatchStateResult};
+
+    #[test]
+    fn test_state_manager_new() {
+        let state_manager = StateManager::new();
+        assert_eq!(state_manager.current(), MatchState::FirstHalf);
+    }
+
+    #[test]
+    fn test_state_manager_next() {
+        let mut state_manager = StateManager::new();
+        assert_eq!(state_manager.next(), Some(MatchState::HalfTime));
+        assert_eq!(state_manager.next(), Some(MatchState::SecondHalf));
+        assert_eq!(state_manager.next(), Some(MatchState::ExtraTime));
+        assert_eq!(state_manager.next(), Some(MatchState::PenaltyShootout));
+        assert_eq!(state_manager.next(), None); // End of match
+        assert_eq!(state_manager.next(), None); // No more states after match ends
+    }
+}

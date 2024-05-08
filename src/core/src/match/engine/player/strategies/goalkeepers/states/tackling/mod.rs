@@ -1,12 +1,14 @@
 use crate::common::NeuralNetwork;
 
+use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    BallMetadata, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerUpdateEvent,
-    StateChangeResult,
+    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
 };
 
 lazy_static! {
-    static ref PLAYER_TACKLING_STATE_NETWORK: NeuralNetwork = PlayerTacklingStateNetLoader::load();
+    static ref GOALKEEPER_TACKLING_STATE_NETWORK: NeuralNetwork =
+        DefaultNeuralNetworkLoader::load(include_str!("nn_tackling_data.json"));
 }
 
 pub struct GoalkeeperTacklingState {}
@@ -15,62 +17,68 @@ impl GoalkeeperTacklingState {
     pub fn process(
         player: &MatchPlayer,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-        ball_metadata: BallMetadata,
+        tick_context: &GameTickContext,
+        player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        StateChangeResult::none()
+        let minimal_distance = 30.0;
 
-        // let mut res_vec = Vec::new();
-        //
-        // res_vec.push(objects_positions.ball_positions.x as f64);
-        // res_vec.push(objects_positions.ball_positions.y as f64);
-        //
-        // res_vec.push(objects_positions.ball_velocity.x as f64);
-        // res_vec.push(objects_positions.ball_velocity.y as f64);
-        //
-        // let res = PLAYER_TACKLING_STATE_NETWORK.run(&res_vec);
-        //
-        // let index_of_max_element = res
-        //     .iter()
-        //     .enumerate()
-        //     .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-        //     .unwrap()
-        //     .0;
-        //
-        // //println!("RES = {:?}", res);
-        //
-        // match index_of_max_element {
-        //     0 => Some(PlayerState::Standing),
-        //     1 => Some(PlayerState::Walking),
-        //     2 => Some(PlayerState::Running),
-        //     3 => Some(PlayerState::Tackling),
-        //     4 => Some(PlayerState::Shooting),
-        //     5 => Some(PlayerState::Passing),
-        //     6 => Some(PlayerState::Returning),
-        //     _ => None,
-        // }
+        let (_, mut nearest_opponents) = tick_context
+            .objects_positions
+            .player_distances
+            .players_within_distance(player, minimal_distance);
 
-        //Check for transition to standing or walking state
-        // let tackling_success = player.skills.tackling() * player.player_attributes.condition;
-        // if tackling_success > 50.0 {
-        //     player.has_ball = true;
-        // }
-        // // Check for transition to standing state
-        // if player.player_attributes.condition < 20 {
-        //     return Some(PlayerState::Standing);
-        // }
+        return if !nearest_opponents.is_empty() {
+            nearest_opponents.sort_by(|(left_player_id, _), (right_player_id, _)| {
+                let left_player = context.players.get(*left_player_id).unwrap();
+                let right_player = context.players.get(*right_player_id).unwrap();
+
+                left_player
+                    .skills
+                    .technical
+                    .tackling
+                    .partial_cmp(&right_player.skills.technical.tackling)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
+
+            let (opponent_to_tackle, _) = nearest_opponents.first().unwrap();
+
+            result.push(PlayerUpdateEvent::TacklingBall(*opponent_to_tackle));
+
+            // TODO Own strategy
+            StateChangeResult::with_state(PlayerState::Running)
+        } else {
+            StateChangeResult::none()
+        };
     }
-}
 
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_tackling_data.json");
-
-#[derive(Debug)]
-pub struct PlayerTacklingStateNetLoader;
-
-impl PlayerTacklingStateNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
-    }
+    // fn select_opponent_to_tackle<'mp>(
+    //     player: &MatchPlayer,
+    //     context: &MatchContext,
+    //     nearest_opponents: &'mp [(u32, f32)],
+    //     objects_positions: &MatchObjectsPositions,
+    //     ball_context: &BallContext,
+    // ) -> &'mp MatchPlayer {
+    //     let opponent_analysis: Vec<_> = nearest_opponents
+    //         .iter()
+    //         .map(|(opponent_id, _)| {
+    //             let opponent = context.players.get(*opponent_id).unwrap();
+    //             let analysis = GOALKEEPER_TACKLING_NETWORK.analyze(&TacklingAnalysisInput {
+    //                 player: player,
+    //                 opponent: opponent,
+    //                 objects_positions: objects_positions,
+    //                 ball_context: ball_context,
+    //             });
+    //             (*opponent_id, analysis)
+    //         })
+    //         .collect();
+    //
+    //     let (best_opponent_id, _) = opponent_analysis
+    //         .iter()
+    //         .max_by(|(_, analysis_a), (_, analysis_b)| analysis_a.partial_cmp(analysis_b).unwrap())
+    //         .unwrap();
+    //
+    //     context.players.get(best_opponent_id).unwrap()
+    // }
 }

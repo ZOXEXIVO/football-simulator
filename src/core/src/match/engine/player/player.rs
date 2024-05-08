@@ -1,4 +1,8 @@
-﻿use crate::r#match::{Ball, MatchContext, MatchObjectsPositions, StateStrategy};
+﻿use crate::r#match::position::VectorExtensions;
+use crate::r#match::{
+    Ball, BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, PlayerTickContext,
+    StateStrategy,
+};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
@@ -9,6 +13,7 @@ pub struct MatchPlayer {
     pub position: Vector3<f32>,
     pub start_position: Vector3<f32>,
     pub attributes: PersonAttributes,
+    pub team_id: u32,
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
@@ -20,16 +25,17 @@ pub struct MatchPlayer {
 }
 
 impl MatchPlayer {
-    pub fn from_player(player: &Player, position: PlayerPositionType) -> Self {
+    pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType) -> Self {
         MatchPlayer {
             player_id: player.id,
             position: Vector3::new(0.0, 0.0, 0.0),
             start_position: Vector3::new(0.0, 0.0, 0.0),
             attributes: player.attributes.clone(),
+            team_id,
             player_attributes: player.player_attributes.clone(),
             skills: player.skills.clone(),
             tactics_position: position,
-            velocity: Vector3::new(1.0, 1.0, 0.0),
+            velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
             is_home: false,
             state: PlayerState::Standing,
@@ -40,11 +46,31 @@ impl MatchPlayer {
     pub fn update(
         &mut self,
         context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
+        tick_context: &GameTickContext,
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
-        self.update_state(context, &mut result, objects_positions);
+        let is_ball_home_size = match context.state.ball_state {
+            Some(ball_state) => ball_state == BallState::HomeSide,
+            None => false,
+        };
+
+        let player_context = PlayerTickContext {
+            ball_context: BallContext {
+                // ball moving towards goal
+                is_heading_towards_goal: MatchBallLogic::is_heading_towards_goal(
+                    &tick_context.objects_positions.ball_position,
+                    &self.start_position,
+                ),
+                is_on_home_side: self.is_home && is_ball_home_size,
+                ball_distance: tick_context
+                    .objects_positions
+                    .ball_position
+                    .distance_to(&self.position),
+            },
+        };
+
+        self.update_state(context, tick_context, player_context, &mut result);
 
         self.move_to();
 
@@ -65,6 +91,9 @@ impl MatchPlayer {
 
                     ball.velocity = ball_pass_vector.normalize();
                 }
+                PlayerUpdateEvent::RushOut(_) => {}
+                PlayerUpdateEvent::StayInGoal(_) => {}
+                _ => {}
             }
         }
     }
@@ -77,19 +106,23 @@ impl MatchPlayer {
     fn update_state(
         &mut self,
         context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
-        objects_positions: &MatchObjectsPositions,
     ) {
         let state_result = self.tactics_position.position_group().calculate(
             self.in_state_time,
-            context,
             self,
+            context,
+            tick_context,
+            player_context,
             result,
-            objects_positions,
         );
 
         if let Some(state) = state_result.state {
-            self.state = state;
+            self.change_state(state);
+        } else {
+            self.in_state_time += 1;
         }
 
         if let Some(velocity) = state_result.velocity {
@@ -138,4 +171,7 @@ pub enum PlayerUpdateEvent {
     Goal(u32),
     TacklingBall(u32),
     PassTo(Vector3<f32>, f64),
+    RushOut(u32),
+    StayInGoal(u32),
+    CommunicateMessage(u32, &'static str)
 }
