@@ -40,6 +40,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                 public matchDataService: MatchDataService,
                 private titleService: TitleService,
                 private topHeaderService: TopHeaderService) {
+        console.log(PIXI.VERSION);
     }
 
     ngOnInit(): void {
@@ -144,7 +145,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
                 this.application.render();
             }
-        );
+        ).then(r => {});
     }
 
     translateToField(x: number, y: number) {
