@@ -45,8 +45,9 @@ export class ScoreModel {
 }
 
 export class PlayerModel {
-    constructor(id: number, displayName: string, idHome: boolean, data: ObjectPositionDto[]) {
+    constructor(id: number, position: string, displayName: string, idHome: boolean, data: ObjectPositionDto[]) {
         this.id = id;
+        this.position = position;
         this.displayName = displayName;
         this.isHome = idHome;
         this.obj = null;
@@ -56,6 +57,7 @@ export class PlayerModel {
 
     public id: number;
     public displayName: string;
+    public position: string;
     public isHome: boolean;
     public obj: Container | null;
     public currentCoordIdx: number;

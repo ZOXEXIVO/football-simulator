@@ -75,7 +75,7 @@ export class MatchDataService {
 
                 const displayName = player.last_name;
 
-                playersData.push(new PlayerModel(player.id, displayName, true, [playerPosition]));
+                playersData.push(new PlayerModel(player.id, player.position, displayName, true, [playerPosition]));
             }
 
             this.matchData.players = playersData;
@@ -93,7 +93,7 @@ export class MatchDataService {
                 const displayName = player.last_name;
 
                 this.matchData.players.push(new PlayerModel(
-                    player.id, displayName, false, [playerPosition]));
+                    player.id, player.position, displayName, false, [playerPosition]));
             }
 
             // Squad

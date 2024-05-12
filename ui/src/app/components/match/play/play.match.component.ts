@@ -64,7 +64,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     async initLineupGraphics(lineupData: MatchLineupModel){
         // create ball
-
         const ball = await this.createBall(lineupData);
         this.matchDataService.matchData.ball.obj = ball;
         this.application!.stage.addChild(ball);
@@ -124,11 +123,12 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     initGraphics() {
         this.zone.runOutsideAngular(
-            async (): Promise<void> => {
+            async () => {
                 this.application = new PIXI.Application();
 
                 await this.application.init({
                     antialias: true,
+                    autoDensity: true
                 });
 
                 this.matchContainer.nativeElement.appendChild(this.application.canvas);
@@ -143,9 +143,9 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.matchPlayService.tick();
                 });
 
-                this.application.render();
+                this.application!.render();
             }
-        ).then(r => {});
+        ).then(_ => {});
     }
 
     translateToField(x: number, y: number) {
@@ -164,14 +164,11 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         container.x = x;
         container.y = y;
 
-        const homeColor = 0x6d02f7;
-        const awayColor = 0xc93ecf;
-
         const circle: Graphics = new PIXI.Graphics();
 
         circle
             .circle(x, y, 12)
-            .fill(player.isHome ? homeColor : awayColor);
+            .fill(this.getColor(player));
 
         container.addChild(circle);
 
@@ -180,19 +177,30 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
             fontSize: 13,
             fill: 'white',
             wordWrap: false,
-            align: "center"
+            align: 'center'
         });
 
         const text = new PIXI.Text({text: player.displayName, style});
 
-        text.x = x - 40;
-        text.y = y + 10;
+        text.x = x;
+        text.y = y + 22;
 
-        text.anchor.set(-0.2);
+        text.anchor.set(0.5); // Set anchor to center for center alignment
 
         container.addChild(text);
 
         return container;
+    }
+
+    getColor(player: PlayerModel) {
+        if(player.position == "GK"){
+            return 0xf7e300;
+        }
+
+        const homeColor = 0x00307d;
+        const awayColor = 0xb33f00;
+
+        return player.isHome ? homeColor : awayColor;
     }
 
     async createBackground(app: PIXI.Application) {
@@ -206,6 +214,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     async createBall(lineupData: MatchLineupModel): Promise<Sprite> {
+        console.log("create ball");
+
         const texture = await Assets.load('assets/images/match/ball.png');
         const ball: PIXI.Sprite = new Sprite(texture);
 
