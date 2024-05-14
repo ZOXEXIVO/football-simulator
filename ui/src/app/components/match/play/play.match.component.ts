@@ -86,15 +86,11 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     public ngAfterViewInit(): void {
-        console.log('ngAfterViewInit');
-
-        this.matchPlayService.lineupCompleted$.subscribe(lineupData => {
-            this.initGraphics();
+        this.matchPlayService.lineupCompleted$.subscribe(async lineupData => {
+            await this.initGraphics();
         });
 
         this.matchPlayService.objectPositionChanged$.subscribe(data => {
-            console.log('objectPositionChanged$', data);
-
             const ballObject = this.matchDataService.matchData.ball.obj!;
 
             let ballCoord = this.translateToField(data.ball.x, data.ball.y);
@@ -128,9 +124,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    initGraphics() {
-        console.log('initGraphics');
-        this.zone.runOutsideAngular(
+    async initGraphics() {
+        await this.zone.runOutsideAngular(
             async () => {
                 this.application = new PIXI.Application();
 
@@ -168,8 +163,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     createPlayer(x: number, y: number, player: PlayerModel): Container {
-        console.log('createPlayer', {x, y, player});
-
         const container = new Container();
 
         container.x = x;
@@ -215,8 +208,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     async createBackground(app: PIXI.Application) {
-        console.log('createBackground');
-
         const landscapeTexture = await Assets.load('assets/images/match/field.svg');
         const background = new PIXI.Sprite(landscapeTexture);
 
@@ -227,8 +218,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     async createBall(lineupData: MatchLineupModel): Promise<Sprite> {
-        console.log("create ball");
-
         const texture = await Assets.load('assets/images/match/ball.png');
         const ball: PIXI.Sprite = new Sprite(texture);
 
@@ -239,8 +228,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        console.log('ngOnDestroy');
-        
         this.isDisposed = true;
         this.application?.ticker.stop();
     }
