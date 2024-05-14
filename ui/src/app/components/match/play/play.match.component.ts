@@ -44,6 +44,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        console.log('ngOnInit');
         this.matchPlayService.lineupCompleted$.subscribe(async lineupData => {
             this.matchTimeMs = lineupData.matchTimeMs;
 
@@ -62,7 +63,9 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    async initLineupGraphics(lineupData: MatchLineupModel){
+    async initLineupGraphics(lineupData: MatchLineupModel) {
+        console.log('initLineupGraphics', lineupData);
+
         // create ball
         const ball = await this.createBall(lineupData);
         this.matchDataService.matchData.ball.obj = ball;
@@ -83,11 +86,15 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     public ngAfterViewInit(): void {
+        console.log('ngAfterViewInit');
+
         this.matchPlayService.lineupCompleted$.subscribe(lineupData => {
             this.initGraphics();
         });
 
         this.matchPlayService.objectPositionChanged$.subscribe(data => {
+            console.log('objectPositionChanged$', data);
+
             const ballObject = this.matchDataService.matchData.ball.obj!;
 
             let ballCoord = this.translateToField(data.ball.x, data.ball.y);
@@ -98,7 +105,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
             this.matchDataService.matchData.players.forEach((player, index) => {
                 const playerObject = player.obj!;
 
-                if(!playerObject){
+                if (!playerObject) {
                     return;
                 }
 
@@ -122,6 +129,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     initGraphics() {
+        console.log('initGraphics');
         this.zone.runOutsideAngular(
             async () => {
                 this.application = new PIXI.Application();
@@ -145,7 +153,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
                 this.application!.render();
             }
-        ).then(_ => {});
+        ).then(_ => {
+        });
     }
 
     translateToField(x: number, y: number) {
@@ -159,6 +168,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     createPlayer(x: number, y: number, player: PlayerModel): Container {
+        console.log('createPlayer', {x, y, player});
+
         const container = new Container();
 
         container.x = x;
@@ -193,7 +204,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     getColor(player: PlayerModel) {
-        if(player.position == "GK"){
+        if (player.position == "GK") {
             return 0xf7e300;
         }
 
@@ -204,6 +215,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     async createBackground(app: PIXI.Application) {
+        console.log('createBackground');
+
         const landscapeTexture = await Assets.load('assets/images/match/field.svg');
         const background = new PIXI.Sprite(landscapeTexture);
 
@@ -226,6 +239,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        console.log('ngOnDestroy');
+        
         this.isDisposed = true;
         this.application?.ticker.stop();
     }
