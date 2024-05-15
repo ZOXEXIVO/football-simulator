@@ -12,7 +12,7 @@ export class MatchPlayService {
     matchEvents = new Subject<MatchEvent>();
     public matchEvents$ = this.matchEvents.asObservable();
 
-    lineupCompleted = new ReplaySubject<MatchLineupModel>();
+    lineupCompleted = new Subject<MatchLineupModel>();
     public lineupCompleted$ = this.lineupCompleted.asObservable();
 
     timeChanged = new Subject<number>();

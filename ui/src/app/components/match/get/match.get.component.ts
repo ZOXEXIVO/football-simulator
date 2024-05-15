@@ -28,11 +28,11 @@ export class MatchGetComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.matchPlayService.init(this.leagueSlug, this.matchId);
-
         this.matchPlayService.lineupCompleted$.subscribe(() => {
             this.initLeftMenu(this.matchDataService.matchData);
         });
+
+        this.matchPlayService.init(this.leagueSlug, this.matchId);
     }
 
     initLeftMenu(match: MatchModel) {
