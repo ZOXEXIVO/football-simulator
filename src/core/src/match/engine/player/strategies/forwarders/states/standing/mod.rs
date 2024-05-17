@@ -1,9 +1,6 @@
 use crate::common::NeuralNetwork;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent,
-    StateChangeResult,
-};
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior};
 
 lazy_static! {
     static ref FORWARD_STANDING_STATE_NETWORK: NeuralNetwork =
@@ -21,7 +18,14 @@ impl ForwardStandingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        StateChangeResult::none()
+        let test = SteeringBehavior::Arrive {
+            target: tick_context.objects_positions.ball_position,
+            slowing_distance: 10.0,
+        }
+            .calculate(player)
+            .velocity;
+
+        return StateChangeResult::with_velocity(test);
         // if in_state_time > 20 {
         //     return Some(PlayerState::Walking);
         // }
