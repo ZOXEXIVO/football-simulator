@@ -89,10 +89,7 @@ pub async fn match_lineup_action(
         },
         match_time_ms: result_details.match_time_ms,
         ball: LineupBall {
-            start_position: (
-                result_details.position_data.ball_positions[0].position.x as i16,
-                result_details.position_data.ball_positions[0].position.y as i16,
-            ),
+            start_position: (395, 292),
         },
         home_team_name: &home_team.name,
         home_team_slug: &home_team.slug,

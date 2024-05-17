@@ -70,7 +70,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         this.matchDataService.matchData.ball.obj = ball;
         this.application!.stage.addChild(ball);
 
-        // create players
+        //create players
         lineupData.players.forEach(player => {
             let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
 
@@ -147,25 +147,31 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     translateToField(x: number, y: number) {
-        let scaleX = (POLE_COORDS.tr.x - POLE_COORDS.tl.x) / 1730;
-        let scaleY = (POLE_COORDS.bl.y - POLE_COORDS.tl.y) / 1400;
+        const real_field_width = 840;
+        const real_field_height = 545;
+
+        const screen_field_width = POLE_COORDS.tr.x - POLE_COORDS.tl.x;
+        const screen_field_height = POLE_COORDS.br.y - POLE_COORDS.tr.y;
+
+        const scaleX = screen_field_width / real_field_width;
+        const scaleY = screen_field_height / real_field_height;
 
         return {
-            x: POLE_COORDS.tl.x + (x * scaleX) - 20,
+            x: POLE_COORDS.tl.x + (x * scaleX),
             y: POLE_COORDS.tl.y + (y * scaleY)
-        }
+        };
     }
 
     createPlayer(x: number, y: number, player: PlayerModel): Container {
         const container = new Container();
 
-        container.x = x;
-        container.y = y;
+        container.position.x = x - 10;
+        container.position.y = y - 10;
 
         const circle: Graphics = new PIXI.Graphics();
 
         circle
-            .circle(x, y, 12)
+            .circle(6, 6, 12)
             .fill(this.getColor(player));
 
         container.addChild(circle);
@@ -180,8 +186,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
         const text = new PIXI.Text({text: player.displayName, style});
 
-        text.x = x;
-        text.y = y + 22;
+        text.x = 10;
+        text.y = 30;
 
         text.anchor.set(0.5); // Set anchor to center for center alignment
 
@@ -215,8 +221,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         const texture = await Assets.load('assets/images/match/ball.png');
         const ball: PIXI.Sprite = new Sprite(texture);
 
-        ball.x = lineupData.ball.data[0].x;
-        ball.y = lineupData.ball.data[0].y;
+        ball.position.x = lineupData.ball.data[0].x;
+        ball.position.y = lineupData.ball.data[0].y;
 
         return ball;
     }
