@@ -56,6 +56,9 @@ impl GoalkeeperStandingState {
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,
     ) -> Option<GoalkeeperDecision> {
+        if !player_tick_context.ball_context.is_on_home_side {
+            return Some(GoalkeeperDecision::Walk);
+        }
         if Self::is_big_opponents_concentration(player, &tick_context.objects_positions) {
             return Some(GoalkeeperDecision::Run);
         }
@@ -225,6 +228,20 @@ impl GoalkeeperStandingState {
                     return StateChangeResult::with(PlayerState::Running, velocity);
                 }
             }
+            GoalkeeperDecision::Walk => {
+                {
+                    // go to own goals
+                    let velocity = SteeringBehavior::Arrive {
+                        target: player.start_position,
+                        slowing_distance: 5.0,
+                    }
+                    .calculate(player)
+                    .velocity;
+
+                    return StateChangeResult::with(PlayerState::Walking, velocity);
+                }
+            }
+            _ => return StateChangeResult::none(),
         }
     }
 
