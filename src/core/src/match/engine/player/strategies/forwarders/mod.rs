@@ -14,7 +14,7 @@ pub struct ForwardStrategies {}
 impl ForwardStrategies {
     pub fn calculate(
         in_state_time: u64,
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: PlayerTickContext,

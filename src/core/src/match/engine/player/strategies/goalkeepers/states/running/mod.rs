@@ -16,7 +16,7 @@ pub struct GoalkeeperRunningState {}
 
 impl GoalkeeperRunningState {
     pub fn process(
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,

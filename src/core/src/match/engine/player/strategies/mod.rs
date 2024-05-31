@@ -23,7 +23,7 @@ pub trait StateStrategy {
     fn calculate(
         &self,
         in_state_time: u64,
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: PlayerTickContext,
@@ -70,7 +70,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
     fn calculate(
         &self,
         in_state_time: u64,
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: PlayerTickContext,
