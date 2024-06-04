@@ -46,7 +46,7 @@ impl GoalkeeperRunningState {
         if objects_positions
             .ball_position
             .distance_to(&player.position)
-            < 5.0
+            < 10.0
         {
             result.push(PlayerUpdateEvent::TacklingBall(player.player_id))
         }

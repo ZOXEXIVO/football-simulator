@@ -85,10 +85,11 @@ impl MatchPlayer {
         for event in events {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {}
-                PlayerUpdateEvent::TacklingBall(_player_id) => {}
+                PlayerUpdateEvent::TacklingBall(_player_id) => {
+                    ball.velocity = Vector3::<f32>::zeros();
+                }
                 PlayerUpdateEvent::PassTo(pass_target, pass_power) => {
                     let ball_pass_vector = pass_target - ball.position;
-
                     ball.velocity = ball_pass_vector.normalize();
                 }
                 PlayerUpdateEvent::RushOut(_) => {}
@@ -173,5 +174,5 @@ pub enum PlayerUpdateEvent {
     PassTo(Vector3<f32>, f64),
     RushOut(u32),
     StayInGoal(u32),
-    CommunicateMessage(u32, &'static str)
+    CommunicateMessage(u32, &'static str),
 }
