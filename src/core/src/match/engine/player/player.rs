@@ -70,6 +70,10 @@ impl MatchPlayer {
             },
         };
 
+        // basic ops
+        self.check_collisions(&player_context, &mut result);
+
+        // change move
         self.update_state(context, tick_context, player_context, &mut result);
 
         self.move_to();
@@ -131,7 +135,15 @@ impl MatchPlayer {
         }
     }
 
-    fn check_collisions(&mut self) {}
+    fn check_collisions(
+        &mut self,
+        player_tick_context: &PlayerTickContext,
+        result: &mut Vec<PlayerUpdateEvent>,
+    ) {
+        if player_tick_context.ball_context.ball_distance < 5.0 {
+            result.push(PlayerUpdateEvent::TacklingBall(self.player_id));
+        }
+    }
 
     fn move_to(&mut self) {
         self.position.x += self.velocity.x;
