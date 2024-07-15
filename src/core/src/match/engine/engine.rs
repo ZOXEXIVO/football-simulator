@@ -6,6 +6,7 @@ use crate::r#match::{
 };
 use itertools::Itertools;
 use std::collections::HashMap;
+use crate::r#match::events::PlayerEvents;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -82,7 +83,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             .collect();
 
         // handle events
-        MatchPlayer::handle_events(player_update_events, &mut field.ball, context);
+        PlayerEvents::process(player_update_events, &mut field.ball, context);
     }
 }
 

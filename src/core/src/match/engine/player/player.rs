@@ -70,59 +70,22 @@ impl MatchPlayer {
             },
         };
 
-        // basic ops
-        self.check_collisions(&player_context, &mut result);
+        self.check_collisions(tick_context, &mut result);
 
-        // change move
-        self.update_state(context, tick_context, player_context, &mut result);
+        PlayerMatchState::process(self, context, tick_context, player_context, &mut result);
 
         self.move_to();
+
+        PlayerConditions::process(self);
 
         result
     }
 
-    pub fn handle_events(
-        events: Vec<PlayerUpdateEvent>,
-        ball: &mut Ball,
-        _context: &mut MatchContext,
-    ) {
-        for event in events {
-            match event {
-                PlayerUpdateEvent::Goal(_player_id) => {}
-                PlayerUpdateEvent::TacklingBall(_player_id) => {
-                    ball.velocity = Vector3::<f32>::zeros();
-                }
-                PlayerUpdateEvent::PassTo(pass_target, pass_power) => {
-                    let ball_pass_vector = pass_target - ball.position;
-                    ball.velocity = ball_pass_vector.normalize();
-                }
-                PlayerUpdateEvent::RushOut(_) => {}
-                PlayerUpdateEvent::StayInGoal(_) => {}
-                _ => {}
-            }
-        }
-    }
+    fn check_collisions(&mut self, tick_context: &GameTickContext, result: &mut Vec<PlayerUpdateEvent>) {
+        let (teammates, opponents) =  tick_context.objects_positions.player_distances
+            .players_within_distance(self, 5.0);
 
-    fn change_state(&mut self, state: PlayerState) {
-        self.in_state_time = 0;
-        self.state = state;
-    }
-
-    fn update_state(
-        &mut self,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) {
-        let state_result = self.tactics_position.position_group().calculate(
-            self.in_state_time,
-            self,
-            context,
-            tick_context,
-            player_context,
-            result,
-        );
+        if teammates.is_empty() {
 
         if let Some(state) = state_result.state {
             self.change_state(state);
