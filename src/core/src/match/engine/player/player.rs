@@ -6,6 +6,8 @@ use crate::r#match::{
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
+use crate::r#match::player::conditions::PlayerConditions;
+use crate::r#match::player::state::PlayerMatchState;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -70,8 +72,10 @@ impl MatchPlayer {
             },
         };
 
-        self.check_collisions(tick_context, &mut result);
+        // basic ops
+        self.check_collisions(&player_context, &mut result);
 
+        // change move
         PlayerMatchState::process(self, context, tick_context, player_context, &mut result);
 
         self.move_to();
@@ -81,11 +85,26 @@ impl MatchPlayer {
         result
     }
 
-    fn check_collisions(&mut self, tick_context: &GameTickContext, result: &mut Vec<PlayerUpdateEvent>) {
-        let (teammates, opponents) =  tick_context.objects_positions.player_distances
-            .players_within_distance(self, 5.0);
+    fn change_state(&mut self, state: PlayerState) {
+        self.in_state_time = 0;
+        self.state = state;
+    }
 
-        if teammates.is_empty() {
+    fn update_state(
+        &mut self,
+        context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
+        result: &mut Vec<PlayerUpdateEvent>,
+    ) {
+        let state_result = self.tactics_position.position_group().calculate(
+            self.in_state_time,
+            self,
+            context,
+            tick_context,
+            player_context,
+            result,
+        );
 
         if let Some(state) = state_result.state {
             self.change_state(state);
