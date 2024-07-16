@@ -50,8 +50,10 @@ impl MatchObjectsPositions {
                     distances.add(
                         outer_player.player_id,
                         outer_player.team_id,
+                        outer_player.position,
                         inner_player.player_id,
                         inner_player.team_id,
+                        inner_player.position,
                         distance,
                     );
                 });
@@ -71,11 +73,13 @@ pub struct PlayerDistanceClosure {
 }
 
 pub struct PlayerDistanceItem {
-    player_from_id: u32,
+    pub player_from_id: u32,
     player_from_team: u32,
+    pub player_from_position: Vector3<f32>,
 
-    player_to_id: u32,
+    pub player_to_id: u32,
     player_to_team: u32,
+    pub player_to_position: Vector3<f32>,
 
     distance: f32,
 }
@@ -101,15 +105,19 @@ impl PlayerDistanceClosure {
         &mut self,
         player_from_id: u32,
         player_from_team: u32,
+        player_from_position: Vector3<f32>,
         player_to_id: u32,
         player_to_team: u32,
+        player_to_position: Vector3<f32>,
         distance: f32,
     ) {
         self.distances.push(PlayerDistanceItem {
             player_from_id,
             player_from_team,
+            player_from_position,
             player_to_id,
             player_to_team,
+            player_to_position,
             distance,
         })
     }
@@ -151,6 +159,13 @@ impl PlayerDistanceClosure {
             );
 
         (teammates, opponents)
+    }
+
+    pub fn get_collisions(&self, max_distance: f32) -> Vec<&PlayerDistanceItem> {
+        self.distances
+            .iter()
+            .filter(|&p| p.distance < max_distance)
+            .collect()
     }
 
     pub fn players_within_distance_count(

@@ -1,11 +1,10 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{
-    GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager,
-};
-use itertools::Itertools;
+use crate::r#match::{BallUpdateEvent, GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, PlayerUpdateEvent, StateManager};
 use std::collections::HashMap;
+use itertools::Itertools;
+use crate::r#match::engine::collisions::ObjectCollisions;
 use crate::r#match::events::PlayerEvents;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -54,8 +53,19 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             objects_positions: MatchObjectsPositions::from(&field),
         };
 
-        Self::play_ball(field, context, &game_tick_context);
-        Self::play_players(field, context, &game_tick_context);
+        let (collision_ball_events, collision_player_events) = ObjectCollisions::process(&game_tick_context);
+        let ball_events = Self::play_ball(field, context, &game_tick_context);
+
+        let all_ball_events =  collision_ball_events.iter().chain(&ball_events);
+
+        Ball::handle_events(context.time.time, &mut field.ball, all_ball_events, context);
+
+        // players
+        let player_events = Self::play_players(field, context, &game_tick_context);
+
+        let all_player_events = player_events.iter().chain(&collision_player_events);
+
+        PlayerEvents::process(all_player_events, &mut field.ball, context);
 
         field.write_match_positions(&mut context.result, context.time.time);
     }
@@ -64,26 +74,19 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-    ) {
-        let ball_update_events = field.ball.update(context);
-
-        // handle events
-        Ball::handle_events(context.time.time, ball_update_events, context);
+    ) -> Vec<BallUpdateEvent>{
+        field.ball.update(context)
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-    ) {
-        let player_update_events = field
-            .players
+    ) -> Vec<PlayerUpdateEvent> {
+        field.players
             .iter_mut()
             .flat_map(|player| player.update(context, tick_context))
-            .collect();
-
-        // handle events
-        PlayerEvents::process(player_update_events, &mut field.ball, context);
+            .collect()
     }
 }
 
@@ -165,8 +168,8 @@ impl MatchPlayerCollection {
         MatchPlayerCollection { players: result }
     }
 
-    pub fn get<'p>(&self, player_id: u32) -> Option<&'p MatchPlayer> {
-        self.get(player_id)
+    pub fn get<'p>(&'p self, player_id: u32) -> Option<&'p MatchPlayer> {
+        self.players.get(&player_id)
     }
 }
 

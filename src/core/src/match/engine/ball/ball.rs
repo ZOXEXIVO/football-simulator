@@ -42,13 +42,14 @@ impl Ball {
         result
     }
 
-    pub fn handle_events(
+    pub fn handle_events<'a>(
         _current_time: u64,
-        events: Vec<BallUpdateEvent>,
+        ball: &mut Ball,
+        events: impl Iterator<Item = &'a BallUpdateEvent>,
         context: &mut MatchContext,
     ) {
         for event in events {
-            match event {
+            match *event {
                 BallUpdateEvent::AwayGoal => {
                     context.result.score.away += 1;
                     // context.result.score.details.push(GoalDetail {
@@ -72,6 +73,13 @@ impl Ball {
                     // };
 
                     //context.state.set_ball_state(ball_state)
+                },
+                BallUpdateEvent::PlayerCollision(player_id) => {
+
+                },
+
+                BallUpdateEvent::UpdateVelocity(new_ball_velocity) => {
+                    ball.velocity = new_ball_velocity;
                 }
             }
         }
@@ -177,10 +185,14 @@ impl Ball {
     }
 }
 
+
+#[derive(Copy, Clone)]
 pub enum BallUpdateEvent {
     HomeGoal,
     AwayGoal,
     ChangeBallSide(BallPosition),
+    PlayerCollision(u32),
+    UpdateVelocity(Vector3<f32>)
 }
 
 pub enum BallOwner {
@@ -188,7 +200,7 @@ pub enum BallOwner {
     Away,
 }
 
-#[derive(Eq, PartialEq)]
+#[derive(Eq, PartialEq, Copy, Clone)]
 pub enum BallPosition {
     Home,
     Away,
