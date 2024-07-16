@@ -7,13 +7,17 @@ impl PlayerEvents {
     pub fn process<'p>(
         events: impl Iterator<Item = &'p PlayerUpdateEvent>,
         ball: &mut Ball,
-        _context: &mut MatchContext,
+        context: &mut MatchContext,
     ) {
         for event in events {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {},
-                PlayerUpdateEvent::BallCollision => {
+                PlayerUpdateEvent::BallCollision(player_id) => {
+                    let player = context.players.get_mut(*player_id).unwrap();
 
+                    if player.skills.technical.first_touch > 10.0 {
+                        player.has_ball = true;
+                    }
                 },
                 PlayerUpdateEvent::TacklingBall(_player_id) => {
                     ball.velocity = Vector3::<f32>::zeros();

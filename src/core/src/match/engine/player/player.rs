@@ -150,7 +150,7 @@ impl Display for PlayerState {
 
 pub enum PlayerUpdateEvent {
     Goal(u32),
-    BallCollision,
+    BallCollision(u32),
     TryAroundPlayer(u32, Vector3<f32>),
     TacklingBall(u32),
     PassTo(Vector3<f32>, f64),

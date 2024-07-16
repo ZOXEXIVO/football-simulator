@@ -171,6 +171,10 @@ impl MatchPlayerCollection {
     pub fn get<'p>(&'p self, player_id: u32) -> Option<&'p MatchPlayer> {
         self.players.get(&player_id)
     }
+
+    pub fn get_mut<'p>(&'p mut self, player_id: u32) -> Option<&'p mut MatchPlayer> {
+        self.players.get_mut(&player_id)
+    }
 }
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;

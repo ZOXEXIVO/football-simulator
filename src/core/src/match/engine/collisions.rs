@@ -27,7 +27,7 @@ impl ObjectCollisions {
                 ball_events.push(BallUpdateEvent::UpdateVelocity(new_bank_velocity));
                 ball_events.push(BallUpdateEvent::PlayerCollision(player.player_id));
 
-                player_events.push(PlayerUpdateEvent::BallCollision);
+                player_events.push(PlayerUpdateEvent::BallCollision(player.player_id));
             }
         }
 
