@@ -53,9 +53,10 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             objects_positions: MatchObjectsPositions::from(&field),
         };
 
-        let (collision_ball_events, collision_player_events) = ObjectCollisions::process(&game_tick_context);
+        let (collision_ball_events, collision_player_events) =
+            ObjectCollisions::process(&game_tick_context.objects_positions);
 
-        Self::play_ball(field, context, &game_tick_context, collision_ball_events);
+        Self::play_ball(field, context, collision_ball_events);
         Self::play_players(field, context, &game_tick_context, collision_player_events);
 
         field.write_match_positions(&mut context.result, context.time.time);
@@ -64,7 +65,6 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_ball(
         field: &mut MatchField,
         context: &mut MatchContext,
-        tick_context: &GameTickContext,
         ball_collision_events: Vec<BallUpdateEvent>
     ) {
         let ball_events = field.ball.update(context);
@@ -80,14 +80,16 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         tick_context: &GameTickContext,
         player_collision_events: Vec<PlayerUpdateEvent>
     ){
-        let player_events = field.players
-            .iter_mut()
-            .flat_map(|player| player.update(context, tick_context))
-            .collect();
+        let mut all_player_events = {
+            let player_events: Vec<PlayerUpdateEvent> = field.players
+                .iter_mut()
+                .flat_map(|player| player.update(context, tick_context))
+                .collect();
 
-        let all_player_events = player_events.iter().chain(&player_collision_events);
+             player_events.into_iter().chain(player_collision_events).into_iter()
+        };
 
-        PlayerEvents::process(all_player_events, &mut field.ball, context);
+        PlayerEvents::process(&mut all_player_events, &mut field.ball, context);
     }
 }
 

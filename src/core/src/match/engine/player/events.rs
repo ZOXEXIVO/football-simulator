@@ -5,7 +5,7 @@ pub struct PlayerEvents;
 
 impl PlayerEvents {
     pub fn process<'p>(
-        events: impl Iterator<Item = &'p PlayerUpdateEvent>,
+        events: impl Iterator<Item = PlayerUpdateEvent>,
         ball: &mut Ball,
         context: &mut MatchContext,
     ) {
@@ -13,7 +13,7 @@ impl PlayerEvents {
             match event {
                 PlayerUpdateEvent::Goal(_player_id) => {},
                 PlayerUpdateEvent::BallCollision(player_id) => {
-                    let player = context.players.get_mut(*player_id).unwrap();
+                    let player = context.players.get_mut(player_id).unwrap();
 
                     if player.skills.technical.first_touch > 10.0 {
                         player.has_ball = true;
