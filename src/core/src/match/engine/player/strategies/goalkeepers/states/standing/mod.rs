@@ -63,7 +63,7 @@ impl GoalkeeperStandingState {
             return Some(GoalkeeperDecision::Run);
         }
 
-        if player_tick_context.ball_context.ball_distance < 100.0 {
+        if player_tick_context.ball_context.ball_distance < 150.0 {
             if let Some((_, opponent_distance)) = tick_context
                 .objects_positions
                 .player_distances
@@ -73,11 +73,6 @@ impl GoalkeeperStandingState {
                     return Some(GoalkeeperDecision::Run);
                 }
             }
-        }
-
-        if Self::should_sweep(player, &tick_context.objects_positions) {
-            // Perform sweeping action
-            // Add sweeping logic here...
         }
 
         None
@@ -240,7 +235,20 @@ impl GoalkeeperStandingState {
 
                     return StateChangeResult::with(PlayerState::Walking, velocity);
                 }
-            }
+            },
+            GoalkeeperDecision::Track => {
+                {
+                    // go to own goals
+                    let velocity = SteeringBehavior::Arrive {
+                        target: player.start_position,
+                        slowing_distance: 5.0,
+                    }
+                        .calculate(player)
+                        .velocity;
+
+                    return StateChangeResult::with(PlayerState::Walking, velocity);
+                }
+            },
             _ => return StateChangeResult::none(),
         }
     }

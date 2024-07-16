@@ -54,18 +54,9 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         };
 
         let (collision_ball_events, collision_player_events) = ObjectCollisions::process(&game_tick_context);
-        let ball_events = Self::play_ball(field, context, &game_tick_context);
 
-        let all_ball_events =  collision_ball_events.iter().chain(&ball_events);
-
-        Ball::handle_events(context.time.time, &mut field.ball, all_ball_events, context);
-
-        // players
-        let player_events = Self::play_players(field, context, &game_tick_context);
-
-        let all_player_events = player_events.iter().chain(&collision_player_events);
-
-        PlayerEvents::process(all_player_events, &mut field.ball, context);
+        Self::play_ball(field, context, &game_tick_context, collision_ball_events);
+        Self::play_players(field, context, &game_tick_context, collision_player_events);
 
         field.write_match_positions(&mut context.result, context.time.time);
     }
@@ -74,19 +65,29 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-    ) -> Vec<BallUpdateEvent>{
-        field.ball.update(context)
+        ball_collision_events: Vec<BallUpdateEvent>
+    ) {
+        let ball_events = field.ball.update(context);
+
+        let all_ball_events =  ball_events.iter().chain(&ball_collision_events);
+
+        Ball::handle_events(context.time.time, &mut field.ball, all_ball_events, context);
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-    ) -> Vec<PlayerUpdateEvent> {
-        field.players
+        player_collision_events: Vec<PlayerUpdateEvent>
+    ){
+        let player_events = field.players
             .iter_mut()
             .flat_map(|player| player.update(context, tick_context))
-            .collect()
+            .collect();
+
+        let all_player_events = player_events.iter().chain(&player_collision_events);
+
+        PlayerEvents::process(all_player_events, &mut field.ball, context);
     }
 }
 

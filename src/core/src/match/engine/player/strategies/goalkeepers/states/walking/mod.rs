@@ -28,11 +28,11 @@ impl GoalkeeperWalkingState {
 
         if in_state_time > 100 {
             let wander_velocity = SteeringBehavior::Wander {
-                target: tick_context.objects_positions.ball_position,
-                radius: 10.0,
+                target: player.start_position,
+                radius: 40.0,
                 jitter: 0.0,
-                distance: 15.0,
-                angle: 40.0,
+                distance: 25.0,
+                angle: 10.0,
             }
             .calculate(player)
             .velocity;
