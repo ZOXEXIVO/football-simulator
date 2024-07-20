@@ -7,8 +7,9 @@ use crate::r#match::strategies::defenders::states::{
 };
 use crate::r#match::{
     BallState, GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    PlayerState, PlayerTickContext, StateChangeResult,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 pub struct DefenderStrategies {}
 

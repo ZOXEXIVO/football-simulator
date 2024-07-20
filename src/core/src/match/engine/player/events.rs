@@ -1,5 +1,17 @@
 use nalgebra::Vector3;
-use crate::r#match::{Ball, MatchContext, PlayerUpdateEvent};
+use crate::r#match::{Ball, MatchContext};
+
+pub enum PlayerUpdateEvent {
+    Goal(u32),
+    Assist(u32),
+    BallCollision(u32),
+    TryAroundPlayer(u32, Vector3<f32>),
+    TacklingBall(u32),
+    PassTo(Vector3<f32>, f64),
+    RushOut(u32),
+    StayInGoal(u32),
+    CommunicateMessage(u32, &'static str),
+}
 
 pub struct PlayerEvents;
 
@@ -11,12 +23,22 @@ impl PlayerEvents {
     ) {
         for event in events {
             match event {
-                PlayerUpdateEvent::Goal(_player_id) => {},
+                PlayerUpdateEvent::Goal(player_id) => {
+                    let player = context.players.get_mut(player_id).unwrap();
+
+                    player.statistics.goals += 1;
+                },
+                PlayerUpdateEvent::Assist(player_id) => {
+                    let player = context.players.get_mut(player_id).unwrap();
+
+                    player.statistics.assists += 1;
+                },
                 PlayerUpdateEvent::BallCollision(player_id) => {
                     let player = context.players.get_mut(player_id).unwrap();
 
                     if player.skills.technical.first_touch > 10.0 {
                         player.has_ball = true;
+                        ball.velocity = Vector3::<f32>::zeros();
                     }
                 },
                 PlayerUpdateEvent::TacklingBall(_player_id) => {

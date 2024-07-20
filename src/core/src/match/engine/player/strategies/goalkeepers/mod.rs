@@ -9,10 +9,11 @@ use crate::r#match::strategies::goalkeepers::states::{
 };
 use crate::r#match::{
     BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    PlayerTickContext, StateChangeResult,
 };
 use itertools::Itertools;
 use std::ops::Deref;
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 pub struct GoalkeeperStrategies {}
 

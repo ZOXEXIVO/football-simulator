@@ -10,9 +10,10 @@ use crate::r#match::strategies::goalkeepers::decision::GoalkeeperDecision;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     BallContext, GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions,
-    MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult,
     SteeringBehavior,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 lazy_static! {
     static ref GOALKEEPER_STANDING_STATE_NETWORK: NeuralNetwork =

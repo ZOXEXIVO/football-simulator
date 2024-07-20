@@ -1,11 +1,11 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{BallUpdateEvent, GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, PlayerUpdateEvent, StateManager};
+use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
-use itertools::Itertools;
-use crate::r#match::engine::collisions::ObjectCollisions;
-use crate::r#match::events::PlayerEvents;
+use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
+use crate::r#match::engine::collisions::ObjectCollisionsDetector;
+use crate::r#match::player::events::{PlayerEvents, PlayerUpdateEvent};
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -54,7 +54,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         };
 
         let (collision_ball_events, collision_player_events) =
-            ObjectCollisions::process(&game_tick_context.objects_positions);
+            ObjectCollisionsDetector::process(&game_tick_context.objects_positions);
 
         Self::play_ball(field, context, collision_ball_events);
         Self::play_players(field, context, &game_tick_context, collision_player_events);
@@ -71,7 +71,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let all_ball_events =  ball_events.iter().chain(&ball_collision_events);
 
-        Ball::handle_events(context.time.time, &mut field.ball, all_ball_events, context);
+        BallEvents::handle_events(context.time.time, &mut field.ball, all_ball_events, context);
     }
 
     fn play_players(

@@ -2,9 +2,10 @@ use crate::common::NeuralNetwork;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    PlayerTickContext, StateChangeResult,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 lazy_static! {
     static ref MIDFIELDER_SHOOTING_STATE_NETWORK: NeuralNetwork =

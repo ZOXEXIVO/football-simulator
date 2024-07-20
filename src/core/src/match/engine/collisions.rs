@@ -1,9 +1,11 @@
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{BallUpdateEvent, GameTickContext, MatchObjectsPositions, PlayerUpdateEvent};
+use crate::r#match::{MatchObjectsPositions};
+use crate::r#match::ball::events::BallUpdateEvent;
+use crate::r#match::player::events::PlayerUpdateEvent;
 
-pub struct ObjectCollisions;
+pub struct ObjectCollisionsDetector;
 
-impl ObjectCollisions {
+impl ObjectCollisionsDetector {
     pub fn process(
         object_positions: &MatchObjectsPositions,
     ) -> (Vec<BallUpdateEvent>, Vec<PlayerUpdateEvent>) {

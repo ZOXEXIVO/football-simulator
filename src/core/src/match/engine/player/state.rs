@@ -1,4 +1,5 @@
-use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent, StateStrategy};
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateStrategy};
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 pub struct PlayerMatchState;
 

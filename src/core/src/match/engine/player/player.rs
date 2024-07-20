@@ -1,13 +1,15 @@
 ﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    Ball, BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, PlayerTickContext,
+    BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, PlayerTickContext,
     StateStrategy,
 };
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
 use crate::r#match::player::conditions::PlayerConditions;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerMatchState;
+use crate::r#match::player::statistics::MatchPlayerStatistics;
 
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayer {
@@ -24,6 +26,7 @@ pub struct MatchPlayer {
     pub is_home: bool,
     pub state: PlayerState,
     pub in_state_time: u64,
+    pub statistics: MatchPlayerStatistics
 }
 
 impl MatchPlayer {
@@ -42,6 +45,7 @@ impl MatchPlayer {
             is_home: false,
             state: PlayerState::Standing,
             in_state_time: 0,
+            statistics: MatchPlayerStatistics::default()
         }
     }
 
@@ -146,15 +150,4 @@ impl Display for PlayerState {
             PlayerState::Returning => write!(f, "Returning"),
         }
     }
-}
-
-pub enum PlayerUpdateEvent {
-    Goal(u32),
-    BallCollision(u32),
-    TryAroundPlayer(u32, Vector3<f32>),
-    TacklingBall(u32),
-    PassTo(Vector3<f32>, f64),
-    RushOut(u32),
-    StayInGoal(u32),
-    CommunicateMessage(u32, &'static str),
 }

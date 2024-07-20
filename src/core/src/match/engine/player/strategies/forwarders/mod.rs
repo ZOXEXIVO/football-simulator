@@ -6,8 +6,9 @@ use crate::r#match::strategies::forwarders::states::{
 };
 use crate::r#match::{
     GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    PlayerTickContext, StateChangeResult
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 pub struct ForwardStrategies {}
 

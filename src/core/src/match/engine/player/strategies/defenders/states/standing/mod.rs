@@ -5,8 +5,9 @@ use crate::r#match::decision::DefenderDecision;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 lazy_static! {
     static ref DEFENDER_STANDING_STATE_NETWORK: NeuralNetwork =

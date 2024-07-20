@@ -1,9 +1,10 @@
 use crate::common::NeuralNetwork;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
     StateChangeResult,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 lazy_static! {
     static ref MIDFIELDER_WALKING_STATE_NETWORK: NeuralNetwork =

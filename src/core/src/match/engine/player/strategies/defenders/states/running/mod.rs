@@ -3,8 +3,9 @@ use crate::r#match::position::VectorExtensions;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext,
-    PlayerUpdateEvent, StateChangeResult,
+    StateChangeResult,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 lazy_static! {
     static ref DEFENDER_RUNNING_STATE_NETWORK: NeuralNetwork =

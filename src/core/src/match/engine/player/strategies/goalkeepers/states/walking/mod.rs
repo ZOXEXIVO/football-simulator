@@ -2,9 +2,10 @@ use crate::common::NeuralNetwork;
 
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent,
+    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext,
     StateChangeResult, SteeringBehavior,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 lazy_static! {
     static ref GOALKEEPER_WALKING_STATE_NETWORK: NeuralNetwork =

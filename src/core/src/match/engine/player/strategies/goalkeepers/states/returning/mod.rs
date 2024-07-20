@@ -1,9 +1,10 @@
 use crate::common::NeuralNetwork;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    GameTickContext, MatchContext, MatchPlayer, PlayerState,
+    PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 lazy_static! {
     static ref GOALKEEPER_RETURNING_STATE_NETWORK: NeuralNetwork =
