@@ -1,6 +1,7 @@
 ﻿use crate::league::LeagueMatch;
 use crate::r#match::position::MatchPositionData;
-use crate::r#match::TeamSquad;
+use crate::r#match::{MatchPlayer, TeamSquad};
+use crate::r#match::statistics::MatchStatisticType;
 
 #[derive(Debug, Clone)]
 pub struct MatchResultRaw {
@@ -34,6 +35,20 @@ impl MatchResultRaw {
     ) {
         self.home_players = FieldSquad::from(home_team_players);
         self.away_players = FieldSquad::from(away_team_players);
+    }
+
+    pub fn fill_details(&mut self, players: Vec<&MatchPlayer>){
+        for player in players.iter().filter(|p| !p.statistics.is_empty()) {
+            for stat in &player.statistics.items            {
+                let detail = GoalDetail{
+                    player_id: player.player_id,
+                    match_second: stat.match_second,
+                    stat_type: stat.stat_type
+                };
+
+                self.score.details.push(detail);
+            }
+        }
     }
 }
 
@@ -80,8 +95,9 @@ pub struct Score {
 #[derive(Debug, Clone)]
 pub struct GoalDetail {
     pub player_id: u32,
-    pub assistant: Option<u32>,
-    pub minute: u8,
+    pub stat_type: MatchStatisticType,
+
+    pub match_second: u64
 }
 
 impl Score {

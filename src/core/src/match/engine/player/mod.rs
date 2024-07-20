@@ -5,7 +5,7 @@ pub mod strategies;
 mod conditions;
 pub mod events;
 mod state;
-mod statistics;
+pub mod statistics;
 
 use crate::r#match::MatchContext;
 pub use behaviours::*;

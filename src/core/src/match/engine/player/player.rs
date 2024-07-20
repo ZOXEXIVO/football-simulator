@@ -11,7 +11,7 @@ use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerMatchState;
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct MatchPlayer {
     pub player_id: u32,
     pub position: Vector3<f32>,
@@ -45,7 +45,7 @@ impl MatchPlayer {
             is_home: false,
             state: PlayerState::Standing,
             in_state_time: 0,
-            statistics: MatchPlayerStatistics::default()
+            statistics: MatchPlayerStatistics::new()
         }
     }
 
@@ -117,7 +117,7 @@ impl MatchPlayer {
         }
     }
 
-    fn move_to(&mut self) {
+    fn  move_to(&mut self) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
     }

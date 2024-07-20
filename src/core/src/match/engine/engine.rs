@@ -1,7 +1,7 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
+use crate::r#match::{GameState, GameTickContext, Match, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
 use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
@@ -34,6 +34,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         // TODO
         context.result.home_players = field.home_players.unwrap();
         context.result.away_players = field.away_players.unwrap();
+
+        context.result.fill_details(context.players.raw_players());
 
         context.result
     }
@@ -178,6 +180,10 @@ impl MatchPlayerCollection {
     pub fn get_mut<'p>(&'p mut self, player_id: u32) -> Option<&'p mut MatchPlayer> {
         self.players.get_mut(&player_id)
     }
+
+    pub fn raw_players(&self) -> Vec<&MatchPlayer> {
+        self.players.values().collect()
+    }
 }
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
@@ -205,5 +211,29 @@ pub struct PlayMatchStateResult {
 impl PlayMatchStateResult {
     pub fn new() -> Self {
         PlayMatchStateResult { additional_time: 0 }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_initialization() {
+        let match_time = MatchTime::new();
+        assert_eq!(match_time.time, 0);
+    }
+
+    #[test]
+    fn test_increment() {
+        let mut match_time = MatchTime::new();
+
+        let incremented_time = match_time.increment(10);
+        assert_eq!(match_time.time, 10);
+        assert_eq!(incremented_time, 10);
+
+        let incremented_time_again = match_time.increment(5);
+        assert_eq!(match_time.time, 15);
+        assert_eq!(incremented_time_again, 15);
     }
 }

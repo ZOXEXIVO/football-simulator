@@ -26,12 +26,12 @@ impl PlayerEvents {
                 PlayerUpdateEvent::Goal(player_id) => {
                     let player = context.players.get_mut(player_id).unwrap();
 
-                    player.statistics.goals += 1;
+                    player.statistics.add_goal(context.time.time)
                 },
                 PlayerUpdateEvent::Assist(player_id) => {
                     let player = context.players.get_mut(player_id).unwrap();
 
-                    player.statistics.assists += 1;
+                    player.statistics.add_assist(context.time.time)
                 },
                 PlayerUpdateEvent::BallCollision(player_id) => {
                     let player = context.players.get_mut(player_id).unwrap();
