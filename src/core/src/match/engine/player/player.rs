@@ -68,7 +68,7 @@ impl MatchPlayer {
                     &tick_context.objects_positions.ball_position,
                     &self.start_position,
                 ),
-                is_on_home_side: self.is_home && is_ball_home_size,
+                on_own_side: self.is_home && is_ball_home_size,
                 ball_distance: tick_context
                     .objects_positions
                     .ball_position
@@ -117,13 +117,17 @@ impl MatchPlayer {
         }
     }
 
-    fn  move_to(&mut self) {
+    fn move_to(&mut self) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
     }
 
     pub fn heading(&self) -> f32 {
         self.velocity.y.atan2(self.velocity.x)
+    }
+
+    pub fn distance_from_start_position(&self) -> f32{
+        self.start_position.distance_to(&self.position)
     }
 }
 

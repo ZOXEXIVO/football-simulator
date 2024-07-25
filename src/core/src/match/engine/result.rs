@@ -46,7 +46,7 @@ impl MatchResultRaw {
                     stat_type: stat.stat_type
                 };
 
-                self.score.details.push(detail);
+                self.score.add_goal_detail(detail);
             }
         }
     }
@@ -89,7 +89,7 @@ impl FieldSquad {
 pub struct Score {
     pub home: u8,
     pub away: u8,
-    pub details: Vec<GoalDetail>,
+    details: Vec<GoalDetail>,
 }
 
 #[derive(Debug, Clone)]
@@ -107,6 +107,14 @@ impl Score {
             away: 0,
             details: Vec::new(),
         }
+    }
+
+    pub fn add_goal_detail(&mut self, goal_detail: GoalDetail){
+        self.details.push(goal_detail)
+    }
+
+    pub fn detail(&self) -> &[GoalDetail]{
+        &self.details
     }
 }
 

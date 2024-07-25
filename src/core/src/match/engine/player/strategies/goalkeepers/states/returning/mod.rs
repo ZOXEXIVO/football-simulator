@@ -22,7 +22,7 @@ impl GoalkeeperReturningState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        if !player_tick_context.ball_context.is_on_home_side {
+        if !player_tick_context.ball_context.on_own_side {
             return StateChangeResult::with_state(PlayerState::Walking);
         }
 

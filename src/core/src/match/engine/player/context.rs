@@ -12,7 +12,7 @@ pub struct PlayerTickContext {
 
 pub struct BallContext {
     pub is_heading_towards_goal: bool,
-    pub is_on_home_side: bool,
+    pub on_own_side: bool,
 
     pub ball_distance: f32,
 }
@@ -65,6 +65,16 @@ impl MatchObjectsPositions {
             players_positions: positions,
             player_distances: distances,
         }
+    }
+
+    pub fn is_big_opponents_concentration(&self, current_player: &MatchPlayer) -> bool {
+        let max_distance = 100.0;
+
+        let (nearest_teammates_count, nearest_opponents_count) = self
+            .player_distances
+            .players_within_distance_count(current_player, max_distance);
+
+        ((nearest_teammates_count as f32) + 1.0) / ((nearest_opponents_count as f32) + 1.0) < 1.0
     }
 }
 
