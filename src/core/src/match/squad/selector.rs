@@ -155,11 +155,11 @@ mod tests {
 
     #[test]
     fn select_is_correct() {
-        let team = generate_team();
-
-        let staff = StaffStub::default();
-
-        let squad = SquadSelector::select(&team, &staff);
+        // let team = generate_team();
+        //
+        // let staff = StaffStub::default();
+        //
+        // let squad = SquadSelector::select(&team, &staff);
 
         // TODO
         //assert_eq!(11, squad.main_squad.len())
@@ -192,14 +192,14 @@ mod tests {
     fn generate_players() -> Vec<Player> {
         let tactics = TACTICS_POSITIONS
             .iter()
-            .find(|(tp, pt)| *tp == TacticsPositioning::T442)
-            .map(|(tp, pt)| pt)
+            .find(|(tp, _)| *tp == TacticsPositioning::T442)
+            .map(|(_, pt)| pt)
             .unwrap();
 
         let mut players = Vec::with_capacity(50);
 
         for tactic_position in tactics {
-            for i in 0..5 {
+            for _ in 0..5 {
                 let level = IntegerUtils::random(10, 20) as u8;
                 let player =
                     PlayerGenerator::generate(0, Utc::now().date_naive(), *tactic_position, level);

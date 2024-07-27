@@ -1,9 +1,7 @@
 use crate::common::NeuralNetwork;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
-};
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult, SteeringBehavior};
 use std::sync::LazyLock;
 
 static FORWARD_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =

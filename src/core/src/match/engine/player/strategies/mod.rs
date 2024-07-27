@@ -12,7 +12,7 @@ pub use goalkeepers::*;
 pub use midfielders::*;
 
 use crate::r#match::{
-    GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    GameTickContext, MatchContext, MatchPlayer, PlayerState,
     PlayerTickContext,
 };
 use nalgebra::Vector3;
