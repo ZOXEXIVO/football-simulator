@@ -34,7 +34,7 @@ docker run -d -p 18000:18000 --name football-simulator football-simulator
 open chrome at http://localhost:18000
 ```
 
-[Player page example](https://football-simulator.org/teams/spartak-moscow/players/0)
+[Player page example](https://football-simulator.org/teams/spartak-moscow/players/1)
 
 ![alt text](docs/images/player.jpg "Player page")
 
