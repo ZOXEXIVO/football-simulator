@@ -6,7 +6,7 @@ use crate::r#match::strategies::midfielders::states::{
     MidfielderWalkingState,
 };
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    GameTickContext, MatchContext, MatchPlayer, PlayerState,
     PlayerTickContext, StateChangeResult,
 };
 use crate::r#match::player::events::PlayerUpdateEvent;

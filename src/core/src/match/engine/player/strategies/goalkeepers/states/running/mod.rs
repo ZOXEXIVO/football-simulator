@@ -1,4 +1,6 @@
+use std::sync::LazyLock;
 use crate::common::NeuralNetwork;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
@@ -6,12 +8,9 @@ use crate::r#match::{
     PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
 use nalgebra::Vector3;
-use crate::r#match::player::events::PlayerUpdateEvent;
 
-lazy_static! {
-    static ref GOALKEEPER_RUNNING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json"));
-}
+static GOALKEEPER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
 
 pub struct GoalkeeperRunningState {}
 

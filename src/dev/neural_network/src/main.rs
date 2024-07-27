@@ -40,7 +40,7 @@ fn main() {
     //                                 configuration.push(fourth);
     //                             }
     //
-    //                             net_configurations.push((configuration, epochs, rate, momentum));
+    //                             net_configurations.push((configuration, epochs, rate, momentum)));
     //                         }
     //                     }
     //                 }
@@ -49,10 +49,10 @@ fn main() {
     //     }
     // }
     //
-    // let mut ratings: Mutex<Vec<(f64, Vec<u32>, (u32, f64, f64))>> = Mutex::new(Vec::new());
+    // let mut ratings: Mutex<Vec<(f64, Vec<u32>, (u32, f64, f64))>> = Mutex::new(Vec::new()));
     //
     // net_configurations.par_iter().for_each(|(configuration, &epochs, &rate, &momentum)| {
-    //     let mut full_configuration = Vec::with_capacity(2 * configuration.len());
+    //     let mut full_configuration = Vec::with_capacity(2 * configuration.len()));
     //
     //     full_configuration.push(2);
     //     full_configuration.extend(configuration);
@@ -60,7 +60,7 @@ fn main() {
     //
     //     let error = train(&full_configuration, epochs, rate, momentum);
     //
-    //     ratings.lock().unwrap().push((error, full_configuration, (epochs, rate, momentum)));
+    //     ratings.lock().unwrap().push((error, full_configuration, (epochs, rate, momentum))));
     // });
     //
     // let mut ratings_lock = ratings.lock().unwrap();

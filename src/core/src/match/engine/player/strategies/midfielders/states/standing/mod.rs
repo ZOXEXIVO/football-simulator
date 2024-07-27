@@ -1,15 +1,13 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
-    StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
-use crate::r#match::player::events::PlayerUpdateEvent;
+use std::sync::LazyLock;
 
-lazy_static! {
-    static ref MIDFIELDER_STANDING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json"));
-}
+static MIDFIELDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
 pub struct MidfielderStandingState {}
 

@@ -1,7 +1,6 @@
 ﻿mod decision;
 mod states;
 
-use crate::r#match::position::VectorExtensions;
 use crate::r#match::strategies::goalkeepers::states::{
     GoalkeeperPassingState, GoalkeeperReturningState, GoalkeeperRunningState,
     GoalkeeperShootingState, GoalkeeperStandingState, GoalkeeperTacklingState,

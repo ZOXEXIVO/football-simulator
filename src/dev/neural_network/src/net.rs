@@ -25,7 +25,7 @@ impl NeuralNetwork {
                 }
             }];
 
-            layers.push(Layer::new(current_neurons, current_inputs));
+            layers.push(Layer::new(current_neurons, current_inputs)));
         }
 
         NeuralNetwork {
@@ -51,13 +51,13 @@ impl NeuralNetwork {
     }
     
     pub(crate) fn run_internal(&self, inputs: &[f64]) -> Vec<Vec<f64>> {
-        let mut results = Vec::with_capacity(self.layers.len());
+        let mut results = Vec::with_capacity(self.layers.len()));
 
         // Fill first layer 
-        results.push(inputs.to_vec());
+        results.push(inputs.to_vec()));
 
         for (layer_idx, layer) in self.layers.iter().enumerate() {
-            let mut layer_results = Vec::with_capacity(layer.neurons.len());
+            let mut layer_results = Vec::with_capacity(layer.neurons.len()));
 
             // calculate weight * input
             for neuron in &layer.neurons {

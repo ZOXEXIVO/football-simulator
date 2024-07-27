@@ -1,16 +1,14 @@
 use crate::common::NeuralNetwork;
-use crate::r#match::position::VectorExtensions;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    PlayerTickContext, StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
+    StateChangeResult,
 };
-use crate::r#match::player::events::PlayerUpdateEvent;
+use std::sync::LazyLock;
 
-lazy_static! {
-    static ref MIDFIELDER_SHOOTING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json"));
-}
+static MIDFIELDER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
 
 pub struct MidfielderRunningState {}
 
@@ -53,19 +51,5 @@ impl MidfielderRunningState {
         //     6 => Some(PlayerState::Returning),
         //     _ => None,
         // }
-    }
-
-    fn check_collision(
-        player: &mut MatchPlayer,
-        objects_positions: &MatchObjectsPositions,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) {
-        if objects_positions
-            .ball_position
-            .distance_to(&player.position)
-            < 5.0
-        {
-            result.push(PlayerUpdateEvent::TacklingBall(player.player_id))
-        }
     }
 }

@@ -279,8 +279,7 @@ name = "core"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "itertools 0.13.0",
- "lazy_static",
+ "itertools",
  "log",
  "nalgebra",
  "rand",
@@ -386,7 +385,7 @@ dependencies = [
  "core",
  "database",
  "env_logger",
- "itertools 0.12.1",
+ "itertools",
  "log",
  "rand",
  "serde",
@@ -587,15 +586,6 @@ name = "indenter"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce23b50ad8242c51a442f3ff322d56b02f08852c77e4c0b4d3fd684abc89c683"
-
-[[package]]
-name = "itertools"
-version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
-dependencies = [
- "either",
-]
 
 [[package]]
 name = "itertools"
@@ -1099,7 +1089,7 @@ dependencies = [
  "chrono",
  "core",
  "database",
- "itertools 0.13.0",
+ "itertools",
  "log",
  "serde",
  "tokio",

@@ -89,7 +89,7 @@ impl FieldSquad {
 pub struct Score {
     pub home: u8,
     pub away: u8,
-    details: Vec<GoalDetail>,
+    pub details: Vec<GoalDetail>,
 }
 
 #[derive(Debug, Clone)]

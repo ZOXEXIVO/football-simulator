@@ -1,3 +1,4 @@
+use std::sync::LazyLock;
 use crate::common::NeuralNetwork;
 
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
@@ -7,10 +8,9 @@ use crate::r#match::{
 };
 use crate::r#match::player::events::PlayerUpdateEvent;
 
-lazy_static! {
-    static ref DEFENDER_SHOOTING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_shooting_data.json"));
-}
+static DEFENDER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
+    DefaultNeuralNetworkLoader::load(include_str!("nn_shooting_data.json"))
+});
 
 pub struct DefenderShootingState {}
 
