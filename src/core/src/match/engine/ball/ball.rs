@@ -1,6 +1,7 @@
 use crate::r#match::{BallState, MatchContext};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
+use crate::r#match::ball::events::BallUpdateEvent;
 
 pub struct Ball {
     pub start_position: Vector3<f32>,
@@ -40,41 +41,6 @@ impl Ball {
         }
 
         result
-    }
-
-    pub fn handle_events(
-        _current_time: u64,
-        events: Vec<BallUpdateEvent>,
-        context: &mut MatchContext,
-    ) {
-        for event in events {
-            match event {
-                BallUpdateEvent::AwayGoal => {
-                    context.result.score.away += 1;
-                    // context.result.score.details.push(GoalDetail {
-                    //     player_id: goal_scorer,
-                    //     assistant: goal_assistant,
-                    //     minute: (current_time / 1000 / 60) as u8,
-                    // })
-                }
-                BallUpdateEvent::HomeGoal => {
-                    context.result.score.home += 1;
-                    // context.result.score.details.push(GoalDetail {
-                    //     player_id: goal_scorer,
-                    //     assistant: goal_assistant,
-                    //     minute: (current_time / 1000 / 60) as u8,
-                    // })
-                }
-                BallUpdateEvent::ChangeBallSide(_position) => {
-                    // let ball_state = match position {
-                    //     BallPosition::Home => BallState::HomeSide,
-                    //     BallPosition::Away => BallState::AwaySide,
-                    // };
-
-                    //context.state.set_ball_state(ball_state)
-                }
-            }
-        }
     }
 
     fn check_boundary_collision(
@@ -177,18 +143,12 @@ impl Ball {
     }
 }
 
-pub enum BallUpdateEvent {
-    HomeGoal,
-    AwayGoal,
-    ChangeBallSide(BallPosition),
-}
-
 pub enum BallOwner {
     Home,
     Away,
 }
 
-#[derive(Eq, PartialEq)]
+#[derive(Eq, PartialEq, Copy, Clone)]
 pub enum BallPosition {
     Home,
     Away,

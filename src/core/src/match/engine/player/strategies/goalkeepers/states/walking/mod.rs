@@ -1,40 +1,38 @@
+use std::sync::LazyLock;
 use crate::common::NeuralNetwork;
 
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent,
+    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext,
     StateChangeResult, SteeringBehavior,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
-lazy_static! {
-    static ref GOALKEEPER_WALKING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json"));
-}
+static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
 
 pub struct GoalkeeperWalkingState {}
 
 impl GoalkeeperWalkingState {
     pub fn process(
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        if player_tick_context.ball_context.is_on_home_side
-            && player_tick_context.ball_context.ball_distance < 100.0
-        {
+        if player_tick_context.ball_context.on_own_side {
             return StateChangeResult::with(PlayerState::Returning, player.skills.running_speed());
         }
 
         if in_state_time > 100 {
             let wander_velocity = SteeringBehavior::Wander {
-                target: tick_context.objects_positions.ball_position,
-                radius: 10.0,
+                target: player.start_position,
+                radius: 40.0,
                 jitter: 0.0,
-                distance: 15.0,
-                angle: 40.0,
+                distance: 25.0,
+                angle: 10.0,
             }
             .calculate(player)
             .velocity;

@@ -2,6 +2,10 @@
 pub mod context;
 pub mod player;
 pub mod strategies;
+mod conditions;
+pub mod events;
+mod state;
+pub mod statistics;
 
 use crate::r#match::MatchContext;
 pub use behaviours::*;

@@ -1,27 +1,27 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult,
+    SteeringBehavior,
 };
+use std::sync::LazyLock;
 
-lazy_static! {
-    static ref GOALKEEPER_RETURNING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_returning_data.json"));
-}
+static GOALKEEPER_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_returning_data.json")));
 
 pub struct GoalkeeperReturningState {}
 
 impl GoalkeeperReturningState {
     pub fn process(
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        if !player_tick_context.ball_context.is_on_home_side {
+        if !player_tick_context.ball_context.on_own_side {
             return StateChangeResult::with_state(PlayerState::Walking);
         }
 

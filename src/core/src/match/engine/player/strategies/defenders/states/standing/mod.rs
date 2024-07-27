@@ -1,23 +1,23 @@
 use crate::common::NeuralNetwork;
 use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 use crate::r#match::decision::DefenderDecision;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
 
-lazy_static! {
-    static ref DEFENDER_STANDING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json"));
-}
+static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
 pub struct DefenderStandingState {}
 
 impl DefenderStandingState {
     pub fn process(
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,

@@ -6,15 +6,16 @@ use crate::r#match::strategies::forwarders::states::{
 };
 use crate::r#match::{
     GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult, SteeringBehavior,
+    PlayerTickContext, StateChangeResult
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
     pub fn calculate(
         in_state_time: u64,
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: PlayerTickContext,

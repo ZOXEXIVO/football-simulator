@@ -1,7 +1,6 @@
 ﻿mod decision;
 mod states;
 
-use crate::r#match::position::VectorExtensions;
 use crate::r#match::strategies::goalkeepers::states::{
     GoalkeeperPassingState, GoalkeeperReturningState, GoalkeeperRunningState,
     GoalkeeperShootingState, GoalkeeperStandingState, GoalkeeperTacklingState,
@@ -9,17 +8,18 @@ use crate::r#match::strategies::goalkeepers::states::{
 };
 use crate::r#match::{
     BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    PlayerTickContext, StateChangeResult,
 };
 use itertools::Itertools;
 use std::ops::Deref;
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
     pub fn calculate(
         in_state_time: u64,
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: PlayerTickContext,

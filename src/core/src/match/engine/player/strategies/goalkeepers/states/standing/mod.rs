@@ -1,29 +1,27 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::position::PlayerFieldPosition;
 use crate::{PlayerFieldPositionGroup, PlayerPositionType};
 use nalgebra::Vector3;
 use std::collections::HashMap;
-
-use crate::r#match::position::PlayerFieldPosition;
+use std::sync::LazyLock;
 
 use crate::r#match::strategies::goalkeepers::decision::GoalkeeperDecision;
 
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     BallContext, GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions,
-    MatchPlayer, PlayerState, PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
-    SteeringBehavior,
+    MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
 
-lazy_static! {
-    static ref GOALKEEPER_STANDING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json"));
-}
+static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
 pub struct GoalkeeperStandingState {}
 
 impl GoalkeeperStandingState {
     pub fn process(
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,
@@ -56,11 +54,17 @@ impl GoalkeeperStandingState {
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,
     ) -> Option<GoalkeeperDecision> {
-        if Self::is_big_opponents_concentration(player, &tick_context.objects_positions) {
+        if !player_tick_context.ball_context.on_own_side {
+            return Some(GoalkeeperDecision::Walk);
+        }
+        if tick_context
+            .objects_positions
+            .is_big_opponents_concentration(player)
+        {
             return Some(GoalkeeperDecision::Run);
         }
 
-        if player_tick_context.ball_context.ball_distance < 100.0 {
+        if player_tick_context.ball_context.ball_distance < 150.0 {
             if let Some((_, opponent_distance)) = tick_context
                 .objects_positions
                 .player_distances
@@ -72,29 +76,11 @@ impl GoalkeeperStandingState {
             }
         }
 
-        if Self::should_sweep(player, &tick_context.objects_positions) {
-            // Perform sweeping action
-            // Add sweeping logic here...
-        }
-
         None
     }
 
     fn should_rush_out(ball_context: &BallContext) -> bool {
         ball_context.ball_distance < 50.0
-    }
-
-    fn is_big_opponents_concentration(
-        player: &MatchPlayer,
-        objects_positions: &MatchObjectsPositions,
-    ) -> bool {
-        let max_distance = 150.0;
-
-        let (nearest_teammates_count, nearest_opponents_count) = objects_positions
-            .player_distances
-            .players_within_distance_count(player, max_distance);
-
-        ((nearest_teammates_count as f32) + 1.0) / ((nearest_opponents_count as f32) + 1.0) < 1.0
     }
 
     fn should_sweep(player: &MatchPlayer, objects_positions: &MatchObjectsPositions) -> bool {
@@ -180,7 +166,7 @@ impl GoalkeeperStandingState {
         decision: GoalkeeperDecision,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        match decision {
+        return match decision {
             GoalkeeperDecision::RushOut => {
                 // Rush out of the goal to intercept the ball
                 let velocity = SteeringBehavior::Arrive {
@@ -190,15 +176,13 @@ impl GoalkeeperStandingState {
                 .calculate(player)
                 .velocity;
 
-                return StateChangeResult::with(PlayerState::Running, velocity);
+                StateChangeResult::with(PlayerState::Running, velocity)
             }
             GoalkeeperDecision::OrganizeDefense => {
                 // Self::organize_defensive_line(player, context);
-                return StateChangeResult::with_state(PlayerState::Walking);
+                StateChangeResult::with_state(PlayerState::Walking)
             }
-            GoalkeeperDecision::Tackle => {
-                return StateChangeResult::with_state(PlayerState::Tackling);
-            }
+            GoalkeeperDecision::Tackle => StateChangeResult::with_state(PlayerState::Tackling),
             GoalkeeperDecision::PositionYourself => {
                 // Position yourself appropriately based on the ball's position
                 let target_position = match_objects_positions.ball_position;
@@ -210,7 +194,7 @@ impl GoalkeeperStandingState {
                 .calculate(player)
                 .velocity;
 
-                return StateChangeResult::with(PlayerState::Walking, velocity);
+                StateChangeResult::with(PlayerState::Walking, velocity)
             }
             GoalkeeperDecision::Run => {
                 {
@@ -222,10 +206,37 @@ impl GoalkeeperStandingState {
                     .calculate(player)
                     .velocity;
 
-                    return StateChangeResult::with(PlayerState::Running, velocity);
+                    StateChangeResult::with(PlayerState::Running, velocity)
                 }
             }
-        }
+            GoalkeeperDecision::Walk => {
+                {
+                    // go to own goals
+                    let velocity = SteeringBehavior::Arrive {
+                        target: player.start_position,
+                        slowing_distance: 5.0,
+                    }
+                    .calculate(player)
+                    .velocity;
+
+                    StateChangeResult::with(PlayerState::Walking, velocity)
+                }
+            }
+            GoalkeeperDecision::Track => {
+                {
+                    // go to own goals
+                    let velocity = SteeringBehavior::Arrive {
+                        target: player.start_position,
+                        slowing_distance: 5.0,
+                    }
+                    .calculate(player)
+                    .velocity;
+
+                    StateChangeResult::with(PlayerState::Walking, velocity)
+                }
+            }
+            _ => StateChangeResult::none(),
+        };
     }
 
     fn calculate_goalkeeper_position(

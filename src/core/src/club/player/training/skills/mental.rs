@@ -2,6 +2,7 @@
 use crate::{MentalFocusType, Player, Staff};
 use chrono::NaiveDate;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 pub enum MentalSkill {
@@ -21,26 +22,28 @@ pub enum MentalSkill {
     WorkRate,
 }
 
-lazy_static! {
-    pub static ref MENTAL_SKILL_INCREASE_SPEED_MAP: HashMap<MentalSkill, f32> = vec![
-        (MentalSkill::Aggression, 0.1),
-        (MentalSkill::Anticipation, 0.15),
-        (MentalSkill::Bravery, 0.12),
-        (MentalSkill::Composure, 0.13),
-        (MentalSkill::Concentration, 0.14),
-        (MentalSkill::Decisions, 0.1),
-        (MentalSkill::Determination, 0.11),
-        (MentalSkill::Flair, 0.09),
-        (MentalSkill::Leadership, 0.08),
-        (MentalSkill::OffTheBall, 0.07),
-        (MentalSkill::Positioning, 0.06),
-        (MentalSkill::Teamwork, 0.05),
-        (MentalSkill::Vision, 0.04),
-        (MentalSkill::WorkRate, 0.03),
-    ]
-    .into_iter()
-    .collect();
-}
+
+pub static MENTAL_SKILL_INCREASE_SPEED_MAP: LazyLock<HashMap<MentalSkill, f32>> =
+    LazyLock::new(|| {
+        vec![
+            (MentalSkill::Aggression, 0.1),
+            (MentalSkill::Anticipation, 0.15),
+            (MentalSkill::Bravery, 0.12),
+            (MentalSkill::Composure, 0.13),
+            (MentalSkill::Concentration, 0.14),
+            (MentalSkill::Decisions, 0.1),
+            (MentalSkill::Determination, 0.11),
+            (MentalSkill::Flair, 0.09),
+            (MentalSkill::Leadership, 0.08),
+            (MentalSkill::OffTheBall, 0.07),
+            (MentalSkill::Positioning, 0.06),
+            (MentalSkill::Teamwork, 0.05),
+            (MentalSkill::Vision, 0.04),
+            (MentalSkill::WorkRate, 0.03),
+        ]
+            .into_iter()
+            .collect()
+    });
 
 pub fn determine_mental_skills_to_increase(
     now: NaiveDate,

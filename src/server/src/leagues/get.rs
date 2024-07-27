@@ -144,7 +144,7 @@ pub async fn league_get_action(
             .unwrap()
             .items
             .iter()
-            .group_by(|t| t.date.date())
+            .chunk_by(|t| t.date.date())
         {
             let tour_schedule = TourSchedule {
                 date: key.format("%d.%m.%Y").to_string(),

@@ -2,6 +2,7 @@
 use crate::{Player, Staff, TechnicalFocusType};
 use chrono::NaiveDate;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 pub enum TechnicalSkill {
@@ -21,8 +22,9 @@ pub enum TechnicalSkill {
     Technique,
 }
 
-lazy_static! {
-    pub static ref TECHNICAL_SKILL_INCREASE_SPEED_MAP: HashMap<TechnicalSkill, f32> = vec![
+
+pub static TECHNICAL_SKILL_INCREASE_SPEED_MAP: LazyLock<HashMap<TechnicalSkill, f32>> = LazyLock::new(|| {
+    vec![
         (TechnicalSkill::Corners, 0.1),
         (TechnicalSkill::Crossing, 0.2),
         (TechnicalSkill::Dribbling, 0.3),
@@ -38,9 +40,10 @@ lazy_static! {
         (TechnicalSkill::Tackling, 0.2),
         (TechnicalSkill::Technique, 0.3)
     ]
-    .into_iter()
-    .collect();
-}
+        .into_iter()
+        .collect()
+});
+
 
 pub fn determine_technical_skills_to_increase(
     now: NaiveDate,

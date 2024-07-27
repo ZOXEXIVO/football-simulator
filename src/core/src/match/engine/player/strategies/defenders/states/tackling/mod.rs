@@ -1,21 +1,20 @@
 use crate::common::NeuralNetwork;
+use std::sync::LazyLock;
 
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent, StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
 
-lazy_static! {
-    static ref DEFENDER_TACKLING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_tackling_data.json"));
-}
+static DEFENDER_TACKLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_tackling_data.json")));
 
 pub struct DefenderTacklingState {}
 
 impl DefenderTacklingState {
     pub fn process(
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,

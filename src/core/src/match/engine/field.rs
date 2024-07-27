@@ -85,7 +85,7 @@ fn setup_player_on_field(
                         home_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
                         home_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
 
-                        players_on_field.push(home_player);
+                        players_on_field.push(home_player.clone());
                     }
                 });
         });
@@ -118,7 +118,7 @@ fn setup_player_on_field(
                         away_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
                         away_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
 
-                        players_on_field.push(away_player);
+                        players_on_field.push(away_player.clone());
                     }
                 });
         });

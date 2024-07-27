@@ -1,20 +1,19 @@
 use crate::common::NeuralNetwork;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, PlayerUpdateEvent,
-    StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
+use std::sync::LazyLock;
 
-lazy_static! {
-    static ref FORWARD_PASSING_STATE_NETWORK: NeuralNetwork =
-        DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json"));
-}
+static FORWARD_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
 
 pub struct ForwardWalkingState {}
 
 impl ForwardWalkingState {
     pub fn process(
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_tick_context: PlayerTickContext,

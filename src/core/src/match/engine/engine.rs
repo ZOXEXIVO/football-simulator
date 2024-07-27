@@ -1,11 +1,11 @@
 use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{
-    GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager,
-};
-use itertools::Itertools;
+use crate::r#match::{GameState, GameTickContext, Match, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
+use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
+use crate::r#match::engine::collisions::ObjectCollisionsDetector;
+use crate::r#match::player::events::{PlayerEvents, PlayerUpdateEvent};
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -35,6 +35,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         context.result.home_players = field.home_players.unwrap();
         context.result.away_players = field.away_players.unwrap();
 
+        context.result.fill_details(context.players.raw_players());
+
         context.result
     }
 
@@ -53,8 +55,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             objects_positions: MatchObjectsPositions::from(&field),
         };
 
-        Self::play_ball(field, context, &game_tick_context);
-        Self::play_players(field, context, &game_tick_context);
+        let (collision_ball_events, collision_player_events) =
+            ObjectCollisionsDetector::process(&game_tick_context.objects_positions);
+
+        Self::play_ball(field, context, collision_ball_events);
+        Self::play_players(field, context, &game_tick_context, collision_player_events);
 
         field.write_match_positions(&mut context.result, context.time.time);
     }
@@ -62,27 +67,31 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_ball(
         field: &mut MatchField,
         context: &mut MatchContext,
-        tick_context: &GameTickContext,
+        ball_collision_events: Vec<BallUpdateEvent>
     ) {
-        let ball_update_events = field.ball.update(context);
+        let ball_events = field.ball.update(context);
 
-        // handle events
-        Ball::handle_events(context.time.time, ball_update_events, context);
+        let all_ball_events =  ball_events.iter().chain(&ball_collision_events);
+
+        BallEvents::handle_events(context.time.time, &mut field.ball, all_ball_events, context);
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-    ) {
-        let player_update_events = field
-            .players
-            .iter_mut()
-            .flat_map(|player| player.update(context, tick_context))
-            .collect();
+        player_collision_events: Vec<PlayerUpdateEvent>
+    ){
+        let mut all_player_events = {
+            let player_events: Vec<PlayerUpdateEvent> = field.players
+                .iter_mut()
+                .flat_map(|player| player.update(context, tick_context))
+                .collect();
 
-        // handle events
-        MatchPlayer::handle_events(player_update_events, &mut field.ball, context);
+             player_events.into_iter().chain(player_collision_events).into_iter()
+        };
+
+        PlayerEvents::process(&mut all_player_events, &mut field.ball, context);
     }
 }
 
@@ -164,8 +173,16 @@ impl MatchPlayerCollection {
         MatchPlayerCollection { players: result }
     }
 
-    pub fn get<'p>(&self, player_id: u32) -> Option<&'p MatchPlayer> {
-        self.get(player_id)
+    pub fn get<'p>(&'p self, player_id: u32) -> Option<&'p MatchPlayer> {
+        self.players.get(&player_id)
+    }
+
+    pub fn get_mut<'p>(&'p mut self, player_id: u32) -> Option<&'p mut MatchPlayer> {
+        self.players.get_mut(&player_id)
+    }
+
+    pub fn raw_players(&self) -> Vec<&MatchPlayer> {
+        self.players.values().collect()
     }
 }
 
@@ -194,5 +211,29 @@ pub struct PlayMatchStateResult {
 impl PlayMatchStateResult {
     pub fn new() -> Self {
         PlayMatchStateResult { additional_time: 0 }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_initialization() {
+        let match_time = MatchTime::new();
+        assert_eq!(match_time.time, 0);
+    }
+
+    #[test]
+    fn test_increment() {
+        let mut match_time = MatchTime::new();
+
+        let incremented_time = match_time.increment(10);
+        assert_eq!(match_time.time, 10);
+        assert_eq!(incremented_time, 10);
+
+        let incremented_time_again = match_time.increment(5);
+        assert_eq!(match_time.time, 15);
+        assert_eq!(incremented_time_again, 15);
     }
 }

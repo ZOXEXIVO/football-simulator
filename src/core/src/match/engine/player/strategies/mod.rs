@@ -13,17 +13,18 @@ pub use midfielders::*;
 
 use crate::r#match::{
     GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, PlayerUpdateEvent,
+    PlayerTickContext,
 };
 use nalgebra::Vector3;
 
 use crate::PlayerFieldPositionGroup;
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 pub trait StateStrategy {
     fn calculate(
         &self,
         in_state_time: u64,
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: PlayerTickContext,
@@ -70,7 +71,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
     fn calculate(
         &self,
         in_state_time: u64,
-        player: &MatchPlayer,
+        player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: PlayerTickContext,

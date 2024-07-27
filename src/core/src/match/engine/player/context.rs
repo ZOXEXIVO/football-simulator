@@ -12,7 +12,7 @@ pub struct PlayerTickContext {
 
 pub struct BallContext {
     pub is_heading_towards_goal: bool,
-    pub is_on_home_side: bool,
+    pub on_own_side: bool,
 
     pub ball_distance: f32,
 }
@@ -50,8 +50,10 @@ impl MatchObjectsPositions {
                     distances.add(
                         outer_player.player_id,
                         outer_player.team_id,
+                        outer_player.position,
                         inner_player.player_id,
                         inner_player.team_id,
+                        inner_player.position,
                         distance,
                     );
                 });
@@ -64,6 +66,16 @@ impl MatchObjectsPositions {
             player_distances: distances,
         }
     }
+
+    pub fn is_big_opponents_concentration(&self, current_player: &MatchPlayer) -> bool {
+        let max_distance = 100.0;
+
+        let (nearest_teammates_count, nearest_opponents_count) = self
+            .player_distances
+            .players_within_distance_count(current_player, max_distance);
+
+        ((nearest_teammates_count as f32) + 1.0) / ((nearest_opponents_count as f32) + 1.0) < 1.0
+    }
 }
 
 pub struct PlayerDistanceClosure {
@@ -71,11 +83,13 @@ pub struct PlayerDistanceClosure {
 }
 
 pub struct PlayerDistanceItem {
-    player_from_id: u32,
+    pub player_from_id: u32,
     player_from_team: u32,
+    pub player_from_position: Vector3<f32>,
 
-    player_to_id: u32,
+    pub player_to_id: u32,
     player_to_team: u32,
+    pub player_to_position: Vector3<f32>,
 
     distance: f32,
 }
@@ -101,15 +115,19 @@ impl PlayerDistanceClosure {
         &mut self,
         player_from_id: u32,
         player_from_team: u32,
+        player_from_position: Vector3<f32>,
         player_to_id: u32,
         player_to_team: u32,
+        player_to_position: Vector3<f32>,
         distance: f32,
     ) {
         self.distances.push(PlayerDistanceItem {
             player_from_id,
             player_from_team,
+            player_from_position,
             player_to_id,
             player_to_team,
+            player_to_position,
             distance,
         })
     }
@@ -151,6 +169,13 @@ impl PlayerDistanceClosure {
             );
 
         (teammates, opponents)
+    }
+
+    pub fn get_collisions(&self, max_distance: f32) -> Vec<&PlayerDistanceItem> {
+        self.distances
+            .iter()
+            .filter(|&p| p.distance < max_distance)
+            .collect()
     }
 
     pub fn players_within_distance_count(

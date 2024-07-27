@@ -61,11 +61,11 @@ impl Trainer for NeuralNetwork{
 
         for (layer_index, (layer_nodes, layer_results)) in iter_zip_enum(layers, network_results).rev() {
             let prev_layer_results = &results[layer_index];
-            let mut layer_errors = Vec::with_capacity(layer_nodes.neurons.len());
-            let mut layer_weight_updates = Vec::with_capacity(layer_nodes.neurons.len());
+            let mut layer_errors = Vec::with_capacity(layer_nodes.neurons.len()));
+            let mut layer_weight_updates = Vec::with_capacity(layer_nodes.neurons.len()));
 
             for (node_index, (neuron, &result)) in layer_nodes.neurons.iter().zip(layer_results).enumerate() {
-                let mut node_weight_updates = Vec::with_capacity(neuron.weights.len());
+                let mut node_weight_updates = Vec::with_capacity(neuron.weights.len()));
                 let mut node_error;
 
                 if layer_index == layers.len() - 1 {
@@ -130,13 +130,13 @@ impl Trainer for NeuralNetwork{
     }
 
     fn initial_deltas(&self) -> Vec<Vec<Vec<f64>>> {
-        let mut result = Vec::with_capacity(self.layers.len());
+        let mut result = Vec::with_capacity(self.layers.len()));
 
         for layer in &self.layers {
-            let mut layer_stage = Vec::with_capacity(layer.neurons.len());
+            let mut layer_stage = Vec::with_capacity(layer.neurons.len()));
 
             for neuron in &layer.neurons {
-                let mut neuron_stage = Vec::with_capacity(neuron.weights.len());
+                let mut neuron_stage = Vec::with_capacity(neuron.weights.len()));
 
                 for _ in 0..neuron.weights.len() {
                     neuron_stage.push(0f64);
