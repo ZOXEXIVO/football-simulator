@@ -20,7 +20,14 @@ impl MidfielderStandingState {
         in_state_time: u64,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        StateChangeResult::none()
+        let test = SteeringBehavior::Arrive {
+            target: tick_context.objects_positions.ball_position,
+            slowing_distance: 10.0,
+        }
+            .calculate(player)
+            .velocity;
+
+        return StateChangeResult::with_velocity(test);
         // if in_state_time > 20 {
         //     return Some(PlayerState::Walking);
         // }
