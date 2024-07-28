@@ -10,7 +10,7 @@ use crate::r#match::strategies::goalkeepers::decision::GoalkeeperDecision;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    BallContext, GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions,
+    BallContext, GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions,
     MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
 
@@ -29,7 +29,7 @@ impl GoalkeeperStandingState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         // Analyze the game situation using the neural network
-        let nn_input = GameSituationInput::from_contexts(context, player, tick_context).to_input();
+        let nn_input = GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
         let nn_result = GOALKEEPER_STANDING_STATE_NETWORK.run(&nn_input);
 
         // Make decisions based on the analysis

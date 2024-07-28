@@ -6,7 +6,7 @@ use crate::r#match::decision::DefenderDecision;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameSituationInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
     PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
 
@@ -34,7 +34,7 @@ impl DefenderStandingState {
         return StateChangeResult::with_velocity(test);
 
         // Analyze the game situation using the neural network
-        let nn_input = GameSituationInput::from_contexts(context, player, tick_context).to_input();
+        let nn_input = GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
         let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
 
         // Make decisions based on the analysis

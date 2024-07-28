@@ -25,7 +25,7 @@ impl NeuralNetwork {
                 }
             }];
 
-            layers.push(Layer::new(current_neurons, current_inputs)));
+            layers.push(Layer::new(current_neurons, current_inputs));
         }
 
         NeuralNetwork {
@@ -49,31 +49,24 @@ impl NeuralNetwork {
         // latest output will be at the end of vec
         results.pop().unwrap()
     }
-    
-    pub(crate) fn run_internal(&self, inputs: &[f64]) -> Vec<Vec<f64>> {
-        let mut results = Vec::with_capacity(self.layers.len()));
 
-        // Fill first layer 
-        results.push(inputs.to_vec()));
+    pub(crate) fn run_internal(&self, inputs: &[f64]) -> Vec<Vec<f64>> {
+        let mut results = Vec::with_capacity(self.layers.len() + 1);
+        results.push(inputs.to_vec());
 
         for (layer_idx, layer) in self.layers.iter().enumerate() {
-            let mut layer_results = Vec::with_capacity(layer.neurons.len()));
+            let current_result = &results[layer_idx];
+            let mut layer_results = vec![0.0; layer.neurons.len()];
 
-            // calculate weight * input
-            for neuron in &layer.neurons {
-                let mut total: f64 = neuron.weights[0];
-                
-                let current_result = &results[layer_idx];
+            layer.neurons.iter().enumerate().for_each(|(i, neuron)| {
+                let mut total = neuron.weights[0];
 
                 for (&weight, &value) in neuron.weights.iter().skip(1).zip(current_result) {
                     total += weight * value;
                 }
 
-                // write activated result
-                layer_results.push(
-                    self.activate(total)
-                );
-            }
+                layer_results[i] = self.activate(total);
+            });
 
             results.push(layer_results);
         }
@@ -170,14 +163,10 @@ pub fn tanh_derive(x: f64) -> f64 {
 
 #[inline]
 pub fn relu(x: f64) -> f64 {
-    f64::max(0.0, x)
+    x.max(0.0)
 }
 
 #[inline]
 pub fn relu_derive(x: f64) -> f64 {
-    if x <= 0.0 {
-        0.0
-    } else {
-        1.0
-    }
+    if x <= 0.0 { 0.0 } else { 1.0 }
 }

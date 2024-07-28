@@ -14,17 +14,17 @@ use itertools::Itertools;
 pub use player::*;
 pub use strategies::*;
 
-pub struct GameSituationInput<'p> {
+pub struct GameFieldContextInput<'p> {
     objects_positions: &'p MatchObjectsPositions,
 }
 
-impl<'p> GameSituationInput<'p> {
+impl<'p> GameFieldContextInput<'p> {
     pub fn from_contexts(
         context: &MatchContext,
         player: &MatchPlayer,
         tick_context: &'p GameTickContext,
     ) -> Self {
-        GameSituationInput {
+        GameFieldContextInput {
             objects_positions: &tick_context.objects_positions,
         }
     }
