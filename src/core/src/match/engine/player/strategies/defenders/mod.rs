@@ -95,14 +95,3 @@ enum DefenderBehavior {
     Support,
     Idle,
 }
-
-const NEURAL_NETWORK_DATA: &'static str = include_str!("nn_running_data.json");
-
-#[derive(Debug)]
-pub struct DefendersNetLoader;
-
-impl DefendersNetLoader {
-    pub fn load() -> NeuralNetwork {
-        NeuralNetwork::load_json(NEURAL_NETWORK_DATA)
-    }
-}

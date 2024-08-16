@@ -2,7 +2,6 @@
 mod defenders;
 mod forwarders;
 mod goalkeepers;
-mod loader;
 mod midfielders;
 
 pub use common::*;
@@ -19,6 +18,11 @@ use nalgebra::Vector3;
 
 use crate::PlayerFieldPositionGroup;
 use crate::r#match::player::events::PlayerUpdateEvent;
+
+pub trait StataHandler {
+    fn fast_path() -> Option<StateChangeResult>;
+    fn slow_path() -> Option<StateChangeResult>;
+}
 
 pub trait StateStrategy {
     fn calculate(

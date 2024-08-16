@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 use crate::r#match::decision::DefenderDecision;
 use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
+use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
     PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,

@@ -12,5 +12,4 @@ impl MatchBallLogic {
 
         dot_product > 0.8
     }
-
 }
