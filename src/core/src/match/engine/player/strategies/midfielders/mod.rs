@@ -1,16 +1,15 @@
 ﻿pub mod states;
 
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::midfielders::states::{
     MidfielderPassingState, MidfielderReturningState, MidfielderRunningState,
     MidfielderShootingState, MidfielderStandingState, MidfielderTacklingState,
     MidfielderWalkingState,
 };
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState,
-    PlayerTickContext, StateChangeResult,
-};
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::StateHandler;
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult,
+};
 
 pub struct MidfielderStrategies {}
 
@@ -30,14 +29,16 @@ impl MidfielderStrategies {
             PlayerState::Tackling => MidfielderTacklingState::process,
             PlayerState::Shooting => MidfielderShootingState::process,
             PlayerState::Passing => MidfielderPassingState::process,
-            PlayerState::Returning => MidfielderReturningState::process
+            PlayerState::Returning => MidfielderReturningState::process,
         };
 
-        state_handler(in_state_time,
-                      player,
-                      context,
-                      tick_context,
-                      player_context,
-                      result)
+        state_handler(
+            in_state_time,
+            player,
+            context,
+            tick_context,
+            player_context,
+            result,
+        )
     }
 }

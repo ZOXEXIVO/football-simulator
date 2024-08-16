@@ -1,15 +1,15 @@
 ﻿pub mod states;
 
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::forwarders::states::{
     ForwardPassingState, ForwardReturningState, ForwardRunningState, ForwardShootingState,
     ForwardStandingState, ForwardTacklingState, ForwardWalkingState,
 };
+use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
     GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
     PlayerTickContext, StateChangeResult,
 };
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::strategies::StateHandler;
 
 pub struct ForwardStrategies {}
 
@@ -29,15 +29,16 @@ impl ForwardStrategies {
             PlayerState::Tackling => ForwardTacklingState::process,
             PlayerState::Shooting => ForwardShootingState::process,
             PlayerState::Passing => ForwardPassingState::process,
-            PlayerState::Returning => ForwardReturningState::process
+            PlayerState::Returning => ForwardReturningState::process,
         };
 
-        state_handler(in_state_time,
-                      player,
-                      context,
-                      tick_context,
-                      player_context,
-                      result)
+        state_handler(
+            in_state_time,
+            player,
+            context,
+            tick_context,
+            player_context,
+            result,
+        )
     }
 }
-

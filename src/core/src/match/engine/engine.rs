@@ -1,7 +1,6 @@
-use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, Match, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
+use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
 use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;

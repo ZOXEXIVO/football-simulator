@@ -1,19 +1,19 @@
 ﻿mod decision;
 mod states;
 
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::goalkeepers::states::{
     GoalkeeperPassingState, GoalkeeperReturningState, GoalkeeperRunningState,
     GoalkeeperShootingState, GoalkeeperStandingState, GoalkeeperTacklingState,
     GoalkeeperWalkingState,
 };
+use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
     BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
     PlayerTickContext, StateChangeResult,
 };
 use itertools::Itertools;
 use std::ops::Deref;
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::strategies::StateHandler;
 
 pub struct GoalkeeperStrategies {}
 
@@ -33,14 +33,16 @@ impl GoalkeeperStrategies {
             PlayerState::Tackling => GoalkeeperTacklingState::process,
             PlayerState::Shooting => GoalkeeperShootingState::process,
             PlayerState::Passing => GoalkeeperPassingState::process,
-            PlayerState::Returning => GoalkeeperReturningState::process
+            PlayerState::Returning => GoalkeeperReturningState::process,
         };
 
-        state_handler(in_state_time,
-                      player,
-                      context,
-                      tick_context,
-                      player_context,
-                      result)
+        state_handler(
+            in_state_time,
+            player,
+            context,
+            tick_context,
+            player_context,
+            result,
+        )
     }
 }

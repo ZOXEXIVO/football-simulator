@@ -20,10 +20,14 @@ use nalgebra::Vector3;
 use crate::PlayerFieldPositionGroup;
 use crate::r#match::player::events::PlayerUpdateEvent;
 
-pub trait StataHandler {
-    fn fast_path() -> Option<StateChangeResult>;
-    fn slow_path() -> Option<StateChangeResult>;
-}
+type StateHandler = fn(
+    in_state_time: u64,
+    player: &mut MatchPlayer,
+    context: &mut MatchContext,
+    tick_context: &GameTickContext,
+    player_context: PlayerTickContext,
+    result: &mut Vec<PlayerUpdateEvent>,
+) -> StateChangeResult;
 
 pub trait StateStrategy {
     fn calculate(
@@ -36,6 +40,33 @@ pub trait StateStrategy {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult;
 }
+
+impl StateStrategy for PlayerFieldPositionGroup {
+    fn calculate(
+        &self,
+        in_state_time: u64,
+        player: &mut MatchPlayer,
+        context: &mut MatchContext,
+        tick_context: &GameTickContext,
+        player_context: PlayerTickContext,
+        result: &mut Vec<PlayerUpdateEvent>,
+    ) -> StateChangeResult {
+        let state_handler: StateHandler = match self {
+            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate,
+            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate,
+            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate,
+            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate,
+        };
+
+        state_handler(in_state_time,
+                      player,
+                      context,
+                      tick_context,
+                      player_context,
+                      result)
+    }
+}
+
 
 pub struct StateChangeResult {
     pub state: Option<PlayerState>,
@@ -69,40 +100,5 @@ impl StateChangeResult {
             state: None,
             velocity: Some(velocity),
         }
-    }
-}
-
-type StateHandler = fn(
-    in_state_time: u64,
-    player: &mut MatchPlayer,
-    context: &mut MatchContext,
-    tick_context: &GameTickContext,
-    player_context: PlayerTickContext,
-    result: &mut Vec<PlayerUpdateEvent>,
-) -> StateChangeResult;
-
-impl StateStrategy for PlayerFieldPositionGroup {
-    fn calculate(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> StateChangeResult {
-        let state_handler: StateHandler = match self {
-            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate,
-            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate,
-            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate,
-            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate,
-        };
-
-        state_handler(in_state_time,
-                      player,
-                      context,
-                      tick_context,
-                      player_context,
-                      result)
     }
 }

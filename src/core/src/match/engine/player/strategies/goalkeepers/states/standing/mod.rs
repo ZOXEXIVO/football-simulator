@@ -7,9 +7,12 @@ use std::sync::LazyLock;
 
 use crate::r#match::strategies::goalkeepers::decision::GoalkeeperDecision;
 
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::common::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::{BallContext, GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState, PlayerTickContext, StataHandler, StateChangeResult, SteeringBehavior};
+use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::{
+    BallContext, GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions,
+    MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
+};
 
 static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -36,7 +39,8 @@ impl GoalkeeperStandingState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         // Analyze the game situation using the neural network
-        let nn_input = GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
+        let nn_input =
+            GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
         let nn_result = GOALKEEPER_STANDING_STATE_NETWORK.run(&nn_input);
 
         // Make decisions based on the analysis

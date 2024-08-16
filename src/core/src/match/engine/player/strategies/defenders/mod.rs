@@ -1,15 +1,15 @@
 ﻿pub mod decision;
 pub mod states;
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::defenders::states::{
     DefenderPassingState, DefenderReturningState, DefenderRunningState, DefenderShootingState,
     DefenderStandingState, DefenderTacklingState, DefenderWalkingState,
 };
+use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
     BallState, GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
     PlayerState, PlayerTickContext, StateChangeResult,
 };
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::strategies::StateHandler;
 
 pub struct DefenderStrategies {}
 
@@ -29,15 +29,17 @@ impl DefenderStrategies {
             PlayerState::Tackling => DefenderTacklingState::process,
             PlayerState::Shooting => DefenderShootingState::process,
             PlayerState::Passing => DefenderPassingState::process,
-            PlayerState::Returning => DefenderReturningState::process
+            PlayerState::Returning => DefenderReturningState::process,
         };
 
-        state_handler(in_state_time,
-                      player,
-                      context,
-                      tick_context,
-                      player_context,
-                      result)
+        state_handler(
+            in_state_time,
+            player,
+            context,
+            tick_context,
+            player_context,
+            result,
+        )
     }
 
     fn is_on_defending_half(player: &MatchPlayer, state: &GameState) -> bool {
