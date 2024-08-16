@@ -1,6 +1,5 @@
 ﻿pub mod decision;
 pub mod states;
-use crate::common::NeuralNetwork;
 use crate::r#match::strategies::defenders::states::{
     DefenderPassingState, DefenderReturningState, DefenderRunningState, DefenderShootingState,
     DefenderStandingState, DefenderTacklingState, DefenderWalkingState,
@@ -10,6 +9,7 @@ use crate::r#match::{
     PlayerState, PlayerTickContext, StateChangeResult,
 };
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::strategies::StateHandler;
 
 pub struct DefenderStrategies {}
 
@@ -22,64 +22,22 @@ impl DefenderStrategies {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        match player.state {
-            PlayerState::Standing => DefenderStandingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Walking => DefenderWalkingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Running => DefenderRunningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Tackling => DefenderTacklingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Shooting => DefenderShootingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Passing => DefenderPassingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Returning => DefenderReturningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-        }
+        let state_handler: StateHandler = match player.state {
+            PlayerState::Standing => DefenderStandingState::process,
+            PlayerState::Walking => DefenderWalkingState::process,
+            PlayerState::Running => DefenderRunningState::process,
+            PlayerState::Tackling => DefenderTacklingState::process,
+            PlayerState::Shooting => DefenderShootingState::process,
+            PlayerState::Passing => DefenderPassingState::process,
+            PlayerState::Returning => DefenderReturningState::process
+        };
+
+        state_handler(in_state_time,
+                      player,
+                      context,
+                      tick_context,
+                      player_context,
+                      result)
     }
 
     fn is_on_defending_half(player: &MatchPlayer, state: &GameState) -> bool {

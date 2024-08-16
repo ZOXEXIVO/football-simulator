@@ -17,11 +17,11 @@ pub struct DefenderStandingState {}
 
 impl DefenderStandingState {
     pub fn process(
+        in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_tick_context: PlayerTickContext,
-        in_state_time: u64,
+        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let test = SteeringBehavior::Arrive {
@@ -32,23 +32,23 @@ impl DefenderStandingState {
         .velocity;
 
         return StateChangeResult::with_velocity(test);
-
-        // Analyze the game situation using the neural network
-        let nn_input = GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
-        let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
-
-        // Make decisions based on the analysis
-        if let Some(decision) =
-            Self::analyze_results(nn_result, player, tick_context, player_tick_context)
-        {
-            return Self::execute_decision(
-                player,
-                context,
-                &tick_context.objects_positions,
-                decision,
-                result,
-            );
-        }
+        //
+        // // Analyze the game situation using the neural network
+        // let nn_input = GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
+        // let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
+        //
+        // // Make decisions based on the analysis
+        // if let Some(decision) =
+        //     Self::analyze_results(nn_result, player, tick_context, player_tick_context)
+        // {
+        //     return Self::execute_decision(
+        //         player,
+        //         context,
+        //         &tick_context.objects_positions,
+        //         decision,
+        //         result,
+        //     );
+        // }
 
         StateChangeResult::none()
     }

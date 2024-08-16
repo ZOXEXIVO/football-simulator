@@ -6,9 +6,10 @@ use crate::r#match::strategies::forwarders::states::{
 };
 use crate::r#match::{
     GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
-    PlayerTickContext, StateChangeResult
+    PlayerTickContext, StateChangeResult,
 };
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::strategies::StateHandler;
 
 pub struct ForwardStrategies {}
 
@@ -21,63 +22,22 @@ impl ForwardStrategies {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        match player.state {
-            PlayerState::Standing => ForwardStandingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Walking => ForwardWalkingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Running => ForwardRunningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Tackling => ForwardTacklingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Shooting => ForwardShootingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Passing => ForwardPassingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Returning => ForwardReturningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-        }
+        let state_handler: StateHandler = match player.state {
+            PlayerState::Standing => ForwardStandingState::process,
+            PlayerState::Walking => ForwardWalkingState::process,
+            PlayerState::Running => ForwardRunningState::process,
+            PlayerState::Tackling => ForwardTacklingState::process,
+            PlayerState::Shooting => ForwardShootingState::process,
+            PlayerState::Passing => ForwardPassingState::process,
+            PlayerState::Returning => ForwardReturningState::process
+        };
+
+        state_handler(in_state_time,
+                      player,
+                      context,
+                      tick_context,
+                      player_context,
+                      result)
     }
 }
+

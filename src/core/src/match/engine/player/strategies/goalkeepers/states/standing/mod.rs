@@ -28,11 +28,11 @@ pub struct GoalkeeperStandingState {}
 
 impl GoalkeeperStandingState {
     pub fn process(
+        in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_tick_context: PlayerTickContext,
-        in_state_time: u64,
+        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         // Analyze the game situation using the neural network
@@ -41,7 +41,7 @@ impl GoalkeeperStandingState {
 
         // Make decisions based on the analysis
         if let Some(decision) =
-            Self::analyze_results(nn_result, player, tick_context, player_tick_context)
+            Self::analyze_results(nn_result, player, tick_context, player_context)
         {
             return Self::execute_decision(
                 player,

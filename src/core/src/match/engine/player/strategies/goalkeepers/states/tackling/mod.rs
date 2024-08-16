@@ -15,11 +15,11 @@ pub struct GoalkeeperTacklingState {}
 
 impl GoalkeeperTacklingState {
     pub fn process(
+        in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_tick_context: PlayerTickContext,
-        in_state_time: u64,
+        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let minimal_distance = 30.0;

@@ -10,6 +10,7 @@ use crate::r#match::{
     PlayerTickContext, StateChangeResult,
 };
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::strategies::StateHandler;
 
 pub struct MidfielderStrategies {}
 
@@ -22,63 +23,21 @@ impl MidfielderStrategies {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        match player.state {
-            PlayerState::Standing => MidfielderStandingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Walking => MidfielderWalkingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Running => MidfielderRunningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Tackling => MidfielderTacklingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Shooting => MidfielderShootingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Passing => MidfielderPassingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Returning => MidfielderReturningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-        }
+        let state_handler: StateHandler = match player.state {
+            PlayerState::Standing => MidfielderStandingState::process,
+            PlayerState::Walking => MidfielderWalkingState::process,
+            PlayerState::Running => MidfielderRunningState::process,
+            PlayerState::Tackling => MidfielderTacklingState::process,
+            PlayerState::Shooting => MidfielderShootingState::process,
+            PlayerState::Passing => MidfielderPassingState::process,
+            PlayerState::Returning => MidfielderReturningState::process
+        };
+
+        state_handler(in_state_time,
+                      player,
+                      context,
+                      tick_context,
+                      player_context,
+                      result)
     }
 }

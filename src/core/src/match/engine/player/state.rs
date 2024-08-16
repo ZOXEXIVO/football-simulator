@@ -11,7 +11,7 @@ impl PlayerMatchState {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) {
-        let state_result = player.tactics_position.position_group().calculate(
+        let state_change_result = player.tactics_position.position_group().calculate(
             player.in_state_time,
             player,
             context,
@@ -20,13 +20,13 @@ impl PlayerMatchState {
             result,
         );
 
-        if let Some(state) = state_result.state {
+        if let Some(state) = state_change_result.state {
             Self::change_state(player, state);
         } else {
             player.in_state_time += 1;
         }
 
-        if let Some(velocity) = state_result.velocity {
+        if let Some(velocity) = state_change_result.velocity {
             player.velocity = velocity;
         }
     }

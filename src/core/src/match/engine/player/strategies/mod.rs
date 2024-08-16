@@ -4,6 +4,7 @@ mod forwarders;
 mod goalkeepers;
 mod midfielders;
 
+use std::hash::Hash;
 pub use common::*;
 pub use defenders::*;
 pub use forwarders::*;
@@ -71,6 +72,15 @@ impl StateChangeResult {
     }
 }
 
+type StateHandler = fn(
+    in_state_time: u64,
+    player: &mut MatchPlayer,
+    context: &mut MatchContext,
+    tick_context: &GameTickContext,
+    player_context: PlayerTickContext,
+    result: &mut Vec<PlayerUpdateEvent>,
+) -> StateChangeResult;
+
 impl StateStrategy for PlayerFieldPositionGroup {
     fn calculate(
         &self,
@@ -81,39 +91,18 @@ impl StateStrategy for PlayerFieldPositionGroup {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        match self {
-            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate(
-                in_state_time,
-                player,
-                context,
-                tick_context,
-                player_context,
-                result,
-            ),
-            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate(
-                in_state_time,
-                player,
-                context,
-                tick_context,
-                player_context,
-                result,
-            ),
-            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate(
-                in_state_time,
-                player,
-                context,
-                tick_context,
-                player_context,
-                result,
-            ),
-            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate(
-                in_state_time,
-                player,
-                context,
-                tick_context,
-                player_context,
-                result,
-            ),
-        }
+        let state_handler: StateHandler = match self {
+            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate,
+            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate,
+            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate,
+            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate,
+        };
+
+        state_handler(in_state_time,
+                      player,
+                      context,
+                      tick_context,
+                      player_context,
+                      result)
     }
 }

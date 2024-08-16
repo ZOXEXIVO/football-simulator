@@ -13,6 +13,7 @@ use crate::r#match::{
 use itertools::Itertools;
 use std::ops::Deref;
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::strategies::StateHandler;
 
 pub struct GoalkeeperStrategies {}
 
@@ -25,63 +26,21 @@ impl GoalkeeperStrategies {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        match player.state {
-            PlayerState::Standing => GoalkeeperStandingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Walking => GoalkeeperWalkingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Running => GoalkeeperRunningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Tackling => GoalkeeperTacklingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Shooting => GoalkeeperShootingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Passing => GoalkeeperPassingState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-            PlayerState::Returning => GoalkeeperReturningState::process(
-                player,
-                context,
-                tick_context,
-                player_context,
-                in_state_time,
-                result,
-            ),
-        }
+        let state_handler: StateHandler = match player.state {
+            PlayerState::Standing => GoalkeeperStandingState::process,
+            PlayerState::Walking => GoalkeeperWalkingState::process,
+            PlayerState::Running => GoalkeeperRunningState::process,
+            PlayerState::Tackling => GoalkeeperTacklingState::process,
+            PlayerState::Shooting => GoalkeeperShootingState::process,
+            PlayerState::Passing => GoalkeeperPassingState::process,
+            PlayerState::Returning => GoalkeeperReturningState::process
+        };
+
+        state_handler(in_state_time,
+                      player,
+                      context,
+                      tick_context,
+                      player_context,
+                      result)
     }
 }
