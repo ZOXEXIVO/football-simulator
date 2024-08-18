@@ -1,16 +1,16 @@
 ﻿pub mod decision;
 pub mod states;
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::state::PlayerState;
 use crate::r#match::strategies::defenders::states::{
     DefenderPassingState, DefenderReturningState, DefenderRunningState, DefenderShootingState,
-    DefenderStandingState, DefenderTacklingState, DefenderWalkingState,
+    DefenderTacklingState, DefenderWalkingState,
 };
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
-    BallState, GameState, GameTickContext, MatchContext, MatchPlayer,
-    PlayerTickContext, StateChangeResult,
+    BallState, GameState, GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
+    StateChangeResult,
 };
-use crate::r#match::player::state::PlayerState;
 
 pub struct DefenderStrategies {}
 
@@ -24,7 +24,6 @@ impl DefenderStrategies {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let state_handler: StateHandler = match player.state {
-            PlayerState::Standing => DefenderStandingState::process,
             PlayerState::Walking => DefenderWalkingState::process,
             PlayerState::Running => DefenderRunningState::process,
             PlayerState::Tackling => DefenderTacklingState::process,

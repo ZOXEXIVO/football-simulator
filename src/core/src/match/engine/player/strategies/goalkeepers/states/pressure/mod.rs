@@ -8,6 +8,7 @@ use crate::r#match::{
     PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
 use nalgebra::Vector3;
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::state::PlayerState;
 
 static GOALKEEPER_PRESSURE_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -25,7 +26,7 @@ impl GoalkeeperPressureState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         if player.position.distance_to(&player.start_position) < 10.0 {
-            return StateChangeResult::with(PlayerState::Standing, Vector3::zeros());
+            return StateChangeResult::with(PlayerState::Goalkeeper(GoalkeeperState::Standing), Vector3::zeros());
         }
 
         Self::check_collision(player, &tick_context.objects_positions, result);

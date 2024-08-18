@@ -2,6 +2,8 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy)]
 pub enum GoalkeeperState {
+    Standing,            // Standing
+    Resting,             // Resting
     Jumping,             // Jumping
     Diving,              // Diving to save the ball
     Catching,            // Catching the ball with hands
@@ -24,6 +26,8 @@ pub enum GoalkeeperState {
 impl Display for GoalkeeperState {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match self {
+            GoalkeeperState::Standing => write!(f, "Standing"),
+            GoalkeeperState::Resting => write!(f, "Resting"),
             GoalkeeperState::Jumping => write!(f, "Jumping"),
             GoalkeeperState::Diving => write!(f, "Diving"),
             GoalkeeperState::Catching => write!(f, "Catching"),

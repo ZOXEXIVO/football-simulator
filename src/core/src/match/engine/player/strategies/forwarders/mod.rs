@@ -24,7 +24,7 @@ impl ForwardStrategies {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let state_handler: StateHandler = match player.state {
-            PlayerState::Standing => ForwardStandingState::process,
+            //PlayerState::Standing => ForwardStandingState::process,
             PlayerState::Walking => ForwardWalkingState::process,
             PlayerState::Running => ForwardRunningState::process,
             PlayerState::Tackling => ForwardTacklingState::process,

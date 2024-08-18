@@ -10,7 +10,6 @@ use crate::r#match::midfielders::states::MidfielderState;
 
 #[derive(Debug, Clone, Copy)]
 pub enum PlayerState {
-    Standing,
     Walking,
     Running,
     Tackling,
@@ -18,7 +17,6 @@ pub enum PlayerState {
     Passing,
     Returning,
     Injured,
-    Resting,
     Goalkeeper(GoalkeeperState),
     Defender(DefenderState),
     Midfielder(MidfielderState),
@@ -28,7 +26,6 @@ pub enum PlayerState {
 impl Display for PlayerState {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match self {
-            PlayerState::Standing => write!(f, "Standing"),
             PlayerState::Walking => write!(f, "Walking"),
             PlayerState::Running => write!(f, "Running"),
             PlayerState::Tackling => write!(f, "Tackling"),
@@ -36,7 +33,6 @@ impl Display for PlayerState {
             PlayerState::Passing => write!(f, "Passing"),
             PlayerState::Returning => write!(f, "Returning"),
             PlayerState::Injured => write!(f, "Injured"),
-            PlayerState::Resting => write!(f, "Resting"),
             PlayerState::Goalkeeper(state) => write!(f, "Goalkeeper: {}", state),
             PlayerState::Defender(state) => write!(f, "Defender: {}", state),
             PlayerState::Midfielder(state) => write!(f, "Midfielder: {}", state),

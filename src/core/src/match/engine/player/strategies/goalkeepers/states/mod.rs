@@ -17,6 +17,8 @@ pub mod sweeping;
 pub mod pressure;
 pub mod presave;
 pub mod penalty;
+pub mod standing;
+pub mod resting;
 
 pub use passing::*;
 pub use pressure::*;
@@ -36,3 +38,5 @@ pub use distributing::*;
 pub use comingout::*;
 pub use returninggoal::*;
 pub use sweeping::*;
+pub use standing::*;
+pub use resting::*;

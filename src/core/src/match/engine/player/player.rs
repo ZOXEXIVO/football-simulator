@@ -3,9 +3,10 @@ use crate::r#match::{
     BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, PlayerTickContext,
     StateStrategy,
 };
-use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
+use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::conditions::PlayerConditions;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
@@ -43,7 +44,10 @@ impl MatchPlayer {
             velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
             is_home: false,
-            state: PlayerState::Standing,
+            state: match position.position_group() {
+                PlayerFieldPositionGroup::Goalkeeper => PlayerState::Goalkeeper(GoalkeeperState::Standing),
+                _ => PlayerState::Injured,
+            },
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new()
         }

@@ -24,7 +24,7 @@ impl MidfielderStrategies {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let state_handler: StateHandler = match player.state {
-            PlayerState::Standing => MidfielderStandingState::process,
+            //PlayerState::Standing => MidfielderStandingState::process,
             PlayerState::Walking => MidfielderWalkingState::process,
             PlayerState::Running => MidfielderRunningState::process,
             PlayerState::Tackling => MidfielderTacklingState::process,

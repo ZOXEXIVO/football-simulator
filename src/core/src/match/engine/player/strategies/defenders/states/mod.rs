@@ -6,6 +6,7 @@ pub mod standing;
 pub mod tackling;
 pub mod walking;
 pub mod state;
+pub mod resting;
 
 pub use passing::*;
 pub use returning::*;
@@ -15,3 +16,4 @@ pub use standing::*;
 pub use tackling::*;
 pub use walking::*;
 pub use state::*;
+pub use resting::*;

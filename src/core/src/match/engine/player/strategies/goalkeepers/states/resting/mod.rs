@@ -1,16 +1,16 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::strategies::processing::StateChangeResult;
+use crate::r#match::StateChangeResult;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use std::sync::LazyLock;
 
-static COMMON_RESTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_common_resting_data.json")));
+static GOALKEEPER_RESTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_resting_data.json")));
 
-pub struct CommonRestingState {}
+pub struct GoalkeeperRestingState {}
 
-impl CommonRestingState {
+impl GoalkeeperRestingState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
