@@ -3,6 +3,10 @@ use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateStrategy,
 };
+use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::forwarders::states::ForwardState;
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::midfielders::states::MidfielderState;
 
 #[derive(Debug, Clone, Copy)]
 pub enum PlayerState {
@@ -13,6 +17,10 @@ pub enum PlayerState {
     Shooting,
     Passing,
     Returning,
+    Goalkeeper(GoalkeeperState),
+    Defender(DefenderState),
+    Midfielder(MidfielderState),
+    Forward(ForwardState)
 }
 
 impl Display for PlayerState {
@@ -25,6 +33,10 @@ impl Display for PlayerState {
             PlayerState::Shooting => write!(f, "Shooting"),
             PlayerState::Passing => write!(f, "Passing"),
             PlayerState::Returning => write!(f, "Returning"),
+            PlayerState::Goalkeeper(state) => write!(f, "Goalkeeper: {}", state),
+            PlayerState::Defender(state) => write!(f, "Defender: {}", state),
+            PlayerState::Midfielder(state) => write!(f, "Midfielder: {}", state),
+            PlayerState::Forward(state) => write!(f, "Forward: {}", state),
         }
     }
 }

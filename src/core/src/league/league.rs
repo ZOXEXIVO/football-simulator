@@ -6,7 +6,6 @@ use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, Team};
 use chrono::{Datelike, NaiveDate};
-use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct League {

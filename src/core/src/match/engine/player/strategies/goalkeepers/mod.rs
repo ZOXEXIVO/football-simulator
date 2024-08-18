@@ -1,5 +1,5 @@
 ﻿mod decision;
-mod states;
+pub mod states;
 
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::strategies::goalkeepers::states::{
@@ -9,11 +9,10 @@ use crate::r#match::strategies::goalkeepers::states::{
 };
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
-    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    GameTickContext, MatchContext, MatchPlayer,
     PlayerTickContext, StateChangeResult,
 };
 use itertools::Itertools;
-use std::ops::Deref;
 use crate::r#match::player::state::PlayerState;
 
 pub struct GoalkeeperStrategies {}
@@ -35,6 +34,9 @@ impl GoalkeeperStrategies {
             PlayerState::Shooting => GoalkeeperShootingState::process,
             PlayerState::Passing => GoalkeeperPassingState::process,
             PlayerState::Returning => GoalkeeperReturningState::process,
+            _ => {
+                unimplemented!()
+            }
         };
 
         state_handler(

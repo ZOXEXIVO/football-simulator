@@ -31,6 +31,9 @@ impl ForwardStrategies {
             PlayerState::Shooting => ForwardShootingState::process,
             PlayerState::Passing => ForwardPassingState::process,
             PlayerState::Returning => ForwardReturningState::process,
+            _ => {
+                unimplemented!()
+            }
         };
 
         state_handler(

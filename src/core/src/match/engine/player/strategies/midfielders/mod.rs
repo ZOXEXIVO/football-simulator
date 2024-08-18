@@ -31,6 +31,9 @@ impl MidfielderStrategies {
             PlayerState::Shooting => MidfielderShootingState::process,
             PlayerState::Passing => MidfielderPassingState::process,
             PlayerState::Returning => MidfielderReturningState::process,
+            _ => {
+                unimplemented!()
+            }
         };
 
         state_handler(

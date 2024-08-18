@@ -1,15 +1,14 @@
 ﻿mod common;
-mod defenders;
-mod forwarders;
-mod goalkeepers;
-mod midfielders;
+pub mod defenders;
+pub mod forwarders;
+pub mod goalkeepers;
+pub mod midfielders;
 
 pub use common::*;
 pub use defenders::*;
 pub use forwarders::*;
 pub use goalkeepers::*;
 pub use midfielders::*;
-use std::hash::Hash;
 
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use nalgebra::Vector3;

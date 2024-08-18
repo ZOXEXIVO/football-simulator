@@ -7,7 +7,7 @@ use crate::r#match::strategies::defenders::states::{
 };
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
-    BallState, GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    BallState, GameState, GameTickContext, MatchContext, MatchPlayer,
     PlayerTickContext, StateChangeResult,
 };
 use crate::r#match::player::state::PlayerState;
@@ -31,6 +31,9 @@ impl DefenderStrategies {
             PlayerState::Shooting => DefenderShootingState::process,
             PlayerState::Passing => DefenderPassingState::process,
             PlayerState::Returning => DefenderReturningState::process,
+            _ => {
+                unimplemented!()
+            }
         };
 
         state_handler(

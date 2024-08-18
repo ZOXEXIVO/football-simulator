@@ -148,7 +148,7 @@ impl PlayerDistanceClosure {
         current_player: &MatchPlayer,
         max_distance: f32,
     ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
-        let (mut teammates, mut opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self
+        let (teammates, opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self
             .distances
             .iter()
             .filter(|&p| p.distance < max_distance)
