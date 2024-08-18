@@ -6,12 +6,12 @@ use crate::r#match::{
 };
 use std::sync::LazyLock;
 
-static MIDFIELDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
+static MIDFIELDER_SWITCHING_PLAY_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_switching_play_data.json")));
 
-pub struct MidfielderPassingState {}
+pub struct MidfielderSwitchingPlayState {}
 
-impl MidfielderPassingState {
+impl MidfielderSwitchingPlayState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -29,7 +29,7 @@ impl MidfielderPassingState {
         // res_vec.push(objects_positions.ball_velocity.x as f64);
         // res_vec.push(objects_positions.ball_velocity.y as f64);
         //
-        // let res = PLAYER_PASSING_STATE_NETWORK.run(&res_vec);
+        // let res = PLAYER_RETURNING_STATE_NETWORK.run(&res_vec);
         //
         // let index_of_max_element = res
         //     .iter()
@@ -49,15 +49,10 @@ impl MidfielderPassingState {
         //     _ => None,
         // }
 
-        // if let Some(teammate_position) =
-        //     objects_positions.find_closest_teammate(player, &context.state.match_state)
-        // {
-        //     result.push(PlayerUpdateEvent::PassTo(
-        //         teammate_position,
-        //         player.skills.running_speed(),
-        //     ))
+        // if player.position.distance_to(&player.start_position) < 10.0 {
+        //     return Some(PlayerState::Standing);
         // }
         //
-        // Some(PlayerState::Standing)
+        // None
     }
 }

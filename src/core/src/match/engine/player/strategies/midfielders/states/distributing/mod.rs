@@ -1,20 +1,17 @@
-use std::sync::LazyLock;
 use crate::common::NeuralNetwork;
-
+use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer,
-    PlayerTickContext,  StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
-use crate::r#match::player::events::PlayerUpdateEvent;
+use std::sync::LazyLock;
 
-static DEFENDER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
-    DefaultNeuralNetworkLoader::load(include_str!("nn_shooting_data.json"))
-});
+static MIDFIELDER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_distributing_data.json")));
 
-pub struct DefenderShootingState {}
+pub struct MidfielderDistributingState {}
 
-impl DefenderShootingState {
+impl MidfielderDistributingState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -24,7 +21,6 @@ impl DefenderShootingState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         StateChangeResult::none()
-        //
         // let mut res_vec = Vec::new();
         //
         // res_vec.push(objects_positions.ball_position.x as f64);
@@ -33,7 +29,7 @@ impl DefenderShootingState {
         // res_vec.push(objects_positions.ball_velocity.x as f64);
         // res_vec.push(objects_positions.ball_velocity.y as f64);
         //
-        // let res = PLAYER_SHOOTING_STATE_NETWORK.run(&res_vec);
+        // let res = PLAYER_RETURNING_STATE_NETWORK.run(&res_vec);
         //
         // let index_of_max_element = res
         //     .iter()
@@ -53,23 +49,10 @@ impl DefenderShootingState {
         //     _ => None,
         // }
 
-        // write code for processing shoot state
-
-        //         player.velocity = player.skills.running_speed();
-        //         // let distance_to_goal = (self.position.x - self.field.width as i16 / 2).abs();
-        //         // if distance_to_goal < 50 {
-        //         //     let mut rng = thread_rng();
-        //     let shot_success = rng.gen_range(0, 100);
-        //
-        //     let shooting_skill = self.skills.technical.finishing;
-        //
-        //     if shot_success < shooting_skill {
-        //         if self.position.x < self.field.width as i16 / 2 {
-        //             self.field.home_goals += 1;
-        //         } else {
-        //             self.field.away_goals += 1;
-        //         }
-        //     }
+        // if player.position.distance_to(&player.start_position) < 10.0 {
+        //     return Some(PlayerState::Standing);
         // }
+        //
+        // None
     }
 }

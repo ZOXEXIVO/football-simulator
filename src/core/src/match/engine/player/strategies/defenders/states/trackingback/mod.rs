@@ -6,12 +6,12 @@ use crate::r#match::{
 };
 use std::sync::LazyLock;
 
-static MIDFIELDER_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_returning_data.json")));
+static DEFENDER_TRACKING_BACK_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_trackingback_data.json")));
 
-pub struct MidfielderReturningState {}
+pub struct DefenderTrackingBackState {}
 
-impl MidfielderReturningState {
+impl DefenderTrackingBackState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -21,6 +21,23 @@ impl MidfielderReturningState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         StateChangeResult::none()
+        // if context.time.time % 1000 == 0 {
+        //     let direction = SteeringBehavior::Seek {
+        //         target: objects_positions.ball_position,
+        //     }
+        //     .calculate(player);
+        //
+        //     player.velocity = Vector3::new(direction.velocity.x, direction.velocity.y, 0.0);
+        //
+        //     if in_state_time > 30 {
+        //         player.state = PlayerState::Running;
+        //     }
+        //
+        //     // if player.skills.physical.acceleration > 15.0 {
+        //     //     player.state = PlayerState::Running;
+        //     // }
+        // }
+        //
         // let mut res_vec = Vec::new();
         //
         // res_vec.push(objects_positions.ball_position.x as f64);
@@ -29,7 +46,7 @@ impl MidfielderReturningState {
         // res_vec.push(objects_positions.ball_velocity.x as f64);
         // res_vec.push(objects_positions.ball_velocity.y as f64);
         //
-        // let res = PLAYER_RETURNING_STATE_NETWORK.run(&res_vec);
+        // let res = PLAYER_WALKING_STATE_NETWORK.run(&res_vec);
         //
         // let index_of_max_element = res
         //     .iter()
@@ -48,11 +65,5 @@ impl MidfielderReturningState {
         //     6 => Some(PlayerState::Returning),
         //     _ => None,
         // }
-
-        // if player.position.distance_to(&player.start_position) < 10.0 {
-        //     return Some(PlayerState::Standing);
-        // }
-        //
-        // None
     }
 }

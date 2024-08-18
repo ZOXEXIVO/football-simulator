@@ -1,16 +1,18 @@
 ﻿pub mod states;
 
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::strategies::midfielders::states::{
-    MidfielderPassingState, MidfielderReturningState, MidfielderRunningState,
-    MidfielderShootingState, MidfielderStandingState, MidfielderTacklingState,
-    MidfielderWalkingState,
+use crate::r#match::midfielders::states::{
+    MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState,
+    MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState,
+    MidfielderPressingState, MidfielderShortPassingState, MidfielderStandingState, MidfielderState,
+    MidfielderSwitchingPlayState, MidfielderTrackingRunnerState,
 };
+use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::state::PlayerState;
+use crate::r#match::strategies::midfielders::states::MidfielderTacklingState;
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
     GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
-use crate::r#match::player::state::PlayerState;
 
 pub struct MidfielderStrategies {}
 
@@ -24,13 +26,34 @@ impl MidfielderStrategies {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let state_handler: StateHandler = match player.state {
-            //PlayerState::Standing => MidfielderStandingState::process,
-            PlayerState::Walking => MidfielderWalkingState::process,
-            PlayerState::Running => MidfielderRunningState::process,
-            PlayerState::Tackling => MidfielderTacklingState::process,
-            PlayerState::Shooting => MidfielderShootingState::process,
-            PlayerState::Passing => MidfielderPassingState::process,
-            PlayerState::Returning => MidfielderReturningState::process,
+            PlayerState::Midfielder(MidfielderState::Standing) => MidfielderStandingState::process,
+            PlayerState::Midfielder(MidfielderState::Distributing) => {
+                MidfielderDistributingState::process
+            }
+            PlayerState::Midfielder(MidfielderState::SupportingAttack) => {
+                MidfielderAttackSupportingState::process
+            }
+            PlayerState::Midfielder(MidfielderState::HoldingPossession) => {
+                MidfielderHoldingPossessionState::process
+            }
+            PlayerState::Midfielder(MidfielderState::SwitchingPlay) => {
+                MidfielderSwitchingPlayState::process
+            }
+            PlayerState::Midfielder(MidfielderState::Crossing) => MidfielderCrossingState::process,
+            PlayerState::Midfielder(MidfielderState::LongPassing) => {
+                MidfielderLongPassingState::process
+            }
+            PlayerState::Midfielder(MidfielderState::ShortPassing) => {
+                MidfielderShortPassingState::process
+            }
+            PlayerState::Midfielder(MidfielderState::DistanceShooting) => {
+                MidfielderDistanceShootingState::process
+            }
+            PlayerState::Midfielder(MidfielderState::Pressing) => MidfielderPressingState::process,
+            PlayerState::Midfielder(MidfielderState::TrackingRunner) => {
+                MidfielderTrackingRunnerState::process
+            }
+            PlayerState::Midfielder(MidfielderState::Tackling) => MidfielderTacklingState::process,
             _ => {
                 unimplemented!()
             }

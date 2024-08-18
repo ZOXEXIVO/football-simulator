@@ -1,18 +1,17 @@
 use crate::common::NeuralNetwork;
-use std::sync::LazyLock;
-
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
     GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
+use std::sync::LazyLock;
 
-static DEFENDER_TACKLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_tackling_data.json")));
+static MIDFIELDER_SHORT_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_short_passing_data.json")));
 
-pub struct DefenderTacklingState {}
+pub struct MidfielderShortPassingState {}
 
-impl DefenderTacklingState {
+impl MidfielderShortPassingState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -24,13 +23,13 @@ impl DefenderTacklingState {
         StateChangeResult::none()
         // let mut res_vec = Vec::new();
         //
-        // res_vec.push(objects_positions.ball_positions.x as f64);
-        // res_vec.push(objects_positions.ball_positions.y as f64);
+        // res_vec.push(objects_positions.ball_position.x as f64);
+        // res_vec.push(objects_positions.ball_position.y as f64);
         //
         // res_vec.push(objects_positions.ball_velocity.x as f64);
         // res_vec.push(objects_positions.ball_velocity.y as f64);
         //
-        // let res = PLAYER_TACKLING_STATE_NETWORK.run(&res_vec);
+        // let res = PLAYER_PASSING_STATE_NETWORK.run(&res_vec);
         //
         // let index_of_max_element = res
         //     .iter()
@@ -38,8 +37,6 @@ impl DefenderTacklingState {
         //     .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
         //     .unwrap()
         //     .0;
-        //
-        // //println!("RES = {:?}", res);
         //
         // match index_of_max_element {
         //     0 => Some(PlayerState::Standing),
@@ -52,14 +49,15 @@ impl DefenderTacklingState {
         //     _ => None,
         // }
 
-        //Check for transition to standing or walking state
-        // let tackling_success = player.skills.tackling() * player.player_attributes.condition;
-        // if tackling_success > 50.0 {
-        //     player.has_ball = true;
+        // if let Some(teammate_position) =
+        //     objects_positions.find_closest_teammate(player, &context.state.match_state)
+        // {
+        //     result.push(PlayerUpdateEvent::PassTo(
+        //         teammate_position,
+        //         player.skills.running_speed(),
+        //     ))
         // }
-        // // Check for transition to standing state
-        // if player.player_attributes.condition < 20 {
-        //     return Some(PlayerState::Standing);
-        // }
+        //
+        // Some(PlayerState::Standing)
     }
 }

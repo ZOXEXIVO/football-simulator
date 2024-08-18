@@ -47,7 +47,6 @@ impl StateStrategy for PlayerFieldPositionGroup {
                 PlayerState::Running => CommonRunningState::process,
                 PlayerState::Tackling => CommonTacklingState::process,
                 PlayerState::Shooting => CommonShootingState::process,
-                PlayerState::Passing => CommonPassingState::process,
                 PlayerState::Returning => CommonReturningState::process,
                 PlayerState::Injured => CommonInjuredState::process,
                 _ => {

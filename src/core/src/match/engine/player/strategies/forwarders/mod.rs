@@ -29,7 +29,6 @@ impl ForwardStrategies {
             PlayerState::Running => ForwardRunningState::process,
             PlayerState::Tackling => ForwardTacklingState::process,
             PlayerState::Shooting => ForwardShootingState::process,
-            PlayerState::Passing => ForwardPassingState::process,
             PlayerState::Returning => ForwardReturningState::process,
             _ => {
                 unimplemented!()

@@ -6,12 +6,12 @@ use crate::r#match::{
 };
 use std::sync::LazyLock;
 
-static DEFENDER_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_returning_data.json")));
+static MIDFIELDER_HOLDING_POSSESSION_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_holding_possession_data.json")));
 
-pub struct DefenderReturningState {}
+pub struct MidfielderHoldingPossessionState {}
 
-impl DefenderReturningState {
+impl MidfielderHoldingPossessionState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,

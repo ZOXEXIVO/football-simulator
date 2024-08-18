@@ -2,17 +2,16 @@ use crate::common::NeuralNetwork;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
-    StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
 use std::sync::LazyLock;
 
-static MIDFIELDER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
+static MIDFIELDER_DISTANCE_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_distance_shooting_data.json")));
 
-pub struct MidfielderRunningState {}
+pub struct MidfielderDistanceShootingState {}
 
-impl MidfielderRunningState {
+impl MidfielderDistanceShootingState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -22,8 +21,6 @@ impl MidfielderRunningState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         StateChangeResult::none()
-        // Self::check_collision(player, objects_positions, result);
-        //
         // let mut res_vec = Vec::new();
         //
         // res_vec.push(objects_positions.ball_position.x as f64);
@@ -32,7 +29,7 @@ impl MidfielderRunningState {
         // res_vec.push(objects_positions.ball_velocity.x as f64);
         // res_vec.push(objects_positions.ball_velocity.y as f64);
         //
-        // let res = PLAYER_RUNNING_STATE_NETWORK.run(&res_vec);
+        // let res = PLAYER_PASSING_STATE_NETWORK.run(&res_vec);
         //
         // let index_of_max_element = res
         //     .iter()
@@ -51,5 +48,16 @@ impl MidfielderRunningState {
         //     6 => Some(PlayerState::Returning),
         //     _ => None,
         // }
+
+        // if let Some(teammate_position) =
+        //     objects_positions.find_closest_teammate(player, &context.state.match_state)
+        // {
+        //     result.push(PlayerUpdateEvent::PassTo(
+        //         teammate_position,
+        //         player.skills.running_speed(),
+        //     ))
+        // }
+        //
+        // Some(PlayerState::Standing)
     }
 }
