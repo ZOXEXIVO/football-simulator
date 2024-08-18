@@ -143,7 +143,7 @@ pub enum PlayerState {
 }
 
 impl Display for PlayerState {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter) -> Result {
         match self {
             PlayerState::Standing => write!(f, "Standing"),
             PlayerState::Walking => write!(f, "Walking"),

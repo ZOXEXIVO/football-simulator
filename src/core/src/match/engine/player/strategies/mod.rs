@@ -4,21 +4,18 @@ mod forwarders;
 mod goalkeepers;
 mod midfielders;
 
-use std::hash::Hash;
 pub use common::*;
 pub use defenders::*;
 pub use forwarders::*;
 pub use goalkeepers::*;
 pub use midfielders::*;
+use std::hash::Hash;
 
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState,
-    PlayerTickContext,
-};
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext};
 use nalgebra::Vector3;
 
-use crate::PlayerFieldPositionGroup;
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::PlayerFieldPositionGroup;
 
 type StateHandler = fn(
     in_state_time: u64,
@@ -58,15 +55,16 @@ impl StateStrategy for PlayerFieldPositionGroup {
             PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate,
         };
 
-        state_handler(in_state_time,
-                      player,
-                      context,
-                      tick_context,
-                      player_context,
-                      result)
+        state_handler(
+            in_state_time,
+            player,
+            context,
+            tick_context,
+            player_context,
+            result,
+        )
     }
 }
-
 
 pub struct StateChangeResult {
     pub state: Option<PlayerState>,

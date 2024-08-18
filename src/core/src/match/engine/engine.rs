@@ -172,11 +172,11 @@ impl MatchPlayerCollection {
         MatchPlayerCollection { players: result }
     }
 
-    pub fn get<'p>(&'p self, player_id: u32) -> Option<&'p MatchPlayer> {
+    pub fn get(&self, player_id: u32) -> Option<&MatchPlayer> {
         self.players.get(&player_id)
     }
 
-    pub fn get_mut<'p>(&'p mut self, player_id: u32) -> Option<&'p mut MatchPlayer> {
+    pub fn get_mut(&mut self, player_id: u32) -> Option<&mut MatchPlayer> {
         self.players.get_mut(&player_id)
     }
 
