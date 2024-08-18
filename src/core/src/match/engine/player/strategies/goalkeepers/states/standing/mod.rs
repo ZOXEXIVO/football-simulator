@@ -11,23 +11,14 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     BallContext, GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions,
-    MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
+    MatchPlayer, PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
+use crate::r#match::player::state::PlayerState;
 
 static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
 pub struct GoalkeeperStandingState {}
-
-// impl StataHandler for GoalkeeperStandingState {
-//     fn fast_path() -> Option<StateChangeResult> {
-//
-//     }
-//
-//     fn slow_path() -> Option<StateChangeResult> {
-//         todo!()
-//     }
-// }
 
 impl GoalkeeperStandingState {
     pub fn process(
@@ -68,6 +59,7 @@ impl GoalkeeperStandingState {
         if !player_tick_context.ball_context.on_own_side {
             return Some(GoalkeeperDecision::Walk);
         }
+
         if tick_context
             .objects_positions
             .is_big_opponents_concentration(player)

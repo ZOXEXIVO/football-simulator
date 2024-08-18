@@ -1,4 +1,5 @@
-use crate::r#match::{MatchPlayer, PlayerState};
+use crate::r#match::{MatchPlayer};
+use crate::r#match::player::state::PlayerState;
 
 pub struct PlayerConditions;
 

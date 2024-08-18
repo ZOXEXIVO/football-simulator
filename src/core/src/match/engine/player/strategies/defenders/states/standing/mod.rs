@@ -6,9 +6,10 @@ use crate::r#match::decision::DefenderDecision;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    PlayerState, PlayerTickContext, StateChangeResult, SteeringBehavior,
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
+use crate::r#match::player::state::PlayerState;
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));

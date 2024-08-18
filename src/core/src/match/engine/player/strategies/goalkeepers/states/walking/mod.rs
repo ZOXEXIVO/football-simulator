@@ -3,10 +3,11 @@ use crate::common::NeuralNetwork;
 
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
     StateChangeResult, SteeringBehavior,
 };
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::state::PlayerState;
 
 static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));

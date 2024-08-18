@@ -8,13 +8,14 @@ use crate::r#match::strategies::defenders::states::{
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
     BallState, GameState, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    PlayerState, PlayerTickContext, StateChangeResult,
+    PlayerTickContext, StateChangeResult,
 };
+use crate::r#match::player::state::PlayerState;
 
 pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
-    pub fn calculate(
+    pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,

@@ -7,14 +7,15 @@ use crate::r#match::strategies::forwarders::states::{
 };
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
     PlayerTickContext, StateChangeResult,
 };
+use crate::r#match::player::state::PlayerState;
 
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
-    pub fn calculate(
+    pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,

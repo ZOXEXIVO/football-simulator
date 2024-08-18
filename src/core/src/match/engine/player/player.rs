@@ -8,7 +8,7 @@ use nalgebra::Vector3;
 use std::fmt::*;
 use crate::r#match::player::conditions::PlayerConditions;
 use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::player::state::PlayerMatchState;
+use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 
 #[derive(Debug, Clone)]
@@ -97,7 +97,7 @@ impl MatchPlayer {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) {
-        let state_result = self.tactics_position.position_group().calculate(
+        let state_result = self.tactics_position.position_group().process(
             self.in_state_time,
             self,
             context,
@@ -128,30 +128,5 @@ impl MatchPlayer {
 
     pub fn distance_from_start_position(&self) -> f32{
         self.start_position.distance_to(&self.position)
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum PlayerState {
-    Standing,
-    Walking,
-    Running,
-    Tackling,
-    Shooting,
-    Passing,
-    Returning,
-}
-
-impl Display for PlayerState {
-    fn fmt(&self, f: &mut Formatter) -> Result {
-        match self {
-            PlayerState::Standing => write!(f, "Standing"),
-            PlayerState::Walking => write!(f, "Walking"),
-            PlayerState::Running => write!(f, "Running"),
-            PlayerState::Tackling => write!(f, "Tackling"),
-            PlayerState::Shooting => write!(f, "Shooting"),
-            PlayerState::Passing => write!(f, "Passing"),
-            PlayerState::Returning => write!(f, "Returning"),
-        }
     }
 }

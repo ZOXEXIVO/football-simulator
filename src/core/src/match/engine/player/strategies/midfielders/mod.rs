@@ -8,13 +8,14 @@ use crate::r#match::strategies::midfielders::states::{
 };
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
 };
+use crate::r#match::player::state::PlayerState;
 
 pub struct MidfielderStrategies {}
 
 impl MidfielderStrategies {
-    pub fn calculate(
+    pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,

@@ -4,10 +4,11 @@ use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
     PlayerTickContext, StateChangeResult, SteeringBehavior,
 };
 use nalgebra::Vector3;
+use crate::r#match::player::state::PlayerState;
 
 static GOALKEEPER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));

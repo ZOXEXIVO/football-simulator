@@ -2,10 +2,11 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext, StateChangeResult,
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
     SteeringBehavior,
 };
 use std::sync::LazyLock;
+use crate::r#match::player::state::PlayerState;
 
 static GOALKEEPER_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_returning_data.json")));

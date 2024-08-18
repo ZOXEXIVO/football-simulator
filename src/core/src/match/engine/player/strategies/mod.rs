@@ -11,11 +11,12 @@ pub use goalkeepers::*;
 pub use midfielders::*;
 use std::hash::Hash;
 
-use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerState, PlayerTickContext};
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use nalgebra::Vector3;
 
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::PlayerFieldPositionGroup;
+use crate::r#match::player::state::PlayerState;
 
 type StateHandler = fn(
     in_state_time: u64,
@@ -27,7 +28,7 @@ type StateHandler = fn(
 ) -> StateChangeResult;
 
 pub trait StateStrategy {
-    fn calculate(
+    fn process(
         &self,
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -39,7 +40,7 @@ pub trait StateStrategy {
 }
 
 impl StateStrategy for PlayerFieldPositionGroup {
-    fn calculate(
+    fn process(
         &self,
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -49,10 +50,10 @@ impl StateStrategy for PlayerFieldPositionGroup {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let state_handler: StateHandler = match self {
-            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::calculate,
-            PlayerFieldPositionGroup::Defender => DefenderStrategies::calculate,
-            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::calculate,
-            PlayerFieldPositionGroup::Forward => ForwardStrategies::calculate,
+            PlayerFieldPositionGroup::Goalkeeper => GoalkeeperStrategies::process,
+            PlayerFieldPositionGroup::Defender => DefenderStrategies::process,
+            PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::process,
+            PlayerFieldPositionGroup::Forward => ForwardStrategies::process,
         };
 
         state_handler(

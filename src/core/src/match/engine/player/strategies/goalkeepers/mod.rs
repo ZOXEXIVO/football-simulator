@@ -9,16 +9,17 @@ use crate::r#match::strategies::goalkeepers::states::{
 };
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
-    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerState,
+    BallContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
     PlayerTickContext, StateChangeResult,
 };
 use itertools::Itertools;
 use std::ops::Deref;
+use crate::r#match::player::state::PlayerState;
 
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
-    pub fn calculate(
+    pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,
