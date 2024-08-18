@@ -177,7 +177,7 @@ impl GoalkeeperStandingState {
         decision: GoalkeeperDecision,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        return match decision {
+        match decision {
             GoalkeeperDecision::RushOut => {
                 // Rush out of the goal to intercept the ball
                 let velocity = SteeringBehavior::Arrive {
@@ -247,7 +247,7 @@ impl GoalkeeperStandingState {
                 }
             }
             _ => StateChangeResult::none(),
-        };
+        }
     }
 
     fn calculate_goalkeeper_position(

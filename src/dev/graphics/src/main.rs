@@ -11,6 +11,7 @@ use core::club::team::tactics::{Tactics, TacticsPositioning};
 use core::r#match::squad::TeamSquad;
 use core::r#match::MatchObjectsPositions;
 use core::r#match::MatchPlayerCollection;
+use std::time::Instant;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
@@ -34,12 +35,33 @@ async fn main() {
 
     let mut context = MatchContext::new(&field_size, players);
 
+    let mut current_frame = 0u64;
+
+    let mut fps_data = [0u128;30];
+
     loop {
+        current_frame += 1;
+
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
 
         draw_circle(ball.position.x, ball.position.y, 7.0, BLACK);
 
+        let start = Instant::now();
+
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
+
+        let elapsed = start.elapsed();
+        let fps_data_current_idx = (current_frame % 30) as usize;
+
+        fps_data[fps_data_current_idx] = elapsed.as_micros() as u128;
+
+        draw_text(
+            &format!("GAME_TICK: {} mcs", average(&fps_data)),
+            10.0,
+            20.0,
+            20.0,
+            BLACK,
+        );
 
         field.players.iter().for_each(|player| {
             let mut color = if player.is_home {
@@ -164,4 +186,10 @@ fn get_player(position: PlayerPositionType) -> Player {
         position,
         20,
     )
+}
+
+fn average(numbers: &[u128;30]) -> u128 {
+    let sum: u128 = numbers.iter().sum();
+    let count = numbers.len() as u128;
+    sum / count
 }

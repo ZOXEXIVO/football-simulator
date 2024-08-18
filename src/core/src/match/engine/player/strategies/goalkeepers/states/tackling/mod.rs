@@ -29,7 +29,7 @@ impl GoalkeeperTacklingState {
             .player_distances
             .players_within_distance(player, minimal_distance);
 
-        return if !nearest_opponents.is_empty() {
+        if !nearest_opponents.is_empty() {
             nearest_opponents.sort_by(|(left_player_id, _), (right_player_id, _)| {
                 let left_player = context.players.get(*left_player_id).unwrap();
                 let right_player = context.players.get(*right_player_id).unwrap();
@@ -50,7 +50,7 @@ impl GoalkeeperTacklingState {
             StateChangeResult::with_state(PlayerState::Running)
         } else {
             StateChangeResult::none()
-        };
+        }
     }
 
     // fn select_opponent_to_tackle<'mp>(
