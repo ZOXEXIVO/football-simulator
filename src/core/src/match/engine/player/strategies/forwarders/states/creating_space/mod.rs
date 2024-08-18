@@ -6,12 +6,12 @@ use crate::r#match::{
 };
 use std::sync::LazyLock;
 
-static FORWARD_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_returning_data.json")));
+static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_creating_space_data.json")));
 
-pub struct ForwardReturningState {}
+pub struct ForwardCreatingSpaceState {}
 
-impl ForwardReturningState {
+impl ForwardCreatingSpaceState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
