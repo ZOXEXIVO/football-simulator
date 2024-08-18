@@ -5,12 +5,12 @@ use crate::r#match::StateChangeResult;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use std::sync::LazyLock;
 
-static DEFENDER_OFFSIDE_TRAP_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_offsidetrap_data.json")));
+static DEFENDER_SLIDING_TACKLE_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_sliding_tackle_data.json")));
 
-pub struct DefenderOffsideTrapState {}
+pub struct DefenderSlidingTackleState {}
 
-impl DefenderOffsideTrapState {
+impl DefenderSlidingTackleState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,

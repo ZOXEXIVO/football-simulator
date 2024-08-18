@@ -7,7 +7,7 @@ use crate::r#match::{
 use std::sync::LazyLock;
 
 static GOALKEEPER_RETURNING_GOAL_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_returninggoal_data.json")));
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_returning_goal_data.json")));
 
 pub struct GoalkeeperReturningGoalState {}
 

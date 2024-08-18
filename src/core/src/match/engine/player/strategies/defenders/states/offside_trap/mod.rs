@@ -1,17 +1,16 @@
+use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::common::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
-};
+use crate::r#match::StateChangeResult;
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use std::sync::LazyLock;
 
-static GOALKEEPER_PICKINGUP_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_pickingup_data.json")));
+static DEFENDER_OFFSIDE_TRAP_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_offside_trap_data.json")));
 
-pub struct GoalkeeperPickingUpState {}
+pub struct DefenderOffsideTrapState {}
 
-impl GoalkeeperPickingUpState {
+impl DefenderOffsideTrapState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -20,7 +19,6 @@ impl GoalkeeperPickingUpState {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-
         StateChangeResult::none()
     }
 }

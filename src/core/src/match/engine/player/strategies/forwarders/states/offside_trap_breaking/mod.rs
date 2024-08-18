@@ -6,7 +6,7 @@ use crate::r#match::{
 };
 use std::sync::LazyLock;
 
-static FORWARD_OffsideTrapBreaking_STATE_NETWORK: LazyLock<NeuralNetwork> =
+static FORWARD_OFFSIDE_TRAP_BREAKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_offside_trap_breaking_data.json")));
 
 pub struct ForwardOffsideTrapBreakingState {}
