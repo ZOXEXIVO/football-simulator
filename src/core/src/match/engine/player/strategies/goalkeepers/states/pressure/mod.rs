@@ -10,12 +10,12 @@ use crate::r#match::{
 use nalgebra::Vector3;
 use crate::r#match::player::state::PlayerState;
 
-static GOALKEEPER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
+static GOALKEEPER_PRESSURE_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_pressure_data.json")));
 
-pub struct GoalkeeperRunningState {}
+pub struct GoalkeeperPressureState {}
 
-impl GoalkeeperRunningState {
+impl GoalkeeperPressureState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,

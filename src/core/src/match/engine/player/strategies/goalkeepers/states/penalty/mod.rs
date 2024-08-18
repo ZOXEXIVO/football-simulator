@@ -9,12 +9,12 @@ use crate::r#match::{
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 
-static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
+static GOALKEEPER_PENALTY_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_penalty_data.json")));
 
-pub struct GoalkeeperWalkingState {}
+pub struct GoalkeeperPenaltyState {}
 
-impl GoalkeeperWalkingState {
+impl GoalkeeperPenaltyState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,

@@ -15,12 +15,12 @@ use crate::r#match::{
 };
 use crate::r#match::player::state::PlayerState;
 
-static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
+static GOALKEEPER_PRESAVE_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_presave_data.json")));
 
-pub struct GoalkeeperStandingState {}
+pub struct GoalkeeperPreSaveState {}
 
-impl GoalkeeperStandingState {
+impl GoalkeeperPreSaveState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,
@@ -32,7 +32,7 @@ impl GoalkeeperStandingState {
         // Analyze the game situation using the neural network
         let nn_input =
             GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
-        let nn_result = GOALKEEPER_STANDING_STATE_NETWORK.run(&nn_input);
+        let nn_result = GOALKEEPER_PRESAVE_STATE_NETWORK.run(&nn_input);
 
         // Make decisions based on the analysis
         if let Some(decision) =

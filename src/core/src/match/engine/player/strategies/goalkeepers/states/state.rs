@@ -13,12 +13,10 @@ pub enum GoalkeeperState {
     Distributing,        // Distributing the ball after catching it
     ComingOut,           // Coming out of the goal to intercept
     ReturningToGoal,     // Returning to the goal after coming out
+    Tackling,            // Tackling the ball
     Sweeping,            // Acting as a "sweeper", clearing the ball in front of the defense line
-    CommandingDefense,   // Commanding defenders, directing their positions
-    AwaitingAction,      // Awaiting action, watching the play
     UnderPressure,       // Under pressure from opponents
-    Injured,             // Injured
-    Resting,             // Resting, not involved in active play
+    Shooting,            // Shoot to goal
     PreparingForSave,    // Preparing to make a save
     PenaltySave,         // Saving a penalty
 }
@@ -38,13 +36,11 @@ impl Display for GoalkeeperState {
             GoalkeeperState::ComingOut => write!(f, "Coming Out"),
             GoalkeeperState::ReturningToGoal => write!(f, "Returning to Goal"),
             GoalkeeperState::Sweeping => write!(f, "Sweeping"),
-            GoalkeeperState::CommandingDefense => write!(f, "Commanding Defense"),
-            GoalkeeperState::AwaitingAction => write!(f, "Awaiting Action"),
             GoalkeeperState::UnderPressure => write!(f, "Under Pressure"),
-            GoalkeeperState::Injured => write!(f, "Injured"),
-            GoalkeeperState::Resting => write!(f, "Resting"),
+            GoalkeeperState::Shooting => write!(f, "Try shoot to goal"),
             GoalkeeperState::PreparingForSave => write!(f, "Preparing for Save"),
             GoalkeeperState::PenaltySave => write!(f, "Penalty Save"),
+            GoalkeeperState::Tackling => write!(f, "Tackling"),
         }
     }
 }

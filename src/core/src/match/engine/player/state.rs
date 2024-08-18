@@ -17,6 +17,8 @@ pub enum PlayerState {
     Shooting,
     Passing,
     Returning,
+    Injured,
+    Resting,
     Goalkeeper(GoalkeeperState),
     Defender(DefenderState),
     Midfielder(MidfielderState),
@@ -33,10 +35,12 @@ impl Display for PlayerState {
             PlayerState::Shooting => write!(f, "Shooting"),
             PlayerState::Passing => write!(f, "Passing"),
             PlayerState::Returning => write!(f, "Returning"),
+            PlayerState::Injured => write!(f, "Injured"),
+            PlayerState::Resting => write!(f, "Resting"),
             PlayerState::Goalkeeper(state) => write!(f, "Goalkeeper: {}", state),
             PlayerState::Defender(state) => write!(f, "Defender: {}", state),
             PlayerState::Midfielder(state) => write!(f, "Midfielder: {}", state),
-            PlayerState::Forward(state) => write!(f, "Forward: {}", state),
+            PlayerState::Forward(state) => write!(f, "Forward: {}", state)
         }
     }
 }
