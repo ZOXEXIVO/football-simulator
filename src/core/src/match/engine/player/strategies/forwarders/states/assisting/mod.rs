@@ -20,6 +20,7 @@ impl ForwardAssistingState {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
+
         StateChangeResult::none()
         // let mut res_vec = Vec::new();
         //

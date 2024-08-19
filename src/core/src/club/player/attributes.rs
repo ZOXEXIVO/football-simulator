@@ -38,4 +38,8 @@ impl PlayerAttributes {
             self.condition = CONDITION_MAX_VALUE;
         }
     }
+
+    pub fn condition_percentage(&self) -> u32 {
+        self.condition as f32 / CONDITION_MAX_VALUE as u32
+    }
 }
