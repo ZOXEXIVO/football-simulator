@@ -6,7 +6,10 @@ use crate::r#match::{
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
+use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::conditions::PlayerConditions;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
@@ -46,7 +49,10 @@ impl MatchPlayer {
             is_home: false,
             state: match position.position_group() {
                 PlayerFieldPositionGroup::Goalkeeper => PlayerState::Goalkeeper(GoalkeeperState::Standing),
-                _ => PlayerState::Injured,
+                PlayerFieldPositionGroup::Defender => PlayerState::Defender(DefenderState::Standing),
+                PlayerFieldPositionGroup::Midfielder => PlayerState::Midfielder(MidfielderState::Standing),
+                PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::Standing),
+                _ => PlayerState::Returning
             },
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new()
