@@ -1,8 +1,5 @@
 ﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, PlayerTickContext,
-    StateStrategy,
-};
+use crate::r#match::{BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, MatchPlayerLogic, PlayerContext, PlayerTickContext, StateStrategy};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
@@ -84,6 +81,9 @@ impl MatchPlayer {
                     .ball_position
                     .distance_to(&self.position),
             },
+            player_context: PlayerContext {
+                distance_to_start_position: MatchPlayerLogic::distance_to_start_position(self)
+            }
         };
 
         // change move

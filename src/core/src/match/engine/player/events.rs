@@ -11,6 +11,7 @@ pub enum PlayerUpdateEvent {
     RushOut(u32),
     StayInGoal(u32),
     CommunicateMessage(u32, &'static str),
+    Rest(u32)
 }
 
 pub struct PlayerEvents;
@@ -54,6 +55,10 @@ impl PlayerEvents {
 
                 },
                 PlayerUpdateEvent::CommunicateMessage(player_id, message) => {}
+                PlayerUpdateEvent::Rest(player_id) => {
+                    let mut player = context.players.get_mut(player_id).unwrap();
+                    player.player_attributes.condition += 10;
+                }
             }
         }
     }

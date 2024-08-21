@@ -1,4 +1,5 @@
-use crate::r#match::{MatchContext, MatchObjectsPositions};
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition};
+use crate::r#match::position::VectorExtensions;
 
 pub struct MatchPlayerLogic;
 
@@ -21,5 +22,19 @@ impl MatchPlayerLogic {
         }
 
         leader_id
+    }
+
+    pub fn distance_to_start_position(
+        player: &MatchPlayer,
+    ) -> PlayerDistanceFromStartPosition {
+        let start_position_distance = player.position.distance_to(&player.start_position);
+
+        if start_position_distance < 50.0 {
+            PlayerDistanceFromStartPosition::Small
+        } else if start_position_distance < 100.0 {
+            PlayerDistanceFromStartPosition::Medium
+        } else {
+            PlayerDistanceFromStartPosition::Big
+        }
     }
 }
