@@ -51,7 +51,7 @@ impl ForwardStrategies {
             PlayerState::Forward(ForwardState::Assisting) => ForwardAssistingState::process,
 
             _ => {
-                unimplemented!()
+                return StateChangeResult::none();
             }
         };
 

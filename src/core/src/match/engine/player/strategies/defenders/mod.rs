@@ -47,7 +47,7 @@ impl DefenderStrategies {
             PlayerState::Defender(DefenderState::HoldingLine) => DefenderHoldingLineState::process,
             PlayerState::Defender(DefenderState::OffsideTrap) => DefenderOffsideTrapState::process,
             _ => {
-                unimplemented!()
+                return StateChangeResult::none();
             }
         };
 

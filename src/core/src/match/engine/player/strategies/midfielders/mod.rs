@@ -55,7 +55,7 @@ impl MidfielderStrategies {
             }
             PlayerState::Midfielder(MidfielderState::Tackling) => MidfielderTacklingState::process,
             _ => {
-                unimplemented!()
+                return StateChangeResult::none();
             }
         };
 

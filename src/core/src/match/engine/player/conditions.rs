@@ -1,6 +1,5 @@
 use crate::r#match::{MatchPlayer};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 
 pub struct PlayerConditions;
@@ -16,7 +15,12 @@ impl PlayerConditions {
             PlayerState::Goalkeeper(GoalkeeperState::Resting) |
             PlayerState::Goalkeeper(GoalkeeperState::Walking) => {
                 player.skills.physical.stamina -= 0.05;
-                player.player_attributes.condition += 10;
+                if player.skills.physical.stamina < 0.0 {
+                    player.skills.physical.stamina = 0.0;
+                }
+                if player.player_attributes.condition < 10000 {
+                    player.player_attributes.condition += 10;
+                }
             },
             _ => player.skills.physical.stamina -= 0.01,
         }

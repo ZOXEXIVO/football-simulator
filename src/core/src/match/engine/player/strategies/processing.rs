@@ -56,7 +56,7 @@ impl StateStrategy for PlayerFieldPositionGroup {
                         PlayerFieldPositionGroup::Midfielder => MidfielderStrategies::process,
                         PlayerFieldPositionGroup::Forward => ForwardStrategies::process,
                         _ => {
-                            unimplemented!()
+                            return StateChangeResult::none();
                         }
                     }
                 }

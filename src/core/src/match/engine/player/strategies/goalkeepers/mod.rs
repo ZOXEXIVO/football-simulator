@@ -67,7 +67,7 @@ impl GoalkeeperStrategies {
                 GoalkeeperPenaltyState::process
             }
             _ => {
-                unimplemented!()
+                return StateChangeResult::none();
             }
         };
 
