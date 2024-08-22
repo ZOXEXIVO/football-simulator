@@ -22,8 +22,6 @@ impl GoalkeeperRestingState {
         player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        result.push(PlayerUpdateEvent::Rest(player.player_id));
-
         if in_state_time < 5 {
             StateChangeResult::none();
         }

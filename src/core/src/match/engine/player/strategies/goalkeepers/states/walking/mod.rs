@@ -5,12 +5,12 @@ use crate::r#match::strategies::processing::StateChangeResult;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use std::sync::LazyLock;
 
-static COMMON_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_common_walking_data.json")));
+static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
 
-pub struct CommonWalkingState {}
+pub struct GoalkeeperWalkingState {}
 
-impl CommonWalkingState {
+impl GoalkeeperWalkingState {
     pub fn process(
         in_state_time: u64,
         player: &mut MatchPlayer,

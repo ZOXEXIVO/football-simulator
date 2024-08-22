@@ -1,5 +1,4 @@
 pub mod standing;
-pub mod walking;
 pub mod running;
 pub mod tackling;
 pub mod shooting;
@@ -8,7 +7,6 @@ pub mod returning;
 pub mod injured;
 
 pub use standing::*;
-pub use walking::*;
 pub use running::*;
 pub use tackling::*;
 pub use shooting::*;

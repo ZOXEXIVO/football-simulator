@@ -3,7 +3,7 @@ use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
     CommonInjuredState, CommonReturningState,
     CommonRunningState, CommonShootingState, CommonTacklingState,
-    CommonWalkingState, DefenderStrategies, ForwardStrategies, GameTickContext,
+    DefenderStrategies, ForwardStrategies, GameTickContext,
     GoalkeeperStrategies, MatchContext, MatchPlayer, MidfielderStrategies, PlayerTickContext,
 };
 use crate::PlayerFieldPositionGroup;
@@ -43,7 +43,6 @@ impl StateStrategy for PlayerFieldPositionGroup {
         let state_handler: StateHandler = {
             match player.state {
                 // Common states
-                PlayerState::Walking => CommonWalkingState::process,
                 PlayerState::Running => CommonRunningState::process,
                 PlayerState::Tackling => CommonTacklingState::process,
                 PlayerState::Shooting => CommonShootingState::process,

@@ -21,21 +21,23 @@ impl GoalkeeperComingOutState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         if player_context.ball_context.on_own_side {
-            return StateChangeResult::with_state(PlayerState::Goalkeeper(GoalkeeperState::ReturningToGoal));
+            if player_context.ball_context.is_heading_towards_player {
+                return StateChangeResult::with_state(PlayerState::Goalkeeper(GoalkeeperState::ReturningToGoal));
+            }
+        }else {
+            if in_state_time > 100 {
+                return StateChangeResult::with_state(PlayerState::Goalkeeper(GoalkeeperState::Walking));
+            }
         }
 
-        if in_state_time % 2 == 0 {
-            let wander_behaviour = SteeringBehavior::Wander {
-                target: tick_context.objects_positions.ball_position,
-                radius: 100.0,
-                jitter: 1.0,
-                distance: 10.0,
-                angle: 1.0,
-            }.calculate(player);
+        let wander_behaviour = SteeringBehavior::Wander {
+            target: tick_context.objects_positions.ball_position,
+            radius: 100.0,
+            jitter: 1.0,
+            distance: 10.0,
+            angle: 1.0,
+        }.calculate(player);
 
-            return StateChangeResult::with_velocity(wander_behaviour.velocity);
-        }
-
-        StateChangeResult::none()
+        return StateChangeResult::with_velocity(wander_behaviour.velocity);
     }
 }

@@ -20,7 +20,8 @@ pub enum GoalkeeperState {
     UnderPressure,       // Under pressure from opponents
     Shooting,            // Shoot to goal
     PreparingForSave,    // Preparing to make a save
-    PenaltySave,         // Saving a penalty
+    PenaltySave,         // Saving a penalty,
+    Walking              // Walking
 }
 
 impl Display for GoalkeeperState {
@@ -45,6 +46,7 @@ impl Display for GoalkeeperState {
             GoalkeeperState::PreparingForSave => write!(f, "Preparing for Save"),
             GoalkeeperState::PenaltySave => write!(f, "Penalty Save"),
             GoalkeeperState::Tackling => write!(f, "Tackling"),
+            GoalkeeperState::Walking => write!(f, "Walking"),
         }
     }
 }

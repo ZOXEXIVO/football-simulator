@@ -122,7 +122,7 @@ impl DefenderStandingState {
                 .calculate(player)
                 .velocity;
 
-                StateChangeResult::with(PlayerState::Walking, velocity)
+                StateChangeResult::with(PlayerState::Shooting, velocity)
             }
             DefenderDecision::RunTowardsGoal => {
                 // Run towards the goal to defend
@@ -146,7 +146,7 @@ impl DefenderStandingState {
                 .calculate(player)
                 .velocity;
 
-                StateChangeResult::with(PlayerState::Walking, velocity)
+                StateChangeResult::with(PlayerState::Shooting, velocity)
             }
             _ => StateChangeResult::none(),
         }
