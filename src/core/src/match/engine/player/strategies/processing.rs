@@ -2,8 +2,8 @@ use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
     CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState,
-    CommonTacklingState, GameTickContext, GoalkeeperStrategies, MatchContext, MatchPlayer,
-    PlayerTickContext,
+    CommonTacklingState, DefenderStrategies, GameTickContext, GoalkeeperStrategies, MatchContext,
+    MatchPlayer, PlayerTickContext,
 };
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
@@ -71,7 +71,9 @@ impl PlayerFieldPositionGroup {
             PlayerState::Goalkeeper(goalkeeper_state) => {
                 GoalkeeperStrategies::process(goalkeeper_state, &mut state_processor)
             }
-            // PlayerState::Defender(_) => DefenderStrategies::process,
+            PlayerState::Defender(defender_state) => {
+                DefenderStrategies::process(defender_state, &mut state_processor)
+            }
             // PlayerState::Midfielder(_) => MidfielderStrategies::process,
             // PlayerState::Forward(_) => ForwardStrategies::process,
             _ => StateChangeResult::none(),
