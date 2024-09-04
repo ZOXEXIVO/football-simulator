@@ -49,7 +49,6 @@ impl ForwardStrategies {
             }
             PlayerState::Forward(ForwardState::Tackling) => ForwardTacklingState::process,
             PlayerState::Forward(ForwardState::Assisting) => ForwardAssistingState::process,
-
             _ => {
                 return StateChangeResult::none();
             }

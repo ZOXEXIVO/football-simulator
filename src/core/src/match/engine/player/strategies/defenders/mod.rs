@@ -1,14 +1,8 @@
 ﻿pub mod decision;
 pub mod states;
-use crate::r#match::defenders::states::{
-    DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState,
-    DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState,
-    DefenderPressingState, DefenderRestingState, DefenderSlidingTackleState, DefenderStandingState,
-    DefenderState, DefenderTrackingBackState,
-};
+use crate::r#match::defenders::states::{DefenderStandingState,  DefenderState };
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::strategies::defenders::states::DefenderPassingState;
 use crate::r#match::strategies::StateHandler;
 use crate::r#match::{
     BallState, GameState, GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
@@ -28,24 +22,25 @@ impl DefenderStrategies {
     ) -> StateChangeResult {
         let state_handler: StateHandler = match player.state {
             PlayerState::Defender(DefenderState::Standing) => DefenderStandingState::process,
-            PlayerState::Defender(DefenderState::Resting) => DefenderRestingState::process,
-            PlayerState::Defender(DefenderState::Passing) => DefenderPassingState::process,
-            PlayerState::Defender(DefenderState::Blocking) => DefenderBlockingState::process,
-            PlayerState::Defender(DefenderState::Intercepting) => {
-                DefenderInterceptingState::process
-            }
-            PlayerState::Defender(DefenderState::Marking) => DefenderMarkingState::process,
-            PlayerState::Defender(DefenderState::Clearing) => DefenderClearingState::process,
-            PlayerState::Defender(DefenderState::Heading) => DefenderHeadingState::process,
-            PlayerState::Defender(DefenderState::SlidingTackle) => {
-                DefenderSlidingTackleState::process
-            }
-            PlayerState::Defender(DefenderState::Pressing) => DefenderPressingState::process,
-            PlayerState::Defender(DefenderState::TrackingBack) => {
-                DefenderTrackingBackState::process
-            }
-            PlayerState::Defender(DefenderState::HoldingLine) => DefenderHoldingLineState::process,
-            PlayerState::Defender(DefenderState::OffsideTrap) => DefenderOffsideTrapState::process,
+
+            // PlayerState::Defender(DefenderState::Resting) => DefenderRestingState::process,
+            // PlayerState::Defender(DefenderState::Passing) => DefenderPassingState::process,
+            // PlayerState::Defender(DefenderState::Blocking) => DefenderBlockingState::process,
+            // PlayerState::Defender(DefenderState::Intercepting) => {
+            //     DefenderInterceptingState::process
+            // }
+            // PlayerState::Defender(DefenderState::Marking) => DefenderMarkingState::process,
+            // PlayerState::Defender(DefenderState::Clearing) => DefenderClearingState::process,
+            // PlayerState::Defender(DefenderState::Heading) => DefenderHeadingState::process,
+            // PlayerState::Defender(DefenderState::SlidingTackle) => {
+            //     DefenderSlidingTackleState::process
+            // }
+            // PlayerState::Defender(DefenderState::Pressing) => DefenderPressingState::process,
+            // PlayerState::Defender(DefenderState::TrackingBack) => {
+            //     DefenderTrackingBackState::process
+            // }
+            // PlayerState::Defender(DefenderState::HoldingLine) => DefenderHoldingLineState::process,
+            // PlayerState::Defender(DefenderState::OffsideTrap) => DefenderOffsideTrapState::process,
             _ => {
                 return StateChangeResult::none();
             }

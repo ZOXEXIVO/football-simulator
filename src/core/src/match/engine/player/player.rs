@@ -1,5 +1,5 @@
 ﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::{BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, MatchPlayerLogic, PlayerContext, PlayerTickContext, StateStrategy};
+use crate::r#match::{BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, MatchPlayerLogic, PlayerContext, PlayerTickContext};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
@@ -87,7 +87,7 @@ impl MatchPlayer {
         };
 
         // change move
-        PlayerMatchState::process(self, context, tick_context, player_context, &mut result);
+        PlayerMatchState::process(self, context, tick_context, &player_context, &mut result);
         PlayerConditions::process(self);
 
         self.move_to();
@@ -104,7 +104,7 @@ impl MatchPlayer {
         &mut self,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_context: PlayerTickContext,
+        player_context: &PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) {
         let state_result = self.tactics_position.position_group().process(
