@@ -2,14 +2,14 @@ use crate::{PlayerCollectionResult, PlayerResult, SimulatorData};
 
 pub struct ClubAcademyResult {
     pub players: PlayerCollectionResult,
-        pub produece_result: ProduceYouthPlayersResult
+        pub produce_result: ProduceYouthPlayersResult
 }
 
 impl ClubAcademyResult {
-    pub fn new(players: PlayerCollectionResult,          produece_result: ProduceYouthPlayersResult) -> Self {
+    pub fn new(players: PlayerCollectionResult, produce_result: ProduceYouthPlayersResult) -> Self {
         ClubAcademyResult {
             players,
-            produece_result
+            produce_result
         }
     }
 

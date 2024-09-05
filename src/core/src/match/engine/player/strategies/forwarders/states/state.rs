@@ -30,7 +30,7 @@ pub enum ForwardState {
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
-    pub fn process(state: ForwardState, state_processor: &mut StateProcessor) -> StateChangeResult {
+    pub fn process(state: ForwardState, state_processor: StateProcessor) -> StateChangeResult {
         match state {
             ForwardState::Standing => state_processor.process(ForwardStandingState::default()),
             ForwardState::Passing => state_processor.process(ForwardPassingState::default()),

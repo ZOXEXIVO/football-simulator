@@ -1,11 +1,16 @@
-use crate::common::NeuralNetwork;
-use nalgebra::Vector3;
 use std::sync::LazyLock;
 
+use nalgebra::Vector3;
+
+use crate::common::loader::DefaultNeuralNetworkLoader;
+use crate::common::NeuralNetwork;
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext,
+    StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
+};
 use crate::r#match::decision::DefenderDecision;
 use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::common::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::{GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext, StateChangeResult, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::player::state::PlayerState;
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -15,27 +20,11 @@ static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
-    fn try_fast(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> StateChangeResult {
+    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 }

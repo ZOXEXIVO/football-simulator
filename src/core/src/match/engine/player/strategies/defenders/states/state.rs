@@ -12,6 +12,7 @@ pub enum DefenderState {
     Standing,      // Standing
     Resting,       // Resting after an attack
     Passing,       // Passing the ball
+    Running,       // Running in the direction of the ball
     Blocking,      // Blocking a shot or pass
     Intercepting,  // Intercepting a pass
     Marking,       // Marking an attacker
@@ -29,7 +30,7 @@ pub struct DefenderStrategies {}
 impl DefenderStrategies {
     pub fn process(
         state: DefenderState,
-        state_processor: &mut StateProcessor,
+        state_processor: StateProcessor,
     ) -> StateChangeResult {
         match state {
             DefenderState::Standing => state_processor.process(DefenderStandingState::default()),
@@ -55,6 +56,9 @@ impl DefenderStrategies {
             DefenderState::OffsideTrap => {
                 state_processor.process(DefenderOffsideTrapState::default())
             }
+            DefenderState::Running => {
+                state_processor.process(DefenderOffsideTrapState::default())
+            }
         }
     }
 }
@@ -75,6 +79,7 @@ impl Display for DefenderState {
             DefenderState::TrackingBack => write!(f, "Tracking Back"),
             DefenderState::HoldingLine => write!(f, "Holding Line"),
             DefenderState::OffsideTrap => write!(f, "Offside Trap"),
+            DefenderState::Running => write!(f, "Running"),
         }
     }
 }

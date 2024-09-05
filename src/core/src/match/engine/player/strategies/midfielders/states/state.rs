@@ -23,7 +23,7 @@ pub struct MidfielderStrategies {}
 impl MidfielderStrategies {
     pub fn process(
         state: MidfielderState,
-        state_processor: &mut StateProcessor,
+        state_processor: StateProcessor,
     ) -> StateChangeResult {
          match state {
             MidfielderState::Standing => state_processor.process(MidfielderStandingState::default()),

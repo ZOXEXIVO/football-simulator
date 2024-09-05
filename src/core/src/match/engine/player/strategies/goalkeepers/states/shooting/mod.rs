@@ -1,9 +1,12 @@
 use crate::common::NeuralNetwork;
 use std::sync::LazyLock;
 
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::common::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult, StateProcessingHandler};
+use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::{
+    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler, StateProcessor,
+};
 
 static GOALKEEPER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_shooting_data.json")));
@@ -12,27 +15,11 @@ static GOALKEEPER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct GoalkeeperShootingState {}
 
 impl StateProcessingHandler for GoalkeeperShootingState {
-    fn try_fast(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> StateChangeResult {
+    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 }

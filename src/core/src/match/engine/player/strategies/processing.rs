@@ -12,35 +12,9 @@ use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 
 pub trait StateProcessingHandler {
-    fn try_fast(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> Option<StateChangeResult>;
-
-    fn process_slow(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> StateChangeResult;
+    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult>;
+    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult;
 }
-
-pub type StateHandler = fn(
-    in_state_time: u64,
-    player: &mut MatchPlayer,
-    context: &mut MatchContext,
-    tick_context: &GameTickContext,
-    player_context: PlayerTickContext,
-    result: &mut Vec<PlayerUpdateEvent>,
-) -> StateChangeResult;
 
 impl PlayerFieldPositionGroup {
     pub fn process(
@@ -71,18 +45,10 @@ impl PlayerFieldPositionGroup {
             PlayerState::Returning => state_processor.process(CommonReturningState::default()),
             PlayerState::Injured => state_processor.process(CommonInjuredState::default()),
             // // Specific states
-            PlayerState::Goalkeeper(state) => {
-                GoalkeeperStrategies::process(state, &mut state_processor)
-            }
-            PlayerState::Defender(state) => {
-                DefenderStrategies::process(state, &mut state_processor)
-            }
-            PlayerState::Midfielder(state) => {
-                MidfielderStrategies::process(state, &mut state_processor)
-            }
-            PlayerState::Forward(state) => {
-                ForwardStrategies::process(state, &mut state_processor)
-            }
+            PlayerState::Goalkeeper(state) => GoalkeeperStrategies::process(state, state_processor),
+            PlayerState::Defender(state) => DefenderStrategies::process(state, state_processor),
+            PlayerState::Midfielder(state) => MidfielderStrategies::process(state, state_processor),
+            PlayerState::Forward(state) => ForwardStrategies::process(state, state_processor),
         }
     }
 }
@@ -114,26 +80,41 @@ impl<'p> StateProcessor<'p> {
             result,
         }
     }
-    pub fn process<H: StateProcessingHandler>(&mut self, handler: H) -> StateChangeResult {
-        if let Some(fast_result) = handler.try_fast(
-            self.in_state_time,
-            self.player,
-            self.context,
-            self.tick_context,
-            self.player_context,
-            self.result,
-        ) {
+
+    pub fn process<H: StateProcessingHandler>(self, handler: H) -> StateChangeResult {
+        let mut processing_context = self.to_context();
+
+        if let Some(fast_result) = handler.try_fast(&mut processing_context) {
             return fast_result;
         }
 
-        handler.process_slow(
-            self.in_state_time,
-            self.player,
-            self.context,
-            self.tick_context,
-            self.player_context,
-            self.result,
-        )
+        handler.process_slow(&mut processing_context)
+    }
+
+    pub fn to_context(self) -> StateProcessingContext<'p> {
+        StateProcessingContext::from(self)
+    }
+}
+
+pub struct StateProcessingContext<'sp> {
+    pub in_state_time: u64,
+    pub player: &'sp mut MatchPlayer,
+    pub context: &'sp mut MatchContext,
+    pub tick_context: &'sp GameTickContext,
+    pub player_context: &'sp PlayerTickContext,
+    pub result: &'sp mut Vec<PlayerUpdateEvent>,
+}
+
+impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
+    fn from(value: StateProcessor<'sp>) -> Self {
+        StateProcessingContext {
+            in_state_time: value.in_state_time,
+            player: value.player,
+            context: value.context,
+            tick_context: value.tick_context,
+            player_context: value.player_context,
+            result: value.result,
+        }
     }
 }
 

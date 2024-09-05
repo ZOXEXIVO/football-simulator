@@ -1,7 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::{StateChangeResult, StateProcessingHandler};
+use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use std::sync::LazyLock;
 use crate::CONDITION_MAX_VALUE;
@@ -16,25 +16,13 @@ pub struct GoalkeeperRestingState {}
 
 impl StateProcessingHandler for GoalkeeperRestingState {
     fn try_fast(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        &self, context: &mut StateProcessingContext
     ) -> Option<StateChangeResult> {
         None
     }
 
     fn process_slow(
-        &self,
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        &self, context: &mut StateProcessingContext
     ) -> StateChangeResult {
         StateChangeResult::none()
     }
