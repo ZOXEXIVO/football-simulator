@@ -4,14 +4,14 @@ use nalgebra::Vector3;
 
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext,
-    StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior,
-};
 use crate::r#match::decision::DefenderDecision;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
+use crate::r#match::{
+    GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
+    PlayerTickContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
+};
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -21,63 +21,38 @@ pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
-        None
+        let test = SteeringBehavior::Arrive {
+            target: context.tick_context.objects_positions.ball_position,
+            slowing_distance: 10.0,
+        }
+        .calculate(context.player)
+        .velocity;
+
+        Some(StateChangeResult::with_velocity(test))
     }
 
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
-        StateChangeResult::none()
+        let nn_input = GameFieldContextInput::from_contexts(context).to_input();
+        let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
+
+        // Make decisions based on the analysis
+        if let Some(decision) = DefenderStandingState::analyze_results(nn_result, context) {
+            return DefenderStandingState::execute_decision(decision, context);
+        }
     }
 }
 
 impl DefenderStandingState {
-    pub fn process(
-        in_state_time: u64,
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> StateChangeResult {
-        let test = SteeringBehavior::Arrive {
-            target: tick_context.objects_positions.ball_position,
-            slowing_distance: 10.0,
-        }
-        .calculate(player)
-        .velocity;
-
-        return StateChangeResult::with_velocity(test);
-        //
-        // // Analyze the game situation using the neural network
-        // let nn_input = GameFieldContextInput::from_contexts(context, player, tick_context).to_input();
-        // let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
-        //
-        // // Make decisions based on the analysis
-        // if let Some(decision) =
-        //     Self::analyze_results(nn_result, player, tick_context, player_tick_context)
-        // {
-        //     return Self::execute_decision(
-        //         player,
-        //         context,
-        //         &tick_context.objects_positions,
-        //         decision,
-        //         result,
-        //     );
-        // }
-
-        StateChangeResult::none()
-    }
-
     fn analyze_results(
         nn_analysis: Vec<f64>,
-        player: &MatchPlayer,
-        tick_context: &GameTickContext,
-        player_tick_context: PlayerTickContext,
+        context: &mut StateProcessingContext,
     ) -> Option<DefenderDecision> {
-        if player_tick_context.ball_context.ball_distance < 100.0 {
-            if let Some((_, opponent_distance)) = tick_context
+        if context.player_context.ball_context.ball_distance < 100.0 {
+            if let Some((_, opponent_distance)) = context
+                .tick_context
                 .objects_positions
                 .player_distances
-                .find_closest_opponent(player)
+                .find_closest_opponent(context.player)
             {
                 if opponent_distance < 50.0 {
                     return Some(DefenderDecision::Run);
@@ -108,15 +83,12 @@ impl DefenderStandingState {
     }
 
     fn execute_decision(
-        player: &MatchPlayer,
-        context: &mut MatchContext,
-        match_objects_positions: &MatchObjectsPositions,
         decision: DefenderDecision,
-        result: &mut Vec<PlayerUpdateEvent>,
+        context: &mut StateProcessingContext,
     ) -> StateChangeResult {
         match decision {
             DefenderDecision::RunTowardsBall => {
-                let ball_position = match_objects_positions.ball_position;
+                let ball_position = context.match_objects_positions.ball_position;
                 let velocity = SteeringBehavior::Arrive {
                     target: ball_position,
                     slowing_distance: 10.0,

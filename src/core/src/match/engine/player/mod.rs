@@ -1,11 +1,11 @@
 ﻿pub mod behaviours;
-pub mod context;
-pub mod player;
-pub mod strategies;
 mod conditions;
+pub mod context;
 pub mod events;
+pub mod player;
 mod state;
 pub mod statistics;
+pub mod strategies;
 
 use crate::r#match::MatchContext;
 pub use behaviours::*;
@@ -19,13 +19,9 @@ pub struct GameFieldContextInput<'p> {
 }
 
 impl<'p> GameFieldContextInput<'p> {
-    pub fn from_contexts(
-        context: &MatchContext,
-        player: &MatchPlayer,
-        tick_context: &'p GameTickContext,
-    ) -> Self {
+    pub fn from_contexts(context: &mut StateProcessingContext) -> Self {
         GameFieldContextInput {
-            objects_positions: &tick_context.objects_positions,
+            objects_positions: &context.tick_context.objects_positions,
         }
     }
 
