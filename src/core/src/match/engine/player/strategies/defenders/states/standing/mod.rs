@@ -20,16 +20,16 @@ pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
-        if context.in_state_time > 10 {
+        if context.in_state_time > 100 {
             return Some(StateChangeResult::with_state(PlayerState::Defender(
                 DefenderState::HoldingLine,
             )));
         }
 
-        if context.player_context.ball_context.ball_distance > 100.0
+        if context.player_context.ball.ball_distance > 100.0
             && context
                 .player_context
-                .player_context
+                .player
                 .distance_to_start_position
                 == PlayerDistanceFromStartPosition::Big
         {
@@ -40,10 +40,10 @@ impl StateProcessingHandler for DefenderStandingState {
 
         if context
             .player_context
-            .ball_context
+            .ball
             .is_heading_towards_player
         {
-            if context.player_context.ball_context.ball_distance > 100.0 {
+            if context.player_context.ball.ball_distance > 100.0 {
                 return Some(StateChangeResult::with_state(PlayerState::Defender(
                     DefenderState::Intercepting,
                 )));
@@ -82,7 +82,7 @@ impl DefenderStandingState {
         nn_analysis: Vec<f64>,
         context: &mut StateProcessingContext,
     ) -> Option<DefenderDecision> {
-        if context.player_context.ball_context.ball_distance < 100.0 {
+        if context.player_context.ball.ball_distance < 100.0 {
             if let Some((_, opponent_distance)) = context
                 .tick_context
                 .objects_positions

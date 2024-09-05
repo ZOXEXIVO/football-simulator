@@ -7,8 +7,8 @@ pub struct GameTickContext {
 }
 
 pub struct PlayerTickContext {
-    pub ball_context: BallContext,
-    pub player_context: PlayerContext
+    pub ball: BallContext,
+    pub player: PlayerContext
 }
 
 pub struct BallContext {

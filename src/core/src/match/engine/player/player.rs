@@ -69,7 +69,7 @@ impl MatchPlayer {
         };
 
         let player_context = PlayerTickContext {
-            ball_context: BallContext {
+            ball: BallContext {
                 // ball moving towards goal
                 is_heading_towards_player: MatchBallLogic::is_heading_towards_player(
                     &tick_context.objects_positions.ball_position,
@@ -81,7 +81,7 @@ impl MatchPlayer {
                     .ball_position
                     .distance_to(&self.position),
             },
-            player_context: PlayerContext {
+            player: PlayerContext {
                 distance_to_start_position: MatchPlayerLogic::distance_to_start_position(self)
             }
         };

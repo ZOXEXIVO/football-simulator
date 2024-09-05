@@ -42,12 +42,12 @@ impl GoalkeeperStandingState {
             ));
         }
 
-        if !player_context.ball_context.on_own_side {
+        if !player_context.ball.on_own_side {
             return StateChangeResult::none();
         }
 
-        if player_context.ball_context.is_heading_towards_player
-            && player_context.ball_context.ball_distance < 100.0
+        if player_context.ball.is_heading_towards_player
+            && player_context.ball.ball_distance < 100.0
         {
             return StateChangeResult::with_state(PlayerState::Goalkeeper(
                 GoalkeeperState::PreparingForSave,
@@ -60,7 +60,7 @@ impl GoalkeeperStandingState {
             ));
         }
 
-        match player_context.player_context.distance_to_start_position {
+        match player_context.player.distance_to_start_position {
             PlayerDistanceFromStartPosition::Medium | PlayerDistanceFromStartPosition::Big => {
                 return StateChangeResult::with_state(PlayerState::Goalkeeper(
                     GoalkeeperState::ReturningToGoal,
