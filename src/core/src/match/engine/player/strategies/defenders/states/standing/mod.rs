@@ -5,12 +5,10 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::decision::DefenderDecision;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
-    GameFieldContextInput, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    PlayerTickContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior,
+    GameFieldContextInput, MatchContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
 };
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -39,6 +37,8 @@ impl StateProcessingHandler for DefenderStandingState {
         if let Some(decision) = DefenderStandingState::analyze_results(nn_result, context) {
             return DefenderStandingState::execute_decision(decision, context);
         }
+
+        StateChangeResult::none()
     }
 }
 
@@ -88,12 +88,12 @@ impl DefenderStandingState {
     ) -> StateChangeResult {
         match decision {
             DefenderDecision::RunTowardsBall => {
-                let ball_position = context.match_objects_positions.ball_position;
+                let ball_position = context.tick_context.objects_positions.ball_position;
                 let velocity = SteeringBehavior::Arrive {
                     target: ball_position,
                     slowing_distance: 10.0,
                 }
-                .calculate(player)
+                .calculate(context.player)
                 .velocity;
 
                 StateChangeResult::with(PlayerState::Running, velocity)
@@ -101,34 +101,35 @@ impl DefenderStandingState {
             DefenderDecision::StandStill => StateChangeResult::none(),
             DefenderDecision::AdjustPosition => {
                 let velocity = SteeringBehavior::Arrive {
-                    target: player.start_position,
+                    target: context.player.start_position,
                     slowing_distance: 5.0,
                 }
-                .calculate(player)
+                .calculate(context.player)
                 .velocity;
 
                 StateChangeResult::with(PlayerState::Shooting, velocity)
             }
             DefenderDecision::RunTowardsGoal => {
                 // Run towards the goal to defend
-                let goal_position = calculate_goal_position(player, context);
+                let goal_position = calculate_goal_position(context.player, context.context);
                 let velocity = SteeringBehavior::Arrive {
                     target: goal_position,
                     slowing_distance: 10.0,
                 }
-                .calculate(player)
+                .calculate(context.player)
                 .velocity;
 
                 StateChangeResult::with(PlayerState::Running, velocity)
             }
             DefenderDecision::MarkOpponent => {
                 // Mark the closest opponent
-                let opponent_position = find_closest_opponent_position(player, context);
+                let opponent_position =
+                    find_closest_opponent_position(context.player, context.context);
                 let velocity = SteeringBehavior::Arrive {
                     target: opponent_position,
                     slowing_distance: 5.0,
                 }
-                .calculate(player)
+                .calculate(context.player)
                 .velocity;
 
                 StateChangeResult::with(PlayerState::Shooting, velocity)
