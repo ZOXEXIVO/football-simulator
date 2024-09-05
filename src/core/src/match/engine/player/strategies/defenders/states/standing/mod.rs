@@ -5,10 +5,11 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::decision::DefenderDecision;
+use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
-    GameFieldContextInput, MatchContext, MatchPlayer, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler, SteeringBehavior,
+    GameFieldContextInput, MatchContext, MatchPlayer, PlayerDistanceFromStartPosition,
+    StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior,
 };
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -19,21 +20,55 @@ pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
-        let test = SteeringBehavior::Arrive {
-            target: context.tick_context.objects_positions.ball_position,
-            slowing_distance: 10.0,
+        if context.in_state_time > 10 {
+            return Some(StateChangeResult::with_state(PlayerState::Defender(
+                DefenderState::HoldingLine,
+            )));
         }
-        .calculate(context.player)
-        .velocity;
 
-        Some(StateChangeResult::with_velocity(test))
+        if context.player_context.ball_context.ball_distance > 100.0
+            && context
+                .player_context
+                .player_context
+                .distance_to_start_position
+                == PlayerDistanceFromStartPosition::Big
+        {
+            return Some(StateChangeResult::with_state(PlayerState::Defender(
+                DefenderState::Returning,
+            )));
+        }
+
+        if context
+            .player_context
+            .ball_context
+            .is_heading_towards_player
+        {
+            if context.player_context.ball_context.ball_distance > 100.0 {
+                return Some(StateChangeResult::with_state(PlayerState::Defender(
+                    DefenderState::Intercepting,
+                )));
+            }
+        }
+
+        let (teammates_count, opponents_count) = context
+            .tick_context
+            .objects_positions
+            .player_distances
+            .players_within_distance_count(context.player, 10.0);
+
+        if opponents_count > 2 {
+            return Some(StateChangeResult::with_state(PlayerState::Defender(
+                DefenderState::Intercepting,
+            )));
+        }
+
+        None
     }
 
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
         let nn_input = GameFieldContextInput::from_contexts(context).to_input();
         let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
 
-        // Make decisions based on the analysis
         if let Some(decision) = DefenderStandingState::analyze_results(nn_result, context) {
             return DefenderStandingState::execute_decision(decision, context);
         }
@@ -107,7 +142,7 @@ impl DefenderStandingState {
                 .calculate(context.player)
                 .velocity;
 
-                StateChangeResult::with(PlayerState::Shooting, velocity)
+                StateChangeResult::with(PlayerState::Defender(DefenderState::Pressing), velocity)
             }
             DefenderDecision::RunTowardsGoal => {
                 // Run towards the goal to defend
@@ -119,7 +154,7 @@ impl DefenderStandingState {
                 .calculate(context.player)
                 .velocity;
 
-                StateChangeResult::with(PlayerState::Running, velocity)
+                StateChangeResult::with(PlayerState::Defender(DefenderState::Running), velocity)
             }
             DefenderDecision::MarkOpponent => {
                 // Mark the closest opponent
@@ -132,7 +167,7 @@ impl DefenderStandingState {
                 .calculate(context.player)
                 .velocity;
 
-                StateChangeResult::with(PlayerState::Shooting, velocity)
+                StateChangeResult::with(PlayerState::Defender(DefenderState::Pressing), velocity)
             }
             _ => StateChangeResult::none(),
         }

@@ -61,7 +61,7 @@ async fn main() {
 
         fps_data[fps_data_current_idx] = elapsed.as_micros() as u128;
 
-        if average_fps_bucket_size > 10 && elapsed_mcs > max_fps {
+        if current_frame > 100 && elapsed_mcs > max_fps {
             max_fps = elapsed_mcs;
         }
 

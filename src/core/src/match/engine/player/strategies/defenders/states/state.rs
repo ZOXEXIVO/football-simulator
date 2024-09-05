@@ -1,8 +1,8 @@
 use crate::r#match::defenders::states::{
     DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState,
     DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState,
-    DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderSlidingTackleState,
-    DefenderStandingState, DefenderTrackingBackState,
+    DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderReturningState,
+    DefenderSlidingTackleState, DefenderStandingState, DefenderTrackingBackState,
 };
 use crate::r#match::{StateChangeResult, StateProcessor};
 use std::fmt::{Display, Formatter};
@@ -23,15 +23,13 @@ pub enum DefenderState {
     TrackingBack,  // Tracking back to defense after an attack
     HoldingLine,   // Holding the defensive line
     OffsideTrap,   // Setting up an offside trap,
+    Returning,     // Returning the ball
 }
 
 pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
-    pub fn process(
-        state: DefenderState,
-        state_processor: StateProcessor,
-    ) -> StateChangeResult {
+    pub fn process(state: DefenderState, state_processor: StateProcessor) -> StateChangeResult {
         match state {
             DefenderState::Standing => state_processor.process(DefenderStandingState::default()),
             DefenderState::Resting => state_processor.process(DefenderRestingState::default()),
@@ -56,9 +54,8 @@ impl DefenderStrategies {
             DefenderState::OffsideTrap => {
                 state_processor.process(DefenderOffsideTrapState::default())
             }
-            DefenderState::Running => {
-                state_processor.process(DefenderOffsideTrapState::default())
-            }
+            DefenderState::Running => state_processor.process(DefenderOffsideTrapState::default()),
+            DefenderState::Returning => state_processor.process(DefenderReturningState::default()),
         }
     }
 }
@@ -80,6 +77,7 @@ impl Display for DefenderState {
             DefenderState::HoldingLine => write!(f, "Holding Line"),
             DefenderState::OffsideTrap => write!(f, "Offside Trap"),
             DefenderState::Running => write!(f, "Running"),
+            DefenderState::Returning => write!(f, "Returning"),
         }
     }
 }

@@ -1,6 +1,3 @@
-use std::f32::consts::E;
-use std::fs;
-use std::fs::File;
 use std::io::Write;
 use std::sync::Mutex;
 use crate::net::{ActivationFunction, NeuralNetwork};
