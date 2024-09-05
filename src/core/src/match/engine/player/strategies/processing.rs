@@ -1,9 +1,12 @@
+use crate::r#match::defenders::states::DefenderStrategies;
+use crate::r#match::forwarders::states::ForwardStrategies;
+use crate::r#match::goalkeepers::states::state::GoalkeeperStrategies;
+use crate::r#match::midfielders::states::MidfielderStrategies;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
     CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState,
-    CommonTacklingState, DefenderStrategies, GameTickContext, GoalkeeperStrategies, MatchContext,
-    MatchPlayer, PlayerTickContext,
+    CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
 };
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
@@ -68,15 +71,18 @@ impl PlayerFieldPositionGroup {
             PlayerState::Returning => state_processor.process(CommonReturningState::default()),
             PlayerState::Injured => state_processor.process(CommonInjuredState::default()),
             // // Specific states
-            PlayerState::Goalkeeper(goalkeeper_state) => {
-                GoalkeeperStrategies::process(goalkeeper_state, &mut state_processor)
+            PlayerState::Goalkeeper(state) => {
+                GoalkeeperStrategies::process(state, &mut state_processor)
             }
-            PlayerState::Defender(defender_state) => {
-                DefenderStrategies::process(defender_state, &mut state_processor)
+            PlayerState::Defender(state) => {
+                DefenderStrategies::process(state, &mut state_processor)
             }
-            // PlayerState::Midfielder(_) => MidfielderStrategies::process,
-            // PlayerState::Forward(_) => ForwardStrategies::process,
-            _ => StateChangeResult::none(),
+            PlayerState::Midfielder(state) => {
+                MidfielderStrategies::process(state, &mut state_processor)
+            }
+            PlayerState::Forward(state) => {
+                ForwardStrategies::process(state, &mut state_processor)
+            }
         }
     }
 }

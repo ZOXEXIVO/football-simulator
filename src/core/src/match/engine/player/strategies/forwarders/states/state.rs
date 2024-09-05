@@ -1,3 +1,12 @@
+use crate::r#match::forwarders::states::{
+    ForwardAssistingState, ForwardCreatingSpaceState, ForwardCrossReceivingState,
+    ForwardDribblingState, ForwardFinishingState, ForwardHeadingState, ForwardHeadingUpPlayState,
+    ForwardOffsideTrapBreakingState, ForwardPassingState, ForwardPressingState,
+    ForwardRunningInBehindState, ForwardShootingState, ForwardStandingState, ForwardTacklingState,
+};
+use crate::r#match::{
+    StateChangeResult, StateProcessor,
+};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy)]
@@ -16,6 +25,39 @@ pub enum ForwardState {
     OffsideTrapBreaking, // Trying to beat the offside trap by timing runs
     Tackling,            // Tackling the ball
     Assisting,           // Providing an assist by passing or crossing to a teammate
+}
+
+pub struct ForwardStrategies {}
+
+impl ForwardStrategies {
+    pub fn process(state: ForwardState, state_processor: &mut StateProcessor) -> StateChangeResult {
+        match state {
+            ForwardState::Standing => state_processor.process(ForwardStandingState::default()),
+            ForwardState::Passing => state_processor.process(ForwardPassingState::default()),
+            ForwardState::Dribbling => state_processor.process(ForwardDribblingState::default()),
+            ForwardState::Shooting => state_processor.process(ForwardShootingState::default()),
+            ForwardState::Heading => state_processor.process(ForwardHeadingState::default()),
+            ForwardState::HoldingUpPlay => {
+                state_processor.process(ForwardHeadingUpPlayState::default())
+            }
+            ForwardState::RunningInBehind => {
+                state_processor.process(ForwardRunningInBehindState::default())
+            }
+            ForwardState::Pressing => state_processor.process(ForwardPressingState::default()),
+            ForwardState::Finishing => state_processor.process(ForwardFinishingState::default()),
+            ForwardState::CreatingSpace => {
+                state_processor.process(ForwardCreatingSpaceState::default())
+            }
+            ForwardState::CrossReceiving => {
+                state_processor.process(ForwardCrossReceivingState::default())
+            }
+            ForwardState::OffsideTrapBreaking => {
+                state_processor.process(ForwardOffsideTrapBreakingState::default())
+            }
+            ForwardState::Tackling => state_processor.process(ForwardTacklingState::default()),
+            ForwardState::Assisting => state_processor.process(ForwardAssistingState::default()),
+        }
+    }
 }
 
 impl Display for ForwardState {
