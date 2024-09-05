@@ -55,8 +55,8 @@ impl PlayerFieldPositionGroup {
 
 pub struct StateProcessor<'p> {
     in_state_time: u64,
-    player: &'p mut MatchPlayer,
-    context: &'p mut MatchContext,
+    player: &'p MatchPlayer,
+    context: &'p MatchContext,
     tick_context: &'p GameTickContext,
     player_context: &'p PlayerTickContext,
     result: &'p mut Vec<PlayerUpdateEvent>,
@@ -65,8 +65,8 @@ pub struct StateProcessor<'p> {
 impl<'p> StateProcessor<'p> {
     pub fn new(
         in_state_time: u64,
-        player: &'p mut MatchPlayer,
-        context: &'p mut MatchContext,
+        player: &'p MatchPlayer,
+        context: &'p MatchContext,
         tick_context: &'p GameTickContext,
         player_context: &'p PlayerTickContext,
         result: &'p mut Vec<PlayerUpdateEvent>,
@@ -98,8 +98,8 @@ impl<'p> StateProcessor<'p> {
 
 pub struct StateProcessingContext<'sp> {
     pub in_state_time: u64,
-    pub player: &'sp mut MatchPlayer,
-    pub context: &'sp mut MatchContext,
+    pub player: &'sp MatchPlayer,
+    pub context: &'sp MatchContext,
     pub tick_context: &'sp GameTickContext,
     pub player_context: &'sp PlayerTickContext,
     pub result: &'sp mut Vec<PlayerUpdateEvent>,
