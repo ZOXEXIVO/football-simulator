@@ -37,7 +37,11 @@ async fn main() {
 
     let mut current_frame = 0u64;
 
-    let mut fps_data = [0u128;30];
+    const average_fps_bucket_size: usize = 50;
+
+    let mut max_fps: u128 = 0;
+
+    let mut fps_data = [0u128; average_fps_bucket_size];
 
     loop {
         current_frame += 1;
@@ -51,14 +55,28 @@ async fn main() {
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
 
         let elapsed = start.elapsed();
-        let fps_data_current_idx = (current_frame % 30) as usize;
+        let fps_data_current_idx = (current_frame % average_fps_bucket_size as u64) as usize;
+
+        let elapsed_mcs = elapsed.as_micros() as u128;
 
         fps_data[fps_data_current_idx] = elapsed.as_micros() as u128;
 
+        if average_fps_bucket_size > 10 && elapsed_mcs > max_fps {
+            max_fps = elapsed_mcs;
+        }
+
         draw_text(
-            &format!("GAME_TICK: {} mcs", average(&fps_data)),
+            &format!("FPS AVG: {} mcs", average(&fps_data)),
             10.0,
             20.0,
+            20.0,
+            BLACK,
+        );
+
+        draw_text(
+            &format!("FPS MAX: {} mcs", max_fps),
+            10.0,
+            40.0,
             20.0,
             BLACK,
         );
@@ -188,7 +206,7 @@ fn get_player(position: PlayerPositionType) -> Player {
     )
 }
 
-fn average(numbers: &[u128;30]) -> u128 {
+fn average(numbers: &[u128]) -> u128 {
     let sum: u128 = numbers.iter().sum();
     let count = numbers.len() as u128;
     sum / count
