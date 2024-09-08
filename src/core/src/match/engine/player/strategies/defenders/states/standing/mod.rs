@@ -20,46 +20,43 @@ pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
-        if context.in_state_time > 100 {
-            return Some(StateChangeResult::with_state(PlayerState::Defender(
-                DefenderState::HoldingLine,
-            )));
-        }
-
-        if context.player_context.ball.ball_distance > 100.0
-            && context
-                .player_context
-                .player
-                .distance_to_start_position
-                == PlayerDistanceFromStartPosition::Big
-        {
-            return Some(StateChangeResult::with_state(PlayerState::Defender(
-                DefenderState::Returning,
-            )));
-        }
-
-        if context
-            .player_context
-            .ball
-            .is_heading_towards_player
-        {
-            if context.player_context.ball.ball_distance > 100.0 {
-                return Some(StateChangeResult::with_state(PlayerState::Defender(
-                    DefenderState::Intercepting,
-                )));
+        if context.player_context.ball.on_own_side {
+            // OWN BALL SIDE
+            if context.in_state_time > 50 {
+                return Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine));
             }
-        }
 
-        let (teammates_count, opponents_count) = context
-            .tick_context
-            .objects_positions
-            .player_distances
-            .players_within_distance_count(context.player, 10.0);
+            if context.player_context.ball.is_heading_towards_player {
+                if context
+                    .player_context
+                    .player
+                    .distance_to_start_position == PlayerDistanceFromStartPosition::Big {
+                    return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
+                }
 
-        if opponents_count > 2 {
-            return Some(StateChangeResult::with_state(PlayerState::Defender(
-                DefenderState::Intercepting,
-            )));
+                let (teammates_count, opponents_count) = context
+                    .tick_context
+                    .objects_positions
+                    .player_distances
+                    .players_within_distance_count(context.player, 10.0);
+
+                if opponents_count > 2 {
+                    return Some(StateChangeResult::with_state(PlayerState::Defender(
+                        DefenderState::Intercepting,
+                    )));
+                }
+
+                if context.player_context.ball.ball_distance < 50.0 {
+                    return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
+                }
+            }
+        } else {
+            // OTHER BALL SIDE
+            if context.in_state_time > 150 {
+                return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
+            }
+
+            return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
         }
 
         None

@@ -1,4 +1,4 @@
-use crate::r#match::defenders::states::DefenderStrategies;
+use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::ForwardStrategies;
 use crate::r#match::goalkeepers::states::state::GoalkeeperStrategies;
 use crate::r#match::midfielders::states::MidfielderStrategies;
@@ -10,6 +10,7 @@ use crate::r#match::{
 };
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
+use crate::r#match::player::state::PlayerState::Defender;
 
 pub trait StateProcessingHandler {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult>;
@@ -131,7 +132,7 @@ impl StateChangeResult {
         }
     }
 
-    pub fn none() -> Self {
+    pub const fn none() -> Self {
         StateChangeResult {
             state: None,
             velocity: None,
@@ -141,6 +142,13 @@ impl StateChangeResult {
     pub fn with_state(state: PlayerState) -> Self {
         StateChangeResult {
             state: Some(state),
+            velocity: None,
+        }
+    }
+
+    pub fn with_defender_state(state: DefenderState) -> Self {
+        StateChangeResult {
+            state: Some(Defender(state)),
             velocity: None,
         }
     }
