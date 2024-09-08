@@ -22,10 +22,6 @@ impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
         if context.player_context.ball.on_own_side {
             // OWN BALL SIDE
-            if context.in_state_time > 50 {
-                return Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine));
-            }
-
             if context.player_context.ball.is_heading_towards_player {
                 if context
                     .player_context
@@ -49,14 +45,23 @@ impl StateProcessingHandler for DefenderStandingState {
                 if context.player_context.ball.ball_distance < 50.0 {
                     return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
                 }
+
+                let ball_speed = context.tick_context.objects_positions.ball_velocity.norm();
+                if ball_speed > 15.0 {
+                    return Some(StateChangeResult::with_defender_state(DefenderState::Blocking));
+                }
+
+                let goal_position = calculate_goal_position(context.player, context.context);
+                let distance_to_goal = (context.player.position - goal_position).norm();
+                if distance_to_goal < 20.0 {
+                    return Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine));
+                }
             }
         } else {
             // OTHER BALL SIDE
             if context.in_state_time > 150 {
                 return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
             }
-
-            return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
         }
 
         None
