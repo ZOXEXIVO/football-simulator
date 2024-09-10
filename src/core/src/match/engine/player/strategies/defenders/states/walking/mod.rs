@@ -2,16 +2,17 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{StateChangeResult, StateProcessingHandler};
-use crate::r#match::StateProcessingContext;
+use crate::r#match::{
+    StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
 
-static DEFENDER_HEADING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_heading_data.json")));
+static DEFENDER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
 
 #[derive(Default)]
-pub struct DefenderHeadingState {}
+pub struct DefenderWalkingState {}
 
-impl StateProcessingHandler for DefenderHeadingState {
+impl StateProcessingHandler for DefenderWalkingState {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
         None
     }

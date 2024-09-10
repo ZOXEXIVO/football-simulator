@@ -1,9 +1,4 @@
-use crate::r#match::defenders::states::{
-    DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState,
-    DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState,
-    DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderReturningState,
-    DefenderSlidingTackleState, DefenderStandingState, DefenderTrackingBackState,
-};
+use crate::r#match::defenders::states::{DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState, DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState, DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderReturningState, DefenderSlidingTackleState, DefenderStandingState, DefenderTrackingBackState, DefenderWalkingState};
 use crate::r#match::{StateChangeResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
@@ -23,7 +18,8 @@ pub enum DefenderState {
     TrackingBack,  // Tracking back to defense after an attack
     HoldingLine,   // Holding the defensive line
     OffsideTrap,   // Setting up an offside trap,
-    Returning,     // Returning the ball
+    Returning,     // Returning the ball,
+    Walking,       // Walking around
 }
 
 pub struct DefenderStrategies {}
@@ -56,6 +52,7 @@ impl DefenderStrategies {
             }
             DefenderState::Running => state_processor.process(DefenderOffsideTrapState::default()),
             DefenderState::Returning => state_processor.process(DefenderReturningState::default()),
+            DefenderState::Walking => state_processor.process(DefenderWalkingState::default()),
         }
     }
 }
@@ -78,6 +75,7 @@ impl Display for DefenderState {
             DefenderState::OffsideTrap => write!(f, "Offside Trap"),
             DefenderState::Running => write!(f, "Running"),
             DefenderState::Returning => write!(f, "Returning"),
+            DefenderState::Walking => write!(f, "Walking"),
         }
     }
 }

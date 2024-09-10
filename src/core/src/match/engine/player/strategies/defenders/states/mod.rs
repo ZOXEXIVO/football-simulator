@@ -14,6 +14,7 @@ pub mod standing;
 pub mod state;
 pub mod tracking_back;
 pub mod returning;
+pub mod walking;
 
 pub use blocking::*;
 pub use clearing::*;
@@ -31,3 +32,4 @@ pub use standing::*;
 pub use state::*;
 pub use tracking_back::*;
 pub use returning::*;
+pub use walking::*;

@@ -1,5 +1,5 @@
 use std::sync::LazyLock;
-
+use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler};
@@ -17,5 +17,9 @@ impl StateProcessingHandler for ForwardShootingState {
 
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
+    }
+
+    fn velocity(&self) -> Vector3<f32> {
+        Vector3::new(0.0, 0.0, 0.0)
     }
 }

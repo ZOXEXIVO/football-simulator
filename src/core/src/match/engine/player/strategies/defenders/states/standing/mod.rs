@@ -8,7 +8,7 @@ use crate::r#match::decision::DefenderDecision;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
-    GameFieldContextInput, MatchContext, MatchPlayer, PlayerDistanceFromStartPosition,
+    MatchContext, MatchPlayer, PlayerDistanceFromStartPosition,
     StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior,
 };
 
@@ -20,9 +20,9 @@ pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, ctx: &mut StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player_context.ball.on_own_side {
+        if ctx.ball_on_own_side() {
             // OWN BALL SIDE
-            if ctx.player_context.ball.is_heading_towards_player {
+            if ctx.ball_towards_player() {
                 if ctx.position_to_distance() == PlayerDistanceFromStartPosition::Big {
                     return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
                 }
@@ -60,14 +60,18 @@ impl StateProcessingHandler for DefenderStandingState {
     }
 
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
-        let nn_input = GameFieldContextInput::from_contexts(context).to_input();
-        let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
-
-        if let Some(decision) = DefenderStandingState::analyze_results(nn_result, context) {
-            return DefenderStandingState::execute_decision(decision, context);
-        }
+        // let nn_input = GameFieldContextInput::from_contexts(context).to_input();
+        // let nn_result = DEFENDER_STANDING_STATE_NETWORK.run(&nn_input);
+        //
+        // if let Some(decision) = DefenderStandingState::analyze_results(nn_result, context) {
+        //     return DefenderStandingState::execute_decision(decision, context);
+        // }
 
         StateChangeResult::none()
+    }
+
+    fn velocity(&self) -> Vector3<f32> {
+        Vector3::new(0.0, 0.0, 0.0)
     }
 }
 

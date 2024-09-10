@@ -26,6 +26,10 @@ impl StateProcessingHandler for GoalkeeperPressureState {
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
+
+    fn velocity(&self) -> Vector3<f32> {
+        Vector3::new(0.0, 0.0, 0.0)
+    }
 }
 
 impl GoalkeeperPressureState {

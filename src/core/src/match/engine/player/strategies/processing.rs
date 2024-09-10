@@ -10,12 +10,12 @@ use nalgebra::Vector3;
 use crate::r#match::player::state::PlayerState::Defender;
 
 pub trait StateProcessingHandler {
+    // Try fast processing
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult>;
+    // Try slow processing with neural network
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult;
-
-    fn is_far(context: &mut StateProcessingContext) -> bool {
-        return false;
-    }
+    // Calculate velocity
+    fn velocity(&self) -> Vector3<f32>;
 }
 
 impl PlayerFieldPositionGroup {
@@ -84,16 +84,22 @@ impl<'p> StateProcessor<'p> {
     }
 
     pub fn process<H: StateProcessingHandler>(self, handler: H) -> StateChangeResult {
-        let mut processing_context = self.to_context();
+        let mut processing_ctx = self.into_ctx();
 
-        if let Some(fast_result) = handler.try_fast(&mut processing_context) {
+        if let Some(fast_result) = handler.try_fast(&mut processing_ctx) {
             return fast_result;
         }
 
-        handler.process_slow(&mut processing_context)
+        let mut result = handler.process_slow(&mut processing_ctx);
+
+        if processing_ctx.in_state_time % 3 == 0 {
+            result.velocity = Some(handler.velocity());
+        }
+
+        result
     }
 
-    pub fn to_context(self) -> StateProcessingContext<'p> {
+    pub fn into_ctx(self) -> StateProcessingContext<'p> {
         StateProcessingContext::from(self)
     }
 }
@@ -114,8 +120,16 @@ impl<'sp> StateProcessingContext<'sp> {
             .distance_to_start_position
     }
 
+    pub fn ball_on_own_side(&self) -> bool {
+        self.player_context.ball.on_own_side
+    }
+
     pub fn ball_distance(&self) -> f32 {
         self.player_context.ball.ball_distance
+    }
+
+    pub fn ball_towards_player(&self) -> bool {
+        self.player_context.ball.is_heading_towards_player
     }
 
     pub fn player_distances(&self) -> (usize, usize) {

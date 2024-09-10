@@ -4,6 +4,7 @@ use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer, PlayerTickContext};
 use std::sync::LazyLock;
+use nalgebra::Vector3;
 use crate::CONDITION_MAX_VALUE;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::state::PlayerState;
@@ -25,6 +26,10 @@ impl StateProcessingHandler for GoalkeeperRestingState {
         &self, context: &mut StateProcessingContext
     ) -> StateChangeResult {
         StateChangeResult::none()
+    }
+
+    fn velocity(&self) -> Vector3<f32> {
+        Vector3::new(0.0, 0.0, 0.0)
     }
 }
 

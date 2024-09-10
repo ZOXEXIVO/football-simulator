@@ -1,6 +1,6 @@
 use crate::common::NeuralNetwork;
 use std::sync::LazyLock;
-
+use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
@@ -22,6 +22,10 @@ impl StateProcessingHandler for GoalkeeperSweepingState {
 
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
+    }
+
+    fn velocity(&self) -> Vector3<f32> {
+        Vector3::new(0.0, 0.0, 0.0)
     }
 }
 
