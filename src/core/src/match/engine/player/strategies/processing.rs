@@ -4,10 +4,7 @@ use crate::r#match::goalkeepers::states::state::GoalkeeperStrategies;
 use crate::r#match::midfielders::states::MidfielderStrategies;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::{
-    CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState,
-    CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
-};
+use crate::r#match::{CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerDistanceFromStartPosition, PlayerTickContext};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use crate::r#match::player::state::PlayerState::Defender;
@@ -15,6 +12,10 @@ use crate::r#match::player::state::PlayerState::Defender;
 pub trait StateProcessingHandler {
     fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult>;
     fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult;
+
+    fn is_far(context: &mut StateProcessingContext) -> bool {
+        return false;
+    }
 }
 
 impl PlayerFieldPositionGroup {
@@ -104,6 +105,26 @@ pub struct StateProcessingContext<'sp> {
     pub tick_context: &'sp GameTickContext,
     pub player_context: &'sp PlayerTickContext,
     pub result: &'sp mut Vec<PlayerUpdateEvent>,
+}
+
+impl<'sp> StateProcessingContext<'sp> {
+    pub fn position_to_distance(&self) -> PlayerDistanceFromStartPosition {
+        self.player_context
+            .player
+            .distance_to_start_position
+    }
+
+    pub fn ball_distance(&self) -> f32 {
+        self.player_context.ball.ball_distance
+    }
+
+    pub fn player_distances(&self) -> (usize, usize) {
+        self
+            .tick_context
+            .objects_positions
+            .player_distances
+            .players_within_distance_count(self.player, 10.0)
+    }
 }
 
 impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {

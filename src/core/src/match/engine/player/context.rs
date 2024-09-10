@@ -22,7 +22,7 @@ pub struct PlayerContext {
     pub distance_to_start_position: PlayerDistanceFromStartPosition
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum PlayerDistanceFromStartPosition {
     Small,
     Medium,

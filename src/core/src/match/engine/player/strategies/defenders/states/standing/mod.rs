@@ -19,47 +19,39 @@ static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
-        if context.player_context.ball.on_own_side {
+    fn try_fast(&self, ctx: &mut StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.player_context.ball.on_own_side {
             // OWN BALL SIDE
-            if context.player_context.ball.is_heading_towards_player {
-                if context
-                    .player_context
-                    .player
-                    .distance_to_start_position == PlayerDistanceFromStartPosition::Big {
+            if ctx.player_context.ball.is_heading_towards_player {
+                if ctx.position_to_distance() == PlayerDistanceFromStartPosition::Big {
                     return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
                 }
 
-                let (teammates_count, opponents_count) = context
-                    .tick_context
-                    .objects_positions
-                    .player_distances
-                    .players_within_distance_count(context.player, 10.0);
-
+                let (_, opponents_count) = ctx.player_distances();
                 if opponents_count > 2 {
                     return Some(StateChangeResult::with_state(PlayerState::Defender(
                         DefenderState::Intercepting,
                     )));
                 }
 
-                if context.player_context.ball.ball_distance < 50.0 {
+                if ctx.ball_distance() < 50.0 {
                     return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
                 }
 
-                let ball_speed = context.tick_context.objects_positions.ball_velocity.norm();
+                let ball_speed = ctx.tick_context.objects_positions.ball_velocity.norm();
                 if ball_speed > 15.0 {
                     return Some(StateChangeResult::with_defender_state(DefenderState::Blocking));
                 }
 
-                let goal_position = calculate_goal_position(context.player, context.context);
-                let distance_to_goal = (context.player.position - goal_position).norm();
+                let goal_position = calculate_goal_position(ctx.player, ctx.context);
+                let distance_to_goal = (ctx.player.position - goal_position).norm();
                 if distance_to_goal < 20.0 {
                     return Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine));
                 }
             }
         } else {
             // OTHER BALL SIDE
-            if context.in_state_time > 150 {
+            if ctx.in_state_time > 150 {
                 return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
             }
         }
