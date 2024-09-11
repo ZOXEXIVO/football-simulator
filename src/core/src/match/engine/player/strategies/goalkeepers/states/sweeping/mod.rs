@@ -5,8 +5,8 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler, StateProcessor,
+    GameTickContext, MatchContext, MatchPlayer, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler,
 };
 
 static GOALKEEPER_SWEEPING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -16,15 +16,15 @@ static GOALKEEPER_SWEEPING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct GoalkeeperSweepingState {}
 
 impl StateProcessingHandler for GoalkeeperSweepingState {
-    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 
-    fn velocity(&self) -> Vector3<f32> {
+    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         Vector3::new(0.0, 0.0, 0.0)
     }
 }
@@ -35,7 +35,6 @@ impl GoalkeeperSweepingState {
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         let minimal_distance = 30.0;

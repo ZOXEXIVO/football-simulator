@@ -1,6 +1,6 @@
 ﻿use std::cell::RefCell;
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, MatchPlayerLogic, PlayerContext, PlayerTickContext};
+use crate::r#match::{GameTickContext, MatchContext};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
@@ -64,31 +64,8 @@ impl MatchPlayer {
     ) -> Vec<PlayerUpdateEvent> {
         let mut result = RefCell::new(Vec::with_capacity(10));
 
-        let is_ball_home_size = match context.state.ball_state {
-            Some(ball_state) => ball_state == BallState::HomeSide,
-            None => false,
-        };
-
-        let player_context = PlayerTickContext {
-            ball: BallContext {
-                // ball moving towards goal
-                is_heading_towards_player: MatchBallLogic::is_heading_towards_player(
-                    &tick_context.objects_positions.ball_position,
-                    &self.position,
-                ),
-                on_own_side: self.is_home && is_ball_home_size,
-                ball_distance: tick_context
-                    .objects_positions
-                    .ball_position
-                    .distance_to(&self.position),
-            },
-            player: PlayerContext {
-                distance_to_start_position: MatchPlayerLogic::distance_to_start_position(self)
-            }
-        };
-
         // change move
-        PlayerMatchState::process(self, context, tick_context, &player_context, &result);
+        PlayerMatchState::process(self, context, tick_context, &result);
         PlayerConditions::process(self);
 
         self.move_to();
@@ -105,7 +82,6 @@ impl MatchPlayer {
         &mut self,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
         result: &RefCell<Vec<PlayerUpdateEvent>>
     ) {
         let state_result = self.tactics_position.position_group().process(
@@ -113,7 +89,6 @@ impl MatchPlayer {
             self,
             context,
             tick_context,
-            player_context,
             result,
         );
 

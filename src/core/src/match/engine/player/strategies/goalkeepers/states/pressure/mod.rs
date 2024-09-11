@@ -5,7 +5,7 @@ use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, PlayerTickContext,
+    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
     StateChangeResult, StateProcessingContext, StateProcessingHandler,
     SteeringBehavior,
 };
@@ -19,15 +19,15 @@ static GOALKEEPER_PRESSURE_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct GoalkeeperPressureState {}
 
 impl StateProcessingHandler for GoalkeeperPressureState {
-    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 
-    fn velocity(&self) -> Vector3<f32> {
+    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         Vector3::new(0.0, 0.0, 0.0)
     }
 }
@@ -38,7 +38,6 @@ impl GoalkeeperPressureState {
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_context: PlayerTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         if player.position.distance_to(&player.start_position) < 10.0 {

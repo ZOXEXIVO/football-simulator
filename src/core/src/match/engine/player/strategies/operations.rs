@@ -1,4 +1,5 @@
-use crate::r#match::{PlayerDistanceFromStartPosition, StateProcessingContext};
+use crate::r#match::{BallState, MatchBallLogic, MatchPlayerLogic, PlayerDistanceFromStartPosition, StateProcessingContext};
+use crate::r#match::position::VectorExtensions;
 
 pub trait StateProcessingOperations {
     fn ball(&self) -> impl BallOperations;
@@ -27,15 +28,27 @@ impl <'b> BallOperationsImpl<'b> {
 
 impl<'b> BallOperations for BallOperationsImpl<'b> {
     fn on_own_side(&self) -> bool {
-        self.ctx.player_context.ball.on_own_side
+        if let Some(ball_state) = self.ctx.context.state.ball_state {
+            return self.ctx.player.is_home && ball_state == BallState::HomeSide;
+        }
+
+        false
     }
 
     fn distance(&self) -> f32 {
-        self.ctx.player_context.ball.ball_distance
+        self.ctx.tick_context
+            .objects_positions
+            .ball_position
+            .distance_to(&self.ctx.player.position)
+    }
+
+    fn speed(&self) -> f32 {
+        self.ctx.tick_context.objects_positions.ball_velocity.norm()
     }
 
     fn is_towards_player(&self) -> bool {
-        self.ctx.player_context.ball.is_heading_towards_player
+        MatchBallLogic::is_heading_towards_player(&self.ctx.tick_context.objects_positions.ball_position,
+                                                  &self.ctx.player.position)
     }
 }
 
@@ -50,8 +63,13 @@ impl <'p> PlayerOperationsImpl<'p> {
 }
 
 impl<'p> PlayerOperations for PlayerOperationsImpl<'p> {
+    fn on_own_side(&self) -> bool {
+        let field_half_width = self.ctx.context.field_size.width / 2;
+        self.ctx.player.is_home && self.ctx.player.position.x < field_half_width as f32
+    }
+
     fn position_to_distance(&self) -> PlayerDistanceFromStartPosition {
-        self.ctx.player_context.player.distance_to_start_position
+        MatchPlayerLogic::distance_to_start_position(&self.ctx.player)
     }
 
     fn is_tired(&self) -> bool {
@@ -69,10 +87,12 @@ impl<'p> PlayerOperations for PlayerOperationsImpl<'p> {
 pub trait BallOperations {
     fn on_own_side(&self) -> bool;
     fn distance(&self) -> f32;
+    fn speed(&self) -> f32;
     fn is_towards_player(&self) -> bool;
 }
 
 pub trait PlayerOperations {
+    fn on_own_side(&self) -> bool;
     fn position_to_distance(&self) -> PlayerDistanceFromStartPosition;
     fn is_tired(&self) -> bool;
     fn distances(&self) -> (usize, usize);

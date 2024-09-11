@@ -6,22 +6,6 @@ pub struct GameTickContext {
     pub objects_positions: MatchObjectsPositions,
 }
 
-pub struct PlayerTickContext {
-    pub ball: BallContext,
-    pub player: PlayerContext
-}
-
-pub struct BallContext {
-    pub is_heading_towards_player: bool,
-    pub on_own_side: bool,
-
-    pub ball_distance: f32,
-}
-
-pub struct PlayerContext {
-    pub distance_to_start_position: PlayerDistanceFromStartPosition
-}
-
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum PlayerDistanceFromStartPosition {
     Small,

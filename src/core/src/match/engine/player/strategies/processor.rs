@@ -8,18 +8,18 @@ use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::Defender;
 use crate::r#match::{
     CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState,
-    CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
+    CommonTacklingState, GameTickContext, MatchContext, MatchPlayer,
 };
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 
 pub trait StateProcessingHandler {
     // Try fast processing
-    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult>;
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult>;
     // Try slow processing with neural network
-    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult;
+    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult;
     // Calculate velocity
-    fn velocity(&self) -> Vector3<f32>;
+    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32>;
 }
 
 impl PlayerFieldPositionGroup {
@@ -29,7 +29,6 @@ impl PlayerFieldPositionGroup {
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        player_context: &PlayerTickContext,
         result: &RefCell<Vec<PlayerUpdateEvent>>
     ) -> StateChangeResult {
         let player_state = player.state;
@@ -39,7 +38,6 @@ impl PlayerFieldPositionGroup {
             player,
             context,
             tick_context,
-            player_context,
             result,
         );
 
@@ -64,7 +62,6 @@ pub struct StateProcessor<'p> {
     player: &'p MatchPlayer,
     context: &'p MatchContext,
     tick_context: &'p GameTickContext,
-    player_context: &'p PlayerTickContext,
     result: &'p RefCell<Vec<PlayerUpdateEvent>>
 }
 
@@ -74,7 +71,6 @@ impl<'p> StateProcessor<'p> {
         player: &'p MatchPlayer,
         context: &'p MatchContext,
         tick_context: &'p GameTickContext,
-        player_context: &'p PlayerTickContext,
         result: &'p RefCell<Vec<PlayerUpdateEvent>>
     ) -> Self {
         StateProcessor {
@@ -82,7 +78,6 @@ impl<'p> StateProcessor<'p> {
             player,
             context,
             tick_context,
-            player_context,
             result,
         }
     }
@@ -90,14 +85,14 @@ impl<'p> StateProcessor<'p> {
     pub fn process<H: StateProcessingHandler>(self, handler: H) -> StateChangeResult {
         let mut processing_ctx = self.into_ctx();
 
-        if let Some(fast_result) = handler.try_fast(&mut processing_ctx) {
+        if let Some(fast_result) = handler.try_fast(&processing_ctx) {
             return fast_result;
         }
 
         let mut result = handler.process_slow(&mut processing_ctx);
 
         if processing_ctx.in_state_time % 3 == 0 {
-            result.velocity = Some(handler.velocity());
+            result.velocity = Some(handler.velocity(&processing_ctx));
         }
 
         result
@@ -113,7 +108,6 @@ pub struct StateProcessingContext<'sp> {
     pub player: &'sp MatchPlayer,
     pub context: &'sp MatchContext,
     pub tick_context: &'sp GameTickContext,
-    pub player_context: &'sp PlayerTickContext,
     pub result: &'sp RefCell<Vec<PlayerUpdateEvent>>
 }
 
@@ -124,7 +118,6 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
             player: value.player,
             context: value.context,
             tick_context: value.tick_context,
-            player_context: value.player_context,
             result: value.result
         }
     }

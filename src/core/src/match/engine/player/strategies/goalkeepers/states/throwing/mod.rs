@@ -11,15 +11,15 @@ static GOALKEEPER_THROWING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct GoalkeeperThrowingState {}
 
 impl StateProcessingHandler for GoalkeeperThrowingState {
-    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 
-    fn velocity(&self) -> Vector3<f32> {
+    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         Vector3::new(0.0, 0.0, 0.0)
     }
 }
