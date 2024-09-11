@@ -19,7 +19,7 @@ pub struct GameFieldContextInput<'p> {
 }
 
 impl<'p> GameFieldContextInput<'p> {
-    pub fn from_contexts(context: &mut StateProcessingContext<'p>) -> Self {
+    pub fn from_contexts(context: &StateProcessingContext<'p>) -> Self {
         GameFieldContextInput {
             objects_positions: &context.tick_context.objects_positions,
         }

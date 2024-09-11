@@ -3,7 +3,7 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{StateProcessingContext, StateProcessingHandler};
-use crate::r#match::strategies::processing::StateChangeResult;
+use crate::r#match::strategies::processor::StateChangeResult;
 
 static COMMON_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
     DefaultNeuralNetworkLoader::load(include_str!("nn_common_returning_data.json"))
@@ -13,11 +13,11 @@ static COMMON_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|
 pub struct CommonReturningState {}
 
 impl StateProcessingHandler for CommonReturningState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 

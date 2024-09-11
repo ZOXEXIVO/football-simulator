@@ -5,7 +5,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::strategies::processing::StateChangeResult;
+use crate::r#match::strategies::processor::StateChangeResult;
 use crate::r#match::{
     GameTickContext, MatchContext, MatchPlayer, PlayerDistanceFromStartPosition, PlayerTickContext,
     StateProcessingContext, StateProcessingHandler,
@@ -18,11 +18,11 @@ static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct GoalkeeperStandingState {}
 
 impl StateProcessingHandler for GoalkeeperStandingState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 

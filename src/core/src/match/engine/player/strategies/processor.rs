@@ -1,19 +1,23 @@
+use std::cell::RefCell;
 use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::ForwardStrategies;
 use crate::r#match::goalkeepers::states::state::GoalkeeperStrategies;
 use crate::r#match::midfielders::states::MidfielderStrategies;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::{CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerDistanceFromStartPosition, PlayerTickContext};
+use crate::r#match::player::state::PlayerState::Defender;
+use crate::r#match::{
+    CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState,
+    CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerTickContext,
+};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
-use crate::r#match::player::state::PlayerState::Defender;
 
 pub trait StateProcessingHandler {
     // Try fast processing
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult>;
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult>;
     // Try slow processing with neural network
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult;
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult;
     // Calculate velocity
     fn velocity(&self) -> Vector3<f32>;
 }
@@ -26,7 +30,7 @@ impl PlayerFieldPositionGroup {
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        result: &RefCell<Vec<PlayerUpdateEvent>>
     ) -> StateChangeResult {
         let player_state = player.state;
 
@@ -61,7 +65,7 @@ pub struct StateProcessor<'p> {
     context: &'p MatchContext,
     tick_context: &'p GameTickContext,
     player_context: &'p PlayerTickContext,
-    result: &'p mut Vec<PlayerUpdateEvent>,
+    result: &'p RefCell<Vec<PlayerUpdateEvent>>
 }
 
 impl<'p> StateProcessor<'p> {
@@ -71,7 +75,7 @@ impl<'p> StateProcessor<'p> {
         context: &'p MatchContext,
         tick_context: &'p GameTickContext,
         player_context: &'p PlayerTickContext,
-        result: &'p mut Vec<PlayerUpdateEvent>,
+        result: &'p RefCell<Vec<PlayerUpdateEvent>>
     ) -> Self {
         StateProcessor {
             in_state_time,
@@ -110,35 +114,7 @@ pub struct StateProcessingContext<'sp> {
     pub context: &'sp MatchContext,
     pub tick_context: &'sp GameTickContext,
     pub player_context: &'sp PlayerTickContext,
-    pub result: &'sp mut Vec<PlayerUpdateEvent>,
-}
-
-impl<'sp> StateProcessingContext<'sp> {
-    pub fn position_to_distance(&self) -> PlayerDistanceFromStartPosition {
-        self.player_context
-            .player
-            .distance_to_start_position
-    }
-
-    pub fn ball_on_own_side(&self) -> bool {
-        self.player_context.ball.on_own_side
-    }
-
-    pub fn ball_distance(&self) -> f32 {
-        self.player_context.ball.ball_distance
-    }
-
-    pub fn ball_towards_player(&self) -> bool {
-        self.player_context.ball.is_heading_towards_player
-    }
-
-    pub fn player_distances(&self) -> (usize, usize) {
-        self
-            .tick_context
-            .objects_positions
-            .player_distances
-            .players_within_distance_count(self.player, 10.0)
-    }
+    pub result: &'sp RefCell<Vec<PlayerUpdateEvent>>
 }
 
 impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
@@ -149,7 +125,7 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
             context: value.context,
             tick_context: value.tick_context,
             player_context: value.player_context,
-            result: value.result,
+            result: value.result
         }
     }
 }

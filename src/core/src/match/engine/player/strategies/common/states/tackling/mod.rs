@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::strategies::processing::StateChangeResult;
+use crate::r#match::strategies::processor::StateChangeResult;
 use crate::r#match::{StateProcessingContext, StateProcessingHandler};
 
 static COMMON_TACKLING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
@@ -13,11 +13,11 @@ static COMMON_TACKLING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(||
 pub struct CommonTacklingState {}
 
 impl StateProcessingHandler for CommonTacklingState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 

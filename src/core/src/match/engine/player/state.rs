@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::fmt::{Display, Formatter};
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
@@ -45,7 +46,7 @@ impl PlayerMatchState {
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        result: &RefCell<Vec<PlayerUpdateEvent>>,
     ) {
         let state_change_result = player.tactics_position.position_group().process(
             player.in_state_time,

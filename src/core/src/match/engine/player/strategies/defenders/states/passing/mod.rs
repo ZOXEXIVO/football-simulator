@@ -13,11 +13,11 @@ static DEFENDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct DefenderPassingState {}
 
 impl StateProcessingHandler for DefenderPassingState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 

@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::strategies::processing::StateChangeResult;
+use crate::r#match::strategies::processor::StateChangeResult;
 use crate::r#match::{StateProcessingContext, StateProcessingHandler};
 
 static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -12,11 +12,11 @@ static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct GoalkeeperWalkingState {}
 
 impl StateProcessingHandler for GoalkeeperWalkingState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 

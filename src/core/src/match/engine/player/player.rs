@@ -1,4 +1,5 @@
-﻿use crate::r#match::position::VectorExtensions;
+﻿use std::cell::RefCell;
+use crate::r#match::position::VectorExtensions;
 use crate::r#match::{BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, MatchPlayerLogic, PlayerContext, PlayerTickContext};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
@@ -61,7 +62,7 @@ impl MatchPlayer {
         context: &mut MatchContext,
         tick_context: &GameTickContext,
     ) -> Vec<PlayerUpdateEvent> {
-        let mut result = Vec::with_capacity(10);
+        let mut result = RefCell::new(Vec::with_capacity(10));
 
         let is_ball_home_size = match context.state.ball_state {
             Some(ball_state) => ball_state == BallState::HomeSide,
@@ -87,12 +88,12 @@ impl MatchPlayer {
         };
 
         // change move
-        PlayerMatchState::process(self, context, tick_context, &player_context, &mut result);
+        PlayerMatchState::process(self, context, tick_context, &player_context, &result);
         PlayerConditions::process(self);
 
         self.move_to();
 
-        result
+        result.into_inner()
     }
 
     fn change_state(&mut self, state: PlayerState) {
@@ -105,7 +106,7 @@ impl MatchPlayer {
         context: &mut MatchContext,
         tick_context: &GameTickContext,
         player_context: &PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        result: &RefCell<Vec<PlayerUpdateEvent>>
     ) {
         let state_result = self.tactics_position.position_group().process(
             self.in_state_time,

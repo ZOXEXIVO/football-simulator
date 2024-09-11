@@ -17,13 +17,13 @@ pub struct GoalkeeperRestingState {}
 
 impl StateProcessingHandler for GoalkeeperRestingState {
     fn try_fast(
-        &self, context: &mut StateProcessingContext
+        &self, context: &StateProcessingContext
     ) -> Option<StateChangeResult> {
         None
     }
 
     fn process_slow(
-        &self, context: &mut StateProcessingContext
+        &self, context: &StateProcessingContext
     ) -> StateChangeResult {
         StateChangeResult::none()
     }

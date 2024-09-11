@@ -11,11 +11,11 @@ static MIDFIELDER_TACKLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct MidfielderTacklingState {}
 
 impl StateProcessingHandler for MidfielderTacklingState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 

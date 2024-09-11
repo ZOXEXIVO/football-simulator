@@ -12,11 +12,11 @@ static FORWARD_HEADING_UP_PLAY_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock
 pub struct ForwardHeadingUpPlayState {}
 
 impl StateProcessingHandler for ForwardHeadingUpPlayState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 

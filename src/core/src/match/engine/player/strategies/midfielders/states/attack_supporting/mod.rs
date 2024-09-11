@@ -15,11 +15,11 @@ static MIDFIELDER_ATTACK_SUPPORTING_STATE_NETWORK: LazyLock<NeuralNetwork> = Laz
 pub struct MidfielderAttackSupportingState {}
 
 impl StateProcessingHandler for MidfielderAttackSupportingState {
-    fn try_fast(&self, context: &mut StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, context: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn process_slow(&self, context: &mut StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, context: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 
