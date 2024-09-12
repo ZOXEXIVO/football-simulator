@@ -111,8 +111,4 @@ impl MatchPlayer {
     pub fn heading(&self) -> f32 {
         self.velocity.y.atan2(self.velocity.x)
     }
-
-    pub fn distance_from_start_position(&self) -> f32{
-        self.start_position.distance_to(&self.position)
-    }
 }

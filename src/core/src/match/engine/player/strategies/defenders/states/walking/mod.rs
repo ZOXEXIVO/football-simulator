@@ -2,6 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::IntegerUtils;
 use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::state::PlayerState;
@@ -15,27 +16,38 @@ pub struct DefenderWalkingState {}
 impl StateProcessingHandler for DefenderWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player().on_own_side() {
-            Some(StateChangeResult::with(PlayerState::Defender(
-                DefenderState::Intercepting,
-            )))
-        } else {
-            Some(StateChangeResult::with(PlayerState::Defender(
-                DefenderState::Intercepting,
+            if ctx.ball().distance() < 100.0 {
+                return Some(StateChangeResult::with(PlayerState::Defender(
+                    DefenderState::Intercepting,
+                )))
+            }
+        }
+
+        if ctx.player().distance_from_start_position() > 50.0 {
+            return Some(StateChangeResult::with(PlayerState::Defender(
+                DefenderState::Returning,
             )))
         }
+
+        None
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult {
         StateChangeResult::none()
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        SteeringBehavior::Wander {
-            target: ctx.player.start_position,
-            radius: 0.5,
-            jitter: 0.2,
-            distance: 30.0,
-            angle: 20.0,
-        }.calculate(ctx.player).velocity
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        if ctx.in_state_time == 0 {
+            let rnd =
+            return Some(SteeringBehavior::Wander {
+                target: ctx.player.start_position,
+                radius: IntegerUtils::random(10, 30) as f32,
+                jitter: IntegerUtils::random(10, 50) as f32,
+                distance: IntegerUtils::random(40, 100) as f32,
+                angle: IntegerUtils::random(10, 10) as f32,
+            }.calculate(ctx.player).velocity);
+        }
+
+        None
     }
 }

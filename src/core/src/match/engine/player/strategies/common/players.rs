@@ -17,6 +17,10 @@ impl<'p> PlayerOperationsImpl<'p> {
         self.ctx.player.is_home && self.ctx.player.position.x < field_half_width as f32
     }
 
+    pub fn distance_from_start_position(&self) -> f32{
+        self.ctx.player.start_position.distance_to(&self.ctx.player.position)
+    }
+
     pub fn position_to_distance(&self) -> PlayerDistanceFromStartPosition {
         MatchPlayerLogic::distance_to_start_position(&self.ctx.player)
     }

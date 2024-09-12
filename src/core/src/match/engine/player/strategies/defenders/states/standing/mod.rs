@@ -21,12 +21,8 @@ pub struct DefenderStandingState {}
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.ball().on_own_side() {
-            debug!("player_id: {}, on_own_side", ctx.player.player_id);
-
             // OWN BALL SIDE
             if ctx.ball().is_towards_player() {
-                debug!("player_id: {}, is_towards_player", ctx.player.player_id);
-
                 if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
                     return Some(StateChangeResult::with_defender_state(
                         DefenderState::Returning,
@@ -35,17 +31,13 @@ impl StateProcessingHandler for DefenderStandingState {
 
                 let (_, opponents_count) = ctx.player().distances();
                 if opponents_count > 2 {
-                    debug!("player_id: {},opponents_count > 2", ctx.player.player_id);
-
                     return Some(StateChangeResult::with(PlayerState::Defender(
                         DefenderState::Intercepting,
                     )));
                 }
 
                 if ctx.ball().distance() < 50.0 {
-                    debug!("player_id: {},ball().distance() < 50", ctx.player.player_id);
-
-                    return Some(StateChangeResult::with_defender_state(
+                         return Some(StateChangeResult::with_defender_state(
                         DefenderState::Intercepting,
                     ));
                 }
@@ -53,8 +45,6 @@ impl StateProcessingHandler for DefenderStandingState {
                 // no towards player
             }
         } else {
-            debug!("player_id: {},on_other_side", ctx.player.player_id);
-
             // BALL ON OTHER FIELD SIDE
             if ctx.player().is_tired() {
                 return Some(StateChangeResult::with_defender_state(
@@ -63,9 +53,8 @@ impl StateProcessingHandler for DefenderStandingState {
             }
 
             if ctx.in_state_time > 150 {
-                debug!("player_id: {}, in_state_time > 150", ctx.player.player_id);
                 return Some(StateChangeResult::with_defender_state(
-                    DefenderState::Returning,
+                    DefenderState::Walking,
                 ));
             }
         }
@@ -84,8 +73,8 @@ impl StateProcessingHandler for DefenderStandingState {
         StateChangeResult::none()
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        Vector3::new(0.0, 0.0, 0.0)
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        Some(Vector3::new(0.0, 0.0, 0.0))
     }
 }
 

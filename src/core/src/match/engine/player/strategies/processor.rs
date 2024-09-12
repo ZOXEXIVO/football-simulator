@@ -20,7 +20,7 @@ pub trait StateProcessingHandler {
     // Try slow processing with neural network
     fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult;
     // Calculate velocity
-    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32>;
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>>;
 }
 
 impl PlayerFieldPositionGroup {
@@ -87,8 +87,8 @@ impl<'p> StateProcessor<'p> {
 
         let mut result = handler.process_slow(&mut processing_ctx);
 
-        if processing_ctx.in_state_time % 3 == 0 {
-            result.velocity = Some(handler.velocity(&processing_ctx));
+        if let Some(velocity) = handler.velocity(&processing_ctx) {
+            result.velocity = Some(velocity);
         }
 
         result
@@ -135,13 +135,6 @@ pub struct StateChangeResult {
 }
 
 impl StateChangeResult {
-    // pub fn with(state: PlayerState, velocity: Vector3<f32>) -> Self {
-    //     StateChangeResult {
-    //         state: Some(state),
-    //         velocity: Some(velocity),
-    //     }
-    // }
-
     pub const fn none() -> Self {
         StateChangeResult {
             state: None,

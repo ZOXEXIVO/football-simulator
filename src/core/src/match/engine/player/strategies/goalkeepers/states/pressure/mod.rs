@@ -27,8 +27,8 @@ impl StateProcessingHandler for GoalkeeperPressureState {
         StateChangeResult::none()
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        Vector3::new(0.0, 0.0, 0.0)
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        Some(Vector3::new(0.0, 0.0, 0.0))
     }
 }
 
