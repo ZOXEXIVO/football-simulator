@@ -12,12 +12,15 @@ use core::r#match::squad::TeamSquad;
 use core::r#match::MatchObjectsPositions;
 use core::r#match::MatchPlayerCollection;
 use std::time::Instant;
+use env_logger::Env;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
 
 #[macroquad::main("FootballSimulatorTesting")]
 async fn main() {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
+
     let width = screen_width();
     let height = screen_height();
 

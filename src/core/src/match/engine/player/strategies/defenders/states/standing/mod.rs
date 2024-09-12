@@ -1,15 +1,16 @@
+use log::{debug, info};
 use std::sync::LazyLock;
 
 use nalgebra::Vector3;
 
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{
-    PlayerDistanceFromStartPosition, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler,
-};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::state::PlayerState;
+use crate::r#match::{
+    PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -20,8 +21,12 @@ pub struct DefenderStandingState {}
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.ball().on_own_side() {
+            debug!("player_id: {}, on_own_side", ctx.player.player_id);
+
             // OWN BALL SIDE
             if ctx.ball().is_towards_player() {
+                debug!("player_id: {}, is_towards_player", ctx.player.player_id);
+
                 if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
                     return Some(StateChangeResult::with_defender_state(
                         DefenderState::Returning,
@@ -30,28 +35,35 @@ impl StateProcessingHandler for DefenderStandingState {
 
                 let (_, opponents_count) = ctx.player().distances();
                 if opponents_count > 2 {
+                    debug!("player_id: {},opponents_count > 2", ctx.player.player_id);
+
                     return Some(StateChangeResult::with(PlayerState::Defender(
                         DefenderState::Intercepting,
                     )));
                 }
 
                 if ctx.ball().distance() < 50.0 {
+                    debug!("player_id: {},ball().distance() < 50", ctx.player.player_id);
+
                     return Some(StateChangeResult::with_defender_state(
                         DefenderState::Intercepting,
                     ));
                 }
             } else {
-
+                // no towards player
             }
         } else {
+            debug!("player_id: {},on_other_side", ctx.player.player_id);
+
             // BALL ON OTHER FIELD SIDE
             if ctx.player().is_tired() {
                 return Some(StateChangeResult::with_defender_state(
-                    DefenderState::Walking
-                ))
+                    DefenderState::Walking,
+                ));
             }
 
             if ctx.in_state_time > 150 {
+                debug!("player_id: {}, in_state_time > 150", ctx.player.player_id);
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Returning,
                 ));
