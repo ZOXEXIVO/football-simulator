@@ -56,7 +56,7 @@ impl GoalkeeperRestingState {
         );
 
         if in_state_time >= max_rest_duration {
-            return StateChangeResult::with_state(PlayerState::Goalkeeper(GoalkeeperState::Standing));
+            return StateChangeResult::with(PlayerState::Goalkeeper(GoalkeeperState::Standing));
         }
 
         StateChangeResult::none()

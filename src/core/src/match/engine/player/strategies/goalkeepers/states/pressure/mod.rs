@@ -42,8 +42,7 @@ impl GoalkeeperPressureState {
     ) -> StateChangeResult {
         if player.position.distance_to(&player.start_position) < 10.0 {
             return StateChangeResult::with(
-                PlayerState::Goalkeeper(GoalkeeperState::Standing),
-                Vector3::zeros(),
+                PlayerState::Goalkeeper(GoalkeeperState::Standing)
             );
         }
 

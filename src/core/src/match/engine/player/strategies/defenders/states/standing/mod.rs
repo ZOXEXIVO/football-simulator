@@ -30,7 +30,7 @@ impl StateProcessingHandler for DefenderStandingState {
 
                 let (_, opponents_count) = ctx.player().distances();
                 if opponents_count > 2 {
-                    return Some(StateChangeResult::with_state(PlayerState::Defender(
+                    return Some(StateChangeResult::with(PlayerState::Defender(
                         DefenderState::Intercepting,
                     )));
                 }
@@ -40,6 +40,8 @@ impl StateProcessingHandler for DefenderStandingState {
                         DefenderState::Intercepting,
                     ));
                 }
+            } else {
+
             }
         } else {
             // BALL ON OTHER FIELD SIDE

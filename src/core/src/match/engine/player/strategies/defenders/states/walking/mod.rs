@@ -15,13 +15,13 @@ pub struct DefenderWalkingState {}
 impl StateProcessingHandler for DefenderWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player().on_own_side() {
-            return Some(StateChangeResult::with_state(PlayerState::Defender(
+            Some(StateChangeResult::with(PlayerState::Defender(
                 DefenderState::Intercepting,
-            )));
+            )))
         } else {
-            return Some(StateChangeResult::with_state(PlayerState::Defender(
+            Some(StateChangeResult::with(PlayerState::Defender(
                 DefenderState::Intercepting,
-            )));
+            )))
         }
     }
 

@@ -5,10 +5,14 @@ use crate::r#match::midfielders::states::MidfielderStrategies;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::Defender;
-use crate::r#match::{BallOperationsImpl, CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerOperationsImpl};
+use crate::r#match::{
+    BallOperationsImpl, CommonInjuredState, CommonReturningState, CommonRunningState,
+    CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer,
+    PlayerOperationsImpl,
+};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
-use std::cell::{RefCell};
+use std::cell::RefCell;
 
 pub trait StateProcessingHandler {
     // Try fast processing
@@ -104,10 +108,10 @@ pub struct StateProcessingContext<'sp> {
 }
 
 impl<'sp> StateProcessingContext<'sp> {
-    pub fn ball(&self) -> BallOperationsImpl<'_> {
-        BallOperationsImpl::new(self)
-    }
+    #[inline]
+    pub fn ball(&self) -> BallOperationsImpl<'_> { BallOperationsImpl::new(self) }
 
+    #[inline]
     pub fn player(&self) -> PlayerOperationsImpl<'_> {
         PlayerOperationsImpl::new(self)
     }
@@ -131,12 +135,12 @@ pub struct StateChangeResult {
 }
 
 impl StateChangeResult {
-    pub fn with(state: PlayerState, velocity: Vector3<f32>) -> Self {
-        StateChangeResult {
-            state: Some(state),
-            velocity: Some(velocity),
-        }
-    }
+    // pub fn with(state: PlayerState, velocity: Vector3<f32>) -> Self {
+    //     StateChangeResult {
+    //         state: Some(state),
+    //         velocity: Some(velocity),
+    //     }
+    // }
 
     pub const fn none() -> Self {
         StateChangeResult {
@@ -145,7 +149,7 @@ impl StateChangeResult {
         }
     }
 
-    pub fn with_state(state: PlayerState) -> Self {
+    pub fn with(state: PlayerState) -> Self {
         StateChangeResult {
             state: Some(state),
             velocity: None,

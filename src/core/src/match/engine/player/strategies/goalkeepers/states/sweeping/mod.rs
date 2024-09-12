@@ -62,7 +62,7 @@ impl GoalkeeperSweepingState {
             result.push(PlayerUpdateEvent::TacklingBall(*opponent_to_tackle));
 
             // TODO Own strategy
-            StateChangeResult::with_state(PlayerState::Running)
+            StateChangeResult::with(PlayerState::Running)
         } else {
             StateChangeResult::none()
         }
