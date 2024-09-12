@@ -4,16 +4,12 @@ use nalgebra::Vector3;
 
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::decision::DefenderDecision;
+use crate::r#match::{
+    PlayerDistanceFromStartPosition, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler,
+};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::strategies::operations::{
-    BallOperations, PlayerOperations, StateProcessingOperations,
-};
-use crate::r#match::{
-    MatchContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler, SteeringBehavior,
-};
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));

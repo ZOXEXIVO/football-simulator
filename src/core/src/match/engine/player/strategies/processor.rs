@@ -1,4 +1,3 @@
-use std::cell::RefCell;
 use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::ForwardStrategies;
 use crate::r#match::goalkeepers::states::state::GoalkeeperStrategies;
@@ -6,12 +5,10 @@ use crate::r#match::midfielders::states::MidfielderStrategies;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::Defender;
-use crate::r#match::{
-    CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState,
-    CommonTacklingState, GameTickContext, MatchContext, MatchPlayer,
-};
+use crate::r#match::{BallOperationsImpl, CommonInjuredState, CommonReturningState, CommonRunningState, CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer, PlayerOperationsImpl};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
+use std::cell::{RefCell};
 
 pub trait StateProcessingHandler {
     // Try fast processing
@@ -29,17 +26,12 @@ impl PlayerFieldPositionGroup {
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        result: &RefCell<Vec<PlayerUpdateEvent>>
+        result: &RefCell<Vec<PlayerUpdateEvent>>,
     ) -> StateChangeResult {
         let player_state = player.state;
 
-        let mut state_processor = StateProcessor::new(
-            in_state_time,
-            player,
-            context,
-            tick_context,
-            result,
-        );
+        let mut state_processor =
+            StateProcessor::new(in_state_time, player, context, tick_context, result);
 
         match player_state {
             // Common states
@@ -62,7 +54,7 @@ pub struct StateProcessor<'p> {
     player: &'p MatchPlayer,
     context: &'p MatchContext,
     tick_context: &'p GameTickContext,
-    result: &'p RefCell<Vec<PlayerUpdateEvent>>
+    result: &'p RefCell<Vec<PlayerUpdateEvent>>,
 }
 
 impl<'p> StateProcessor<'p> {
@@ -71,7 +63,7 @@ impl<'p> StateProcessor<'p> {
         player: &'p MatchPlayer,
         context: &'p MatchContext,
         tick_context: &'p GameTickContext,
-        result: &'p RefCell<Vec<PlayerUpdateEvent>>
+        result: &'p RefCell<Vec<PlayerUpdateEvent>>,
     ) -> Self {
         StateProcessor {
             in_state_time,
@@ -108,7 +100,17 @@ pub struct StateProcessingContext<'sp> {
     pub player: &'sp MatchPlayer,
     pub context: &'sp MatchContext,
     pub tick_context: &'sp GameTickContext,
-    pub result: &'sp RefCell<Vec<PlayerUpdateEvent>>
+    pub result: &'sp RefCell<Vec<PlayerUpdateEvent>>,
+}
+
+impl<'sp> StateProcessingContext<'sp> {
+    pub fn ball(&self) -> BallOperationsImpl<'_> {
+        BallOperationsImpl::new(self)
+    }
+
+    pub fn player(&self) -> PlayerOperationsImpl<'_> {
+        PlayerOperationsImpl::new(self)
+    }
 }
 
 impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
@@ -118,7 +120,7 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
             player: value.player,
             context: value.context,
             tick_context: value.tick_context,
-            result: value.result
+            result: value.result,
         }
     }
 }

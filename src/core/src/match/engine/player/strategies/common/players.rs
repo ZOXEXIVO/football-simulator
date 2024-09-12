@@ -1,5 +1,38 @@
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition};
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, StateProcessingContext};
 use crate::r#match::position::VectorExtensions;
+
+pub struct PlayerOperationsImpl<'p> {
+    ctx: &'p StateProcessingContext<'p>,
+}
+
+impl <'p> PlayerOperationsImpl<'p> {
+    pub fn new(ctx: &'p StateProcessingContext<'p>) -> Self {
+        PlayerOperationsImpl { ctx }
+    }
+}
+
+impl<'p> PlayerOperationsImpl<'p> {
+    pub fn on_own_side(&self) -> bool {
+        let field_half_width = self.ctx.context.field_size.width / 2;
+        self.ctx.player.is_home && self.ctx.player.position.x < field_half_width as f32
+    }
+
+    pub fn position_to_distance(&self) -> PlayerDistanceFromStartPosition {
+        MatchPlayerLogic::distance_to_start_position(&self.ctx.player)
+    }
+
+    pub fn is_tired(&self) -> bool {
+        self.ctx.player.player_attributes.condition_percentage() > 50
+    }
+
+    pub fn distances(&self) -> (usize, usize) {
+        self.ctx.tick_context
+            .objects_positions
+            .player_distances
+            .players_within_distance_count(self.ctx.player, 10.0)
+    }
+}
+
 
 pub struct MatchPlayerLogic;
 

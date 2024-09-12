@@ -4,7 +4,6 @@ pub mod forwarders;
 pub mod goalkeepers;
 pub mod midfielders;
 pub mod processor;
-mod operations;
 
 pub use common::*;
 pub use defenders::*;

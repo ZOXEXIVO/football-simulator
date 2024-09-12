@@ -4,8 +4,6 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::strategies::operations::StateProcessingOperations;
-use crate::r#match::engine::player::strategies::operations::PlayerOperations;
 use crate::r#match::player::state::PlayerState;
 
 static DEFENDER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
