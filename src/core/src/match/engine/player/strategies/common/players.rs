@@ -35,6 +35,14 @@ impl<'p> PlayerOperationsImpl<'p> {
             .player_distances
             .players_within_distance_count(self.ctx.player, 10.0)
     }
+
+    pub fn is_team_loosing(&self) -> bool {
+        if self.ctx.player.team_id == self.ctx.context.result.score.team_a.team_id {
+            self.ctx.context.result.score.team_a < self.ctx.context.result.score.team_b
+        } else {
+            self.ctx.context.result.score.team_b < self.ctx.context.result.score.team_a
+        }
+    }
 }
 
 

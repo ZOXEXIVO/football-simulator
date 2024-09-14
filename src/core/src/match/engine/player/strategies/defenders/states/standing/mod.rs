@@ -29,17 +29,27 @@ impl StateProcessingHandler for DefenderStandingState {
                     ));
                 }
 
-                let (_, opponents_count) = ctx.player().distances();
+                let (teammates_count, opponents_count) = ctx.player().distances();
                 if opponents_count > 2 {
                     return Some(StateChangeResult::with(PlayerState::Defender(
                         DefenderState::Intercepting,
                     )));
                 }
 
-                if ctx.ball().distance() < 50.0 {
-                         return Some(StateChangeResult::with_defender_state(
-                        DefenderState::Intercepting,
+                if opponents_count > 2 && teammates_count < 1 {
+                    return Some(StateChangeResult::with_defender_state(
+                        DefenderState::Clearing,
                     ));
+                }
+
+                if ctx.ball().distance() < 50.0 {
+                    if ctx.ball().speed() > 20.0 {
+                        return Some(StateChangeResult::with_defender_state(
+                            DefenderState::TrackingBack,
+                        ));
+                    }
+
+                    return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
                 }
             } else {
                 // no towards player
@@ -58,6 +68,12 @@ impl StateProcessingHandler for DefenderStandingState {
                 ));
             }
         }
+
+        // if ctx.player().is_team_loosing() && ctx.in_state_time > 150 {
+        //     return Some(StateChangeResult::with_defender_state(
+        //         DefenderState::AttackingSupport,
+        //     ));
+        // }
 
         None
     }

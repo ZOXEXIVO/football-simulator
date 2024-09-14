@@ -1,4 +1,5 @@
 use chrono::NaiveDateTime;
+use crate::r#match::TeamScore;
 
 const DEFAULT_MATCH_LIST_SIZE: usize = 10;
 
@@ -23,11 +24,11 @@ impl MatchHistory {
 pub struct MatchHistoryItem {
     date: NaiveDateTime,
     rival_team_id: u32,
-    score: (u8, u8),
+    score: (TeamScore, TeamScore),
 }
 
 impl MatchHistoryItem {
-    pub fn new(date: NaiveDateTime, rival_team_id: u32, score: (u8, u8)) -> Self {
+    pub fn new(date: NaiveDateTime, rival_team_id: u32, score: (TeamScore, TeamScore)) -> Self {
         MatchHistoryItem {
             date,
             rival_team_id,

@@ -73,11 +73,11 @@ impl Ball {
             if (self.start_position.y < goal_line_y && self.position.y >= goal_line_y)
                 || (self.start_position.y > goal_line_y && self.position.y <= goal_line_y)
             {
-                if self.start_position.x < goal_line_x {
-                    result.push(BallUpdateEvent::AwayGoal);
-                } else {
-                    result.push(BallUpdateEvent::HomeGoal);
-                }
+                // if self.start_position.x < goal_line_x {
+                //     result.push(BallUpdateEvent::Goal());
+                // } else {
+                //     result.push(BallUpdateEvent::HomeGoal);
+                // }
 
                 self.reset();
             }

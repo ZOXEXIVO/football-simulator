@@ -36,7 +36,7 @@ async fn main() {
 
     let field_size = field.size.clone();
 
-    let mut context = MatchContext::new(&field_size, players);
+    let mut context = MatchContext::new(&field_size, players, 0, 0);
 
     let mut current_frame = 0u64;
 

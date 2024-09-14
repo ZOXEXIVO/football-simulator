@@ -1,8 +1,8 @@
-use crate::league::{LeagueTableResult, ScheduleItem};
+use crate::league::{LeagueTableResult, ScheduleItem, ScheduleItemResult};
 use crate::simulator::SimulatorData;
 use crate::MatchHistoryItem;
 use chrono::NaiveDateTime;
-use crate::r#match::MatchResult;
+use crate::r#match::{MatchResult, TeamScore};
 
 pub struct LeagueResult {
     pub league_id: u32,
@@ -46,20 +46,20 @@ impl LeagueResult {
 
         league
             .schedule
-            .update_match_result(&result.id, result.score.home, result.score.away);
+            .update_match_result(&result.id, &result.score.team_a, &result.score.team_b);
 
-        let home_team = data.team_mut(result.home_team_id).unwrap();
-        home_team.match_history.add(MatchHistoryItem::new(
+        let team_a = data.team_mut(result.score.team_a.team_id).unwrap();
+        team_a.match_history.add(MatchHistoryItem::new(
             now,
-            result.away_team_id,
-            (result.score.home, result.score.away),
+            result.score.team_a.team_id,
+            (TeamScore::from(&result.score.team_a), TeamScore::from(&result.score.team_b)),
         ));
 
-        let away_team = data.team_mut(result.away_team_id).unwrap();
-        away_team.match_history.add(MatchHistoryItem::new(
+        let team_b = data.team_mut(result.score.team_b.team_id).unwrap();
+        team_b.match_history.add(MatchHistoryItem::new(
             now,
-            result.home_team_id,
-            (result.score.away, result.score.home),
+            result.score.team_b.team_id,
+            (TeamScore::from(&result.score.team_b), TeamScore::from(&result.score.team_a)),
         ));
 
         // process_match_events(result, data);
@@ -104,8 +104,17 @@ pub struct LeagueMatch {
 }
 
 pub struct LeagueMatchResultResult {
-    pub home_goals: u8,
-    pub away_goals: u8,
+    pub team_a: TeamScore,
+    pub team_b: TeamScore,
+}
+
+impl LeagueMatchResultResult {
+    pub fn new(team_a: &TeamScore, team_b: &TeamScore) -> Self {
+        LeagueMatchResultResult {
+            team_a: TeamScore::from(team_a),
+            team_b: TeamScore::from(team_b),
+        }
+    }
 }
 
 impl From<ScheduleItem> for LeagueMatch {
@@ -120,10 +129,7 @@ impl From<ScheduleItem> for LeagueMatch {
         };
 
         if let Some(res) = item.result {
-            result.result = Some(LeagueMatchResultResult {
-                home_goals: res.home_goals,
-                away_goals: res.away_goals,
-            });
+            result.result = Some(LeagueMatchResultResult::new(&res.team_a, &res.team_b));
         }
 
         result

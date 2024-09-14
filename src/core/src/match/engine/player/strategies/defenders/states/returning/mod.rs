@@ -17,9 +17,22 @@ impl StateProcessingHandler for DefenderReturningState {
             return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
         }
 
-        if ctx.ball().distance() < 100.0  {
+        if ctx.player().distance_from_start_position() < 10.0 {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+        }
+
+        if ctx.ball().distance() < 50.0 && ctx.ball().is_towards_player() {
             return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
         }
+
+        // if ctx.game_state().is_losing(ctx.player.team_id) && ctx.game_state().time_remaining() < 300 {
+        //     return Some(StateChangeResult::with_defender_state(DefenderState::AttackingSupport));
+        // }
+
+        if ctx.player().is_tired() {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Walking));
+        }
+
         None
     }
 

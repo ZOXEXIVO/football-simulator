@@ -1,6 +1,7 @@
 use crate::context::GlobalContext;
 use crate::league::round::RoundSchedule;
 use crate::league::{LeagueMatch, LeagueSettings, ScheduleGenerator, ScheduleResult, Season};
+use crate::r#match::TeamScore;
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use log::{debug, error};
 
@@ -74,10 +75,7 @@ impl Schedule {
             .filter(|s| s.home_team_id == team_id || s.away_team_id == team_id)
             .map(|s| {
                 let res = match &s.result {
-                    Some(result) => Some(ScheduleItemResult {
-                        home_goals: result.home_goals,
-                        away_goals: result.away_goals,
-                    }),
+                    Some(result) => Some(ScheduleItemResult::new(&result.team_a, &result.team_b)),
                     None => None,
                 };
 
@@ -86,32 +84,13 @@ impl Schedule {
             .collect()
     }
 
-    pub fn update_match_result(&mut self, id: &str, home_goals: u8, away_goals: u8) {
+    pub fn update_match_result(&mut self, id: &str, team_a: &TeamScore, team_b: &TeamScore) {
         let mut updated = false;
 
         for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {
             if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {
-                item.result = Some(ScheduleItemResult {
-                    home_goals,
-                    away_goals,
-                });
-
+                item.result = Some(ScheduleItemResult::new(team_a, team_b));
                 updated = true;
-            }
-        }
-
-        match updated {
-            true => {
-                debug!(
-                    "update match result, schedule_id={}, {}:{}",
-                    id, home_goals, away_goals
-                );
-            }
-            _ => {
-                debug!(
-                    "match result not updated, schedule_id={}, {}:{}",
-                    id, home_goals, away_goals
-                );
             }
         }
     }
@@ -163,18 +142,26 @@ impl ScheduleItem {
             id,
             league_id,
             date,
+            result,
             home_team_id,
             away_team_id,
-
-            result,
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct ScheduleItemResult {
-    pub home_goals: u8,
-    pub away_goals: u8,
+    pub team_a: TeamScore,
+    pub team_b: TeamScore,
+}
+
+impl ScheduleItemResult {
+    pub fn new(team_a: &TeamScore, team_b: &TeamScore) -> Self {
+        ScheduleItemResult {
+            team_a: TeamScore::from(team_a),
+            team_b: TeamScore::from(team_b),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -231,7 +218,10 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 15)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
@@ -242,7 +232,10 @@ mod tests {
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 16)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
@@ -263,7 +256,10 @@ mod tests {
         let item3 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 17).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 17)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: None,
@@ -284,7 +280,10 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 15)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
@@ -295,7 +294,10 @@ mod tests {
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 16)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
@@ -315,7 +317,10 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 15)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
@@ -326,7 +331,9 @@ mod tests {
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd(2024, 3, 16).and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd(2024, 3, 16)
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {

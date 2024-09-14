@@ -36,6 +36,22 @@ impl<'b> BallOperationsImpl<'b> {
         MatchBallLogic::is_heading_towards_player(&self.ctx.tick_context.objects_positions.ball_position,
                                                   &self.ctx.player.position)
     }
+
+    pub fn distance_to_own_goal(&self) -> f32 {
+        let own_goal_position = if self.ctx.player.is_home {
+            Vector3::new(0.0, self.ctx.context.field_size.height as f32 / 2.0, 0.0)
+        } else {
+            Vector3::new(
+                self.ctx.context.field_size.width as f32,
+                self.ctx.context.field_size.height as f32 / 2.0f32,
+                0.0,
+            )
+        };
+        self.ctx.tick_context
+            .objects_positions
+            .ball_position
+            .distance_to(&own_goal_position)
+    }
 }
 
 pub struct MatchBallLogic;

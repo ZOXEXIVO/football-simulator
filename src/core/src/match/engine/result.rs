@@ -17,9 +17,9 @@ pub struct MatchResultRaw {
 }
 
 impl MatchResultRaw {
-    pub fn with_match_time(match_time_ms: u64) -> Self {
+    pub fn with_match_time(match_time_ms: u64, team_a_id: u32, team_b_id: u32) -> Self {
         MatchResultRaw {
-            score: Score::new(),
+            score: Score::new(team_a_id, team_b_id),
             position_data: MatchPositionData::new(),
             home_players: FieldSquad::new(),
             away_players: FieldSquad::new(),
@@ -87,9 +87,48 @@ impl FieldSquad {
 
 #[derive(Debug, Clone)]
 pub struct Score {
-    pub home: u8,
-    pub away: u8,
+    pub team_a: TeamScore,
+    pub team_b: TeamScore,
     pub details: Vec<GoalDetail>,
+}
+
+#[derive(Debug, Clone)]
+pub struct TeamScore {
+    pub team_id: u32,
+    pub score: u8
+}
+
+impl TeamScore {
+    pub fn new(team_id: u32) -> Self {
+        TeamScore {
+            team_id,
+            score: 0
+        }
+    }
+
+    pub fn new_with_score(team_id: u32, score: u8) -> Self {
+        TeamScore {
+            team_id,
+            score
+        }
+    }
+}
+impl From<&TeamScore> for TeamScore {
+    fn from(team_score: &TeamScore) -> Self {
+        TeamScore::new_with_score(team_score.team_id, team_score.score)
+    }
+}
+
+impl PartialEq<Self> for TeamScore {
+    fn eq(&self, other: &Self) -> bool {
+        self.score == other.score
+    }
+}
+
+impl PartialOrd for TeamScore {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.score.partial_cmp(&other.score)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -101,10 +140,10 @@ pub struct GoalDetail {
 }
 
 impl Score {
-    pub fn new() -> Self {
+    pub fn new(team_a_id: u32, team_b_id: u32) -> Self {
         Score {
-            home: 0,
-            away: 0,
+            team_a: TeamScore::new(team_a_id),
+            team_b: TeamScore::new(team_b_id),
             details: Vec::new(),
         }
     }
@@ -123,9 +162,7 @@ pub struct MatchResult {
     pub id: String,
     pub league_id: u32,
     pub result_details: Option<MatchResultRaw>,
-    pub score: Score,
-    pub home_team_id: u32,
-    pub away_team_id: u32,
+    pub score: Score
 }
 
 impl From<&LeagueMatch> for MatchResult {
@@ -133,10 +170,8 @@ impl From<&LeagueMatch> for MatchResult {
         MatchResult {
             id: m.id.clone(),
             league_id: m.league_id,
-            score: Score::new(),
-            result_details: None,
-            home_team_id: m.home_team_id,
-            away_team_id: m.away_team_id,
+            score: Score::new(m.home_team_id, m.away_team_id),
+            result_details: None
         }
     }
 }
