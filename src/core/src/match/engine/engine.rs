@@ -34,8 +34,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         // TODO
-        context.result.home_players = field.home_players.unwrap();
-        context.result.away_players = field.away_players.unwrap();
+        context.result.left_team_players = field.home_players.unwrap();
+        context.result.right_team_players = field.away_players.unwrap();
 
         context.result.fill_details(context.players.raw_players());
 

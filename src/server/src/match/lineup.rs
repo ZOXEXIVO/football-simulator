@@ -95,7 +95,7 @@ pub async fn match_lineup_action(
         home_team_slug: &home_team.slug,
         home_squad: LineupSquad {
             main: result_details
-                .home_players
+                .left_team_players
                 .main
                 .iter()
                 .filter_map(|player_id| {
@@ -103,7 +103,7 @@ pub async fn match_lineup_action(
                 })
                 .collect(),
             substitutes: result_details
-                .home_players
+                .left_team_players
                 .substitutes
                 .iter()
                 .filter_map(|player_id| {
@@ -115,7 +115,7 @@ pub async fn match_lineup_action(
         away_team_slug: &away_team.slug,
         away_squad: LineupSquad {
             main: result_details
-                .away_players
+                .right_team_players
                 .main
                 .iter()
                 .filter_map(|player_id| {
@@ -123,7 +123,7 @@ pub async fn match_lineup_action(
                 })
                 .collect(),
             substitutes: result_details
-                .away_players
+                .right_team_players
                 .substitutes
                 .iter()
                 .filter_map(|player_id| {

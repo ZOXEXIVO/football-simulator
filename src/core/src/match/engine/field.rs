@@ -16,19 +16,19 @@ pub struct MatchField {
 }
 
 impl MatchField {
-    pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
-        let home_team_squad = FieldSquad::from_team(&home_squad);
-        let away_team_squad = FieldSquad::from_team(&away_squad);
+    pub fn new(width: usize, height: usize, left_team_squad: TeamSquad, right_team_squad: TeamSquad) -> Self {
+        let left_squad = FieldSquad::from_team(&left_team_squad);
+        let away_squad = FieldSquad::from_team(&right_team_squad);
 
-        let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
+        let (players_on_field, substitutes) = setup_player_on_field(left_team_squad, right_team_squad);
 
         MatchField {
             size: MatchFieldSize::new(width, height),
             ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
             players: players_on_field,
             substitutes,
-            home_players: Some(home_team_squad),
-            away_players: Some(away_team_squad),
+            home_players: Some(left_squad),
+            away_players: Some(away_squad),
         }
     }
 
@@ -62,14 +62,14 @@ impl MatchField {
 }
 
 fn setup_player_on_field(
-    home_squad: TeamSquad,
-    away_squad: TeamSquad,
+    left_team_squad: TeamSquad,
+    right_team_squad: TeamSquad,
 ) -> (Vec<MatchPlayer>, Vec<MatchPlayer>) {
     let mut players_on_field: Vec<MatchPlayer> = Vec::with_capacity(22);
     let mut substitutes: Vec<MatchPlayer> = Vec::with_capacity(30);
 
     // home
-    home_squad
+    left_team_squad
         .main_squad
         .into_iter()
         .for_each(|mut home_player| {
@@ -90,7 +90,7 @@ fn setup_player_on_field(
                 });
         });
 
-    home_squad
+    left_team_squad
         .substitutes
         .into_iter()
         .for_each(|mut home_player| {
@@ -101,7 +101,7 @@ fn setup_player_on_field(
         });
 
     // away
-    away_squad
+    right_team_squad
         .main_squad
         .into_iter()
         .for_each(|mut away_player| {
@@ -123,7 +123,7 @@ fn setup_player_on_field(
                 });
         });
 
-    away_squad
+    right_team_squad
         .substitutes
         .into_iter()
         .for_each(|mut away_player| {

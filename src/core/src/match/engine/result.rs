@@ -9,8 +9,8 @@ pub struct MatchResultRaw {
 
     pub position_data: MatchPositionData,
 
-    pub home_players: FieldSquad,
-    pub away_players: FieldSquad,
+    pub left_team_players: FieldSquad,
+    pub right_team_players: FieldSquad,
 
     pub match_time_ms: u64,
     pub additional_time_ms: u64,
@@ -21,8 +21,8 @@ impl MatchResultRaw {
         MatchResultRaw {
             score: Score::new(home_team_id, away_team_id),
             position_data: MatchPositionData::new(),
-            home_players: FieldSquad::new(),
-            away_players: FieldSquad::new(),
+            left_team_players: FieldSquad::new(),
+            right_team_players: FieldSquad::new(),
             match_time_ms,
             additional_time_ms: 0,
         }
@@ -33,8 +33,8 @@ impl MatchResultRaw {
         home_team_players: &FieldSquad,
         away_team_players: &FieldSquad,
     ) {
-        self.home_players = FieldSquad::from(home_team_players);
-        self.away_players = FieldSquad::from(away_team_players);
+        self.left_team_players = FieldSquad::from(home_team_players);
+        self.right_team_players = FieldSquad::from(away_team_players);
     }
 
     pub fn fill_details(&mut self, players: Vec<&MatchPlayer>){
