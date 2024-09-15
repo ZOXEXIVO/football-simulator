@@ -1,4 +1,4 @@
-use crate::r#match::{BallState, MatchContext};
+use crate::r#match::{BallSide, MatchContext};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 use crate::r#match::ball::events::BallUpdateEvent;
@@ -35,9 +35,9 @@ impl Ball {
         self.check_boundary_collision(&mut result, context);
 
         if self.position.x < self.center_field_position {
-            context.state.set_ball_state(BallState::HomeSide);
+            context.ball.set_side(BallSide::Left)
         }else {
-            context.state.set_ball_state(BallState::AwaySide);
+            context.ball.set_side(BallSide::Right)
         }
 
         result

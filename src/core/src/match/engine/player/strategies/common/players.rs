@@ -1,11 +1,14 @@
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, StateProcessingContext};
 use crate::r#match::position::VectorExtensions;
+use crate::r#match::{
+    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, PlayerSide,
+    StateProcessingContext,
+};
 
 pub struct PlayerOperationsImpl<'p> {
     ctx: &'p StateProcessingContext<'p>,
 }
 
-impl <'p> PlayerOperationsImpl<'p> {
+impl<'p> PlayerOperationsImpl<'p> {
     pub fn new(ctx: &'p StateProcessingContext<'p>) -> Self {
         PlayerOperationsImpl { ctx }
     }
@@ -14,11 +17,19 @@ impl <'p> PlayerOperationsImpl<'p> {
 impl<'p> PlayerOperationsImpl<'p> {
     pub fn on_own_side(&self) -> bool {
         let field_half_width = self.ctx.context.field_size.width / 2;
-        self.ctx.player.is_home && self.ctx.player.position.x < field_half_width as f32
+
+        if let Some(side) = self.ctx.player.side {
+            return side == PlayerSide::Left && self.ctx.player.position.x < field_half_width as f32;
+        }
+
+        false
     }
 
-    pub fn distance_from_start_position(&self) -> f32{
-        self.ctx.player.start_position.distance_to(&self.ctx.player.position)
+    pub fn distance_from_start_position(&self) -> f32 {
+        self.ctx
+            .player
+            .start_position
+            .distance_to(&self.ctx.player.position)
     }
 
     pub fn position_to_distance(&self) -> PlayerDistanceFromStartPosition {
@@ -30,7 +41,8 @@ impl<'p> PlayerOperationsImpl<'p> {
     }
 
     pub fn distances(&self) -> (usize, usize) {
-        self.ctx.tick_context
+        self.ctx
+            .tick_context
             .objects_positions
             .player_distances
             .players_within_distance_count(self.ctx.player, 10.0)
@@ -44,7 +56,6 @@ impl<'p> PlayerOperationsImpl<'p> {
         }
     }
 }
-
 
 pub struct MatchPlayerLogic;
 
@@ -69,9 +80,7 @@ impl MatchPlayerLogic {
         leader_id
     }
 
-    pub fn distance_to_start_position(
-        player: &MatchPlayer,
-    ) -> PlayerDistanceFromStartPosition {
+    pub fn distance_to_start_position(player: &MatchPlayer) -> PlayerDistanceFromStartPosition {
         let start_position_distance = player.position.distance_to(&player.start_position);
 
         if start_position_distance < 50.0 {

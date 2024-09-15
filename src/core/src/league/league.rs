@@ -93,7 +93,7 @@ impl League {
 
                 let message = &format!(
                     "play match: {} - {}",
-                    &match_to_play.left_squad.team_name, &match_to_play.right_squad.team_name
+                    &match_to_play.home_squad.team_name, &match_to_play.away_squad.team_name
                 );
 
                 let match_result = Logging::estimate_result(|| match_to_play.play(), message);

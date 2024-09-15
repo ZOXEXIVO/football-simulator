@@ -34,8 +34,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         // TODO
-        context.result.left_team_players = field.home_players.unwrap();
-        context.result.right_team_players = field.away_players.unwrap();
+        context.result.left_team_players = field.left_side_players.unwrap();
+        context.result.right_team_players = field.right_side_players.unwrap();
 
         context.result.fill_details(context.players.raw_players());
 
@@ -106,6 +106,7 @@ pub enum MatchEvent {
 
 pub struct MatchContext {
     pub state: GameState,
+    pub ball: BallState,
     pub time: MatchTime,
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
@@ -116,6 +117,7 @@ impl MatchContext {
     pub fn new(field_size: &MatchFieldSize, players: MatchPlayerCollection, team_left_id: u32, team_right_id: u32) -> Self {
         MatchContext {
             state: GameState::new(),
+            ball: BallState::new(),
             time: MatchTime::new(),
             result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS, team_left_id, team_right_id),
             field_size: MatchFieldSize::clone(&field_size),
@@ -129,6 +131,27 @@ impl MatchContext {
 
     pub fn add_time(&mut self, time: u64) {
         self.time.increment(time);
+    }
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum BallSide {
+    Left,
+    Right
+}
+
+#[derive(Clone)]
+pub struct BallState {
+    pub side: Option<BallSide>,
+}
+
+impl BallState {
+    pub fn new() -> Self {
+        BallState { side: None }
+    }
+
+    pub fn set_side(&mut self, side: BallSide) {
+        self.side = Some(side);
     }
 }
 

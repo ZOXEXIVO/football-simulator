@@ -6,8 +6,8 @@ use log::debug;
 pub struct Match {
     id: String,
     league_id: u32,
-    pub left_squad: TeamSquad,
-    pub right_squad: TeamSquad,
+    pub home_squad: TeamSquad,
+    pub away_squad: TeamSquad,
 }
 
 impl Match {
@@ -15,19 +15,19 @@ impl Match {
         Match {
             id,
             league_id,
-            left_squad: home_squad,
-            right_squad: away_squad,
+            home_squad,
+            away_squad,
         }
     }
 
     pub fn play(self) -> MatchResult {
-        let home_team_id = self.left_squad.team_id;
-        let home_team_name = String::from(&self.left_squad.team_name);
+        let home_team_id = self.home_squad.team_id;
+        let home_team_name = String::from(&self.home_squad.team_name);
 
-        let away_team_id = self.right_squad.team_id;
-        let away_team_name = String::from(&self.right_squad.team_name);
+        let away_team_id = self.away_squad.team_id;
+        let away_team_name = String::from(&self.away_squad.team_name);
 
-        let match_raw_result = FootballEngine::<840, 545>::play(self.left_squad, self.right_squad);
+        let match_raw_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
 
         debug!(
             "match played: {} {}:{} {}",

@@ -3,6 +3,7 @@ use rand::Rng;
 use rand_distr::num_traits::real::Real;
 use rand_distr::num_traits::Pow;
 use std::collections::HashMap;
+use crate::r#match::PlayerSide;
 
 #[derive(Debug, Clone)]
 pub struct PositionDataItem {
@@ -137,7 +138,7 @@ const MAX_NORMALIZED_VALUE: f32 = 0.5f32;
 
 pub struct PlayerFieldPosition {
     pub player_id: u32,
-    pub is_home: bool,
+    pub side: PlayerSide,
     pub position: Vector3<f32>,
 }
 

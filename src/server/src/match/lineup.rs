@@ -141,7 +141,7 @@ fn to_lineup_player<'p>(
     match_details: &'p MatchResultRaw,
     simulator_data: &'p SimulatorData,
 ) -> Option<LineupPlayer<'p>> {
-    let player = simulator_data.player(player_id).unwrap();
+    let player = simulator_data.player(player_id)?;
 
     let position = match_details.position_data.player_positions.get(&player_id);
 

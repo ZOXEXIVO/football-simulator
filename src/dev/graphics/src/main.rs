@@ -4,6 +4,7 @@ use core::r#match::FootballEngine;
 use core::r#match::MatchContext;
 use core::r#match::MatchField;
 use macroquad::prelude::*;
+
 //tactics
 use core::club::player::Player;
 use core::club::player::PlayerPositionType;
@@ -16,6 +17,7 @@ use env_logger::Env;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
+use core::r#match::PlayerSide;
 
 #[macroquad::main("FootballSimulatorTesting")]
 async fn main() {
@@ -85,7 +87,7 @@ async fn main() {
         );
 
         field.players.iter().for_each(|player| {
-            let mut color = if player.is_home {
+            let mut color = if player.side.unwrap() == PlayerSide::Left {
                 Color::from_rgba(0, 184, 186, 255)
             } else {
                 Color::from_rgba(208, 139, 255, 255)

@@ -1,5 +1,5 @@
 use nalgebra::Vector3;
-use crate::r#match::{BallState, StateProcessingContext};
+use crate::r#match::{BallSide, PlayerSide, StateProcessingContext};
 use crate::r#match::position::VectorExtensions;
 
 pub struct BallOperationsImpl<'b> {
@@ -14,8 +14,11 @@ impl <'b> BallOperationsImpl<'b> {
 
 impl<'b> BallOperationsImpl<'b> {
     pub fn on_own_side(&self) -> bool {
-        if let Some(ball_state) = self.ctx.context.state.ball_state {
-            return self.ctx.player.is_home && ball_state == BallState::HomeSide;
+        if let Some(ball_side) = self.ctx.context.ball.side {
+            return match ball_side {
+                BallSide::Left => self.ctx.player.side == Some(PlayerSide::Left),
+                BallSide::Right => self.ctx.player.side == Some(PlayerSide::Right),
+            }
         }
 
         false
@@ -38,7 +41,7 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn distance_to_own_goal(&self) -> f32 {
-        let own_goal_position = if self.ctx.player.is_home {
+        let own_goal_position = if self.ctx.player.side.unwrap() == PlayerSide::Left {
             Vector3::new(0.0, self.ctx.context.field_size.height as f32 / 2.0, 0.0)
         } else {
             Vector3::new(
@@ -47,6 +50,7 @@ impl<'b> BallOperationsImpl<'b> {
                 0.0,
             )
         };
+
         self.ctx.tick_context
             .objects_positions
             .ball_position

@@ -25,10 +25,16 @@ pub struct MatchPlayer {
     pub tactics_position: PlayerPositionType,
     pub velocity: Vector3<f32>,
     pub has_ball: bool,
-    pub is_home: bool,
+    pub side: Option<PlayerSide>,
     pub state: PlayerState,
     pub in_state_time: u64,
     pub statistics: MatchPlayerStatistics
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum PlayerSide {
+    Left,
+    Right
 }
 
 impl MatchPlayer {
@@ -44,7 +50,7 @@ impl MatchPlayer {
             tactics_position: position,
             velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
-            is_home: false,
+            side: None,
             state: match position.position_group() {
                 PlayerFieldPositionGroup::Goalkeeper => PlayerState::Goalkeeper(GoalkeeperState::Standing),
                 PlayerFieldPositionGroup::Defender => PlayerState::Defender(DefenderState::Standing),

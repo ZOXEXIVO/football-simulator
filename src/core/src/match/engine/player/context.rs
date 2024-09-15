@@ -27,7 +27,7 @@ impl MatchObjectsPositions {
             .iter()
             .map(|p| PlayerFieldPosition {
                 player_id: p.player_id,
-                is_home: p.is_home,
+                side: p.side.unwrap(),
                 position: p.position,
             })
             .collect();
