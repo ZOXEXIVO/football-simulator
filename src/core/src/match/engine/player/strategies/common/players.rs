@@ -37,10 +37,10 @@ impl<'p> PlayerOperationsImpl<'p> {
     }
 
     pub fn is_team_loosing(&self) -> bool {
-        if self.ctx.player.team_id == self.ctx.context.result.score.team_a.team_id {
-            self.ctx.context.result.score.team_a < self.ctx.context.result.score.team_b
+        if self.ctx.player.team_id == self.ctx.context.result.score.home_team.team_id {
+            self.ctx.context.result.score.home_team < self.ctx.context.result.score.away_team
         } else {
-            self.ctx.context.result.score.team_b < self.ctx.context.result.score.team_a
+            self.ctx.context.result.score.away_team < self.ctx.context.result.score.home_team
         }
     }
 }

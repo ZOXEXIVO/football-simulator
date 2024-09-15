@@ -10,6 +10,31 @@ pub struct Schedule {
     pub tours: Vec<ScheduleTour>,
 }
 
+#[derive(Debug, Clone)]
+pub struct ScheduleTour {
+    pub num: u8,
+    pub items: Vec<ScheduleItem>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ScheduleItem {
+    pub id: String,
+    pub league_id: u32,
+
+    pub date: NaiveDateTime,
+
+    pub home_team_id: u32,
+    pub away_team_id: u32,
+
+    pub result: Option<ScheduleItemResult>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ScheduleItemResult {
+    pub home: TeamScore,
+    pub away: TeamScore,
+}
+
 impl Schedule {
     pub fn new() -> Self {
         Schedule { tours: Vec::new() }
@@ -75,7 +100,7 @@ impl Schedule {
             .filter(|s| s.home_team_id == team_id || s.away_team_id == team_id)
             .map(|s| {
                 let res = match &s.result {
-                    Some(result) => Some(ScheduleItemResult::new(&result.team_a, &result.team_b)),
+                    Some(result) => Some(ScheduleItemResult::new(&result.home, &result.away)),
                     None => None,
                 };
 
@@ -84,12 +109,12 @@ impl Schedule {
             .collect()
     }
 
-    pub fn update_match_result(&mut self, id: &str, team_a: &TeamScore, team_b: &TeamScore) {
+    pub fn update_match_result(&mut self, id: &str, home_team: &TeamScore, away_team: &TeamScore) {
         let mut updated = false;
 
         for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {
             if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {
-                item.result = Some(ScheduleItemResult::new(team_a, team_b));
+                item.result = Some(ScheduleItemResult::new(home_team, away_team));
                 updated = true;
             }
         }
@@ -115,19 +140,6 @@ impl ScheduleError {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct ScheduleItem {
-    pub id: String,
-    pub league_id: u32,
-
-    pub date: NaiveDateTime,
-
-    pub home_team_id: u32,
-    pub away_team_id: u32,
-
-    pub result: Option<ScheduleItemResult>,
-}
-
 impl ScheduleItem {
     pub fn new(
         league_id: u32,
@@ -149,25 +161,13 @@ impl ScheduleItem {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct ScheduleItemResult {
-    pub team_a: TeamScore,
-    pub team_b: TeamScore,
-}
-
 impl ScheduleItemResult {
-    pub fn new(team_a: &TeamScore, team_b: &TeamScore) -> Self {
+    pub fn new(home_team: &TeamScore, away_team: &TeamScore) -> Self {
         ScheduleItemResult {
-            team_a: TeamScore::from(team_a),
-            team_b: TeamScore::from(team_b),
+            home: TeamScore::from(home_team),
+            away: TeamScore::from(away_team),
         }
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct ScheduleTour {
-    pub num: u8,
-    pub items: Vec<ScheduleItem>,
 }
 
 impl ScheduleTour {

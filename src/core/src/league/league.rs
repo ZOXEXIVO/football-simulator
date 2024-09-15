@@ -81,8 +81,8 @@ impl League {
             .for_each(|scheduled_match| {
                 let score = scheduled_match.result.as_mut().unwrap();
 
-                let home_team = self.get_team(clubs, score.team_a.team_id);
-                let away_team = self.get_team(clubs, score.team_b.team_id);
+                let home_team = self.get_team(clubs, score.home.team_id);
+                let away_team = self.get_team(clubs, score.away.team_id);
 
                 let match_to_play = Match::make(
                     scheduled_match.id.clone(),
@@ -93,12 +93,12 @@ impl League {
 
                 let message = &format!(
                     "play match: {} - {}",
-                    &match_to_play.home_squad.team_name, &match_to_play.away_squad.team_name
+                    &match_to_play.left_squad.team_name, &match_to_play.right_squad.team_name
                 );
 
                 let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
-                scheduled_match.result = Some(LeagueMatchResultResult::new(&match_result.score.team_a, &match_result.score.team_b));
+                scheduled_match.result = Some(LeagueMatchResultResult::new(&match_result.score.home_team, &match_result.score.away_team));
 
                 result.push(match_result);
             });

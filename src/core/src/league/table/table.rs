@@ -81,18 +81,18 @@ impl LeagueTable {
 
     pub fn update_from_results(&mut self, match_result: &Vec<MatchResult>) {
         for result in match_result {
-            match Ord::cmp(&result.score.team_a.score, &result.score.team_b.score) {
+            match Ord::cmp(&result.score.home_team.score, &result.score.away_team.score) {
                 Ordering::Equal => {
-                    self.draft(result.score.team_a.team_id, result.score.team_a.score, result.score.team_b.score);
-                    self.draft(result.score.team_b.team_id, result.score.team_b.score, result.score.team_a.score);
+                    self.draft(result.score.home_team.team_id, result.score.home_team.score, result.score.away_team.score);
+                    self.draft(result.score.away_team.team_id, result.score.away_team.score, result.score.home_team.score);
                 }
                 Ordering::Greater => {
-                    self.winner(result.score.team_a.team_id, result.score.team_a.score, result.score.team_b.score);
-                    self.looser(result.score.team_b.team_id, result.score.team_b.score, result.score.team_a.score);
+                    self.winner(result.score.home_team.team_id, result.score.home_team.score, result.score.away_team.score);
+                    self.looser(result.score.away_team.team_id, result.score.away_team.score, result.score.home_team.score);
                 }
                 Ordering::Less => {
-                    self.looser(result.score.team_a.team_id, result.score.team_a.score, result.score.team_b.score);
-                    self.winner(result.score.team_b.team_id, result.score.team_b.score, result.score.team_a.score);
+                    self.looser(result.score.home_team.team_id, result.score.home_team.score, result.score.away_team.score);
+                    self.winner(result.score.away_team.team_id, result.score.away_team.score, result.score.home_team.score);
                 }
             }
         }

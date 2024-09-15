@@ -17,9 +17,9 @@ pub struct MatchResultRaw {
 }
 
 impl MatchResultRaw {
-    pub fn with_match_time(match_time_ms: u64, team_a_id: u32, team_b_id: u32) -> Self {
+    pub fn with_match_time(match_time_ms: u64, home_team_id: u32, away_team_id: u32) -> Self {
         MatchResultRaw {
-            score: Score::new(team_a_id, team_b_id),
+            score: Score::new(home_team_id, away_team_id),
             position_data: MatchPositionData::new(),
             home_players: FieldSquad::new(),
             away_players: FieldSquad::new(),
@@ -87,8 +87,8 @@ impl FieldSquad {
 
 #[derive(Debug, Clone)]
 pub struct Score {
-    pub team_a: TeamScore,
-    pub team_b: TeamScore,
+    pub home_team: TeamScore,
+    pub away_team: TeamScore,
     pub details: Vec<GoalDetail>,
 }
 
@@ -140,10 +140,10 @@ pub struct GoalDetail {
 }
 
 impl Score {
-    pub fn new(team_a_id: u32, team_b_id: u32) -> Self {
+    pub fn new(home_team_id: u32, away_team_id: u32) -> Self {
         Score {
-            team_a: TeamScore::new(team_a_id),
-            team_b: TeamScore::new(team_b_id),
+            home_team: TeamScore::new(home_team_id),
+            away_team: TeamScore::new(away_team_id),
             details: Vec::new(),
         }
     }
@@ -161,6 +161,8 @@ impl Score {
 pub struct MatchResult {
     pub id: String,
     pub league_id: u32,
+    pub home_team_id: u32,
+    pub away_team_id: u32,
     pub result_details: Option<MatchResultRaw>,
     pub score: Score
 }
@@ -170,6 +172,8 @@ impl From<&LeagueMatch> for MatchResult {
         MatchResult {
             id: m.id.clone(),
             league_id: m.league_id,
+            home_team_id: m.home_team_id,
+            away_team_id: m.away_team_id,
             score: Score::new(m.home_team_id, m.away_team_id),
             result_details: None
         }

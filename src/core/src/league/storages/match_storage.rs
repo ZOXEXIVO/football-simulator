@@ -17,8 +17,8 @@ impl MatchStorage {
         self.results.insert(match_result.id.clone(), match_result);
     }
 
-    pub fn get(&self, match_id: String) -> Option<&MatchResult>{
-        self.results.get(&match_id)
+    pub fn get<M>(&self, match_id: M) -> Option<&MatchResult> where M : AsRef<str> {
+        self.results.get(match_id.as_ref())
     }
 }
 

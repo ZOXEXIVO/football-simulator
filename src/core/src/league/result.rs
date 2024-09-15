@@ -46,20 +46,20 @@ impl LeagueResult {
 
         league
             .schedule
-            .update_match_result(&result.id, &result.score.team_a, &result.score.team_b);
+            .update_match_result(&result.id, &result.score.home_team, &result.score.away_team);
 
-        let team_a = data.team_mut(result.score.team_a.team_id).unwrap();
-        team_a.match_history.add(MatchHistoryItem::new(
+        let home_team = data.team_mut(result.score.home_team.team_id).unwrap();
+        home_team.match_history.add(MatchHistoryItem::new(
             now,
-            result.score.team_a.team_id,
-            (TeamScore::from(&result.score.team_a), TeamScore::from(&result.score.team_b)),
+            result.score.home_team.team_id,
+            (TeamScore::from(&result.score.home_team), TeamScore::from(&result.score.away_team)),
         ));
 
-        let team_b = data.team_mut(result.score.team_b.team_id).unwrap();
-        team_b.match_history.add(MatchHistoryItem::new(
+        let away_team = data.team_mut(result.score.away_team.team_id).unwrap();
+        away_team.match_history.add(MatchHistoryItem::new(
             now,
-            result.score.team_b.team_id,
-            (TeamScore::from(&result.score.team_b), TeamScore::from(&result.score.team_a)),
+            result.score.away_team.team_id,
+            (TeamScore::from(&result.score.away_team), TeamScore::from(&result.score.home_team)),
         ));
 
         // process_match_events(result, data);
@@ -104,15 +104,15 @@ pub struct LeagueMatch {
 }
 
 pub struct LeagueMatchResultResult {
-    pub team_a: TeamScore,
-    pub team_b: TeamScore,
+    pub home: TeamScore,
+    pub away: TeamScore,
 }
 
 impl LeagueMatchResultResult {
-    pub fn new(team_a: &TeamScore, team_b: &TeamScore) -> Self {
+    pub fn new(home_team: &TeamScore, away_team: &TeamScore) -> Self {
         LeagueMatchResultResult {
-            team_a: TeamScore::from(team_a),
-            team_b: TeamScore::from(team_b),
+            home: TeamScore::from(home_team),
+            away: TeamScore::from(away_team),
         }
     }
 }
@@ -129,7 +129,7 @@ impl From<ScheduleItem> for LeagueMatch {
         };
 
         if let Some(res) = item.result {
-            result.result = Some(LeagueMatchResultResult::new(&res.team_a, &res.team_b));
+            result.result = Some(LeagueMatchResultResult::new(&res.home, &res.away));
         }
 
         result

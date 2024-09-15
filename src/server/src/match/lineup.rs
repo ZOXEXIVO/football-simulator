@@ -84,8 +84,8 @@ pub async fn match_lineup_action(
 
     let result = MatchLineupResponse {
         score: LineupScore {
-            home_goals: result_details.score.home,
-            away_goals: result_details.score.away,
+            home_goals: result_details.score.home_team.score,
+            away_goals: result_details.score.away_team.score,
         },
         match_time_ms: result_details.match_time_ms,
         ball: LineupBall {

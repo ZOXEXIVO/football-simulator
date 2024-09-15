@@ -21,10 +21,10 @@ impl BallEvents {
         for event in events {
             match *event {
                 BallUpdateEvent::Goal(team_id) => {
-                    if context.result.score.team_a.team_id == team_id {
-                        context.result.score.team_a.score += 1;
+                    if context.result.score.home_team.team_id == team_id {
+                        context.result.score.home_team.score += 1;
                     } else {
-                        context.result.score.team_b.score += 1;
+                        context.result.score.away_team.score += 1;
                     }
                 }
                 BallUpdateEvent::ChangeBallSide(_position) => {

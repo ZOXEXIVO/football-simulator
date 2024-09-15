@@ -158,15 +158,15 @@ pub async fn league_get_action(
 
                             result: item.result.as_ref().map(|res| {
                                 return LeagueScheduleItemResult {
-                                    home_goals: if item.home_team_id == res.team_a.team_id {
-                                        res.team_a.score
+                                    home_goals: if item.home_team_id == res.home.team_id {
+                                        res.home.score
                                     } else {
-                                        res.team_b.score
+                                        res.away.score
                                     },
-                                    away_goals: if item.home_team_id == res.team_b.team_id {
-                                        res.team_b.score
+                                    away_goals: if item.home_team_id == res.away.team_id {
+                                        res.away.score
                                     } else {
-                                        res.team_a.score
+                                        res.home.score
                                     },
                                 }
                             }),
