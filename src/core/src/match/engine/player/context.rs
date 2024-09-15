@@ -16,7 +16,7 @@ pub enum PlayerDistanceFromStartPosition {
 pub struct MatchObjectsPositions {
     pub ball_position: Vector3<f32>,
     pub ball_velocity: Vector3<f32>,
-    pub players_positions: Vec<PlayerFieldPosition>,
+    pub players_positions: PlayerPositionsClosure,
     pub player_distances: PlayerDistanceClosure,
 }
 
@@ -58,7 +58,7 @@ impl MatchObjectsPositions {
         MatchObjectsPositions {
             ball_position: field.ball.position,
             ball_velocity: field.ball.velocity,
-            players_positions: positions,
+            players_positions: PlayerPositionsClosure::new(positions),
             player_distances: distances,
         }
     }
@@ -71,6 +71,25 @@ impl MatchObjectsPositions {
             .players_within_distance_count(current_player, max_distance);
 
         ((nearest_teammates_count as f32) + 1.0) / ((nearest_opponents_count as f32) + 1.0) < 1.0
+    }
+}
+
+pub struct PlayerPositionsClosure {
+    pub items: Vec<PlayerFieldPosition>,
+}
+
+impl PlayerPositionsClosure {
+    pub fn new(players_positions: Vec<PlayerFieldPosition>) -> Self {
+        PlayerPositionsClosure {
+            items: players_positions
+        }
+    }
+
+    pub fn get_player_position(&self, player_id: u32) -> Option<Vector3<f32>> {
+        self.items
+            .iter()
+            .find(|p| p.player_id == player_id)
+            .map(|p| p.position)
     }
 }
 

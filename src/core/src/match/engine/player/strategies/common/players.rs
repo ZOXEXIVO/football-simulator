@@ -55,6 +55,17 @@ impl<'p> PlayerOperationsImpl<'p> {
             self.ctx.context.result.score.away_team < self.ctx.context.result.score.home_team
         }
     }
+
+    pub fn calculate_pass_power(&self, teammate: &MatchPlayer) -> f64 {
+        let distance = self.ctx.player.position.distance_to(&teammate.position);
+        let pass_skill = self.ctx.player.skills.technical.passing;
+        (distance / pass_skill as f32 * 10.0) as f64
+    }
+
+    pub fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
+        let (_, opponents_count) = self.distances();
+        opponents_count > 1
+    }
 }
 
 pub struct MatchPlayerLogic;
@@ -67,7 +78,7 @@ impl MatchPlayerLogic {
         let mut leader_id = 0;
         let mut highest_leadership = 0.0;
 
-        for player_position in &objects_positions.players_positions {
+        for player_position in &objects_positions.players_positions.items {
             let player = context.players.get(player_position.player_id).unwrap();
             let leadership_skill = player.skills.mental.leadership;
 

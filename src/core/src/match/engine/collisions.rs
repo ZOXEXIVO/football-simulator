@@ -13,7 +13,7 @@ impl ObjectCollisionsDetector {
         let mut player_events = Vec::with_capacity(10);
 
         // Ball-player collisions
-        for player in &object_positions.players_positions {
+        for player in &object_positions.players_positions.items {
             let distance = object_positions.ball_position.distance_to(&player.position);
 
             if distance < 3.0 {
