@@ -32,9 +32,9 @@ impl Match {
         debug!(
             "match played: {} {}:{} {}",
             home_team_name,
-            match_raw_result.score.home_team.score,
+            match_raw_result.score.home_team.get(),
             away_team_name,
-            match_raw_result.score.away_team.score,
+            match_raw_result.score.away_team.get(),
         );
 
         MatchResult {

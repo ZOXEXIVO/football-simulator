@@ -14,14 +14,11 @@ impl <'b> BallOperationsImpl<'b> {
 
 impl<'b> BallOperationsImpl<'b> {
     pub fn on_own_side(&self) -> bool {
-        if let Some(ball_side) = self.ctx.context.ball.side {
-            return match ball_side {
-                BallSide::Left => self.ctx.player.side == Some(PlayerSide::Left),
-                BallSide::Right => self.ctx.player.side == Some(PlayerSide::Right),
-            }
+        match self.ctx.context.ball.get() {
+            BallSide::Left => self.ctx.player.side == Some(PlayerSide::Left),
+            BallSide::Center => true,
+            BallSide::Right => self.ctx.player.side == Some(PlayerSide::Right),
         }
-
-        false
     }
 
     pub fn distance(&self) -> f32 {

@@ -1,4 +1,6 @@
-﻿use crate::league::LeagueMatch;
+﻿use std::cell::Cell;
+use std::sync::atomic::{AtomicU8, Ordering};
+use crate::league::LeagueMatch;
 use crate::r#match::position::MatchPositionData;
 use crate::r#match::{MatchPlayer, TeamSquad};
 use crate::r#match::statistics::MatchStatisticType;
@@ -92,42 +94,58 @@ pub struct Score {
     pub details: Vec<GoalDetail>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TeamScore {
     pub team_id: u32,
-    pub score: u8
+    score: AtomicU8
+}
+
+impl Clone for TeamScore {
+    fn clone(&self) -> Self {
+        TeamScore {
+            team_id: self.team_id,
+            score: AtomicU8::new(self.score.load(Ordering::SeqCst))
+        }
+    }
 }
 
 impl TeamScore {
     pub fn new(team_id: u32) -> Self {
         TeamScore {
             team_id,
-            score: 0
+            score: AtomicU8::new(0)
         }
     }
 
     pub fn new_with_score(team_id: u32, score: u8) -> Self {
         TeamScore {
             team_id,
-            score
+            score: AtomicU8::new(score)
         }
+    }
+
+    pub fn get(&self) -> u8 {
+        self.score.load(Ordering::SeqCst)
     }
 }
 impl From<&TeamScore> for TeamScore {
     fn from(team_score: &TeamScore) -> Self {
-        TeamScore::new_with_score(team_score.team_id, team_score.score)
+        TeamScore::new_with_score(team_score.team_id, team_score.score.load(Ordering::SeqCst))
     }
 }
 
 impl PartialEq<Self> for TeamScore {
     fn eq(&self, other: &Self) -> bool {
-        self.score == other.score
+        self.score.load(Ordering::SeqCst) == other.score.load(Ordering::SeqCst)
     }
 }
 
 impl PartialOrd for TeamScore {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.score.partial_cmp(&other.score)
+        let left_score = self.score.load(Ordering::SeqCst);
+        let other_score =  other.score.load(Ordering::SeqCst);
+
+        Some(left_score.cmp(&other_score))
     }
 }
 
@@ -154,6 +172,14 @@ impl Score {
 
     pub fn detail(&self) -> &[GoalDetail]{
         &self.details
+    }
+
+    pub fn increment_home_goals(&self){
+        self.home_team.score.fetch_add(1, Ordering::SeqCst);
+    }
+
+    pub fn increment_away_goals(&self){
+        self.away_team.score.fetch_add(1, Ordering::SeqCst);
     }
 }
 

@@ -9,7 +9,7 @@ use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::conditions::PlayerConditions;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 
@@ -65,18 +65,19 @@ impl MatchPlayer {
 
     pub fn update(
         &mut self,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-    ) -> Vec<PlayerUpdateEvent> {
-        let mut result = RefCell::new(Vec::with_capacity(10));
+        context: &MatchContext,
+        tick_context: &GameTickContext
+    ) -> PlayerUpdateEventCollection {
+        let mut result = PlayerUpdateEventCollection::new();
 
         // change move
-        PlayerMatchState::process(self, context, tick_context, &result);
+        result.join(PlayerMatchState::process(self, context, tick_context));
+
         PlayerConditions::process(self);
 
         self.move_to();
 
-        result.into_inner()
+        result
     }
 
     fn change_state(&mut self, state: PlayerState) {
@@ -87,15 +88,13 @@ impl MatchPlayer {
     fn update_state(
         &mut self,
         context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        result: &RefCell<Vec<PlayerUpdateEvent>>
+        tick_context: &GameTickContext
     ) {
         let state_result = self.tactics_position.position_group().process(
             self.in_state_time,
             self,
             context,
-            tick_context,
-            result,
+            tick_context
         );
 
         if let Some(state) = state_result.state {

@@ -2,7 +2,7 @@ use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::ForwardStrategies;
 use crate::r#match::goalkeepers::states::state::GoalkeeperStrategies;
 use crate::r#match::midfielders::states::MidfielderStrategies;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::Defender;
 use crate::r#match::{
@@ -28,14 +28,12 @@ impl PlayerFieldPositionGroup {
         &self,
         in_state_time: u64,
         player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        result: &RefCell<Vec<PlayerUpdateEvent>>,
+        context: &MatchContext,
+        tick_context: &GameTickContext
     ) -> StateChangeResult {
         let player_state = player.state;
 
-        let mut state_processor =
-            StateProcessor::new(in_state_time, player, context, tick_context, result);
+        let mut state_processor =  StateProcessor::new(in_state_time, player, context, tick_context);
 
         match player_state {
             // Common states
@@ -57,8 +55,7 @@ pub struct StateProcessor<'p> {
     in_state_time: u64,
     player: &'p MatchPlayer,
     context: &'p MatchContext,
-    tick_context: &'p GameTickContext,
-    result: &'p RefCell<Vec<PlayerUpdateEvent>>,
+    tick_context: &'p GameTickContext
 }
 
 impl<'p> StateProcessor<'p> {
@@ -66,15 +63,13 @@ impl<'p> StateProcessor<'p> {
         in_state_time: u64,
         player: &'p MatchPlayer,
         context: &'p MatchContext,
-        tick_context: &'p GameTickContext,
-        result: &'p RefCell<Vec<PlayerUpdateEvent>>,
+        tick_context: &'p GameTickContext
     ) -> Self {
         StateProcessor {
             in_state_time,
             player,
             context,
-            tick_context,
-            result,
+            tick_context
         }
     }
 
@@ -103,8 +98,7 @@ pub struct StateProcessingContext<'sp> {
     pub in_state_time: u64,
     pub player: &'sp MatchPlayer,
     pub context: &'sp MatchContext,
-    pub tick_context: &'sp GameTickContext,
-    pub result: &'sp RefCell<Vec<PlayerUpdateEvent>>,
+    pub tick_context: &'sp GameTickContext
 }
 
 impl<'sp> StateProcessingContext<'sp> {
@@ -124,7 +118,6 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
             player: value.player,
             context: value.context,
             tick_context: value.tick_context,
-            result: value.result,
         }
     }
 }
@@ -132,13 +125,16 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
 pub struct StateChangeResult {
     pub state: Option<PlayerState>,
     pub velocity: Option<Vector3<f32>>,
+
+    pub events: PlayerUpdateEventCollection
 }
 
 impl StateChangeResult {
-    pub const fn none() -> Self {
+    pub fn none() -> Self {
         StateChangeResult {
             state: None,
             velocity: None,
+            events: PlayerUpdateEventCollection::new()
         }
     }
 
@@ -146,6 +142,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(state),
             velocity: None,
+            events: PlayerUpdateEventCollection::new()
         }
     }
 
@@ -153,6 +150,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Defender(state)),
             velocity: None,
+            events: PlayerUpdateEventCollection::new()
         }
     }
 
@@ -160,6 +158,15 @@ impl StateChangeResult {
         StateChangeResult {
             state: None,
             velocity: Some(velocity),
+            events: PlayerUpdateEventCollection::new()
+        }
+    }
+
+    pub fn with_events(events: PlayerUpdateEventCollection) -> Self {
+        StateChangeResult {
+            state: None,
+            velocity: None,
+            events
         }
     }
 }

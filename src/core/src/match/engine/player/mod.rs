@@ -7,7 +7,6 @@ mod state;
 pub mod statistics;
 pub mod strategies;
 
-use crate::r#match::MatchContext;
 pub use behaviours::*;
 pub use context::*;
 use itertools::Itertools;

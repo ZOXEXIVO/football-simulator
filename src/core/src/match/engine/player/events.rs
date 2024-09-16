@@ -18,30 +18,57 @@ pub enum PlayerUpdateEvent {
     ConflictResolution(u32, u32)
 }
 
-pub struct PlayerEvents;
+pub struct PlayerUpdateEventCollection {
+    pub events: Vec<PlayerUpdateEvent>,
+}
 
-impl PlayerEvents {
-    pub fn process<'p>(
-        events: impl Iterator<Item = PlayerUpdateEvent>,
-        ball: &mut Ball,
-        context: &mut MatchContext,
+impl PlayerUpdateEventCollection {
+    pub fn new() -> Self {
+        PlayerUpdateEventCollection {
+            events: Vec::with_capacity(10)
+        }
+    }
+
+    pub fn with_event(event: PlayerUpdateEvent) -> Self {
+        let mut vec = Vec::with_capacity(10);
+
+        vec.push(event);
+
+        PlayerUpdateEventCollection {
+            events: vec
+        }
+    }
+
+    pub fn add(&mut self, event: PlayerUpdateEvent) {
+        self.events.push(event)
+    }
+
+    pub fn join(&mut self, events: PlayerUpdateEventCollection) {
+        self.events.extend(events.events)
+    }
+
+    pub fn add_range(&mut self, events: impl Iterator<Item = PlayerUpdateEvent>) {
+        self.events.extend(events)
+    }
+
+    pub fn process<'p>(&self, ball: &mut Ball, context: &mut MatchContext,
     ) {
         let mut ball_claims: HashMap<u32, f32> = HashMap::new();
 
-        for event in events {
+        for event in &self.events {
             match event {
                 PlayerUpdateEvent::Goal(player_id) => {
-                    let player = context.players.get_mut(player_id).unwrap();
+                    let player = context.players.get_mut(*player_id).unwrap();
 
                     player.statistics.add_goal(context.time.time)
                 },
                 PlayerUpdateEvent::Assist(player_id) => {
-                    let player = context.players.get_mut(player_id).unwrap();
+                    let player = context.players.get_mut(*player_id).unwrap();
 
                     player.statistics.add_assist(context.time.time)
                 },
                 PlayerUpdateEvent::BallCollision(player_id) => {
-                    let player = context.players.get_mut(player_id).unwrap();
+                    let player = context.players.get_mut(*player_id).unwrap();
 
                     if player.skills.technical.first_touch > 10.0 {
                         player.has_ball = true;
@@ -75,7 +102,7 @@ impl PlayerEvents {
                 }
                 PlayerUpdateEvent::OfferSupport(_) => {}
                 PlayerUpdateEvent::ClaimBall(player_id) => {
-                    let player = context.players.get(player_id).unwrap();
+                    let player = context.players.get(*player_id).unwrap();
                     // Рассчитываем приоритет на основе позиции, скорости и навыков
                     // let priority = player.calculate_ball_priority(ball);
                     // ball_claims.insert(player_id, priority);
@@ -90,12 +117,12 @@ impl PlayerEvents {
                         player2_id
                     };
 
-                    let winner = context.players.get_mut(winner_id).unwrap();
+                    let winner = context.players.get_mut(*winner_id).unwrap();
                     winner.has_ball = true;
                     ball.velocity = Vector3::<f32>::zeros();
 
                     let loser_id = if winner_id == player1_id { player2_id } else { player1_id };
-                    let loser = context.players.get_mut(loser_id).unwrap();
+                    let loser = context.players.get_mut(*loser_id).unwrap();
                     loser.has_ball = false;
                 }
             }

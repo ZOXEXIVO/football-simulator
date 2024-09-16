@@ -1,6 +1,5 @@
-use std::cell::RefCell;
 use std::fmt::{Display, Formatter};
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::{PlayerUpdateEventCollection};
 use crate::r#match::{
     GameTickContext, MatchContext, MatchPlayer,
 };
@@ -43,16 +42,14 @@ pub struct PlayerMatchState;
 impl PlayerMatchState {
     pub fn process(
         player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        result: &RefCell<Vec<PlayerUpdateEvent>>,
-    ) {
+        context: &MatchContext,
+        tick_context: &GameTickContext
+    ) -> PlayerUpdateEventCollection {
         let state_change_result = player.tactics_position.position_group().process(
             player.in_state_time,
             player,
             context,
-            tick_context,
-            result,
+            tick_context
         );
 
         if let Some(state) = state_change_result.state {
@@ -64,6 +61,8 @@ impl PlayerMatchState {
         if let Some(velocity) = state_change_result.velocity {
             player.velocity = velocity;
         }
+
+        state_change_result.events
     }
 
     fn change_state(player: &mut MatchPlayer, state: PlayerState) {

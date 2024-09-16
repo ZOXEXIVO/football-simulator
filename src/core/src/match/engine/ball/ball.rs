@@ -26,7 +26,7 @@ impl Ball {
         }
     }
 
-    pub fn update(&mut self, context: &mut MatchContext) -> Vec<BallUpdateEvent> {
+    pub fn update(&mut self, context: &MatchContext) -> Vec<BallUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
         self.update_velocity(&mut result);
@@ -35,9 +35,9 @@ impl Ball {
         self.check_boundary_collision(&mut result, context);
 
         if self.position.x < self.center_field_position {
-            context.ball.set_side(BallSide::Left)
+            context.ball.set(BallSide::Left)
         }else {
-            context.ball.set_side(BallSide::Right)
+            context.ball.set(BallSide::Right)
         }
 
         result
@@ -46,7 +46,7 @@ impl Ball {
     fn check_boundary_collision(
         &mut self,
         _result: &mut Vec<BallUpdateEvent>,
-        context: &mut MatchContext,
+        context: &MatchContext,
     ) {
         let field_width = context.field_size.width as f32 + 15.0;
         let field_height = context.field_size.height as f32 + 15.0;

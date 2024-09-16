@@ -16,15 +16,15 @@ impl BallEvents {
         _current_time: u64,
         ball: &mut Ball,
         events: impl Iterator<Item = &'a BallUpdateEvent>,
-        context: &mut MatchContext,
+        context: &MatchContext,
     ) {
         for event in events {
             match *event {
                 BallUpdateEvent::Goal(team_id) => {
                     if context.result.score.home_team.team_id == team_id {
-                        context.result.score.home_team.score += 1;
+                        context.result.score.increment_home_goals()
                     } else {
-                        context.result.score.away_team.score += 1;
+                        context.result.score.increment_away_goals()
                     }
                 }
                 BallUpdateEvent::ChangeBallSide(_position) => {

@@ -2,9 +2,12 @@ use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
+use std::sync::atomic::{AtomicU8, Ordering};
+use rayon::iter::IntoParallelRefMutIterator;
 use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
-use crate::r#match::player::events::{PlayerEvents, PlayerUpdateEvent};
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use rayon::iter::ParallelIterator;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -68,7 +71,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
     fn play_ball(
         field: &mut MatchField,
-        context: &mut MatchContext,
+        context: &MatchContext,
         ball_collision_events: Vec<BallUpdateEvent>
     ) {
         let ball_events = field.ball.update(context);
@@ -84,16 +87,16 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         tick_context: &GameTickContext,
         player_collision_events: Vec<PlayerUpdateEvent>
     ){
-        let mut all_player_events = {
-            let player_events: Vec<PlayerUpdateEvent> = field.players
-                .iter_mut()
-                .flat_map(|player| player.update(context, tick_context))
-                .collect();
+        let player_events: Vec<PlayerUpdateEventCollection> = field.players
+            //.par_iter_mut()
+            .iter_mut()
+            .map(|player| player.update(context, tick_context))
+            .collect();
 
-             player_events.into_iter().chain(player_collision_events).into_iter()
-        };
 
-        PlayerEvents::process(&mut all_player_events, &mut field.ball, context);
+        for events in player_events {
+            events.process(&mut field.ball, context)
+        }
     }
 }
 
@@ -137,23 +140,57 @@ impl MatchContext {
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum BallSide {
     Left,
+    Center,
     Right
 }
 
-#[derive(Clone)]
 pub struct BallState {
-    pub side: Option<BallSide>,
+    side: AtomicU8
 }
 
 impl BallState {
     pub fn new() -> Self {
-        BallState { side: None }
+        BallState { side: AtomicU8::new(0) }
     }
 
-    pub fn set_side(&mut self, side: BallSide) {
-        self.side = Some(side);
+    pub fn set(&self, side: BallSide) {
+        let side_u = u8::from(side);
+
+        self.side.store(side_u, Ordering::SeqCst)
+    }
+
+    pub fn get(&self) -> BallSide {
+        BallSide::from(self.side.load(Ordering::SeqCst))
     }
 }
+
+impl From<BallSide> for u8 {
+    fn from(side: BallSide) -> Self {
+        match side {
+            BallSide::Left => 0,
+            BallSide::Center => 1,
+            BallSide::Right => 2
+        }
+    }
+}
+
+impl From<u8> for BallState {
+    fn from(side_u: u8) -> Self {
+        BallState { side: AtomicU8::new(side_u) }
+    }
+}
+
+impl From<u8> for BallSide {
+    fn from(side_u: u8) -> Self {
+        match side_u {
+            0 => BallSide::Left,
+            1 => BallSide::Center,
+            2 => BallSide::Right,
+            _ => BallSide::Left
+        }
+    }
+}
+
 
 #[derive(Clone)]
 pub struct MatchFieldSize {
