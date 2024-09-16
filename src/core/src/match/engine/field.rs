@@ -70,73 +70,53 @@ fn setup_player_on_field(
     left_team_squad: TeamSquad,
     right_team_squad: TeamSquad,
 ) -> (Vec<MatchPlayer>, Vec<MatchPlayer>) {
-    let mut players_on_field: Vec<MatchPlayer> = Vec::with_capacity(22);
-    let mut substitutes: Vec<MatchPlayer> = Vec::with_capacity(30);
+    let setup_squad = |squad: TeamSquad, side: PlayerSide| {
+        let mut players = Vec::new();
+        let mut subs = Vec::new();
 
-    // home
-    left_team_squad
-        .main_squad
-        .into_iter()
-        .for_each(|mut home_player| {
-            let tactics_position = home_player.tactics_position;
+        for mut player in squad.main_squad {
+            player.side = Some(side);
+            if let Some(position) = get_player_position(&player, side) {
+                player.position = position;
+                player.start_position = position;
+                players.push(player);
+            }
+        }
 
-            POSITION_POSITIONING
-                .iter()
-                .filter(|(positioning, _, _)| *positioning == tactics_position)
-                .map(|(_, home_position, _)| home_position)
-                .for_each(|position| {
-                    if let PositionType::Home(x, y) = position {
-                        home_player.side = Some(PlayerSide::Left);
-                        home_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
-                        home_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
+        for mut player in squad.substitutes {
+            player.side = Some(side);
+            player.position = Vector3::new(1.0, 1.0, 0.0);
+            subs.push(player);
+        }
 
-                        players_on_field.push(home_player.clone());
-                    }
-                });
-        });
+        (players, subs)
+    };
 
-    left_team_squad
-        .substitutes
-        .into_iter()
-        .for_each(|mut home_player| {
-            home_player.side = Some(PlayerSide::Left);
-            home_player.position = Vector3::new(1.0, 1.0, 0.0);
+    let (left_players, left_subs) = setup_squad(left_team_squad, PlayerSide::Left);
+    let (right_players, right_subs) = setup_squad(right_team_squad, PlayerSide::Right);
 
-            substitutes.push(home_player);
-        });
+    (
+        [left_players, right_players].concat(),
+        [left_subs, right_subs].concat(),
+    )
+}
 
-    // away
-    right_team_squad
-        .main_squad
-        .into_iter()
-        .for_each(|mut away_player| {
-            let tactics_position = away_player.tactics_position;
+fn get_player_position(player: &MatchPlayer, side: PlayerSide) -> Option<Vector3<f32>> {
+    POSITION_POSITIONING
+        .iter()
+        .find(|(pos, _, _)| *pos == player.tactics_position)
+        .and_then(|(_, home, away)| match side {
+            PlayerSide::Left => if let PositionType::Home(x, y) = home { Some((*x as f32, *y as f32)) } else { None },
+            PlayerSide::Right => if let PositionType::Away(x, y) = away { Some((*x as f32, *y as f32)) } else { None },
+        })
+        .map(|(x, y)| Vector3::new(x, y, 0.0))
+}
 
-            POSITION_POSITIONING
-                .iter()
-                .filter(|(positioning, _, _)| *positioning == tactics_position)
-                .map(|(_, _, away_position)| away_position)
-                .for_each(|position| {
-                    if let PositionType::Away(x, y) = position {
-                        away_player.side = Some(PlayerSide::Right);
-
-                        away_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
-                        away_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
-
-                        players_on_field.push(away_player.clone());
-                    }
-                });
-        });
-
-    right_team_squad
-        .substitutes
-        .into_iter()
-        .for_each(|mut away_player| {
-            away_player.side = Some(PlayerSide::Right);
-            away_player.position = Vector3::new(1.0, 1.0, 0.0);
-
-            substitutes.push(away_player);
-        });
-
-    (players_on_field, substitutes)
+impl PlayerSide {
+    fn opposite(&self) -> Self {
+        match self {
+            PlayerSide::Left => PlayerSide::Right,
+            PlayerSide::Right => PlayerSide::Left,
+        }
+    }
 }
