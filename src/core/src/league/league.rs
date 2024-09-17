@@ -77,12 +77,9 @@ impl League {
 
         scheduled_matches
             .iter_mut()
-            .take(1)
             .for_each(|scheduled_match| {
-                let score = scheduled_match.result.as_mut().unwrap();
-
-                let home_team = self.get_team(clubs, score.home.team_id);
-                let away_team = self.get_team(clubs, score.away.team_id);
+                let home_team = self.get_team(clubs, scheduled_match.home_team_id);
+                let away_team = self.get_team(clubs, scheduled_match.away_team_id);
 
                 let match_to_play = Match::make(
                     scheduled_match.id.clone(),
