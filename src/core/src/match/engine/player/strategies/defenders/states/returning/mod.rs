@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, MATCH_HALF_TIME_MS};
 use crate::r#match::defenders::states::DefenderState;
 
 static DEFENDER_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -13,25 +13,21 @@ pub struct DefenderReturningState {}
 
 impl StateProcessingHandler for DefenderReturningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player().distance_from_start_position() < 10.0 {
+        if ctx.player().distance_from_start_position() < 5.0 {
             return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
         }
 
-        if ctx.player().distance_from_start_position() < 10.0 {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
-        }
-
-        if ctx.ball().distance() < 50.0 && ctx.ball().is_towards_player() {
+        if ctx.ball().is_towards_player() && ctx.ball().distance() < 40.0 {
             return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
         }
 
-        // if ctx.game_state().is_losing(ctx.player.team_id) && ctx.game_state().time_remaining() < 300 {
-        //     return Some(StateChangeResult::with_defender_state(DefenderState::AttackingSupport));
-        // }
-
-        if ctx.player().is_tired() {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Walking));
+        if ctx.player().is_team_loosing() && ctx.context.time.time > (MATCH_HALF_TIME_MS - 300)  {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Pressing));
         }
+
+        // if ctx.player().is_tired() {
+        //     return Some(StateChangeResult::with_defender_state(DefenderState::Walking));
+        // }
 
         None
     }

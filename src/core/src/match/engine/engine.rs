@@ -249,7 +249,7 @@ impl MatchPlayerCollection {
 }
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
-const MATCH_HALF_TIME_MS: u64 = 1 * 60 * 1000;
+pub const MATCH_HALF_TIME_MS: u64 = 1 * 60 * 1000;
 
 pub struct MatchTime {
     pub time: u64,

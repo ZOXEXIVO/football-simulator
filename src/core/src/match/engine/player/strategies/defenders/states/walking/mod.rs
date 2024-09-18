@@ -41,10 +41,10 @@ impl StateProcessingHandler for DefenderWalkingState {
             let rnd =
             return Some(SteeringBehavior::Wander {
                 target: ctx.player.start_position,
-                radius: IntegerUtils::random(10, 30) as f32,
-                jitter: IntegerUtils::random(10, 50) as f32,
-                distance: IntegerUtils::random(40, 100) as f32,
-                angle: IntegerUtils::random(10, 10) as f32,
+                radius: IntegerUtils::random(1, 30) as f32,
+                jitter: IntegerUtils::random(1, 50) as f32,
+                distance: IntegerUtils::random(1, 100) as f32,
+                angle: IntegerUtils::random(1, 10) as f32,
             }.calculate(ctx.player).velocity);
         }
 

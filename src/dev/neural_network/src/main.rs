@@ -85,48 +85,5 @@ fn main() {
 
     for (index, (error,rating , (epochs, rate, momentum))) in ratings_lock.iter().take(10).enumerate() {
         println!("{}) {:?} - {} (epochs: {}, rate: {}, momentum: {})", index + 1, rating, error, *epochs, *rate, *momentum);
-    }
-
-    // let net_json = fs::read_to_string("neural.json")
-    //     .expect("Should have been able to read the file");
-
-    // let net = NeuralNetwork::load_json(&net_json);
-    //
-    // let training_data = [
-    //     (vec![0f64, 0f64], vec![0f64]),
-    //     (vec![0f64, 1f64], vec![1f64]),
-    //     (vec![1f64, 0f64], vec![0f64]),
-    //     (vec![1f64, 1f64], vec![1f64])
-    // ];
-
-
-    // let mut net = NeuralNetwork::new(&[4, 12, 32, 6], ActivationFunction::Sigmoid);
-    //
-    // let training_data = [
-    //     (vec![211f64, 12f64, 12f64, 12f64], vec![0f64, 0f64, 0f64, 0f64, 1f64,0f64]),
-    //     (vec![12f64, 12f64, 12f64, 12f64], vec![0f64, 0f64, 0f64, 0f64, 0f64,0f64]),
-    //     (vec![2f64, 1211f64, 12f64, 12f64], vec![0f64, 0f64, 0f64, 1f64, 0f64,0f64]),
-    //     (vec![1f64, 1f64, 12f64, 12f64], vec![1f64, 0f64, 0f64, 0f64, 0f64,0f64]),
-    //     (vec![212f64, 11f64, 12f64, 12f64], vec![0f64, 0f64, 0f64, 1f64, 0f64,0f64]),
-    //     (vec![1f64, 1f64, 12f64, 12f64], vec![0f64, 2f64, 0f64, 0f64, 0f64,0f64]),
-    //     (vec![11f64, 1211f64, 12f64, 12f64], vec![0f64, 0f64, 0f64, 1f64, 0f64,0f64]),
-    //     (vec![13f64, 1f64, 154f64, 122f64], vec![1f64, 0f64, 0f64, 0f64, 0f64,0f64]),
-    //     (vec![212f64, 211f64, 124f64, 122f64], vec![0f64, 0f64, 0f64, 0f64, 1f64,0f64]),
-    //     (vec![1f64, 12f64, 122f64, 112f64], vec![0f64, 0f64, 0f64, 0f64, 0f64,1f64])
-    // ];
-    //
-    // let error = NeuralNetwork::train(&mut net, &training_data, 0.06, 0.1, 1000000);
-    //
-    // println!("error: {}", error);
-
-    // let json_net = net.save_json();
-    //
-    // let mut f = File::create("training_result.json").expect("Unable to create file");
-    // f.write_all(json_net.as_bytes()).expect("Unable to write data");
-
-    // for (input, output) in training_data {
-    //     let results = net.run(&input);
-    //
-    //     println!("{} - {} = {}", input[0], input[1], results[0]);
-    // }
+    }    
 }
