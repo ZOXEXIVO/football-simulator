@@ -24,8 +24,8 @@ impl StateProcessingHandler for GoalkeeperRestingState {
 
     fn process_slow(
         &self, ctx: &StateProcessingContext
-    ) -> StateChangeResult {
-        StateChangeResult::none()
+    ) -> Option<StateChangeResult> {
+        None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
@@ -42,7 +42,7 @@ impl GoalkeeperRestingState {
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         if in_state_time < 5 {
-            StateChangeResult::none();
+            StateChangeResult::new();
         }
 
         let player_skills = player.skills;
@@ -59,7 +59,7 @@ impl GoalkeeperRestingState {
             return StateChangeResult::with(PlayerState::Goalkeeper(GoalkeeperState::Standing));
         }
 
-        StateChangeResult::none()
+        StateChangeResult::new()
     }
 
     fn calculate_max_rest_duration(

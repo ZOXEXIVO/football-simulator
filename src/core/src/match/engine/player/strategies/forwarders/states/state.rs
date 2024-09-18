@@ -4,9 +4,7 @@ use crate::r#match::forwarders::states::{
     ForwardOffsideTrapBreakingState, ForwardPassingState, ForwardPressingState,
     ForwardRunningInBehindState, ForwardShootingState, ForwardStandingState, ForwardTacklingState,
 };
-use crate::r#match::{
-    StateChangeResult, StateProcessor,
-};
+use crate::r#match::{StateChangeResult, StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy)]
@@ -30,7 +28,7 @@ pub enum ForwardState {
 pub struct ForwardStrategies {}
 
 impl ForwardStrategies {
-    pub fn process(state: ForwardState, state_processor: StateProcessor) -> StateChangeResult {
+    pub fn process(state: ForwardState, state_processor: StateProcessor) -> StateProcessingResult {
         match state {
             ForwardState::Standing => state_processor.process(ForwardStandingState::default()),
             ForwardState::Passing => state_processor.process(ForwardPassingState::default()),

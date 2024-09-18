@@ -7,7 +7,7 @@ use crate::r#match::goalkeepers::states::{
     GoalkeeperStandingState, GoalkeeperSweepingState, GoalkeeperTacklingState,
     GoalkeeperThrowingState, GoalkeeperWalkingState,
 };
-use crate::r#match::{StateChangeResult, StateProcessor};
+use crate::r#match::{StateChangeResult, StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy)]
@@ -38,7 +38,7 @@ pub enum GoalkeeperState {
 pub struct GoalkeeperStrategies {}
 
 impl GoalkeeperStrategies {
-    pub fn process(state: GoalkeeperState, state_processor: StateProcessor) -> StateChangeResult {
+    pub fn process(state: GoalkeeperState, state_processor: StateProcessor) -> StateProcessingResult {
         match state {
             GoalkeeperState::Standing => {
                 state_processor.process(GoalkeeperStandingState::default())

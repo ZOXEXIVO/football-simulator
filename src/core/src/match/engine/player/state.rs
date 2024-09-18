@@ -62,7 +62,9 @@ impl PlayerMatchState {
             player.velocity = velocity;
         }
 
-        state_change_result.events
+        return state_change_result.events;
+
+        PlayerUpdateEventCollection::new()
     }
 
     fn change_state(player: &mut MatchPlayer, state: PlayerState) {

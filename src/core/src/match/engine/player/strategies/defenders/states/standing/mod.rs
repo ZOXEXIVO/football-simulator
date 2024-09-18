@@ -72,11 +72,11 @@ impl StateProcessingHandler for DefenderStandingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult {
+    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let input = self.prepare_network_input(ctx);
         let output = DEFENDER_STANDING_STATE_NETWORK.run(&input);
 
-        self.interpret_network_output(ctx, output)
+        Some(self.interpret_network_output(ctx, output))
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {

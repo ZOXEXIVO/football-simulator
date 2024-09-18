@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter};
-use crate::r#match::{StateChangeResult, StateProcessor};
+use crate::r#match::{StateChangeResult, StateProcessingResult, StateProcessor};
 use crate::r#match::midfielders::states::{MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState, MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState, MidfielderPressingState, MidfielderShortPassingState, MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState, MidfielderTrackingRunnerState};
 
 #[derive(Debug, Clone, Copy)]
@@ -24,7 +24,7 @@ impl MidfielderStrategies {
     pub fn process(
         state: MidfielderState,
         state_processor: StateProcessor,
-    ) -> StateChangeResult {
+    ) -> StateProcessingResult {
          match state {
             MidfielderState::Standing => state_processor.process(MidfielderStandingState::default()),
             MidfielderState::Distributing => {

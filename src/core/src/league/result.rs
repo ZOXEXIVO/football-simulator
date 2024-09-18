@@ -1,4 +1,4 @@
-use crate::league::{LeagueTableResult, ScheduleItem, ScheduleItemResult};
+use crate::league::{LeagueTableResult, ScheduleItem};
 use crate::simulator::SimulatorData;
 use crate::MatchHistoryItem;
 use chrono::NaiveDateTime;

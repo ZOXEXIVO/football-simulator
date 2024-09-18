@@ -1,5 +1,5 @@
 use crate::r#match::defenders::states::{DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState, DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState, DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderReturningState, DefenderSlidingTackleState, DefenderStandingState, DefenderTrackingBackState, DefenderWalkingState};
-use crate::r#match::{StateChangeResult, StateProcessor};
+use crate::r#match::{StateChangeResult, StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy)]
@@ -25,7 +25,7 @@ pub enum DefenderState {
 pub struct DefenderStrategies {}
 
 impl DefenderStrategies {
-    pub fn process(state: DefenderState, state_processor: StateProcessor) -> StateChangeResult {
+    pub fn process(state: DefenderState, state_processor: StateProcessor) -> StateProcessingResult {
         match state {
             DefenderState::Standing => state_processor.process(DefenderStandingState::default()),
             DefenderState::Resting => state_processor.process(DefenderRestingState::default()),

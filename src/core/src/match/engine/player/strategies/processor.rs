@@ -18,7 +18,7 @@ pub trait StateProcessingHandler {
     // Try fast processing
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult>;
     // Try slow processing with neural network
-    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult;
+    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult>;
     // Calculate velocity
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>>;
 }
@@ -30,7 +30,7 @@ impl PlayerFieldPositionGroup {
         player: &mut MatchPlayer,
         context: &MatchContext,
         tick_context: &GameTickContext
-    ) -> StateChangeResult {
+    ) -> StateProcessingResult {
         let player_state = player.state;
 
         let mut state_processor =  StateProcessor::new(in_state_time, player, context, tick_context);
@@ -73,17 +73,32 @@ impl<'p> StateProcessor<'p> {
         }
     }
 
-    pub fn process<H: StateProcessingHandler>(self, handler: H) -> StateChangeResult {
+    pub fn process<H: StateProcessingHandler>(self, handler: H) -> StateProcessingResult {
         let mut processing_ctx = self.into_ctx();
 
-        if let Some(fast_result) = handler.try_fast(&processing_ctx) {
-            return fast_result;
-        }
-
-        let mut result = handler.process_slow(&mut processing_ctx);
+        let mut result = StateProcessingResult::new();
 
         if let Some(velocity) = handler.velocity(&processing_ctx) {
             result.velocity = Some(velocity);
+        }
+
+        if let Some(fast_result) = handler.try_fast(&processing_ctx) {
+            if let Some(state) = fast_result.state {
+                result.state = Some(state);
+                result.events = fast_result.events;
+
+                return result;
+            }
+
+        }
+
+        if let Some(slow_result) = handler.process_slow(&mut processing_ctx) {
+            if let Some(state) = slow_result.state {
+                result.state = Some(state);
+                result.events = slow_result.events;
+
+                return result;
+            }
         }
 
         result
@@ -122,6 +137,22 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
     }
 }
 
+pub struct StateProcessingResult {
+    pub state: Option<PlayerState>,
+    pub velocity: Option<Vector3<f32>>,
+    pub events: PlayerUpdateEventCollection
+}
+
+impl StateProcessingResult {
+    pub fn new() -> Self {
+        StateProcessingResult {
+            state: None,
+            velocity: None,
+            events: PlayerUpdateEventCollection::new()
+        }
+    }
+}
+
 pub struct StateChangeResult {
     pub state: Option<PlayerState>,
     pub velocity: Option<Vector3<f32>>,
@@ -130,12 +161,20 @@ pub struct StateChangeResult {
 }
 
 impl StateChangeResult {
-    pub fn none() -> Self {
+    pub fn new() -> Self {
         StateChangeResult {
             state: None,
             velocity: None,
             events: PlayerUpdateEventCollection::new()
         }
+    }
+
+    pub fn set_state(&mut self, state: PlayerState) {
+        self.state = Some(state);
+    }
+
+    pub fn set_velocity(&mut self, velocity: Vector3<f32>) {
+        self.velocity = Some(velocity);
     }
 
     pub fn with(state: PlayerState) -> Self {

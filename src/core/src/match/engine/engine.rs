@@ -3,11 +3,9 @@ use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU8, Ordering};
-use rayon::iter::IntoParallelRefMutIterator;
 use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
 use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
-use rayon::iter::ParallelIterator;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 

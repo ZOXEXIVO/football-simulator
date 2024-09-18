@@ -19,8 +19,8 @@ impl StateProcessingHandler for GoalkeeperShootingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult {
-        StateChangeResult::none()
+    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
@@ -36,7 +36,7 @@ impl GoalkeeperShootingState {
         tick_context: &GameTickContext,
         result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
-        StateChangeResult::none()
+        StateChangeResult::new()
 
         // let mut res_vec = Vec::new();
         //

@@ -32,8 +32,8 @@ fn main() {
     let max_length = 2u32;
 
     for momentum in &[0.1f64, 0.15f64, 0.2f64] {
-        for rate in &[0.01,0.02,0.03] {
-            for epochs in &[30000, 50000, 100000] {
+        for rate in &[0.01] {
+            for epochs in &[100000] {
                 for first in 0..max_length {
                     for second in 0..max_length {
                         for third in 0..max_length {
@@ -83,7 +83,7 @@ fn main() {
 
     ratings_lock.sort_by(|(error, _, _), (next_error, _, _)| { error.partial_cmp(next_error).unwrap() });
 
-    for (index, (error,rating , (epochs, rate, momentum))) in ratings_lock.iter().take(10).enumerate() {
-        println!("{}) {:?} - {} (epochs: {}, rate: {}, momentum: {})", index + 1, rating, error, *epochs, *rate, *momentum);
-    }    
+    for (index, (error, data, (epochs, rate, momentum))) in ratings_lock.iter().take(10).enumerate() {
+        println!("{}) {:?} - {} (epochs: {}, rate: {}, momentum: {})", index + 1, data, error, *epochs, *rate, *momentum);
+    }
 }

@@ -57,8 +57,8 @@ impl StateProcessingHandler for DefenderTrackingBackState {
         }
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> StateChangeResult {
-        StateChangeResult::none()
+    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
