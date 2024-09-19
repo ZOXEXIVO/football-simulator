@@ -1,6 +1,6 @@
 pub const CONDITION_MAX_VALUE: i16 = 10000;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct PlayerAttributes {
     pub is_banned: bool,
     pub is_injured: bool,

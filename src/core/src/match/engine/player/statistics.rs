@@ -11,7 +11,7 @@ impl MatchPlayerStatistics {
     }
 
     pub fn is_empty(&self) -> bool {
-        return self.items.is_empty()
+        self.items.is_empty()
     }
 
     pub fn add_goal(&mut self, match_second: u64){
@@ -26,6 +26,12 @@ impl MatchPlayerStatistics {
             stat_type: MatchStatisticType::Assist,
             match_second
         })
+    }
+}
+
+impl Default for MatchPlayerStatistics {
+    fn default() -> Self {
+        MatchPlayerStatistics::new()
     }
 }
 

@@ -1,6 +1,6 @@
 use nalgebra::Vector3;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct PlayerSkills {
     pub technical: Technical,
     pub mental: Mental,
@@ -27,7 +27,7 @@ impl PlayerSkills {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct Technical {
     pub corners: f32,
     pub crossing: f32,
@@ -67,7 +67,7 @@ impl Technical {
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct Mental {
     pub aggression: f32,
     pub anticipation: f32,
@@ -107,7 +107,7 @@ impl Mental {
     pub fn rest(&mut self) {}
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct Physical {
     pub acceleration: f32,
     pub agility: f32,

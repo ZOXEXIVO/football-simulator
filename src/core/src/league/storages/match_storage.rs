@@ -25,7 +25,7 @@ impl MatchStorage {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::r#match::{MatchResult, Score};
+    use crate::r#match::{MatchResult, Score, TeamScore};
 
     #[test]
     fn test_match_storage_new() {
@@ -42,8 +42,8 @@ mod tests {
             league_id: 0,
             result_details: None,
             score: Score {
-                home: 0,
-                away: 0,
+                home_team: TeamScore::new_with_score(0, 0),
+                away_team: TeamScore::new_with_score(0, 0),
                 details: vec![],
             },
             home_team_id: 0,
@@ -63,8 +63,8 @@ mod tests {
             league_id: 0,
             result_details: None,
             score: Score {
-                home: 0,
-                away: 0,
+                home_team: TeamScore::new_with_score(0, 0),
+                away_team: TeamScore::new_with_score(0, 0),
                 details: vec![],
             },
             home_team_id: 0,

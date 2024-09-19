@@ -127,7 +127,7 @@ impl Default for LeagueTable {
 
 #[cfg(test)]
 mod tests {
-    use crate::r#match::Score;
+    use crate::r#match::{Score, TeamScore};
     use super::*;
 
     #[test]
@@ -145,8 +145,8 @@ mod tests {
             home_team_id: 1,
             away_team_id: 2,
             score: Score{
-                home: 3,
-                away: 3,
+                home_team: TeamScore::new_with_score(1, 3),
+                away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
             result_details: None,
@@ -195,8 +195,8 @@ mod tests {
             home_team_id,
             away_team_id,
             score: Score{
-                home: 3,
-                away: 0,
+                home_team: TeamScore::new_with_score(1, 3),
+                away_team: TeamScore::new_with_score(2, 0),
                 details: vec![],
             },
             result_details: None,
@@ -253,8 +253,8 @@ mod tests {
             home_team_id,
             away_team_id,
             score: Score{
-                home: 0,
-                away: 3,
+                home_team: TeamScore::new_with_score(1, 0),
+                away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
             result_details: None,

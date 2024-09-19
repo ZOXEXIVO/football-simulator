@@ -1,6 +1,4 @@
-﻿use std::cell::RefCell;
-use crate::r#match::position::VectorExtensions;
-use crate::r#match::{GameTickContext, MatchContext};
+﻿use crate::r#match::{GameTickContext, MatchContext};
 use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
@@ -8,8 +6,7 @@ use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::conditions::PlayerConditions;
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use crate::r#match::player::events::{PlayerUpdateEventCollection};
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 
@@ -72,8 +69,6 @@ impl MatchPlayer {
 
         // change move
         result.join(PlayerMatchState::process(self, context, tick_context));
-
-        PlayerConditions::process(self);
 
         self.move_to();
 

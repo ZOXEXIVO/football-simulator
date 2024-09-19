@@ -96,6 +96,7 @@ impl<'p> StateProcessor<'p> {
             result.velocity = Some(velocity);
         }
 
+        // common logic
         let complete_result = |state_results: StateChangeResult, mut result: StateProcessingResult|  {
             if let Some(state) = state_results.state {
                 result.state = Some(state);

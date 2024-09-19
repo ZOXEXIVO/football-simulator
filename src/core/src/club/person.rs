@@ -18,7 +18,7 @@ pub trait Person {
     fn relations(&self) -> &Relations;
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct PersonAttributes {
     pub adaptability: f32,
     pub ambition: f32,

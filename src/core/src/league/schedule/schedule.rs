@@ -110,12 +110,12 @@ impl Schedule {
     }
 
     pub fn update_match_result(&mut self, id: &str, home_team: &TeamScore, away_team: &TeamScore) {
-        let mut updated = false;
+        let mut _updated = false;
 
         for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {
             if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {
                 item.result = Some(ScheduleItemResult::new(home_team, away_team));
-                updated = true;
+                _updated = true;
             }
         }
     }
@@ -225,8 +225,8 @@ mod tests {
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let item2 = ScheduleItem {
@@ -239,8 +239,8 @@ mod tests {
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let mut items_with_results = Vec::new();
@@ -287,8 +287,8 @@ mod tests {
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let item2 = ScheduleItem {
@@ -301,8 +301,8 @@ mod tests {
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let schedule_tour = ScheduleTour {
@@ -324,8 +324,8 @@ mod tests {
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let item2 = ScheduleItem {
@@ -337,8 +337,8 @@ mod tests {
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let schedule_tour = ScheduleTour {
