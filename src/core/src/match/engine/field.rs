@@ -1,8 +1,5 @@
 ﻿use crate::r#match::ball::Ball;
-use crate::r#match::{
-    FieldSquad, MatchFieldSize, MatchPlayer, MatchResultRaw, PositionType, TeamSquad,
-    POSITION_POSITIONING,
-};
+use crate::r#match::{FieldSquad, MatchFieldSize, MatchPlayer, MatchResultRaw, PlayerSide, PositionType, TeamSquad, POSITION_POSITIONING};
 use nalgebra::Vector3;
 
 pub struct MatchField {
@@ -11,30 +8,38 @@ pub struct MatchField {
     pub players: Vec<MatchPlayer>,
     pub substitutes: Vec<MatchPlayer>,
 
-    pub home_players: Option<FieldSquad>,
-    pub away_players: Option<FieldSquad>,
+    pub left_side_players: Option<FieldSquad>,
+    pub right_side_players: Option<FieldSquad>,
 }
 
 impl MatchField {
-    pub fn new(width: usize, height: usize, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
-        let home_team_squad = FieldSquad::from_team(&home_squad);
-        let away_team_squad = FieldSquad::from_team(&away_squad);
+    pub fn new(width: usize, height: usize, left_team_squad: TeamSquad, right_team_squad: TeamSquad) -> Self {
+        let left_squad = FieldSquad::from_team(&left_team_squad);
+        let away_squad = FieldSquad::from_team(&right_team_squad);
 
-        let (players_on_field, substitutes) = setup_player_on_field(home_squad, away_squad);
+        let (players_on_field, substitutes) = setup_player_on_field(left_team_squad, right_team_squad);
 
         MatchField {
             size: MatchFieldSize::new(width, height),
             ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
             players: players_on_field,
             substitutes,
-            home_players: Some(home_team_squad),
-            away_players: Some(away_team_squad),
+            left_side_players: Some(left_squad),
+            right_side_players: Some(away_squad),
         }
     }
 
     pub fn swap_squads(&mut self) {
-        std::mem::swap(&mut self.home_players, &mut self.away_players);
-        self.players.iter_mut().for_each(|p| p.is_home = !p.is_home);
+        std::mem::swap(&mut self.left_side_players, &mut self.right_side_players);
+
+        self.players.iter_mut().for_each(|p|  {
+            if let Some(side) = &p.side {
+                p.side = Some(match side {
+                    PlayerSide::Left => PlayerSide::Right,
+                    PlayerSide::Right => PlayerSide::Left,
+                })
+            }
+        });
     }
 
     pub fn write_match_positions(&self, result: &mut MatchResultRaw, timestamp: u64) {
@@ -62,76 +67,56 @@ impl MatchField {
 }
 
 fn setup_player_on_field(
-    home_squad: TeamSquad,
-    away_squad: TeamSquad,
+    left_team_squad: TeamSquad,
+    right_team_squad: TeamSquad,
 ) -> (Vec<MatchPlayer>, Vec<MatchPlayer>) {
-    let mut players_on_field: Vec<MatchPlayer> = Vec::with_capacity(22);
-    let mut substitutes: Vec<MatchPlayer> = Vec::with_capacity(30);
+    let setup_squad = |squad: TeamSquad, side: PlayerSide| {
+        let mut players = Vec::new();
+        let mut subs = Vec::new();
 
-    // home
-    home_squad
-        .main_squad
-        .into_iter()
-        .for_each(|mut home_player| {
-            let tactics_position = home_player.tactics_position;
+        for mut player in squad.main_squad {
+            player.side = Some(side);
+            if let Some(position) = get_player_position(&player, side) {
+                player.position = position;
+                player.start_position = position;
+                players.push(player);
+            }
+        }
 
-            POSITION_POSITIONING
-                .iter()
-                .filter(|(positioning, _, _)| *positioning == tactics_position)
-                .map(|(_, home_position, _)| home_position)
-                .for_each(|position| {
-                    if let PositionType::Home(x, y) = position {
-                        home_player.is_home = true;
-                        home_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
-                        home_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
+        for mut player in squad.substitutes {
+            player.side = Some(side);
+            player.position = Vector3::new(1.0, 1.0, 0.0);
+            subs.push(player);
+        }
 
-                        players_on_field.push(home_player.clone());
-                    }
-                });
-        });
+        (players, subs)
+    };
 
-    home_squad
-        .substitutes
-        .into_iter()
-        .for_each(|mut home_player| {
-            home_player.is_home = true;
-            home_player.position = Vector3::new(1.0, 1.0, 0.0);
+    let (left_players, left_subs) = setup_squad(left_team_squad, PlayerSide::Left);
+    let (right_players, right_subs) = setup_squad(right_team_squad, PlayerSide::Right);
 
-            substitutes.push(home_player);
-        });
+    (
+        [left_players, right_players].concat(),
+        [left_subs, right_subs].concat(),
+    )
+}
 
-    // away
-    away_squad
-        .main_squad
-        .into_iter()
-        .for_each(|mut away_player| {
-            let tactics_position = away_player.tactics_position;
+fn get_player_position(player: &MatchPlayer, side: PlayerSide) -> Option<Vector3<f32>> {
+    POSITION_POSITIONING
+        .iter()
+        .find(|(pos, _, _)| *pos == player.tactics_position)
+        .and_then(|(_, home, away)| match side {
+            PlayerSide::Left => if let PositionType::Home(x, y) = home { Some((*x as f32, *y as f32)) } else { None },
+            PlayerSide::Right => if let PositionType::Away(x, y) = away { Some((*x as f32, *y as f32)) } else { None },
+        })
+        .map(|(x, y)| Vector3::new(x, y, 0.0))
+}
 
-            POSITION_POSITIONING
-                .iter()
-                .filter(|(positioning, _, _)| *positioning == tactics_position)
-                .map(|(_, _, away_position)| away_position)
-                .for_each(|position| {
-                    if let PositionType::Away(x, y) = position {
-                        away_player.is_home = false;
-
-                        away_player.position = Vector3::new(*x as f32, *y as f32, 0.0);
-                        away_player.start_position = Vector3::new(*x as f32, *y as f32, 0.0);
-
-                        players_on_field.push(away_player.clone());
-                    }
-                });
-        });
-
-    away_squad
-        .substitutes
-        .into_iter()
-        .for_each(|mut away_player| {
-            away_player.is_home = false;
-            away_player.position = Vector3::new(1.0, 1.0, 0.0);
-
-            substitutes.push(away_player);
-        });
-
-    (players_on_field, substitutes)
+impl PlayerSide {
+    fn opposite(&self) -> Self {
+        match self {
+            PlayerSide::Left => PlayerSide::Right,
+            PlayerSide::Right => PlayerSide::Left,
+        }
+    }
 }

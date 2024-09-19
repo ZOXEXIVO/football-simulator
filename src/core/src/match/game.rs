@@ -32,17 +32,17 @@ impl Match {
         debug!(
             "match played: {} {}:{} {}",
             home_team_name,
-            match_raw_result.score.home,
+            match_raw_result.score.home_team.get(),
             away_team_name,
-            match_raw_result.score.away
+            match_raw_result.score.away_team.get(),
         );
 
         MatchResult {
             id: String::from(self.id),
             league_id: self.league_id,
-            score: match_raw_result.score.clone(),
             home_team_id,
             away_team_id,
+            score: match_raw_result.score.clone(),
             result_details: Some(match_raw_result),
         }
     }

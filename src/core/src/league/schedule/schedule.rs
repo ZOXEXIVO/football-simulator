@@ -1,12 +1,38 @@
 use crate::context::GlobalContext;
 use crate::league::round::RoundSchedule;
 use crate::league::{LeagueMatch, LeagueSettings, ScheduleGenerator, ScheduleResult, Season};
+use crate::r#match::TeamScore;
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
 use log::{debug, error};
 
 #[derive(Debug)]
 pub struct Schedule {
     pub tours: Vec<ScheduleTour>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ScheduleTour {
+    pub num: u8,
+    pub items: Vec<ScheduleItem>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ScheduleItem {
+    pub id: String,
+    pub league_id: u32,
+
+    pub date: NaiveDateTime,
+
+    pub home_team_id: u32,
+    pub away_team_id: u32,
+
+    pub result: Option<ScheduleItemResult>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ScheduleItemResult {
+    pub home: TeamScore,
+    pub away: TeamScore,
 }
 
 impl Schedule {
@@ -74,10 +100,7 @@ impl Schedule {
             .filter(|s| s.home_team_id == team_id || s.away_team_id == team_id)
             .map(|s| {
                 let res = match &s.result {
-                    Some(result) => Some(ScheduleItemResult {
-                        home_goals: result.home_goals,
-                        away_goals: result.away_goals,
-                    }),
+                    Some(result) => Some(ScheduleItemResult::new(&result.home, &result.away)),
                     None => None,
                 };
 
@@ -86,32 +109,13 @@ impl Schedule {
             .collect()
     }
 
-    pub fn update_match_result(&mut self, id: &str, home_goals: u8, away_goals: u8) {
-        let mut updated = false;
+    pub fn update_match_result(&mut self, id: &str, home_team: &TeamScore, away_team: &TeamScore) {
+        let mut _updated = false;
 
         for tour in &mut self.tours.iter_mut().filter(|t| !t.played()) {
             if let Some(item) = tour.items.iter_mut().find(|i| i.id == id) {
-                item.result = Some(ScheduleItemResult {
-                    home_goals,
-                    away_goals,
-                });
-
-                updated = true;
-            }
-        }
-
-        match updated {
-            true => {
-                debug!(
-                    "update match result, schedule_id={}, {}:{}",
-                    id, home_goals, away_goals
-                );
-            }
-            _ => {
-                debug!(
-                    "match result not updated, schedule_id={}, {}:{}",
-                    id, home_goals, away_goals
-                );
+                item.result = Some(ScheduleItemResult::new(home_team, away_team));
+                _updated = true;
             }
         }
     }
@@ -136,19 +140,6 @@ impl ScheduleError {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct ScheduleItem {
-    pub id: String,
-    pub league_id: u32,
-
-    pub date: NaiveDateTime,
-
-    pub home_team_id: u32,
-    pub away_team_id: u32,
-
-    pub result: Option<ScheduleItemResult>,
-}
-
 impl ScheduleItem {
     pub fn new(
         league_id: u32,
@@ -163,24 +154,20 @@ impl ScheduleItem {
             id,
             league_id,
             date,
+            result,
             home_team_id,
             away_team_id,
-
-            result,
         }
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct ScheduleItemResult {
-    pub home_goals: u8,
-    pub away_goals: u8,
-}
-
-#[derive(Debug, Clone)]
-pub struct ScheduleTour {
-    pub num: u8,
-    pub items: Vec<ScheduleItem>,
+impl ScheduleItemResult {
+    pub fn new(home_team: &TeamScore, away_team: &TeamScore) -> Self {
+        ScheduleItemResult {
+            home: TeamScore::from(home_team),
+            away: TeamScore::from(away_team),
+        }
+    }
 }
 
 impl ScheduleTour {
@@ -231,23 +218,29 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 15)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 16)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let mut items_with_results = Vec::new();
@@ -263,7 +256,10 @@ mod tests {
         let item3 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 17).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 17)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: None,
@@ -284,23 +280,29 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 15)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 16)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let schedule_tour = ScheduleTour {
@@ -315,23 +317,28 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd_opt(2024, 3, 15).unwrap().and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd_opt(2024, 3, 15)
+                .unwrap()
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
-            date: NaiveDate::from_ymd(2024, 3, 16).and_hms_opt(0,0,0).unwrap(),
+            date: NaiveDate::from_ymd(2024, 3, 16)
+                .and_hms_opt(0, 0, 0)
+                .unwrap(),
             home_team_id: 0,
             away_team_id: 0,
             result: Some(ScheduleItemResult {
-                home_goals: 0,
-                away_goals: 0,
+                home: TeamScore::new_with_score(0, 0),
+                away: TeamScore::new_with_score(0, 0),
             }),
         };
         let schedule_tour = ScheduleTour {

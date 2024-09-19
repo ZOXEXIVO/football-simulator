@@ -1,4 +1,4 @@
-use crate::r#match::{BallState, MatchContext};
+use crate::r#match::{BallSide, MatchContext};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 use crate::r#match::ball::events::BallUpdateEvent;
@@ -18,7 +18,7 @@ impl Ball {
         Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(300.0, 300.0, 0.0),
-            velocity: Vector3::new(0.2, 0.02, 0.1),
+            velocity: Vector3::new(0.6, 0.12, 0.1),
             owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
@@ -26,7 +26,7 @@ impl Ball {
         }
     }
 
-    pub fn update(&mut self, context: &mut MatchContext) -> Vec<BallUpdateEvent> {
+    pub fn update(&mut self, context: &MatchContext) -> Vec<BallUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
         self.update_velocity(&mut result);
@@ -35,9 +35,9 @@ impl Ball {
         self.check_boundary_collision(&mut result, context);
 
         if self.position.x < self.center_field_position {
-            context.state.set_ball_state(BallState::HomeSide);
+            context.ball.set(BallSide::Left)
         }else {
-            context.state.set_ball_state(BallState::AwaySide);
+            context.ball.set(BallSide::Right)
         }
 
         result
@@ -46,7 +46,7 @@ impl Ball {
     fn check_boundary_collision(
         &mut self,
         _result: &mut Vec<BallUpdateEvent>,
-        context: &mut MatchContext,
+        context: &MatchContext,
     ) {
         let field_width = context.field_size.width as f32 + 15.0;
         let field_height = context.field_size.height as f32 + 15.0;
@@ -73,11 +73,11 @@ impl Ball {
             if (self.start_position.y < goal_line_y && self.position.y >= goal_line_y)
                 || (self.start_position.y > goal_line_y && self.position.y <= goal_line_y)
             {
-                if self.start_position.x < goal_line_x {
-                    result.push(BallUpdateEvent::AwayGoal);
-                } else {
-                    result.push(BallUpdateEvent::HomeGoal);
-                }
+                // if self.start_position.x < goal_line_x {
+                //     result.push(BallUpdateEvent::Goal());
+                // } else {
+                //     result.push(BallUpdateEvent::HomeGoal);
+                // }
 
                 self.reset();
             }

@@ -4,6 +4,7 @@ use core::r#match::FootballEngine;
 use core::r#match::MatchContext;
 use core::r#match::MatchField;
 use macroquad::prelude::*;
+
 //tactics
 use core::club::player::Player;
 use core::club::player::PlayerPositionType;
@@ -11,12 +12,17 @@ use core::club::team::tactics::{Tactics, TacticsPositioning};
 use core::r#match::squad::TeamSquad;
 use core::r#match::MatchObjectsPositions;
 use core::r#match::MatchPlayerCollection;
+use std::time::Instant;
+use env_logger::Env;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
+use core::r#match::PlayerSide;
 
 #[macroquad::main("FootballSimulatorTesting")]
 async fn main() {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
+
     let width = screen_width();
     let height = screen_height();
 
@@ -32,17 +38,56 @@ async fn main() {
 
     let field_size = field.size.clone();
 
-    let mut context = MatchContext::new(&field_size, players);
+    let mut context = MatchContext::new(&field_size, players, 0, 0);
+
+    let mut current_frame = 0u64;
+
+    const average_fps_bucket_size: usize = 50;
+
+    let mut max_fps: u128 = 0;
+
+    let mut fps_data = [0u128; average_fps_bucket_size];
 
     loop {
+        current_frame += 1;
+
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
 
         draw_circle(ball.position.x, ball.position.y, 7.0, BLACK);
 
+        let start = Instant::now();
+
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
 
+        let elapsed = start.elapsed();
+        let fps_data_current_idx = (current_frame % average_fps_bucket_size as u64) as usize;
+
+        let elapsed_mcs = elapsed.as_micros() as u128;
+
+        fps_data[fps_data_current_idx] = elapsed.as_micros() as u128;
+
+        if current_frame > 100 && elapsed_mcs > max_fps {
+            max_fps = elapsed_mcs;
+        }
+
+        draw_text(
+            &format!("FPS AVG: {} mcs", average(&fps_data)),
+            10.0,
+            20.0,
+            20.0,
+            BLACK,
+        );
+
+        draw_text(
+            &format!("FPS MAX: {} mcs", max_fps),
+            10.0,
+            40.0,
+            20.0,
+            BLACK,
+        );
+
         field.players.iter().for_each(|player| {
-            let mut color = if player.is_home {
+            let mut color = if player.side.unwrap() == PlayerSide::Left {
                 Color::from_rgba(0, 184, 186, 255)
             } else {
                 Color::from_rgba(208, 139, 255, 255)
@@ -164,4 +209,10 @@ fn get_player(position: PlayerPositionType) -> Player {
         position,
         20,
     )
+}
+
+fn average(numbers: &[u128]) -> u128 {
+    let sum: u128 = numbers.iter().sum();
+    let count = numbers.len() as u128;
+    sum / count
 }

@@ -81,18 +81,18 @@ impl LeagueTable {
 
     pub fn update_from_results(&mut self, match_result: &Vec<MatchResult>) {
         for result in match_result {
-            match Ord::cmp(&result.score.home, &result.score.away) {
+            match Ord::cmp(&result.score.home_team.get(), &result.score.away_team.get()) {
                 Ordering::Equal => {
-                    self.draft(result.home_team_id, result.score.home, result.score.away);
-                    self.draft(result.away_team_id, result.score.away, result.score.away);
+                    self.draft(result.score.home_team.team_id, result.score.home_team.get(), result.score.away_team.get());
+                    self.draft(result.score.away_team.team_id, result.score.away_team.get(), result.score.home_team.get());
                 }
                 Ordering::Greater => {
-                    self.winner(result.home_team_id, result.score.home, result.score.away);
-                    self.looser(result.away_team_id, result.score.away, result.score.home);
+                    self.winner(result.score.home_team.team_id, result.score.home_team.get(), result.score.away_team.get());
+                    self.looser(result.score.away_team.team_id, result.score.away_team.get(), result.score.home_team.get());
                 }
                 Ordering::Less => {
-                    self.looser(result.home_team_id, result.score.home, result.score.away);
-                    self.winner(result.away_team_id, result.score.away, result.score.home);
+                    self.looser(result.score.home_team.team_id, result.score.home_team.get(), result.score.away_team.get());
+                    self.winner(result.score.away_team.team_id, result.score.away_team.get(), result.score.home_team.get());
                 }
             }
         }
@@ -127,7 +127,7 @@ impl Default for LeagueTable {
 
 #[cfg(test)]
 mod tests {
-    use crate::r#match::Score;
+    use crate::r#match::{Score, TeamScore};
     use super::*;
 
     #[test]
@@ -145,8 +145,8 @@ mod tests {
             home_team_id: 1,
             away_team_id: 2,
             score: Score{
-                home: 3,
-                away: 3,
+                home_team: TeamScore::new_with_score(1, 3),
+                away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
             result_details: None,
@@ -195,8 +195,8 @@ mod tests {
             home_team_id,
             away_team_id,
             score: Score{
-                home: 3,
-                away: 0,
+                home_team: TeamScore::new_with_score(1, 3),
+                away_team: TeamScore::new_with_score(2, 0),
                 details: vec![],
             },
             result_details: None,
@@ -253,8 +253,8 @@ mod tests {
             home_team_id,
             away_team_id,
             score: Score{
-                home: 0,
-                away: 3,
+                home_team: TeamScore::new_with_score(1, 0),
+                away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
             result_details: None,

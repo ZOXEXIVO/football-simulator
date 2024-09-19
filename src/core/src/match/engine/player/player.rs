@@ -1,14 +1,13 @@
-﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    BallContext, BallState, GameTickContext, MatchBallLogic, MatchContext, PlayerTickContext,
-    StateStrategy,
-};
-use crate::{PersonAttributes, Player, PlayerAttributes, PlayerPositionType, PlayerSkills};
+﻿use crate::r#match::{GameTickContext, MatchContext};
+use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
-use crate::r#match::player::conditions::PlayerConditions;
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::player::state::PlayerMatchState;
+use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::forwarders::states::ForwardState;
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::midfielders::states::MidfielderState;
+use crate::r#match::player::events::{PlayerUpdateEventCollection};
+use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 
 #[derive(Debug, Clone)]
@@ -23,10 +22,16 @@ pub struct MatchPlayer {
     pub tactics_position: PlayerPositionType,
     pub velocity: Vector3<f32>,
     pub has_ball: bool,
-    pub is_home: bool,
+    pub side: Option<PlayerSide>,
     pub state: PlayerState,
     pub in_state_time: u64,
     pub statistics: MatchPlayerStatistics
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum PlayerSide {
+    Left,
+    Right
 }
 
 impl MatchPlayer {
@@ -42,8 +47,14 @@ impl MatchPlayer {
             tactics_position: position,
             velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
-            is_home: false,
-            state: PlayerState::Standing,
+            side: None,
+            state: match position.position_group() {
+                PlayerFieldPositionGroup::Goalkeeper => PlayerState::Goalkeeper(GoalkeeperState::Standing),
+                PlayerFieldPositionGroup::Defender => PlayerState::Defender(DefenderState::Standing),
+                PlayerFieldPositionGroup::Midfielder => PlayerState::Midfielder(MidfielderState::Standing),
+                PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::Standing),
+                _ => PlayerState::Returning
+            },
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new()
         }
@@ -51,34 +62,13 @@ impl MatchPlayer {
 
     pub fn update(
         &mut self,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-    ) -> Vec<PlayerUpdateEvent> {
-        let mut result = Vec::with_capacity(10);
-
-        let is_ball_home_size = match context.state.ball_state {
-            Some(ball_state) => ball_state == BallState::HomeSide,
-            None => false,
-        };
-
-        let player_context = PlayerTickContext {
-            ball_context: BallContext {
-                // ball moving towards goal
-                is_heading_towards_goal: MatchBallLogic::is_heading_towards_goal(
-                    &tick_context.objects_positions.ball_position,
-                    &self.start_position,
-                ),
-                on_own_side: self.is_home && is_ball_home_size,
-                ball_distance: tick_context
-                    .objects_positions
-                    .ball_position
-                    .distance_to(&self.position),
-            },
-        };
+        context: &MatchContext,
+        tick_context: &GameTickContext
+    ) -> PlayerUpdateEventCollection {
+        let mut result = PlayerUpdateEventCollection::new();
 
         // change move
-        PlayerMatchState::process(self, context, tick_context, player_context, &mut result);
-        PlayerConditions::process(self);
+        result.join(PlayerMatchState::process(self, context, tick_context));
 
         self.move_to();
 
@@ -93,17 +83,13 @@ impl MatchPlayer {
     fn update_state(
         &mut self,
         context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_context: PlayerTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        tick_context: &GameTickContext
     ) {
-        let state_result = self.tactics_position.position_group().calculate(
+        let state_result = self.tactics_position.position_group().process(
             self.in_state_time,
             self,
             context,
-            tick_context,
-            player_context,
-            result,
+            tick_context
         );
 
         if let Some(state) = state_result.state {
@@ -124,34 +110,5 @@ impl MatchPlayer {
 
     pub fn heading(&self) -> f32 {
         self.velocity.y.atan2(self.velocity.x)
-    }
-
-    pub fn distance_from_start_position(&self) -> f32{
-        self.start_position.distance_to(&self.position)
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum PlayerState {
-    Standing,
-    Walking,
-    Running,
-    Tackling,
-    Shooting,
-    Passing,
-    Returning,
-}
-
-impl Display for PlayerState {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            PlayerState::Standing => write!(f, "Standing"),
-            PlayerState::Walking => write!(f, "Walking"),
-            PlayerState::Running => write!(f, "Running"),
-            PlayerState::Tackling => write!(f, "Tackling"),
-            PlayerState::Shooting => write!(f, "Shooting"),
-            PlayerState::Passing => write!(f, "Passing"),
-            PlayerState::Returning => write!(f, "Returning"),
-        }
     }
 }

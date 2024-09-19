@@ -1,63 +1,65 @@
-use crate::common::NeuralNetwork;
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::strategies::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer, PlayerTickContext, StateChangeResult,
-};
 use std::sync::LazyLock;
+use nalgebra::Vector3;
+use crate::common::loader::DefaultNeuralNetworkLoader;
+use crate::common::NeuralNetwork;
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 
 static DEFENDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
 
+#[derive(Default)]
 pub struct DefenderPassingState {}
 
-impl DefenderPassingState {
-    pub fn process(
-        player: &mut MatchPlayer,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_tick_context: PlayerTickContext,
-        in_state_time: u64,
-        result: &mut Vec<PlayerUpdateEvent>,
-    ) -> StateChangeResult {
-        StateChangeResult::none()
-        // let mut res_vec = Vec::new();
-        //
-        // res_vec.push(objects_positions.ball_position.x as f64);
-        // res_vec.push(objects_positions.ball_position.y as f64);
-        //
-        // res_vec.push(objects_positions.ball_velocity.x as f64);
-        // res_vec.push(objects_positions.ball_velocity.y as f64);
-        //
-        // let res = PLAYER_PASSING_STATE_NETWORK.run(&res_vec);
-        //
-        // let index_of_max_element = res
-        //     .iter()
-        //     .enumerate()
-        //     .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-        //     .unwrap()
-        //     .0;
-        //
-        // match index_of_max_element {
-        //     0 => Some(PlayerState::Standing),
-        //     1 => Some(PlayerState::Walking),
-        //     2 => Some(PlayerState::Running),
-        //     3 => Some(PlayerState::Tackling),
-        //     4 => Some(PlayerState::Shooting),
-        //     5 => Some(PlayerState::Passing),
-        //     6 => Some(PlayerState::Returning),
-        //     _ => None,
-        // }
+impl StateProcessingHandler for DefenderPassingState {
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if !ctx.player.has_ball {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+        }
 
-        // if let Some(teammate_position) =
-        //     objects_positions.find_closest_teammate(player, &context.state.match_state)
-        // {
-        //     result.push(PlayerUpdateEvent::PassTo(
-        //         teammate_position,
-        //         player.skills.running_speed(),
-        //     ))
-        // }
-        //
-        // Some(PlayerState::Standing)
+        let (nearest_teammates, opponents) = ctx.tick_context
+            .objects_positions
+            .player_distances
+            .players_within_distance(ctx.player, 30.0);
+
+        if ctx.player.has_ball && opponents.len() > 1  {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Clearing));
+        }
+
+        let mut best_player_id = None;
+        let mut highest_score = 0.0;
+
+        for (player_id, teammate_distance) in nearest_teammates {
+            let score = 1.0 / (teammate_distance + 1.0);
+            if score > highest_score {
+                highest_score = score;
+                best_player_id = Some(player_id);
+            }
+        }
+
+        if let Some(player_id) = best_player_id {
+            if let Some(teammate_player_position) = ctx.tick_context.objects_positions.players_positions.get_player_position(player_id) {
+                let events = PlayerUpdateEventCollection::with_event(
+                    PlayerUpdateEvent::PassTo(teammate_player_position, 0.0)
+                );
+
+                return Some(StateChangeResult::with_events(events));
+            }
+        }
+
+        None
+    }
+
+    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        None
+    }
+
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        Some(Vector3::new(0.0, 0.0, 0.0))
+    }
+
+    fn process_conditions(&self, ctx: ConditionContext) {
+
     }
 }

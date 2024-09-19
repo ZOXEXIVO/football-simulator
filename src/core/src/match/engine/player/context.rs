@@ -6,21 +6,17 @@ pub struct GameTickContext {
     pub objects_positions: MatchObjectsPositions,
 }
 
-pub struct PlayerTickContext {
-    pub ball_context: BallContext,
-}
-
-pub struct BallContext {
-    pub is_heading_towards_goal: bool,
-    pub on_own_side: bool,
-
-    pub ball_distance: f32,
+#[derive(PartialEq, Debug, Clone, Copy)]
+pub enum PlayerDistanceFromStartPosition {
+    Small,
+    Medium,
+    Big
 }
 
 pub struct MatchObjectsPositions {
     pub ball_position: Vector3<f32>,
     pub ball_velocity: Vector3<f32>,
-    pub players_positions: Vec<PlayerFieldPosition>,
+    pub players_positions: PlayerPositionsClosure,
     pub player_distances: PlayerDistanceClosure,
 }
 
@@ -31,7 +27,7 @@ impl MatchObjectsPositions {
             .iter()
             .map(|p| PlayerFieldPosition {
                 player_id: p.player_id,
-                is_home: p.is_home,
+                side: p.side.unwrap(),
                 position: p.position,
             })
             .collect();
@@ -62,7 +58,7 @@ impl MatchObjectsPositions {
         MatchObjectsPositions {
             ball_position: field.ball.position,
             ball_velocity: field.ball.velocity,
-            players_positions: positions,
+            players_positions: PlayerPositionsClosure::new(positions),
             player_distances: distances,
         }
     }
@@ -75,6 +71,25 @@ impl MatchObjectsPositions {
             .players_within_distance_count(current_player, max_distance);
 
         ((nearest_teammates_count as f32) + 1.0) / ((nearest_opponents_count as f32) + 1.0) < 1.0
+    }
+}
+
+pub struct PlayerPositionsClosure {
+    pub items: Vec<PlayerFieldPosition>,
+}
+
+impl PlayerPositionsClosure {
+    pub fn new(players_positions: Vec<PlayerFieldPosition>) -> Self {
+        PlayerPositionsClosure {
+            items: players_positions
+        }
+    }
+
+    pub fn get_player_position(&self, player_id: u32) -> Option<Vector3<f32>> {
+        self.items
+            .iter()
+            .find(|p| p.player_id == player_id)
+            .map(|p| p.position)
     }
 }
 
@@ -148,7 +163,7 @@ impl PlayerDistanceClosure {
         current_player: &MatchPlayer,
         max_distance: f32,
     ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
-        let (mut teammates, mut opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self
+        let (teammates, opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self
             .distances
             .iter()
             .filter(|&p| p.distance < max_distance)

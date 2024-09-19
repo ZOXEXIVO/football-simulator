@@ -1,11 +1,13 @@
-use crate::r#match::ball::Ball;
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, Match, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
+use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
+use std::sync::atomic::{AtomicU8, Ordering};
+use rayon::prelude::IntoParallelRefMutIterator;
 use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
-use crate::r#match::player::events::{PlayerEvents, PlayerUpdateEvent};
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use rayon::iter::ParallelIterator;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -14,12 +16,15 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         FootballEngine {}
     }
 
-    pub fn play(home_squad: TeamSquad, away_squad: TeamSquad) -> MatchResultRaw {
-        let players = MatchPlayerCollection::from_squads(&home_squad, &away_squad);
+    pub fn play(left_squad: TeamSquad, right_squad: TeamSquad) -> MatchResultRaw {
+        let left_team_id = left_squad.team_id;
+        let right_team_id = right_squad.team_id;
 
-        let mut field = MatchField::new(W, H, home_squad, away_squad);
+        let players = MatchPlayerCollection::from_squads(&left_squad, &right_squad);
 
-        let mut context = MatchContext::new(&field.size, players);
+        let mut field = MatchField::new(W, H, left_squad, right_squad);
+
+        let mut context = MatchContext::new(&field.size, players, left_team_id, right_team_id);
 
         let mut state_manager = StateManager::new();
 
@@ -32,8 +37,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         }
 
         // TODO
-        context.result.home_players = field.home_players.unwrap();
-        context.result.away_players = field.away_players.unwrap();
+        context.result.left_team_players = field.left_side_players.unwrap();
+        context.result.right_team_players = field.right_side_players.unwrap();
 
         context.result.fill_details(context.players.raw_players());
 
@@ -66,7 +71,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
     fn play_ball(
         field: &mut MatchField,
-        context: &mut MatchContext,
+        context: &MatchContext,
         ball_collision_events: Vec<BallUpdateEvent>
     ) {
         let ball_events = field.ball.update(context);
@@ -82,16 +87,16 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         tick_context: &GameTickContext,
         player_collision_events: Vec<PlayerUpdateEvent>
     ){
-        let mut all_player_events = {
-            let player_events: Vec<PlayerUpdateEvent> = field.players
-                .iter_mut()
-                .flat_map(|player| player.update(context, tick_context))
-                .collect();
+        let player_events: Vec<PlayerUpdateEventCollection> = field.players
+            //.par_iter_mut()
+            .iter_mut()
+            .map(|player| player.update(context, tick_context))
+            .collect();
 
-             player_events.into_iter().chain(player_collision_events).into_iter()
-        };
 
-        PlayerEvents::process(&mut all_player_events, &mut field.ball, context);
+        for events in player_events {
+            events.process(&mut field.ball, context)
+        }
     }
 }
 
@@ -104,6 +109,7 @@ pub enum MatchEvent {
 
 pub struct MatchContext {
     pub state: GameState,
+    pub ball: BallState,
     pub time: MatchTime,
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
@@ -111,11 +117,12 @@ pub struct MatchContext {
 }
 
 impl MatchContext {
-    pub fn new(field_size: &MatchFieldSize, players: MatchPlayerCollection) -> Self {
+    pub fn new(field_size: &MatchFieldSize, players: MatchPlayerCollection, team_left_id: u32, team_right_id: u32) -> Self {
         MatchContext {
             state: GameState::new(),
+            ball: BallState::new(),
             time: MatchTime::new(),
-            result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS),
+            result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS, team_left_id, team_right_id),
             field_size: MatchFieldSize::clone(&field_size),
             players,
         }
@@ -129,6 +136,61 @@ impl MatchContext {
         self.time.increment(time);
     }
 }
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum BallSide {
+    Left,
+    Center,
+    Right
+}
+
+pub struct BallState {
+    side: AtomicU8
+}
+
+impl BallState {
+    pub fn new() -> Self {
+        BallState { side: AtomicU8::new(0) }
+    }
+
+    pub fn set(&self, side: BallSide) {
+        let side_u = u8::from(side);
+
+        self.side.store(side_u, Ordering::SeqCst)
+    }
+
+    pub fn get(&self) -> BallSide {
+        BallSide::from(self.side.load(Ordering::SeqCst))
+    }
+}
+
+impl From<BallSide> for u8 {
+    fn from(side: BallSide) -> Self {
+        match side {
+            BallSide::Left => 0,
+            BallSide::Center => 1,
+            BallSide::Right => 2
+        }
+    }
+}
+
+impl From<u8> for BallState {
+    fn from(side_u: u8) -> Self {
+        BallState { side: AtomicU8::new(side_u) }
+    }
+}
+
+impl From<u8> for BallSide {
+    fn from(side_u: u8) -> Self {
+        match side_u {
+            0 => BallSide::Left,
+            1 => BallSide::Center,
+            2 => BallSide::Right,
+            _ => BallSide::Left
+        }
+    }
+}
+
 
 #[derive(Clone)]
 pub struct MatchFieldSize {
@@ -173,11 +235,11 @@ impl MatchPlayerCollection {
         MatchPlayerCollection { players: result }
     }
 
-    pub fn get<'p>(&'p self, player_id: u32) -> Option<&'p MatchPlayer> {
+    pub fn get(&self, player_id: u32) -> Option<&MatchPlayer> {
         self.players.get(&player_id)
     }
 
-    pub fn get_mut<'p>(&'p mut self, player_id: u32) -> Option<&'p mut MatchPlayer> {
+    pub fn get_mut(&mut self, player_id: u32) -> Option<&mut MatchPlayer> {
         self.players.get_mut(&player_id)
     }
 
@@ -187,7 +249,7 @@ impl MatchPlayerCollection {
 }
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
-const MATCH_HALF_TIME_MS: u64 = 1 * 60 * 1000;
+pub const MATCH_HALF_TIME_MS: u64 = 1 * 60 * 1000;
 
 pub struct MatchTime {
     pub time: u64,

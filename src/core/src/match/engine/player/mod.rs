@@ -1,31 +1,25 @@
 ﻿pub mod behaviours;
 pub mod context;
-pub mod player;
-pub mod strategies;
-mod conditions;
 pub mod events;
+pub mod player;
 mod state;
 pub mod statistics;
+pub mod strategies;
 
-use crate::r#match::MatchContext;
 pub use behaviours::*;
 pub use context::*;
 use itertools::Itertools;
 pub use player::*;
 pub use strategies::*;
 
-pub struct GameSituationInput<'p> {
+pub struct GameFieldContextInput<'p> {
     objects_positions: &'p MatchObjectsPositions,
 }
 
-impl<'p> GameSituationInput<'p> {
-    pub fn from_contexts(
-        context: &MatchContext,
-        player: &MatchPlayer,
-        tick_context: &'p GameTickContext,
-    ) -> Self {
-        GameSituationInput {
-            objects_positions: &tick_context.objects_positions,
+impl<'p> GameFieldContextInput<'p> {
+    pub fn from_contexts(ctx: &StateProcessingContext<'p>) -> Self {
+        GameFieldContextInput {
+            objects_positions: &ctx.tick_context.objects_positions,
         }
     }
 
@@ -33,6 +27,7 @@ impl<'p> GameSituationInput<'p> {
         let players_positions: Vec<f64> = self
             .objects_positions
             .players_positions
+            .items
             .iter()
             .sorted_by_key(|m| m.player_id)
             .flat_map(|p| p.position.as_slice().to_vec())

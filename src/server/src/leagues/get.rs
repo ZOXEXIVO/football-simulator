@@ -156,9 +156,19 @@ pub async fn league_get_action(
                         LeagueScheduleItem {
                             match_id: &item.id,
 
-                            result: item.result.as_ref().map(|res| LeagueScheduleItemResult {
-                                home_goals: res.home_goals,
-                                away_goals: res.away_goals,
+                            result: item.result.as_ref().map(|res| {
+                                return LeagueScheduleItemResult {
+                                    home_goals: if item.home_team_id == res.home.team_id {
+                                        res.home.get()
+                                    } else {
+                                        res.away.get()
+                                    },
+                                    away_goals: if item.home_team_id == res.away.team_id {
+                                        res.away.get()
+                                    } else {
+                                        res.home.get()
+                                    },
+                                }
                             }),
 
                             home_team_id: item.home_team_id,

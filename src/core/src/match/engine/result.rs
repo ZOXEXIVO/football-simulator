@@ -1,4 +1,6 @@
-﻿use crate::league::LeagueMatch;
+﻿use std::cell::Cell;
+use std::sync::atomic::{AtomicU8, Ordering};
+use crate::league::LeagueMatch;
 use crate::r#match::position::MatchPositionData;
 use crate::r#match::{MatchPlayer, TeamSquad};
 use crate::r#match::statistics::MatchStatisticType;
@@ -9,20 +11,20 @@ pub struct MatchResultRaw {
 
     pub position_data: MatchPositionData,
 
-    pub home_players: FieldSquad,
-    pub away_players: FieldSquad,
+    pub left_team_players: FieldSquad,
+    pub right_team_players: FieldSquad,
 
     pub match_time_ms: u64,
     pub additional_time_ms: u64,
 }
 
 impl MatchResultRaw {
-    pub fn with_match_time(match_time_ms: u64) -> Self {
+    pub fn with_match_time(match_time_ms: u64, home_team_id: u32, away_team_id: u32) -> Self {
         MatchResultRaw {
-            score: Score::new(),
+            score: Score::new(home_team_id, away_team_id),
             position_data: MatchPositionData::new(),
-            home_players: FieldSquad::new(),
-            away_players: FieldSquad::new(),
+            left_team_players: FieldSquad::new(),
+            right_team_players: FieldSquad::new(),
             match_time_ms,
             additional_time_ms: 0,
         }
@@ -33,8 +35,8 @@ impl MatchResultRaw {
         home_team_players: &FieldSquad,
         away_team_players: &FieldSquad,
     ) {
-        self.home_players = FieldSquad::from(home_team_players);
-        self.away_players = FieldSquad::from(away_team_players);
+        self.left_team_players = FieldSquad::from(home_team_players);
+        self.right_team_players = FieldSquad::from(away_team_players);
     }
 
     pub fn fill_details(&mut self, players: Vec<&MatchPlayer>){
@@ -87,9 +89,64 @@ impl FieldSquad {
 
 #[derive(Debug, Clone)]
 pub struct Score {
-    pub home: u8,
-    pub away: u8,
+    pub home_team: TeamScore,
+    pub away_team: TeamScore,
     pub details: Vec<GoalDetail>,
+}
+
+#[derive(Debug)]
+pub struct TeamScore {
+    pub team_id: u32,
+    score: AtomicU8
+}
+
+impl Clone for TeamScore {
+    fn clone(&self) -> Self {
+        TeamScore {
+            team_id: self.team_id,
+            score: AtomicU8::new(self.score.load(Ordering::SeqCst))
+        }
+    }
+}
+
+impl TeamScore {
+    pub fn new(team_id: u32) -> Self {
+        TeamScore {
+            team_id,
+            score: AtomicU8::new(0)
+        }
+    }
+
+    pub fn new_with_score(team_id: u32, score: u8) -> Self {
+        TeamScore {
+            team_id,
+            score: AtomicU8::new(score)
+        }
+    }
+
+    pub fn get(&self) -> u8 {
+        self.score.load(Ordering::SeqCst)
+    }
+}
+impl From<&TeamScore> for TeamScore {
+    fn from(team_score: &TeamScore) -> Self {
+        TeamScore::new_with_score(team_score.team_id, team_score.score.load(Ordering::SeqCst))
+    }
+}
+
+impl PartialEq<Self> for TeamScore {
+    fn eq(&self, other: &Self) -> bool {
+        self.score.load(Ordering::SeqCst) == other.score.load(Ordering::SeqCst)
+    }
+}
+
+impl PartialOrd for TeamScore {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        let left_score = self.score.load(Ordering::SeqCst);
+        let other_score =  other.score.load(Ordering::SeqCst);
+
+        Some(left_score.cmp(&other_score))
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -101,10 +158,10 @@ pub struct GoalDetail {
 }
 
 impl Score {
-    pub fn new() -> Self {
+    pub fn new(home_team_id: u32, away_team_id: u32) -> Self {
         Score {
-            home: 0,
-            away: 0,
+            home_team: TeamScore::new(home_team_id),
+            away_team: TeamScore::new(away_team_id),
             details: Vec::new(),
         }
     }
@@ -116,16 +173,24 @@ impl Score {
     pub fn detail(&self) -> &[GoalDetail]{
         &self.details
     }
+
+    pub fn increment_home_goals(&self){
+        self.home_team.score.fetch_add(1, Ordering::SeqCst);
+    }
+
+    pub fn increment_away_goals(&self){
+        self.away_team.score.fetch_add(1, Ordering::SeqCst);
+    }
 }
 
 #[derive(Debug, Clone)]
 pub struct MatchResult {
     pub id: String,
     pub league_id: u32,
-    pub result_details: Option<MatchResultRaw>,
-    pub score: Score,
     pub home_team_id: u32,
     pub away_team_id: u32,
+    pub result_details: Option<MatchResultRaw>,
+    pub score: Score
 }
 
 impl From<&LeagueMatch> for MatchResult {
@@ -133,10 +198,10 @@ impl From<&LeagueMatch> for MatchResult {
         MatchResult {
             id: m.id.clone(),
             league_id: m.league_id,
-            score: Score::new(),
-            result_details: None,
             home_team_id: m.home_team_id,
             away_team_id: m.away_team_id,
+            score: Score::new(m.home_team_id, m.away_team_id),
+            result_details: None
         }
     }
 }
