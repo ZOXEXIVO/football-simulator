@@ -25,7 +25,7 @@ pub struct DatabaseGenerator;
 impl DatabaseGenerator {
     pub fn generate(data: &DatabaseEntity) -> SimulatorData {
         let current_date = NaiveDateTime::new(
-            NaiveDate::from_ymd_opt(2023, 7, 1).unwrap(),
+            NaiveDate::from_ymd_opt(2024, 7, 1).unwrap(),
             NaiveTime::default(),
         ); // Utc::now().date_naive().and_hms_opt(0, 0, 0).unwrap();
 
@@ -43,7 +43,7 @@ impl DatabaseGenerator {
     }
 
     fn generate_countries(continent: &ContinentEntity, data: &DatabaseEntity) -> Vec<Country> {
-        return data
+        data
             .countries
             .iter()
             .filter(|cn| cn.continent_id == continent.id)
@@ -89,11 +89,11 @@ impl DatabaseGenerator {
 
                 country
             })
-            .collect();
+            .collect()
     }
 
     fn generate_leagues(country_id: u32, data: &DatabaseEntity) -> Vec<League> {
-        return data
+        data
             .leagues
             .iter()
             .filter(|l| l.country_id == country_id)
@@ -131,7 +131,7 @@ impl DatabaseGenerator {
                     reputation: 0,
                 }
             })
-            .collect();
+            .collect()
     }
 
     fn generate_clubs(
@@ -140,7 +140,7 @@ impl DatabaseGenerator {
         player_generator: &mut PlayerGenerator,
         staff_generator: &mut StaffGenerator,
     ) -> Vec<Club> {
-        return data
+        data
             .clubs
             .iter()
             .filter(|c| c.country_id == country_id)
@@ -186,7 +186,7 @@ impl DatabaseGenerator {
                         .collect(),
                 ),
             })
-            .collect();
+            .collect()
     }
 
     fn generate_players(player_generator: &mut PlayerGenerator, country_id: u32) -> Vec<Player> {

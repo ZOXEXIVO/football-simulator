@@ -108,11 +108,11 @@ impl Trainer for NeuralNetwork{
 
     fn updates_weights(&mut self, weight_updates: Vec<Vec<Vec<f64>>>, deltas: &mut Vec<Vec<Vec<f64>>>, learning_rate: f64, momentum: f64)  {
         for layer_index in 0..self.layers.len() {
-            let mut layer = &mut self.layers[layer_index];
+            let layer = &mut self.layers[layer_index];
             let layer_weight_updates = &weight_updates[layer_index];
 
             for neuron_index in 0..layer.neurons.len() {
-                let mut neuron = &mut layer.index_mut(neuron_index as u32);
+                let neuron = &mut layer.index_mut(neuron_index as u32);
                 let neuron_weight_updates = &layer_weight_updates[neuron_index];
 
                 for weight_index in 0..neuron.weights.len() {
