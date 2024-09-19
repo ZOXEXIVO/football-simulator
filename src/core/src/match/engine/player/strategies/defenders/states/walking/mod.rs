@@ -3,7 +3,7 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::IntegerUtils;
-use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::state::PlayerState;
 
@@ -49,5 +49,9 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         None
+    }
+
+    fn process_conditions(&self, ctx: ConditionContext) {
+
     }
 }

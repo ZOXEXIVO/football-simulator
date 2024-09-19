@@ -1,7 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use std::sync::LazyLock;
 use nalgebra::Vector3;
@@ -30,6 +30,10 @@ impl StateProcessingHandler for GoalkeeperRestingState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
+    }
+
+    fn process_conditions(&self, ctx: ConditionContext) {
+
     }
 }
 

@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::{
-    PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler, SteeringBehavior,
-};
+use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -79,5 +76,9 @@ impl StateProcessingHandler for DefenderInterceptingState {
             .calculate(ctx.player)
             .velocity,
         )
+    }
+
+    fn process_conditions(&self, ctx: ConditionContext) {
+
     }
 }

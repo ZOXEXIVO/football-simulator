@@ -21,6 +21,9 @@ pub trait StateProcessingHandler {
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult>;
     // Calculate velocity
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>>;
+
+    // Calculate changind conditions
+    fn process_conditions(&self, ctx: ConditionContext);
 }
 
 impl PlayerFieldPositionGroup {
@@ -53,7 +56,7 @@ impl PlayerFieldPositionGroup {
 
 pub struct StateProcessor<'p> {
     in_state_time: u64,
-    player: &'p MatchPlayer,
+    player: &'p mut MatchPlayer,
     context: &'p MatchContext,
     tick_context: &'p GameTickContext
 }
@@ -61,7 +64,7 @@ pub struct StateProcessor<'p> {
 impl<'p> StateProcessor<'p> {
     pub fn new(
         in_state_time: u64,
-        player: &'p MatchPlayer,
+        player: &'p mut MatchPlayer,
         context: &'p MatchContext,
         tick_context: &'p GameTickContext
     ) -> Self {
@@ -74,31 +77,39 @@ impl<'p> StateProcessor<'p> {
     }
 
     pub fn process<H: StateProcessingHandler>(self, handler: H) -> StateProcessingResult {
-        let mut processing_ctx = self.into_ctx();
+        let condition_ctx = ConditionContext {
+            in_state_time: self.in_state_time,
+            player: self.player
+        };
 
+        // Process player conditions
+        handler.process_conditions(condition_ctx);
+
+        self.process_inner(handler)
+    }
+
+    pub fn process_inner<H: StateProcessingHandler>(self, handler: H) -> StateProcessingResult {
+        let processing_ctx = self.into_ctx();
         let mut result = StateProcessingResult::new();
 
         if let Some(velocity) = handler.velocity(&processing_ctx) {
             result.velocity = Some(velocity);
         }
 
-        if let Some(fast_result) = handler.try_fast(&processing_ctx) {
-            if let Some(state) = fast_result.state {
+        let complete_result = |state_results: StateChangeResult, mut result: StateProcessingResult|  {
+            if let Some(state) = state_results.state {
                 result.state = Some(state);
-                result.events = fast_result.events;
-
-                return result;
+                result.events = state_results.events;
             }
+            result
+        };
 
+        if let Some(fast_result) = handler.try_fast(&processing_ctx) {
+            return complete_result(fast_result, result);
         }
 
-        if let Some(slow_result) = handler.process_slow(&mut processing_ctx) {
-            if let Some(state) = slow_result.state {
-                result.state = Some(state);
-                result.events = slow_result.events;
-
-                return result;
-            }
+        if let Some(slow_result) = handler.process_slow(&processing_ctx) {
+            return complete_result(slow_result, result);
         }
 
         result
@@ -107,6 +118,11 @@ impl<'p> StateProcessor<'p> {
     pub fn into_ctx(self) -> StateProcessingContext<'p> {
         StateProcessingContext::from(self)
     }
+}
+
+pub struct ConditionContext<'sp> {
+    pub in_state_time: u64,
+    pub player: &'sp mut MatchPlayer
 }
 
 pub struct StateProcessingContext<'sp> {

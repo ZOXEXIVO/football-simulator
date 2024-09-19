@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{StateChangeResult, StateProcessingHandler};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingHandler};
 use crate::r#match::StateProcessingContext;
 
 static DEFENDER_HEADING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -22,5 +22,9 @@ impl StateProcessingHandler for DefenderHeadingState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
+    }
+
+    fn process_conditions(&self, ctx: ConditionContext) {
+
     }
 }

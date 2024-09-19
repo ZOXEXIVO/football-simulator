@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, MATCH_HALF_TIME_MS};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, MATCH_HALF_TIME_MS};
 use crate::r#match::defenders::states::DefenderState;
 
 static DEFENDER_RETURNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -41,5 +41,9 @@ impl StateProcessingHandler for DefenderReturningState {
             target: ctx.player.start_position,
             slowing_distance: 10.0,
         }.calculate(ctx.player).velocity)
+    }
+
+    fn process_conditions(&self, ctx: ConditionContext) {
+
     }
 }

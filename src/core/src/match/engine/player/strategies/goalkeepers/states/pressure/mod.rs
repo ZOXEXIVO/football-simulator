@@ -4,11 +4,7 @@ use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior,
-};
+use crate::r#match::{ConditionContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -29,6 +25,10 @@ impl StateProcessingHandler for GoalkeeperPressureState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
+    }
+
+    fn process_conditions(&self, ctx: ConditionContext) {
+
     }
 }
 
