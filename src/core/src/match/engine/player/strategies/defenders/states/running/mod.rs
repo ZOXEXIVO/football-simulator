@@ -21,7 +21,7 @@ impl StateProcessingHandler for DefenderRunningState {
                 return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
             }
 
-            if distance_to_ball >= 10.0 && distance_to_ball < 20.0 {
+            if ctx.player.has_ball && distance_to_ball >= 10.0 && distance_to_ball < 20.0 {
                 return Some(StateChangeResult::with_defender_state(DefenderState::Clearing));
             }
         }

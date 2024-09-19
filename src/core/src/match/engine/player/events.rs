@@ -9,6 +9,7 @@ pub enum PlayerUpdateEvent {
     TryAroundPlayer(u32, Vector3<f32>),
     TacklingBall(u32),
     PassTo(Vector3<f32>, f64),
+    ClearBall(Vector3<f32>),
     RushOut(u32),
     StayInGoal(u32),
     CommunicateMessage(u32, &'static str),
@@ -124,6 +125,9 @@ impl PlayerUpdateEventCollection {
                     let loser_id = if winner_id == player1_id { player2_id } else { player1_id };
                     let loser = context.players.get_mut(*loser_id).unwrap();
                     loser.has_ball = false;
+                }
+                PlayerUpdateEvent::ClearBall(ball_velocity) => {
+                    ball.velocity = *ball_velocity;
                 }
             }
         }

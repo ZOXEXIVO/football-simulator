@@ -33,7 +33,7 @@ impl StateProcessingHandler for DefenderStandingState {
                     )));
                 }
 
-                if opponents_count > 2 && teammates_count < 1 {
+                if ctx.player.has_ball && opponents_count > 2 && teammates_count < 1 {
                     return Some(StateChangeResult::with_defender_state(
                         DefenderState::Clearing,
                     ));

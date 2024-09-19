@@ -23,7 +23,7 @@ impl StateProcessingHandler for DefenderPassingState {
             .player_distances
             .players_within_distance(ctx.player, 30.0);
 
-        if opponents.len() > 1  {
+        if ctx.player.has_ball && opponents.len() > 1  {
             return Some(StateChangeResult::with_defender_state(DefenderState::Clearing));
         }
 
