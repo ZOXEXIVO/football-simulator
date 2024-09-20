@@ -124,10 +124,10 @@ async fn main() {
             );
 
             draw_text(
-                &format!("{:?}", player.state),
+                &player_state(player),
                 offset_x + player.position.x - 20.0,
                 offset_y + player.position.y + 20.0,
-                12.0,
+                13.0,
                 DARKGRAY,
             );
         });
@@ -234,12 +234,19 @@ fn average(numbers: &[u128]) -> u128 {
     sum / count
 }
 
+fn player_state(player: &MatchPlayer) -> String {
+    let state = player.state.to_string();
+
+    let cleaned_state = state.split(':').nth(1).unwrap_or(&state).trim();
+
+    return cleaned_state.to_string();
+}
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "FootballSimulatorTesting".to_owned(),
 
-        window_width: 1600,  // Set your preferred width
+        window_width: 1650,  // Set your preferred width
         window_height: 1100,  // Set your preferred height
         window_resizable: false,
         fullscreen: false,
