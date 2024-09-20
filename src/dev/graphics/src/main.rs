@@ -35,14 +35,14 @@ async fn main() {
     let offset_y = (height - field_height) / 2.0;
 
     //840, 545
-    let mut ball = Ball::with_coord(500.0, 500.0);
+    let mut ball = Ball::with_coord(field_width / 2.0, field_height / 2.0);
 
     let home_squad = get_home_squad();
     let away_squad = get_away_squad();
 
     let players = MatchPlayerCollection::from_squads(&home_squad, &away_squad);
 
-    let mut field = MatchField::new(width as usize, height as usize, home_squad, away_squad);
+    let mut field = MatchField::new(field_width as usize, field_height as usize, home_squad, away_squad);
 
     let field_size = field.size.clone();
 
@@ -133,22 +133,6 @@ async fn main() {
         });
 
         ball.update(&mut context);
-
-        if ball.position.x < 10.0 {
-            ball.velocity.x = -ball.velocity.x;
-        }
-
-        if ball.position.x > 800.0 {
-            ball.velocity.x = -ball.velocity.x;
-        }
-
-        if ball.position.y < 10.0 {
-            ball.velocity.y = -ball.velocity.y;
-        }
-
-        if ball.position.y > 400.0 {
-            ball.velocity.y = -ball.velocity.y;
-        }
 
         field.ball.position = ball.position;
         field.ball.velocity = ball.velocity;

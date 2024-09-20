@@ -17,7 +17,7 @@ impl Ball {
     pub fn with_coord(x: f32, y: f32) -> Self {
         Ball {
             position: Vector3::new(x, y, 0.0),
-            start_position: Vector3::new(300.0, 300.0, 0.0),
+            start_position: Vector3::new(x, y, 0.0),
             velocity: Vector3::new(0.2, 0.02, 0.1),
             owner: None,
             ball_position: BallPosition::Home,
@@ -48,16 +48,16 @@ impl Ball {
         _result: &mut Vec<BallUpdateEvent>,
         context: &MatchContext,
     ) {
-        let field_width = context.field_size.width as f32 + 15.0;
-        let field_height = context.field_size.height as f32 + 15.0;
+        let field_width = context.field_size.width as f32;
+        let field_height = context.field_size.height as f32;
 
         // Check if ball hits the boundary and reverse its velocity if it does
         if self.position.x <= 0.0 || self.position.x >= field_width {
-            self.velocity = -self.velocity;
+            self.velocity.x = -self.velocity.x;
         }
 
         if self.position.y <= 0.0 || self.position.y >= field_height {
-            self.velocity =-self.velocity;
+            self.velocity.y =- self.velocity.y;
         }
     }
 
