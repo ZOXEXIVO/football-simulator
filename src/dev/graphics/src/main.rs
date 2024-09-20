@@ -4,6 +4,7 @@ use core::r#match::FootballEngine;
 use core::r#match::MatchContext;
 use core::r#match::MatchField;
 use macroquad::prelude::*;
+use core::Vector2;
 
 //tactics
 use core::club::player::Player;
@@ -19,12 +20,19 @@ use core::NaiveDate;
 use core::PlayerGenerator;
 use core::r#match::PlayerSide;
 
-#[macroquad::main("FootballSimulatorTesting")]
+#[macroquad::main(window_conf)]
 async fn main() {
     env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
 
     let width = screen_width();
     let height = screen_height();
+
+    let field_width = 840.0;
+    let field_height = 545.0;
+
+    // Define an offset to center the field
+    let offset_x = (width - field_width) / 2.0;
+    let offset_y = (height - field_height) / 2.0;
 
     //840, 545
     let mut ball = Ball::with_coord(500.0, 500.0);
@@ -53,7 +61,16 @@ async fn main() {
 
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
 
-        draw_circle(ball.position.x, ball.position.y, 7.0, BLACK);
+        draw_rectangle_ex(offset_x , offset_y, field_width, field_height, DrawRectangleParams {
+            color: Color::from_rgba(189, 255, 204, 255),
+            offset: Vec2 {
+                x: 0.0,
+                y: 0.0,
+            },
+            rotation: 0.0,
+        });
+
+        draw_circle(offset_x + ball.position.x, offset_y + ball.position.y, 7.0, BLACK);
 
         let start = Instant::now();
 
@@ -72,16 +89,16 @@ async fn main() {
 
         draw_text(
             &format!("FPS AVG: {} mcs", average(&fps_data)),
-            10.0,
-            20.0,
+            offset_x + 10.0,
+            offset_y + 20.0,
             20.0,
             BLACK,
         );
 
         draw_text(
             &format!("FPS MAX: {} mcs", max_fps),
-            10.0,
-            40.0,
+            offset_x + 10.0,
+            offset_y + 40.0,
             20.0,
             BLACK,
         );
@@ -97,20 +114,20 @@ async fn main() {
                 color = YELLOW;
             }
 
-            draw_circle(player.position.x, player.position.y, 13.0, color);
+            draw_circle(offset_x + player.position.x, offset_y + player.position.y, 13.0, color);
             draw_text(
                 &player.tactics_position.get_short_name(),
-                player.position.x - 7.0,
-                player.position.y + 3.0,
-                15.0,
+                offset_x + player.position.x - 7.0,
+                offset_y + player.position.y + 3.0,
+                16.0,
                 BLACK,
             );
 
             draw_text(
-                &player.state.to_string(),
-                player.position.x - 20.0,
-                player.position.y + 20.0,
-                10.0,
+                &format!("{:?}", player.state),
+                offset_x + player.position.x - 20.0,
+                offset_y + player.position.y + 20.0,
+                12.0,
                 DARKGRAY,
             );
         });
@@ -215,4 +232,18 @@ fn average(numbers: &[u128]) -> u128 {
     let sum: u128 = numbers.iter().sum();
     let count = numbers.len() as u128;
     sum / count
+}
+
+
+fn window_conf() -> Conf {
+    Conf {
+        window_title: "FootballSimulatorTesting".to_owned(),
+
+        window_width: 1600,  // Set your preferred width
+        window_height: 1100,  // Set your preferred height
+        window_resizable: false,
+        fullscreen: false,
+        high_dpi: true, // Enable High DPI
+        ..Default::default()
+    }
 }
