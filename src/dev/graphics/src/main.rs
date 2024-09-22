@@ -114,20 +114,20 @@ async fn main() {
                 color = YELLOW;
             }
 
-            draw_circle(offset_x + player.position.x, offset_y + player.position.y, 13.0, color);
+            draw_circle(offset_x + player.position.x, offset_y + player.position.y, 16.0, color);
             draw_text(
                 &player.tactics_position.get_short_name(),
-                offset_x + player.position.x - 7.0,
-                offset_y + player.position.y + 3.0,
-                16.0,
+                offset_x + player.position.x - 8.0,
+                offset_y + player.position.y + 4.0,
+                19.0,
                 BLACK,
             );
 
             draw_text(
                 &player_state(player),
-                offset_x + player.position.x - 20.0,
-                offset_y + player.position.y + 20.0,
-                13.0,
+                offset_x + player.position.x - 27.0,
+                offset_y + player.position.y + 27.0,
+                15.0,
                 DARKGRAY,
             );
         });
@@ -229,12 +229,11 @@ fn player_state(player: &MatchPlayer) -> String {
 fn window_conf() -> Conf {
     Conf {
         window_title: "FootballSimulatorTesting".to_owned(),
-
-        window_width: 1650,  // Set your preferred width
-        window_height: 1100,  // Set your preferred height
+        window_width: 1024,
+        window_height: 768,
         window_resizable: false,
         fullscreen: false,
-        high_dpi: true, // Enable High DPI
+        high_dpi: true,
         ..Default::default()
     }
 }

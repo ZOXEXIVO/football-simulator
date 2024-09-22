@@ -55,7 +55,6 @@ impl StateProcessingHandler for DefenderInterceptingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Player's acceleration
         let player_acceleration = ctx.player.skills.physical.acceleration;
 
         // Get current positions
@@ -64,8 +63,6 @@ impl StateProcessingHandler for DefenderInterceptingState {
 
         // Calculate the direction vector towards the ball
         let direction_to_ball = (ball_position - player_position).normalize();
-
-        // Scale direction by player's acceleration to get velocity
         let player_velocity = (direction_to_ball * player_acceleration).normalize();
 
         Some(

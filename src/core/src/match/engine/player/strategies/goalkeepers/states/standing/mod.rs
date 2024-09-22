@@ -26,7 +26,6 @@ impl StateProcessingHandler for GoalkeeperStandingState {
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
-
     }
 }
 
