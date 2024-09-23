@@ -15,6 +15,7 @@ use core::r#match::MatchObjectsPositions;
 use core::r#match::MatchPlayerCollection;
 use std::time::Instant;
 use env_logger::Env;
+use core::Vector3;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
@@ -124,7 +125,7 @@ async fn main() {
             );
 
             draw_text(
-                &player_state(player),
+                &format!("{} ({})", player_state(player), distance(&ball.position, &player.position)) ,
                 offset_x + player.position.x - 27.0,
                 offset_y + player.position.y + 27.0,
                 15.0,
@@ -224,6 +225,10 @@ fn player_state(player: &MatchPlayer) -> String {
     let cleaned_state = state.split(':').nth(1).unwrap_or(&state).trim();
 
     return cleaned_state.to_string();
+}
+
+fn distance(a: &Vector3<f32>, b: &Vector3<f32>) -> usize {
+    ((a.x - b.x).powi(2) + (a.y - b.y).powi(2) + (a.z - b.z).powi(2)).sqrt() as usize
 }
 
 fn window_conf() -> Conf {
