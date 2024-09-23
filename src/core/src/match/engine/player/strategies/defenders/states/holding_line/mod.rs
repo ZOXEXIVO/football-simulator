@@ -74,8 +74,8 @@ impl StateProcessingHandler for DefenderHoldingLineState {
 impl DefenderHoldingLineState {
     /// Calculates the defensive line position based on team tactics and defender positions.
     fn calculate_defensive_line_position(&self, ctx: &StateProcessingContext) -> f32 {
-        // Get all defenders on the team
-        let defenders: Vec<&MatchPlayer> = ctx.context.players.defenders();
+        let player_ops = ctx.player();
+        let defenders: Vec<&MatchPlayer> = player_ops.defenders();
 
         // If no defenders found, use player's current position
         if defenders.is_empty() {
@@ -89,8 +89,9 @@ impl DefenderHoldingLineState {
 
     /// Checks if an opponent player is nearby within the MARKING_DISTANCE_THRESHOLD.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.context.players.raw_players().iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
+        ctx.player()
+            .opponents()
+            .iter()
             .any(|opponent| {
                 let distance = (ctx.player.position - opponent.position).magnitude();
                 distance < MARKING_DISTANCE_THRESHOLD
@@ -102,8 +103,9 @@ impl DefenderHoldingLineState {
         // Check if opponents are positioned ahead of the defensive line
         let defensive_line_position = self.calculate_defensive_line_position(ctx);
 
-        let opponents_ahead = ctx.context.players.raw_players().iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
+        let opponents_ahead = ctx.player()
+            .opponents()
+            .iter()
             .filter(|opponent| {
                 if ctx.player().on_own_side() {
                     opponent.position.y < defensive_line_position

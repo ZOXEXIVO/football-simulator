@@ -54,9 +54,9 @@ impl StateProcessingHandler for GoalkeeperStandingState {
 impl GoalkeeperStandingState {
     /// Determines if any opponent is within the danger zone around the penalty area.
     fn is_opponent_in_danger_zone(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.context.players.raw_players()
+        ctx.player()
+            .opponents()
             .iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
             .any(|opponent| {
                 let distance = (ctx.player.position - opponent.position).magnitude();
                 distance < DANGER_ZONE_RADIUS

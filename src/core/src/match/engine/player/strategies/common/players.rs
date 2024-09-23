@@ -1,3 +1,4 @@
+use crate::PlayerFieldPositionGroup;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, PlayerSide,
@@ -65,6 +66,14 @@ impl<'p> PlayerOperationsImpl<'p> {
     pub fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
         let (_, opponents_count) = self.distances();
         opponents_count > 1
+    }
+
+    pub fn opponents(&self) -> Vec<&MatchPlayer> {
+        self.ctx.context.players.get_by_not_team(self.ctx.player.team_id)
+    }
+
+    pub fn defenders(&self) -> Vec<&MatchPlayer> {
+        self.ctx.context.players.get_by_position(PlayerFieldPositionGroup::Defender)
     }
 }
 

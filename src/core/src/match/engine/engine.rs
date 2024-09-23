@@ -248,9 +248,15 @@ impl MatchPlayerCollection {
         self.players.values().collect()
     }
 
-    pub fn defenders(&self) -> Vec<&MatchPlayer> {
+    pub fn get_by_position(&self, position_group: PlayerFieldPositionGroup) -> Vec<&MatchPlayer> {
         self.players.values()
-            .filter(|player| player.tactics_position.position_group() == PlayerFieldPositionGroup::Defender)
+            .filter(|player| player.tactics_position.position_group() == position_group)
+            .collect()
+    }
+
+    pub fn get_by_not_team(&self, team_id: u32) -> Vec<&MatchPlayer> {
+        self.players.values()
+            .filter(|player| player.team_id != team_id)
             .collect()
     }
 }
