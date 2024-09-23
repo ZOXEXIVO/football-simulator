@@ -1,10 +1,10 @@
 use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::ForwardStrategies;
-use crate::r#match::goalkeepers::states::state::GoalkeeperStrategies;
+use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStrategies};
 use crate::r#match::midfielders::states::MidfielderStrategies;
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use crate::r#match::player::events::{PlayerUpdateEventCollection};
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::player::state::PlayerState::Defender;
+use crate::r#match::player::state::PlayerState::{Defender, Goalkeeper};
 use crate::r#match::{
     BallOperationsImpl, CommonInjuredState, CommonReturningState, CommonRunningState,
     CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer,
@@ -12,7 +12,6 @@ use crate::r#match::{
 };
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
-use std::cell::RefCell;
 
 pub trait StateProcessingHandler {
     // Try fast processing
@@ -197,6 +196,14 @@ impl StateChangeResult {
     pub fn with(state: PlayerState) -> Self {
         StateChangeResult {
             state: Some(state),
+            velocity: None,
+            events: PlayerUpdateEventCollection::new()
+        }
+    }
+
+    pub fn with_goalkeeper_state(state: GoalkeeperState) -> Self {
+        StateChangeResult {
+            state: Some(Goalkeeper(state)),
             velocity: None,
             events: PlayerUpdateEventCollection::new()
         }

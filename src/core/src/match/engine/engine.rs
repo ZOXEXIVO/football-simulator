@@ -8,6 +8,7 @@ use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
 use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use rayon::iter::ParallelIterator;
+use crate::PlayerFieldPositionGroup;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -245,6 +246,12 @@ impl MatchPlayerCollection {
 
     pub fn raw_players(&self) -> Vec<&MatchPlayer> {
         self.players.values().collect()
+    }
+
+    pub fn defenders(&self) -> Vec<&MatchPlayer> {
+        self.players.values()
+            .filter(|player| player.tactics_position.position_group() == PlayerFieldPositionGroup::Defender)
+            .collect()
     }
 }
 

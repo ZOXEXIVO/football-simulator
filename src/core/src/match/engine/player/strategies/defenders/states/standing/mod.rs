@@ -39,7 +39,7 @@ impl StateProcessingHandler for DefenderStandingState {
                     ));
                 }
 
-                if ctx.ball().distance() < 100.0 {
+                if ctx.player().distance_from_start_position() > 20.0 && ctx.ball().distance() < 100.0 {
                     if ctx.ball().speed() > 20.0 {
                         return Some(StateChangeResult::with_defender_state(
                             DefenderState::TrackingBack
@@ -70,6 +70,8 @@ impl StateProcessingHandler for DefenderStandingState {
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        return None;
+
         let input = self.prepare_network_input(ctx);
         let output = DEFENDER_STANDING_STATE_NETWORK.run(&input);
 

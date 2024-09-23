@@ -229,8 +229,8 @@ fn player_state(player: &MatchPlayer) -> String {
 fn window_conf() -> Conf {
     Conf {
         window_title: "FootballSimulatorTesting".to_owned(),
-        window_width: 1024,
-        window_height: 768,
+        window_width: 1624,
+        window_height: 1268,
         window_resizable: false,
         fullscreen: false,
         high_dpi: true,
