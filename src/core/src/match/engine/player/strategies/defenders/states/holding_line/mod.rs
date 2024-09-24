@@ -58,12 +58,13 @@ impl StateProcessingHandler for DefenderHoldingLineState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Adjust position to maintain the defensive line
-        let defensive_line_position = self.calculate_defensive_line_position(ctx);
-        let desired_position = Vector3::new(ctx.player.position.x, defensive_line_position, ctx.player.position.z);
-        let direction = (desired_position - ctx.player.position).normalize();
-        let speed = ctx.player.skills.physical.pace; // Use player's pace attribute
-        Some(direction * speed)
+        None
+        // // Adjust position to maintain the defensive line
+        // let defensive_line_position = self.calculate_defensive_line_position(ctx);
+        // let desired_position = Vector3::new(ctx.player.position.x, defensive_line_position, ctx.player.position.z);
+        // let direction = (desired_position - ctx.player.position).normalize();
+        // let speed = ctx.player.skills.physical.pace; // Use player's pace attribute
+        // Some(direction * speed)
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {

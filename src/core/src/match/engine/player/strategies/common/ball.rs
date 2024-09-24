@@ -14,7 +14,7 @@ impl <'b> BallOperationsImpl<'b> {
 
 impl<'b> BallOperationsImpl<'b> {
     pub fn on_own_side(&self) -> bool {
-        match self.ctx.context.ball.get() {
+        match self.ctx.context.ball.side() {
             BallSide::Left => self.ctx.player.side == Some(PlayerSide::Left),
             BallSide::Center => true,
             BallSide::Right => self.ctx.player.side == Some(PlayerSide::Right),
@@ -33,8 +33,10 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn is_towards_player(&self) -> bool {
-        MatchBallLogic::is_heading_towards_player(&self.ctx.tick_context.objects_positions.ball_position,
-                                                  &self.ctx.player.position)
+        let (is_towards, _) = MatchBallLogic::is_heading_towards_player(&self.ctx.tick_context.objects_positions.ball_position,
+                                                  &self.ctx.tick_context.objects_positions.ball_velocity,
+                                                  &self.ctx.player.position);
+        is_towards
     }
 
     pub fn distance_to_own_goal(&self) -> f32 {
@@ -58,13 +60,21 @@ impl<'b> BallOperationsImpl<'b> {
 pub struct MatchBallLogic;
 
 impl MatchBallLogic {
-    pub fn is_heading_towards_player(ball_position: &Vector3<f32>, player_position: &Vector3<f32>) -> bool {
-        let ball_to_goal = player_position - ball_position;
+    pub fn is_heading_towards_player(ball_position: &Vector3<f32>, ball_velocity: &Vector3<f32>, player_position: &Vector3<f32>) -> (bool, f32) {
+        let velocity_xy = Vector3::new(ball_velocity.x, ball_velocity.y, 0.0);
+        let ball_to_player_xy = Vector3::new(
+            player_position.x - ball_position.x,
+            player_position.y - ball_position.y,
+            0.0,
+        );
 
-        let ball_forward = Vector3::new(1.0, 0.0, 0.0);
+        let velocity_norm = velocity_xy.norm();
+        let direction_norm = ball_to_player_xy.norm();
 
-        let dot_product = ball_to_goal.normalize().dot(&ball_forward);
+        let normalized_velocity = velocity_xy / velocity_norm;
+        let normalized_direction = ball_to_player_xy / direction_norm;
+        let dot_product = normalized_velocity.dot(&normalized_direction);
 
-        dot_product > 0.8
+        (dot_product >= 0.95, dot_product)
     }
 }

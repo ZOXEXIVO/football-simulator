@@ -5,6 +5,7 @@ use core::r#match::MatchContext;
 use core::r#match::MatchField;
 use macroquad::prelude::*;
 use core::Vector2;
+use core::r#match::BallSide;
 
 //tactics
 use core::club::player::Player;
@@ -16,6 +17,7 @@ use core::r#match::MatchPlayerCollection;
 use std::time::Instant;
 use env_logger::Env;
 use core::Vector3;
+use core::r#match::MatchBallLogic;
 
 use core::NaiveDate;
 use core::PlayerGenerator;
@@ -71,7 +73,7 @@ async fn main() {
             rotation: 0.0,
         });
 
-        draw_circle(offset_x + ball.position.x, offset_y + ball.position.y, 7.0, BLACK);
+        draw_circle(offset_x + ball.position.x, offset_y + ball.position.y, 7.0, ORANGE);
 
         let start = Instant::now();
 
@@ -125,12 +127,38 @@ async fn main() {
             );
 
             draw_text(
-                &format!("{} ({})", player_state(player), distance(&ball.position, &player.position)) ,
+                &format!("{}", player_state(player)),
                 offset_x + player.position.x - 27.0,
                 offset_y + player.position.y + 27.0,
                 15.0,
                 DARKGRAY,
             );
+
+            draw_text(
+                &format!("distance = {}", distance(&ball.position, &player.position)) ,
+                offset_x + player.position.x - 27.0,
+                offset_y + player.position.y + 40.0,
+                11.0,
+                DARKGRAY
+            );
+            //
+            // let (is_towards, angle) = is_towards_player(&ball.position, &ball.velocity, &player.position);
+            //
+            // draw_text(
+            //     &format!("is_ball_towards = {}", is_towards),
+            //     offset_x + player.position.x - 27.0,
+            //     offset_y + player.position.y + 50.0,
+            //     11.0,
+            //     DARKGRAY,
+            // );
+
+            // draw_text(
+            //     &format!("on_own_side = {}", on_own_side(&context, &ball, &player)),
+            //     offset_x + player.position.x - 27.0,
+            //     offset_y + player.position.y + 60.0,
+            //     11.0,
+            //     DARKGRAY,
+            // );
         });
 
         ball.update(&mut context);
@@ -229,6 +257,18 @@ fn player_state(player: &MatchPlayer) -> String {
 
 fn distance(a: &Vector3<f32>, b: &Vector3<f32>) -> usize {
     ((a.x - b.x).powi(2) + (a.y - b.y).powi(2) + (a.z - b.z).powi(2)).sqrt() as usize
+}
+
+pub fn is_towards_player(ball_position: &Vector3<f32>, ball_velocity: &Vector3<f32>, player_position: &Vector3<f32>) -> (bool, f32) {
+    MatchBallLogic::is_heading_towards_player(ball_position, ball_velocity, player_position)
+}
+
+pub fn on_own_side(context: &MatchContext, ball: &Ball, player: &MatchPlayer) -> bool {
+    match context.ball.side() {
+        BallSide::Left => player.side == Some(PlayerSide::Left),
+        BallSide::Center => true,
+        BallSide::Right => player.side == Some(PlayerSide::Right),
+    }
 }
 
 fn window_conf() -> Conf {

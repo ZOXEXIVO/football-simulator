@@ -160,7 +160,7 @@ impl BallState {
         self.side.store(side_u, Ordering::SeqCst)
     }
 
-    pub fn get(&self) -> BallSide {
+    pub fn side(&self) -> BallSide {
         BallSide::from(self.side.load(Ordering::SeqCst))
     }
 }

@@ -17,9 +17,17 @@ pub struct DefenderStandingState {}
 
 impl StateProcessingHandler for DefenderStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.ball().on_own_side() {
+        let ball_ops = ctx.ball();
+
+        if ball_ops.on_own_side() {
             // OWN BALL SIDE
-            if ctx.ball().is_towards_player() {
+            if ball_ops.is_towards_player() {
+                if ball_ops.distance() < 100.0 {
+                    return Some(StateChangeResult::with_defender_state(
+                        DefenderState::Intercepting
+                    ));
+                }
+
                 if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
                     return Some(StateChangeResult::with_defender_state(
                         DefenderState::Returning,
@@ -39,8 +47,8 @@ impl StateProcessingHandler for DefenderStandingState {
                     ));
                 }
 
-                if ctx.player().distance_from_start_position() > 20.0 && ctx.ball().distance() < 100.0 {
-                    if ctx.ball().speed() > 20.0 {
+                if ctx.player().distance_from_start_position() > 20.0 && ball_ops.distance() < 100.0 {
+                    if ball_ops.speed() > 20.0 {
                         return Some(StateChangeResult::with_defender_state(
                             DefenderState::TrackingBack
                         ));
