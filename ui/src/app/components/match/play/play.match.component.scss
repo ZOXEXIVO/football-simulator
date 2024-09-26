@@ -20,3 +20,26 @@
     color: #fff;
   }
 }
+
+/* Ensure the middle column fills the available vertical space */
+.middle-column {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Make the middle column fill the viewport height */
+}
+
+/* Make the match container flex and grow to fill available space */
+.match-container {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+/* When in fullscreen, make the match container fill the screen */
+.match-container:-webkit-full-screen,
+.match-container:-moz-full-screen,
+.match-container:-ms-fullscreen,
+.match-container:fullscreen {
+    width: 100% !important;
+    height: 100% !important;
+}

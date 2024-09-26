@@ -35,6 +35,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     currentTime = 0;
 
+    isFullscreen: boolean = false;
+
     constructor(private zone: NgZone,
                 public matchPlayService: MatchPlayService,
                 public matchDataService: MatchDataService,
@@ -56,11 +58,18 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
             await this.initGraphics();
             await this.initLineupGraphics(lineupData);
+
+            //this.application!.resizeTo = this.matchContainer.nativeElement;
         });
 
         this.matchPlayService.timeChanged$.subscribe(time => {
             this.currentTime = time;
         });
+
+        document.addEventListener('fullscreenchange', this.onFullscreenChange.bind(this));
+        document.addEventListener('webkitfullscreenchange', this.onFullscreenChange.bind(this));
+        document.addEventListener('mozfullscreenchange', this.onFullscreenChange.bind(this));
+        document.addEventListener('MSFullscreenChange', this.onFullscreenChange.bind(this));
     }
 
     async initLineupGraphics(lineupData: MatchLineupModel) {
@@ -126,7 +135,10 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
                 await this.application.init({
                     antialias: true,
-                    autoDensity: true
+                    autoDensity: true,
+                    resolution: window.devicePixelRatio,
+                    width: 1000,
+                    height: 700
                 });
 
                 this.matchContainer.nativeElement.appendChild(this.application.canvas);
@@ -153,8 +165,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         const screen_field_width = POLE_COORDS.tr.x - POLE_COORDS.tl.x;
         const screen_field_height = POLE_COORDS.br.y - POLE_COORDS.tr.y;
 
-        const scaleX = screen_field_width / real_field_width;
-        const scaleY = screen_field_height / real_field_height;
+        const scaleX = screen_field_width / 665;
+        const scaleY = screen_field_height / 460;
 
         return {
             x: POLE_COORDS.tl.x + (x * scaleX),
@@ -227,8 +239,62 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         return ball;
     }
 
+    toggleFullscreen() {
+        if (!this.isFullscreen) {
+            this.openFullscreen();
+        } else {
+            this.closeFullscreen();
+        }
+    }
+
+    openFullscreen() {
+        const elem = this.matchContainer.nativeElement;
+
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+    }
+
+    closeFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if ((document as any).mozCancelFullScreen) { /* Firefox */
+            (document as any).mozCancelFullScreen();
+        } else if ((document as any).webkitExitFullscreen) { /* Chrome, Safari & Opera */
+            (document as any).webkitExitFullscreen();
+        } else if ((document as any).msExitFullscreen) { /* IE/Edge */
+            (document as any).msExitFullscreen();
+        }
+    }
+
+    onFullscreenChange() {
+        const fullscreenElement =
+            document.fullscreenElement ||
+            (document as any).webkitFullscreenElement ||
+            (document as any).mozFullScreenElement ||
+            (document as any).msFullscreenElement;
+
+        this.isFullscreen = !!fullscreenElement;
+
+        // Resize the PIXI application
+        if (this.application) {
+            this.application.resize();
+        }
+    }
+
     ngOnDestroy(): void {
         this.isDisposed = true;
         this.application?.ticker.stop();
+
+        document.removeEventListener('fullscreenchange', this.onFullscreenChange.bind(this));
+        document.removeEventListener('webkitfullscreenchange', this.onFullscreenChange.bind(this));
+        document.removeEventListener('mozfullscreenchange', this.onFullscreenChange.bind(this));
+        document.removeEventListener('MSFullscreenChange', this.onFullscreenChange.bind(this));
     }
 }
