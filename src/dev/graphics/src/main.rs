@@ -260,7 +260,7 @@ fn distance(a: &Vector3<f32>, b: &Vector3<f32>) -> usize {
 }
 
 pub fn is_towards_player(ball_position: &Vector3<f32>, ball_velocity: &Vector3<f32>, player_position: &Vector3<f32>) -> (bool, f32) {
-    MatchBallLogic::is_heading_towards_player(ball_position, ball_velocity, player_position)
+    MatchBallLogic::is_heading_towards_player(ball_position, ball_velocity, player_position, 0.95)
 }
 
 pub fn on_own_side(context: &MatchContext, ball: &Ball, player: &MatchPlayer) -> bool {
