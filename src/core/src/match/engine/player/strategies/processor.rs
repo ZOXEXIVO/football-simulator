@@ -45,9 +45,9 @@ impl PlayerFieldPositionGroup {
             PlayerState::Returning => state_processor.process(CommonReturningState::default()),
             PlayerState::Injured => state_processor.process(CommonInjuredState::default()),
             // // Specific states
-            PlayerState::Goalkeeper(state) => GoalkeeperStrategies::process(state, state_processor),
-            PlayerState::Defender(state) => DefenderStrategies::process(state, state_processor),
-            PlayerState::Midfielder(state) => MidfielderStrategies::process(state, state_processor),
+            Goalkeeper(state) => GoalkeeperStrategies::process(state, state_processor),
+            Defender(state) => DefenderStrategies::process(state, state_processor),
+            Midfielder(state) => MidfielderStrategies::process(state, state_processor),
             PlayerState::Forward(state) => ForwardStrategies::process(state, state_processor),
         }
     }
