@@ -174,8 +174,8 @@ pub fn get_home_squad() -> TeamSquad {
     let players = [
         get_player(PlayerPositionType::Goalkeeper),
         get_player(PlayerPositionType::DefenderLeft),
-        get_player(PlayerPositionType::DefenderCenter),
-        get_player(PlayerPositionType::DefenderCenter),
+        get_player(PlayerPositionType::DefenderCenterLeft),
+        get_player(PlayerPositionType::DefenderCenterRight),
         get_player(PlayerPositionType::DefenderRight),
         get_player(PlayerPositionType::MidfielderLeft),
         get_player(PlayerPositionType::MidfielderCenter),
@@ -205,8 +205,8 @@ pub fn get_away_squad() -> TeamSquad {
     let players = [
         get_player(PlayerPositionType::Goalkeeper),
         get_player(PlayerPositionType::DefenderLeft),
-        get_player(PlayerPositionType::DefenderCenter),
-        get_player(PlayerPositionType::DefenderCenter),
+        get_player(PlayerPositionType::DefenderCenterLeft),
+        get_player(PlayerPositionType::DefenderCenterRight),
         get_player(PlayerPositionType::DefenderRight),
         get_player(PlayerPositionType::MidfielderLeft),
         get_player(PlayerPositionType::MidfielderCenter),

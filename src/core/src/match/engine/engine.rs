@@ -254,10 +254,16 @@ impl MatchPlayerCollection {
             .collect()
     }
 
-    pub fn get_by_not_team(&self, team_id: u32) -> Vec<&MatchPlayer> {
-        self.players.values()
-            .filter(|player| player.team_id != team_id)
-            .collect()
+    pub fn get_by_not_team(&self, team_id: u32, has_ball: Option<bool>) -> Vec<&MatchPlayer> {
+        let opponents= self.players.values()
+            .filter(|player| player.team_id != team_id);
+
+        if has_ball.is_some()  {
+            let ball_val = has_ball.unwrap();
+            return opponents.filter(|player| player.has_ball == ball_val).collect();
+        }
+
+        opponents.collect()
     }
 }
 

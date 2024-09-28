@@ -12,11 +12,14 @@ pub enum PlayerUpdateEvent {
     ClearBall(Vector3<f32>),
     RushOut(u32),
     StayInGoal(u32),
+    MoveBall(Vector3<f32>),
     CommunicateMessage(u32, &'static str),
     RequestBall(u32),
     OfferSupport(u32),
     ClaimBall(u32),
-    ConflictResolution(u32, u32)
+    ConflictResolution(u32, u32),
+    GainBall,
+    CommitFoul
 }
 
 pub struct PlayerUpdateEventCollection {
@@ -129,6 +132,11 @@ impl PlayerUpdateEventCollection {
                 PlayerUpdateEvent::ClearBall(ball_velocity) => {
                     ball.velocity = *ball_velocity;
                 }
+                PlayerUpdateEvent::MoveBall(ball_velocity) => {
+                    ball.velocity = *ball_velocity;
+                }
+                PlayerUpdateEvent::GainBall => {}
+                PlayerUpdateEvent::CommitFoul => {}
             }
         }
 

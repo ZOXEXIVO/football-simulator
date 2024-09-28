@@ -69,7 +69,11 @@ impl<'p> PlayerOperationsImpl<'p> {
     }
 
     pub fn opponents(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.get_by_not_team(self.ctx.player.team_id)
+        self.ctx.context.players.get_by_not_team(self.ctx.player.team_id, None)
+    }
+
+    pub fn opponent_with_ball(&self) -> Vec<&MatchPlayer> {
+        self.ctx.context.players.get_by_not_team(self.ctx.player.team_id, Some(true))
     }
 
     pub fn defenders(&self) -> Vec<&MatchPlayer> {

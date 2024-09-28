@@ -3,9 +3,8 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::IntegerUtils;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::state::PlayerState;
 
 static DEFENDER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
@@ -15,43 +14,52 @@ pub struct DefenderWalkingState {}
 
 impl StateProcessingHandler for DefenderWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player().on_own_side() {
-            if ctx.ball().distance() < 100.0 {
-                return Some(StateChangeResult::with(PlayerState::Defender(
-                    DefenderState::Intercepting,
-                )))
-            }
+        // 1. If the defender is on their own side and the ball is close, transition to Intercepting
+        if ctx.ball().is_towards_player_with_angle(0.8) && ctx.ball().distance() < 150.0 {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
         }
 
-        if ctx.player().distance_from_start_position() > 50.0 {
-            return Some(StateChangeResult::with(PlayerState::Defender(
-                DefenderState::Returning,
-            )))
+        // 2. If the defender is far from their starting position, transition to Returning
+        if ctx.player().position_to_distance() != PlayerDistanceFromStartPosition::Small {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
         }
 
+        // 3. Remain in Walking state
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        // Implement neural network logic if necessary
         None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        // 1. If this is the first tick in the state, initialize wander behavior
         if ctx.in_state_time == 0 {
-            let rnd =
-            return Some(SteeringBehavior::Wander {
+            let wander_behavior = SteeringBehavior::Wander {
                 target: ctx.player.start_position,
-                radius: IntegerUtils::random(1, 30) as f32,
-                jitter: IntegerUtils::random(1, 50) as f32,
-                distance: IntegerUtils::random(1, 100) as f32,
-                angle: IntegerUtils::random(1, 10) as f32,
-            }.calculate(ctx.player).velocity);
+                radius: IntegerUtils::random(5, 15) as f32,
+                jitter: IntegerUtils::random(1, 5) as f32,
+                distance: IntegerUtils::random(10, 20) as f32,
+                angle: IntegerUtils::random(0, 360) as f32,
+            };
+
+            // Store the wander behavior in the player's state if needed
+            // For simplicity, we'll calculate and return the velocity directly
+            let velocity = wander_behavior.calculate(ctx.player).velocity;
+            return Some(velocity);
         }
 
-        None
+        // 2. Continue wandering
+        // Implement continuous wandering behavior if needed
+        // For now, return a default walking speed towards the start position
+
+        let direction = (ctx.player.start_position - ctx.player.position).normalize();
+        let speed = ctx.player.skills.physical.stamina / 10.0; // Adjust scaling as needed
+        Some(direction * speed)
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
+    fn process_conditions(&self, _ctx: ConditionContext) {
+        // No additional conditions
     }
 }
