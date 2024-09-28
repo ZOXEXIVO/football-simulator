@@ -3,10 +3,15 @@ use crate::r#match::{Ball, BallPosition, MatchContext};
 
 #[derive(Copy, Clone)]
 pub enum BallUpdateEvent {
-    Goal(u32),
-    ChangeBallSide(BallPosition),
+    Goal(GoalSide, Option<u32>),
     PlayerCollision(u32),
     UpdateVelocity(Vector3<f32>)
+}
+
+#[derive(Copy, Clone)]
+pub enum GoalSide {
+    Home,
+    Away
 }
 
 pub struct BallEvents;
@@ -20,25 +25,19 @@ impl BallEvents {
     ) {
         for event in events {
             match *event {
-                BallUpdateEvent::Goal(team_id) => {
-                    if context.result.score.home_team.team_id == team_id {
-                        context.result.score.increment_home_goals()
-                    } else {
-                        context.result.score.increment_away_goals()
+                BallUpdateEvent::Goal(side, goalscorer_player_id) => {
+                    match side {
+                        GoalSide::Home => {
+                            context.result.score.increment_home_goals()
+                        }
+                        GoalSide::Away => {
+                            context.result.score.increment_away_goals()
+                        }
                     }
-                }
-                BallUpdateEvent::ChangeBallSide(_position) => {
-                    // let ball_state = match position {
-                    //     BallPosition::Home => BallState::HomeSide,
-                    //     BallPosition::Away => BallState::AwaySide,
-                    // };
-
-                    //context.state.set_ball_state(ball_state)
                 },
                 BallUpdateEvent::PlayerCollision(player_id) => {
 
                 },
-
                 BallUpdateEvent::UpdateVelocity(new_ball_velocity) => {
                     ball.velocity = new_ball_velocity;
                 }

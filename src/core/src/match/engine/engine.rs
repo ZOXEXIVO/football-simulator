@@ -4,7 +4,7 @@ use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPla
 use std::collections::HashMap;
 use nalgebra::{Point2, Vector3};
 use rayon::prelude::IntoParallelRefMutIterator;
-use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
+use crate::r#match::ball::events::{BallEvents, BallUpdateEvent, GoalSide};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
 use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use rayon::iter::ParallelIterator;
@@ -169,6 +169,34 @@ impl From<&MatchFieldSize> for GoalPosition {
             left: left_goal,
             right: right_goal,
         }
+    }
+}
+
+pub const GOAL_WIDTH: f32 = 60.0;
+
+impl GoalPosition {
+    pub fn is_goal(&self, ball_position: Vector3<f32>) -> Option<GoalSide> {
+        const EPSILON: f32 = 0.5;
+
+        if (ball_position.x - self.left.x).abs() < EPSILON {
+            let top_goal_bound = self.left.y - GOAL_WIDTH;
+            let bottom_goal_bound = self.left.y + GOAL_WIDTH;
+
+            if ball_position.y >= top_goal_bound && ball_position.y <= bottom_goal_bound {
+               return Some(GoalSide::Home);
+            }
+        }
+
+        if (ball_position.x - self.right.x).abs() < EPSILON  {
+            let top_goal_bound =  self.right.y - GOAL_WIDTH;
+            let bottom_goal_bound =  self.right.y + GOAL_WIDTH;
+
+            if ball_position.y >= top_goal_bound && ball_position.y <= bottom_goal_bound {
+                return Some(GoalSide::Away);
+            }
+        }
+
+        None
     }
 }
 

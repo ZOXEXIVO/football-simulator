@@ -22,6 +22,7 @@ use core::r#match::MatchBallLogic;
 use core::NaiveDate;
 use core::PlayerGenerator;
 use core::r#match::PlayerSide;
+use core::r#match::GOAL_WIDTH;
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -106,6 +107,8 @@ async fn main() {
             BLACK,
         );
 
+        draw_goals(offset_x, offset_y, &context);
+
         field.players.iter().for_each(|player| {
             let mut color = if player.side.unwrap() == PlayerSide::Left {
                 Color::from_rgba(0, 184, 186, 255)
@@ -118,7 +121,6 @@ async fn main() {
             }
 
             draw_circle(offset_x + player.position.x, offset_y + player.position.y, 16.0, color);
-
 
             let state = &player.tactics_position.get_short_name();
 
@@ -134,7 +136,7 @@ async fn main() {
 
             draw_text(
                 &format!("{}", player_state(player)),
-                offset_x + player.position.x - left_offset,
+                offset_x + player.position.x - left_offset - 15.0,
                 offset_y + player.position.y + 27.0,
                 15.0,
                 DARKGRAY,
@@ -279,4 +281,23 @@ fn window_conf() -> Conf {
         high_dpi: true,
         ..Default::default()
     }
+}
+
+
+// draw
+
+fn draw_goals(offset_x: f32, offset_y: f32, context: &MatchContext){
+    draw_line(offset_x,
+              offset_y + context.goal_positions.left.y - GOAL_WIDTH,
+              offset_x,
+              offset_y + context.goal_positions.left.y + GOAL_WIDTH,
+              3.0,
+              BLACK);
+
+    draw_line(offset_x + context.goal_positions.right.x,
+              offset_y + context.goal_positions.right.y - GOAL_WIDTH,
+              offset_x + context.goal_positions.right.x,
+              offset_y + context.goal_positions.right.y + GOAL_WIDTH,
+              3.0,
+              BLACK);
 }

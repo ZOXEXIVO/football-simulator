@@ -34,7 +34,7 @@ impl Ball {
 
         self.update_velocity(&mut result);
         self.move_to(&mut result);
-        self.check_goal(&mut result);
+        self.check_goal(context, &mut result);
         self.check_boundary_collision(&mut result, context);
 
         result
@@ -45,8 +45,8 @@ impl Ball {
         _result: &mut Vec<BallUpdateEvent>,
         context: &MatchContext,
     ) {
-        let field_width = context.field_size.width as f32;
-        let field_height = context.field_size.height as f32;
+        let field_width = context.field_size.width as f32 + 1.0;
+        let field_height = context.field_size.height as f32 + 1.0;
 
         // Check if ball hits the boundary and reverse its velocity if it does
         if self.position.x <= 0.0 || self.position.x >= field_width {
@@ -58,26 +58,10 @@ impl Ball {
         }
     }
 
-    fn check_goal(&mut self, result: &mut Vec<BallUpdateEvent>) {
-        let goal_post_width = 6.0;
-        let goal_line_x = 140.0;
-
-        if self.position.x > goal_line_x - goal_post_width
-            && self.position.x < goal_line_x + goal_post_width
-        {
-            let goal_line_y = 90.0 / 2.0;
-
-            if (self.start_position.y < goal_line_y && self.position.y >= goal_line_y)
-                || (self.start_position.y > goal_line_y && self.position.y <= goal_line_y)
-            {
-                // if self.start_position.x < goal_line_x {
-                //     result.push(BallUpdateEvent::Goal());
-                // } else {
-                //     result.push(BallUpdateEvent::HomeGoal);
-                // }
-
-                self.reset();
-            }
+    fn check_goal(&mut self, context: &MatchContext, result: &mut Vec<BallUpdateEvent>) {
+        if let Some(goal_side) = context.goal_positions.is_goal(self.position) {
+            result.push(BallUpdateEvent::Goal(goal_side, self.last_owner));
+            self.reset();
         }
     }
 
@@ -110,11 +94,6 @@ impl Ball {
     fn move_to(&mut self, result: &mut Vec<BallUpdateEvent>) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;
-
-        let position = self.position();
-        if position != self.ball_position {
-            result.push(BallUpdateEvent::ChangeBallSide(position))
-        }
     }
 
     fn position(&self) -> BallPosition {

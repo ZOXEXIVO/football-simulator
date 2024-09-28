@@ -45,7 +45,7 @@ impl StateProcessingHandler for DefenderRunningState {
                 _ => Vector3::new(0.0, 0.0, 0.0)
             };
 
-            return Some(SteeringBehavior::Arrive {
+            Some(SteeringBehavior::Arrive {
                 target,
                 slowing_distance: 10.0,
             }.calculate(ctx.player).velocity);
