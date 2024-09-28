@@ -116,6 +116,7 @@ impl Ball {
     pub fn reset(&mut self) {
         self.position.x = self.start_position.x;
         self.position.y = self.start_position.y;
+        self.velocity = Vector3::zeros();
     }
 }
 
