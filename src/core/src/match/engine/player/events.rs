@@ -8,11 +8,12 @@ pub enum PlayerUpdateEvent {
     BallCollision(u32),
     TryAroundPlayer(u32, Vector3<f32>),
     TacklingBall(u32),
+    BallOwnerChange(u32),
     PassTo(Vector3<f32>, f64),
     ClearBall(Vector3<f32>),
     RushOut(u32),
     StayInGoal(u32),
-    MoveBall(Vector3<f32>),
+    MoveBall(u32, Vector3<f32>),
     CommunicateMessage(u32, &'static str),
     RequestBall(u32),
     OfferSupport(u32),
@@ -81,6 +82,10 @@ impl PlayerUpdateEventCollection {
                 },
                 PlayerUpdateEvent::TacklingBall(_player_id) => {
                     ball.velocity = Vector3::<f32>::zeros();
+                },
+                PlayerUpdateEvent::BallOwnerChange(player_id) => {
+                   ball.owned = true;
+                   ball.last_owner = Some(*player_id);
                 }
                 PlayerUpdateEvent::PassTo(pass_target, pass_power) => {
                     let ball_pass_vector = pass_target - ball.position;
@@ -132,8 +137,11 @@ impl PlayerUpdateEventCollection {
                 PlayerUpdateEvent::ClearBall(ball_velocity) => {
                     ball.velocity = *ball_velocity;
                 }
-                PlayerUpdateEvent::MoveBall(ball_velocity) => {
+                PlayerUpdateEvent::MoveBall(player_id, ball_velocity) => {
                     ball.velocity = *ball_velocity;
+
+                    let mut player = context.players.get_mut(*player_id).unwrap();
+                    player.has_ball = false;
                 }
                 PlayerUpdateEvent::GainBall => {}
                 PlayerUpdateEvent::CommitFoul => {}

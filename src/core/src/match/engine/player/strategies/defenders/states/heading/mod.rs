@@ -41,7 +41,7 @@ impl StateProcessingHandler for DefenderHeadingState {
             let mut state_change = StateChangeResult::with_defender_state(DefenderState::HoldingLine);
             let new_ball_velocity = self.calculate_heading_velocity(ctx);
 
-            state_change.events.add(PlayerUpdateEvent::MoveBall(new_ball_velocity));
+            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.player_id, new_ball_velocity));
 
             // 4. Update player's stamina or condition if needed
             // (e.g., heading might cost some stamina)

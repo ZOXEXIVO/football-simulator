@@ -7,10 +7,12 @@ pub struct Ball {
     pub start_position: Vector3<f32>,
     pub position: Vector3<f32>,
     pub velocity: Vector3<f32>,
-    pub owner: Option<BallOwner>,
     pub ball_position: BallPosition,
     pub center_field_position: f32,
     pub height: f32,
+
+    pub last_owner: Option<u32>,
+    pub owned: bool
 }
 
 impl Ball {
@@ -19,10 +21,11 @@ impl Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(x, y, 0.0),
             velocity: Vector3::new(0.2, 0.02, 0.1),
-            owner: None,
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
             height: 0.0,
+            last_owner: None,
+            owned: false
         }
     }
 
@@ -141,11 +144,6 @@ impl Ball {
         self.position.x = self.start_position.x;
         self.position.y = self.start_position.y;
     }
-}
-
-pub enum BallOwner {
-    Home,
-    Away,
 }
 
 #[derive(Eq, PartialEq, Copy, Clone)]

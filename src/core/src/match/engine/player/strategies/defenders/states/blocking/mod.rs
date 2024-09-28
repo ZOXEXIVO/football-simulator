@@ -72,7 +72,7 @@ impl StateProcessingHandler for DefenderBlockingState {
             // For simplicity, we'll invert the ball's velocity and reduce its speed
             let new_ball_velocity = -ball_velocity * 0.5; // Reduce speed by half
 
-            state_change.events.add(PlayerUpdateEvent::MoveBall(new_ball_velocity));
+            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.player_id, new_ball_velocity));
 
             // Optionally reduce defender's stamina
             // ctx.player.player_attributes.reduce_stamina(block_stamina_cost);

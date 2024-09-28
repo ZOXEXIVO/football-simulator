@@ -12,6 +12,8 @@ pub mod tackling;
 pub mod distance_shooting;
 pub mod pressing;
 pub mod tracking_runner;
+pub mod returning;
+pub mod resting;
 
 pub use attack_supporting::*;
 pub use crossing::*;
@@ -27,5 +29,7 @@ pub use tackling::*;
 pub use distance_shooting::*;
 pub use pressing::*;
 pub use tracking_runner::*;
+pub use returning::*;
+pub use resting::*;
 
 

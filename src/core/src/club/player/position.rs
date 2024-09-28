@@ -63,6 +63,26 @@ impl PlayerPositionType {
     }
 
     #[inline]
+    pub fn is_goalkeeper(&self) -> bool {
+        self.position_group() == PlayerFieldPositionGroup::Goalkeeper
+    }
+
+    #[inline]
+    pub fn is_defender(&self) -> bool {
+        self.position_group() == PlayerFieldPositionGroup::Defender
+    }
+
+    #[inline]
+    pub fn is_midfielder(&self) -> bool {
+        self.position_group() == PlayerFieldPositionGroup::Midfielder
+    }
+
+    #[inline]
+    pub fn is_forward(&self) -> bool {
+        self.position_group() == PlayerFieldPositionGroup::Forward
+    }
+
+    #[inline]
     pub fn position_group(&self) -> PlayerFieldPositionGroup {
         match *self {
             PlayerPositionType::Goalkeeper => PlayerFieldPositionGroup::Goalkeeper,
@@ -114,12 +134,12 @@ impl PlayerPositions {
             .collect()
     }
 
-    pub fn is_goalkeeper(&self) -> bool {
-        self.positions().contains(&PlayerPositionType::Goalkeeper)
-    }
-
     pub fn has_position(&self, position: PlayerPositionType) -> bool {
         self.positions().contains(&position)
+    }
+
+    pub fn is_goalkeeper(&self) -> bool {
+        self.positions().contains(&PlayerPositionType::Goalkeeper)
     }
 
     pub fn get_level(&self, position: PlayerPositionType) -> u8 {

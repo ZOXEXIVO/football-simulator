@@ -240,4 +240,41 @@ impl PlayerDistanceClosure {
             })
             .min_by(|&(_, distance1), &(_, distance2)| distance1.partial_cmp(&distance2).unwrap())
     }
+
+    pub fn find_closest_teammate(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
+        let mut teammates: Vec<(u32, f32)> = self.distances
+            .iter()
+            // Filter distances that involve the current player
+            .filter(|distance| {
+                distance.player_from_id == player.player_id || distance.player_to_id == player.player_id
+            })
+            // Filter distances where the other player is a teammate and not the same player
+            .filter(|distance| {
+                if distance.player_from_id == player.player_id {
+                    distance.player_to_team == player.team_id && distance.player_to_id != player.player_id
+                } else {
+                    distance.player_from_team == player.team_id && distance.player_from_id != player.player_id
+                }
+            })
+            // Map to (teammate_id, distance)
+            .map(|distance| {
+                let teammate_id = if distance.player_from_id == player.player_id {
+                    distance.player_to_id
+                } else {
+                    distance.player_from_id
+                };
+                let distance_to_teammate = distance.distance;
+                (teammate_id, distance_to_teammate)
+            })
+            .collect();
+
+        // Sort teammates by distance
+        teammates.sort_by(|&(_, dist1), &(_, dist2)| dist1.partial_cmp(&dist2).unwrap());
+
+        if teammates.is_empty() {
+            None
+        } else {
+            Some(teammates)
+        }
+    }
 }

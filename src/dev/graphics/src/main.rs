@@ -118,17 +118,23 @@ async fn main() {
             }
 
             draw_circle(offset_x + player.position.x, offset_y + player.position.y, 16.0, color);
+
+
+            let state = &player.tactics_position.get_short_name();
+
+            let left_offset = if state.len() == 3 { 12.0 } else { 8.0 };
+
             draw_text(
-                &player.tactics_position.get_short_name(),
-                offset_x + player.position.x - 8.0,
-                offset_y + player.position.y + 4.0,
+                state,
+                offset_x + player.position.x - left_offset,
+                offset_y + player.position.y + 5.0,
                 19.0,
                 BLACK,
             );
 
             draw_text(
                 &format!("{}", player_state(player)),
-                offset_x + player.position.x - 27.0,
+                offset_x + player.position.x - left_offset,
                 offset_y + player.position.y + 27.0,
                 15.0,
                 DARKGRAY,
@@ -155,7 +161,7 @@ async fn main() {
             // draw_text(
             //     &format!("on_own_side = {}", on_own_side(&context, &ball, &player)),
             //     offset_x + player.position.x - 27.0,
-            //     offset_y + player.position.y + 60.0,
+            //     offset_y + player.position.y + 50.0,
             //     11.0,
             //     DARKGRAY,
             // );
@@ -178,8 +184,8 @@ pub fn get_home_squad() -> TeamSquad {
         get_player(PlayerPositionType::DefenderCenterRight),
         get_player(PlayerPositionType::DefenderRight),
         get_player(PlayerPositionType::MidfielderLeft),
-        get_player(PlayerPositionType::MidfielderCenter),
-        get_player(PlayerPositionType::MidfielderCenter),
+        get_player(PlayerPositionType::MidfielderCenterLeft),
+        get_player(PlayerPositionType::MidfielderCenterRight),
         get_player(PlayerPositionType::MidfielderRight),
         get_player(PlayerPositionType::ForwardLeft),
         get_player(PlayerPositionType::ForwardRight),
@@ -209,8 +215,8 @@ pub fn get_away_squad() -> TeamSquad {
         get_player(PlayerPositionType::DefenderCenterRight),
         get_player(PlayerPositionType::DefenderRight),
         get_player(PlayerPositionType::MidfielderLeft),
-        get_player(PlayerPositionType::MidfielderCenter),
-        get_player(PlayerPositionType::MidfielderCenter),
+        get_player(PlayerPositionType::MidfielderCenterLeft),
+        get_player(PlayerPositionType::MidfielderCenterRight),
         get_player(PlayerPositionType::MidfielderRight),
         get_player(PlayerPositionType::ForwardLeft),
         get_player(PlayerPositionType::ForwardRight),

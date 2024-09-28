@@ -269,6 +269,7 @@ impl MatchPlayerCollection {
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
 pub const MATCH_HALF_TIME_MS: u64 = 1 * 60 * 1000;
+pub const MATCH_TIME_MS: u64 = MATCH_HALF_TIME_MS * 2;
 
 pub struct MatchTime {
     pub time: u64,
@@ -282,6 +283,10 @@ impl MatchTime {
     pub fn increment(&mut self, val: u64) -> u64 {
         self.time += val;
         self.time
+    }
+
+    pub fn is_running_out(&self) -> bool {
+        self.time > (2 * MATCH_TIME_MS / 3)
     }
 }
 
