@@ -29,7 +29,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
 
         // Get current positions
         let player_position = ctx.player.position;
-        let ball_position = ctx.tick_context.objects_positions.ball_position;
+        let ball_position = ctx.tick_context.object_positions.ball_position;
 
         // Calculate the direction vector towards the ball
         let direction_to_ball = (ball_position - player_position).normalize();
@@ -37,7 +37,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
 
         Some(
             SteeringBehavior::Pursuit {
-                target: ctx.tick_context.objects_positions.ball_position,
+                target: ctx.tick_context.object_positions.ball_position,
                 velocity: player_velocity,
             }
                 .calculate(ctx.player)

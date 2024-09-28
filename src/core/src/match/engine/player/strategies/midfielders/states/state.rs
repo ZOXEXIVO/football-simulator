@@ -1,10 +1,4 @@
-use crate::r#match::midfielders::states::{
-    MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState,
-    MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState,
-    MidfielderPressingState, MidfielderReturningState, MidfielderShortPassingState,
-    MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState,
-    MidfielderTrackingRunnerState,
-};
+use crate::r#match::midfielders::states::{MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState, MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState, MidfielderPressingState, MidfielderReturningState, MidfielderShortPassingState, MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState, MidfielderTrackingRunnerState, MidfielderWalkingState};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
@@ -24,6 +18,7 @@ pub enum MidfielderState {
     Tackling,          // Tackling to win the ball
     Returning,         // Returning the ball,
     Resting,           // Resting
+    Walking,           // Walking
 }
 
 pub struct MidfielderStrategies {}
@@ -76,6 +71,9 @@ impl MidfielderStrategies {
             MidfielderState::Resting => {
                 state_processor.process(MidfielderDistributingState::default())
             }
+            MidfielderState::Walking => {
+                state_processor.process(MidfielderWalkingState::default())
+            }
         }
     }
 }
@@ -98,6 +96,7 @@ impl Display for MidfielderState {
             MidfielderState::DistanceShooting => write!(f, "DistanceShooting"),
             MidfielderState::Returning => write!(f, "Returning"),
             MidfielderState::Resting => write!(f, "Resting"),
+            MidfielderState::Walking => write!(f, "Walking"),
         }
     }
 }

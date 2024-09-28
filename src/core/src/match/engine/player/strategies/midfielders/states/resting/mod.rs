@@ -31,7 +31,7 @@ impl StateProcessingHandler for MidfielderRestingState {
 
         // 2. Check if the ball is close
         let ball_distance =
-            (ctx.tick_context.objects_positions.ball_position - ctx.player.position).magnitude();
+            (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
         if ball_distance < BALL_PROXIMITY_THRESHOLD {
             // If the ball is close, check for nearby opponents
             let opponent_nearby = self.is_opponent_nearby(ctx);
@@ -74,7 +74,7 @@ impl MidfielderRestingState {
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
         let (_, opponents_count) = ctx
             .tick_context
-            .objects_positions
+            .object_positions
             .player_distances
             .players_within_distance_count(ctx.player, MARKING_DISTANCE_THRESHOLD);
 

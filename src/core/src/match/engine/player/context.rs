@@ -1,9 +1,19 @@
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
-use crate::r#match::{MatchField, MatchPlayer};
+use crate::r#match::{BallSide, MatchField, MatchPlayer};
 use nalgebra::Vector3;
 
 pub struct GameTickContext {
-    pub objects_positions: MatchObjectsPositions,
+    pub object_positions: MatchObjectsPositions,
+    pub ball: BallMetadata
+}
+
+impl GameTickContext {
+    pub fn new(field: &MatchField) -> Self {
+        GameTickContext {
+            ball: BallMetadata::from_field(field),
+            object_positions: MatchObjectsPositions::from(field)
+        }
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -71,6 +81,30 @@ impl MatchObjectsPositions {
             .players_within_distance_count(current_player, max_distance);
 
         ((nearest_teammates_count as f32) + 1.0) / ((nearest_opponents_count as f32) + 1.0) < 1.0
+    }
+}
+
+pub struct BallMetadata {
+    pub side: BallSide,
+    pub is_owned: bool,
+    pub last_owner: Option<u32>
+}
+
+impl BallMetadata {
+    pub fn from_field(field: &MatchField) -> Self {
+        BallMetadata {
+            side: Self::calculate_side(field),
+            is_owned: field.ball.owned,
+            last_owner: field.ball.last_owner
+        }
+    }
+
+    fn calculate_side(field: &MatchField) -> BallSide {
+        if field.ball.position.x < field.ball.center_field_position {
+            return BallSide::Left;
+        }
+
+        BallSide::Right
     }
 }
 

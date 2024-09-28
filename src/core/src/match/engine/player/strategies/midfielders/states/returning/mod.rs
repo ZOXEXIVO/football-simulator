@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior,
-};
+use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -18,19 +15,19 @@ pub struct MidfielderReturningState {}
 
 impl StateProcessingHandler for MidfielderReturningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // 1. Check if the midfielder has reached their starting position
-        if ctx.player().distance_from_start_position() < 10.0 {
-            // Transition to Standing state
-            return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Standing,
-            ));
-        }
-
         // 2. Check if the ball is moving towards the player and is close
-        if ctx.ball().is_towards_player() && ctx.ball().distance() < 50.0 {
+        if ctx.ball().distance() < 10.0 {
             // Transition to Tackling state to attempt to regain possession
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Tackling,
+            ));
+        }
+
+        // 1. Check if the midfielder has reached their starting position
+        if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Small {
+            // Transition to Standing state
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Walking
             ));
         }
 
@@ -42,15 +39,6 @@ impl StateProcessingHandler for MidfielderReturningState {
             ));
         }
 
-        // 4. Check if the player's stamina is low
-        if ctx.player.player_attributes.condition_percentage() < STAMINA_THRESHOLD {
-            // Transition to Resting state
-            return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Resting,
-            ));
-        }
-
-        // 5. Continue returning to position
         None
     }
 

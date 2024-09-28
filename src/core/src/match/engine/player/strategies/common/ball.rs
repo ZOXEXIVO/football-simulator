@@ -14,9 +14,8 @@ impl<'b> BallOperationsImpl<'b> {
 
 impl<'b> BallOperationsImpl<'b> {
     pub fn on_own_side(&self) -> bool {
-        match self.ctx.context.ball.side() {
+        match self.ctx.tick_context.ball.side {
             BallSide::Left => self.ctx.player.side == Some(PlayerSide::Left),
-            BallSide::Center => true,
             BallSide::Right => self.ctx.player.side == Some(PlayerSide::Right),
         }
     }
@@ -24,31 +23,35 @@ impl<'b> BallOperationsImpl<'b> {
     pub fn distance(&self) -> f32 {
         self.ctx
             .tick_context
-            .objects_positions
+            .object_positions
             .ball_position
             .distance_to(&self.ctx.player.position)
     }
 
     pub fn speed(&self) -> f32 {
-        self.ctx.tick_context.objects_positions.ball_velocity.norm()
+        self.ctx.tick_context.object_positions.ball_velocity.norm()
+    }
+
+    pub fn is_owned(&self) -> bool {
+        self.ctx.tick_context.ball.is_owned
     }
 
     pub fn is_towards_player(&self) -> bool {
         let (is_towards, _) = MatchBallLogic::is_heading_towards_player(
-            &self.ctx.tick_context.objects_positions.ball_position,
-            &self.ctx.tick_context.objects_positions.ball_velocity,
+            &self.ctx.tick_context.object_positions.ball_position,
+            &self.ctx.tick_context.object_positions.ball_velocity,
             &self.ctx.player.position,
-            0.95
+            0.95,
         );
         is_towards
     }
 
     pub fn is_towards_player_with_angle(&self, angle: f32) -> bool {
         let (is_towards, _) = MatchBallLogic::is_heading_towards_player(
-            &self.ctx.tick_context.objects_positions.ball_position,
-            &self.ctx.tick_context.objects_positions.ball_velocity,
+            &self.ctx.tick_context.object_positions.ball_position,
+            &self.ctx.tick_context.object_positions.ball_velocity,
             &self.ctx.player.position,
-            angle
+            angle,
         );
         is_towards
     }
@@ -66,7 +69,7 @@ impl<'b> BallOperationsImpl<'b> {
 
         self.ctx
             .tick_context
-            .objects_positions
+            .object_positions
             .ball_position
             .distance_to(&own_goal_position)
     }

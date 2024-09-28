@@ -21,7 +21,7 @@ impl StateProcessingHandler for DefenderClearingState {
 
         // Get player's position and ball's current position
         let player_position = ctx.player.position;
-        let ball_position = ctx.tick_context.objects_positions.ball_position;
+        let ball_position = ctx.tick_context.object_positions.ball_position;
 
         // Determine the target position for clearing (opposite side of the field)
         let field_width = ctx.context.field_size.width as f32;

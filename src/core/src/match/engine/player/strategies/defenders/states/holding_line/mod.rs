@@ -30,7 +30,7 @@ impl StateProcessingHandler for DefenderHoldingLineState {
         }
 
         // 4. Calculate the distance to the ball
-        let ball_distance = (ctx.tick_context.objects_positions.ball_position - ctx.player.position).magnitude();
+        let ball_distance = (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
 
         // 5. If the ball is close, decide whether to Mark or Intercept
         if ball_distance < BALL_PROXIMITY_THRESHOLD {

@@ -14,6 +14,7 @@ pub mod pressing;
 pub mod tracking_runner;
 pub mod returning;
 pub mod resting;
+pub mod walking;
 
 pub use attack_supporting::*;
 pub use crossing::*;
@@ -31,5 +32,6 @@ pub use pressing::*;
 pub use tracking_runner::*;
 pub use returning::*;
 pub use resting::*;
+pub use walking::*;
 
 

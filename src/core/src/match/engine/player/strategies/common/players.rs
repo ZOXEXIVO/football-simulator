@@ -44,7 +44,7 @@ impl<'p> PlayerOperationsImpl<'p> {
     pub fn distances(&self) -> (usize, usize) {
         self.ctx
             .tick_context
-            .objects_positions
+            .object_positions
             .player_distances
             .players_within_distance_count(self.ctx.player, 10.0)
     }

@@ -37,12 +37,6 @@ impl Ball {
         self.check_goal(&mut result);
         self.check_boundary_collision(&mut result, context);
 
-        if self.position.x < self.center_field_position {
-            context.ball.set(BallSide::Left)
-        }else {
-            context.ball.set(BallSide::Right)
-        }
-
         result
     }
 

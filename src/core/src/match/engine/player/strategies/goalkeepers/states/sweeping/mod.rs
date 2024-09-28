@@ -41,7 +41,7 @@ impl GoalkeeperSweepingState {
         let minimal_distance = 30.0;
 
         let (_, mut nearest_opponents) = tick_context
-            .objects_positions
+            .object_positions
             .player_distances
             .players_within_distance(player, minimal_distance);
 

@@ -1,19 +1,19 @@
 use crate::r#match::ball::events::BallUpdateEvent;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::MatchObjectsPositions;
+use crate::r#match::{GameTickContext, MatchObjectsPositions};
 
 pub struct ObjectCollisionsDetector;
 
 impl ObjectCollisionsDetector {
-    pub fn process(
-        object_positions: &MatchObjectsPositions,
-    ) -> (Vec<BallUpdateEvent>, Vec<PlayerUpdateEvent>) {
+    pub fn process(context: &GameTickContext) -> (Vec<BallUpdateEvent>, Vec<PlayerUpdateEvent>) {
         let mut ball_events = Vec::with_capacity(10);
         let mut player_events = Vec::with_capacity(10);
 
+        let object_positions = &context.object_positions;
+
         // Ball-player collisions
-        for player in &object_positions.players_positions.items {
+        for player in &context.object_positions.players_positions.items {
             let distance = object_positions.ball_position.distance_to(&player.position);
 
             if distance < 3.0 {

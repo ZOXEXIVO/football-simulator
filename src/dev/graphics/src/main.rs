@@ -269,14 +269,6 @@ pub fn is_towards_player(ball_position: &Vector3<f32>, ball_velocity: &Vector3<f
     MatchBallLogic::is_heading_towards_player(ball_position, ball_velocity, player_position, 0.95)
 }
 
-pub fn on_own_side(context: &MatchContext, ball: &Ball, player: &MatchPlayer) -> bool {
-    match context.ball.side() {
-        BallSide::Left => player.side == Some(PlayerSide::Left),
-        BallSide::Center => true,
-        BallSide::Right => player.side == Some(PlayerSide::Right),
-    }
-}
-
 fn window_conf() -> Conf {
     Conf {
         window_title: "FootballSimulatorTesting".to_owned(),

@@ -46,7 +46,7 @@ impl GoalkeeperPressureState {
             );
         }
 
-        Self::check_collision(player, &tick_context.objects_positions, result);
+        Self::check_collision(player, &tick_context.object_positions, result);
 
         let to_start_position = SteeringBehavior::Seek {
             target: player.start_position,

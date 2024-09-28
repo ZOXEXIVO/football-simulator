@@ -2,7 +2,6 @@ use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
-use std::sync::atomic::{AtomicU8, Ordering};
 use rayon::prelude::IntoParallelRefMutIterator;
 use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
@@ -57,12 +56,10 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn game_tick(field: &mut MatchField, context: &mut MatchContext) {
-        let game_tick_context = GameTickContext {
-            objects_positions: MatchObjectsPositions::from(&field),
-        };
+        let game_tick_context = GameTickContext::new(field);
 
         let (collision_ball_events, collision_player_events) =
-            ObjectCollisionsDetector::process(&game_tick_context.objects_positions);
+            ObjectCollisionsDetector::process(&game_tick_context);
 
         Self::play_ball(field, context, collision_ball_events);
         Self::play_players(field, context, &game_tick_context, collision_player_events);
@@ -110,7 +107,6 @@ pub enum MatchEvent {
 
 pub struct MatchContext {
     pub state: GameState,
-    pub ball: BallState,
     pub time: MatchTime,
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
@@ -121,7 +117,6 @@ impl MatchContext {
     pub fn new(field_size: &MatchFieldSize, players: MatchPlayerCollection, team_left_id: u32, team_right_id: u32) -> Self {
         MatchContext {
             state: GameState::new(),
-            ball: BallState::new(),
             time: MatchTime::new(),
             result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS, team_left_id, team_right_id),
             field_size: MatchFieldSize::clone(&field_size),
@@ -141,57 +136,17 @@ impl MatchContext {
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum BallSide {
     Left,
-    Center,
     Right
-}
-
-pub struct BallState {
-    side: AtomicU8
-}
-
-impl BallState {
-    pub fn new() -> Self {
-        BallState { side: AtomicU8::new(0) }
-    }
-
-    pub fn set(&self, side: BallSide) {
-        let side_u = u8::from(side);
-
-        self.side.store(side_u, Ordering::SeqCst)
-    }
-
-    pub fn side(&self) -> BallSide {
-        BallSide::from(self.side.load(Ordering::SeqCst))
-    }
 }
 
 impl From<BallSide> for u8 {
     fn from(side: BallSide) -> Self {
         match side {
             BallSide::Left => 0,
-            BallSide::Center => 1,
-            BallSide::Right => 2
+            BallSide::Right => 1
         }
     }
 }
-
-impl From<u8> for BallState {
-    fn from(side_u: u8) -> Self {
-        BallState { side: AtomicU8::new(side_u) }
-    }
-}
-
-impl From<u8> for BallSide {
-    fn from(side_u: u8) -> Self {
-        match side_u {
-            0 => BallSide::Left,
-            1 => BallSide::Center,
-            2 => BallSide::Right,
-            _ => BallSide::Left
-        }
-    }
-}
-
 
 #[derive(Clone)]
 pub struct MatchFieldSize {
