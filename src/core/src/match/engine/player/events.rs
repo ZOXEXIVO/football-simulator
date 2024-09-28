@@ -19,7 +19,7 @@ pub enum PlayerUpdateEvent {
     OfferSupport(u32),
     ClaimBall(u32),
     ConflictResolution(u32, u32),
-    GainBall,
+    GainBall(u32),
     CommitFoul
 }
 
@@ -143,7 +143,10 @@ impl PlayerUpdateEventCollection {
                     let mut player = context.players.get_mut(*player_id).unwrap();
                     player.has_ball = false;
                 }
-                PlayerUpdateEvent::GainBall => {}
+                PlayerUpdateEvent::GainBall(player_id) => {
+                    ball.owned = true;
+                    ball.last_owner = Some(*player_id);
+                }
                 PlayerUpdateEvent::CommitFoul => {}
             }
         }

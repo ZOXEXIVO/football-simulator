@@ -47,13 +47,13 @@ impl MatchField {
         self.players.iter().for_each(|player| {
             result
                 .position_data
-                .add_player_positions(player.player_id, timestamp, player.position);
+                .add_player_positions(player.id, timestamp, player.position);
         });
 
         // player positions
         self.substitutes.iter().for_each(|sub_player| {
             result.position_data.add_player_positions(
-                sub_player.player_id,
+                sub_player.id,
                 timestamp,
                 sub_player.position,
             );

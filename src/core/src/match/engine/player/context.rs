@@ -36,7 +36,7 @@ impl MatchObjectsPositions {
             .players
             .iter()
             .map(|p| PlayerFieldPosition {
-                player_id: p.player_id,
+                player_id: p.id,
                 side: p.side.unwrap(),
                 position: p.position,
             })
@@ -54,10 +54,10 @@ impl MatchObjectsPositions {
                 field.players.iter().skip(i + 1).for_each(|inner_player| {
                     let distance = outer_player.position.distance_to(&inner_player.position);
                     distances.add(
-                        outer_player.player_id,
+                        outer_player.id,
                         outer_player.team_id,
                         outer_player.position,
-                        inner_player.player_id,
+                        inner_player.id,
                         inner_player.team_id,
                         inner_player.position,
                         distance,
@@ -205,11 +205,11 @@ impl PlayerDistanceClosure {
                 (Vec::with_capacity(10), Vec::with_capacity(10)),
                 |(mut teammates, mut opponents), distance| {
                     if distance.player_from_team == current_player.team_id {
-                        if distance.player_from_id != current_player.player_id {
+                        if distance.player_from_id != current_player.id {
                             teammates.push((distance.player_from_id, distance.distance));
                         }
                     } else {
-                        if distance.player_to_id != current_player.player_id {
+                        if distance.player_to_id != current_player.id {
                             opponents.push((distance.player_from_id, distance.distance));
                         }
                     }
@@ -240,11 +240,11 @@ impl PlayerDistanceClosure {
                 (0, 0),
                 |(mut teammates_count, mut opponents_count), distance| {
                     if distance.player_from_team == current_player.team_id
-                        && distance.player_from_id != current_player.player_id
+                        && distance.player_from_id != current_player.id
                     {
                         teammates_count += 1;
                     } else if distance.player_to_team == current_player.team_id
-                        && distance.player_to_id != current_player.player_id
+                        && distance.player_to_id != current_player.id
                     {
                         opponents_count += 1;
                     }
@@ -259,17 +259,17 @@ impl PlayerDistanceClosure {
         self.distances
             .iter()
             .filter(|distance| {
-                distance.player_from_id == player.player_id
-                    || distance.player_to_id == player.player_id
+                distance.player_from_id == player.id
+                    || distance.player_to_id == player.id
             })
-            .filter(|distance| distance.player_from_id != player.player_id)
+            .filter(|distance| distance.player_from_id != player.id)
             .filter_map(|distance| {
-                let opponent_id = if distance.player_from_id == player.player_id {
+                let opponent_id = if distance.player_from_id == player.id {
                     distance.player_to_id
                 } else {
                     distance.player_from_id
                 };
-                let distance_to_opponent = self.get(player.player_id, opponent_id)?;
+                let distance_to_opponent = self.get(player.id, opponent_id)?;
                 Some((opponent_id, distance_to_opponent))
             })
             .min_by(|&(_, distance1), &(_, distance2)| distance1.partial_cmp(&distance2).unwrap())
@@ -280,19 +280,19 @@ impl PlayerDistanceClosure {
             .iter()
             // Filter distances that involve the current player
             .filter(|distance| {
-                distance.player_from_id == player.player_id || distance.player_to_id == player.player_id
+                distance.player_from_id == player.id || distance.player_to_id == player.id
             })
             // Filter distances where the other player is a teammate and not the same player
             .filter(|distance| {
-                if distance.player_from_id == player.player_id {
-                    distance.player_to_team == player.team_id && distance.player_to_id != player.player_id
+                if distance.player_from_id == player.id {
+                    distance.player_to_team == player.team_id && distance.player_to_id != player.id
                 } else {
-                    distance.player_from_team == player.team_id && distance.player_from_id != player.player_id
+                    distance.player_from_team == player.team_id && distance.player_from_id != player.id
                 }
             })
             // Map to (teammate_id, distance)
             .map(|distance| {
-                let teammate_id = if distance.player_from_id == player.player_id {
+                let teammate_id = if distance.player_from_id == player.id {
                     distance.player_to_id
                 } else {
                     distance.player_from_id

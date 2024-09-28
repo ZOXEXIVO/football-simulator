@@ -2,6 +2,7 @@ use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
+use nalgebra::{Point2, Vector3};
 use rayon::prelude::IntoParallelRefMutIterator;
 use crate::r#match::ball::events::{BallEvents, BallUpdateEvent};
 use crate::r#match::engine::collisions::ObjectCollisionsDetector;
@@ -111,6 +112,7 @@ pub struct MatchContext {
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
     pub players: MatchPlayerCollection,
+    pub goal_positions: GoalPosition
 }
 
 impl MatchContext {
@@ -121,6 +123,7 @@ impl MatchContext {
             result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS, team_left_id, team_right_id),
             field_size: MatchFieldSize::clone(&field_size),
             players,
+            goal_positions: GoalPosition::from(field_size)
         }
     }
 
@@ -149,6 +152,27 @@ impl From<BallSide> for u8 {
 }
 
 #[derive(Clone)]
+pub struct GoalPosition {
+    pub left: Vector3<f32>,
+    pub right: Vector3<f32>
+}
+
+impl From<&MatchFieldSize> for GoalPosition {
+    fn from(value: &MatchFieldSize) -> Self {
+        // Left goal at x = 0, centered on width
+        let left_goal = Vector3::new(0.0, value.height as f32 / 2.0, 0.0);
+
+        // Right goal at x = length, centered on width
+        let right_goal = Vector3::new(value.width as f32, (value.height / 2usize) as f32, 0.0);
+
+        GoalPosition {
+            left: left_goal,
+            right: right_goal,
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct MatchFieldSize {
     pub width: usize,
     pub height: usize,
@@ -170,22 +194,22 @@ impl MatchPlayerCollection {
 
         // home_main
         for hs_m in &home_squad.main_squad {
-            result.insert(hs_m.player_id, hs_m.clone());
+            result.insert(hs_m.id, hs_m.clone());
         }
 
         // home_subs
         for hs_s in &home_squad.substitutes {
-            result.insert(hs_s.player_id, hs_s.clone());
+            result.insert(hs_s.id, hs_s.clone());
         }
 
         // home_main
         for as_m in &away_squad.main_squad {
-            result.insert(as_m.player_id, as_m.clone());
+            result.insert(as_m.id, as_m.clone());
         }
 
         // home_subs
         for as_s in &away_squad.substitutes {
-            result.insert(as_s.player_id, as_s.clone());
+            result.insert(as_s.id, as_s.clone());
         }
 
         MatchPlayerCollection { players: result }

@@ -1,5 +1,6 @@
     use std::sync::LazyLock;
     use nalgebra::Vector3;
+    use rand::Rng;
     use crate::common::loader::DefaultNeuralNetworkLoader;
     use crate::common::NeuralNetwork;
     use crate::r#match::{ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
@@ -69,9 +70,31 @@
             None
         }
 
-        fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-            // Midfielder remains stationary in Standing state
-            Some(Vector3::new(0.0, 0.0, 0.0))
+        fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+            let mut rng = rand::thread_rng();
+
+            // Determine if the player should move based on their concentration and positioning
+            let should_move = rng.gen_bool((ctx.player.skills.mental.positioning / 20.0) as f64)
+                && rng.gen_bool((ctx.player.skills.mental.concentration / 20.0) as f64);
+
+            if should_move {
+                // Get player's agility and stamina to adjust movement
+                let agility_factor = ctx.player.skills.physical.agility / 20.0; // normalize between 0 and 1
+                let stamina_factor = ctx.player.skills.physical.stamina / 20.0; // normalize between 0 and 1
+
+                // Generate random movement direction
+                let random_x: f32 = rng.gen_range(-0.5..0.5) * agility_factor * stamina_factor;
+                let random_y: f32 = rng.gen_range(-0.5..0.5) * agility_factor * stamina_factor;
+
+                // Random movement vector based on skills
+                let random_movement = Vector3::new(random_x, random_y, 0.0);
+
+                // Return random movement
+                Some(random_movement)
+            } else {
+                // Player remains stationary
+                Some(Vector3::new(0.0, 0.0, 0.0))
+            }
         }
 
         fn process_conditions(&self, _ctx: ConditionContext) {
@@ -91,7 +114,7 @@
             const PASSING_DISTANCE_THRESHOLD: f32 = 30.0; // Distance within which a teammate is considered available for a pass
 
             ctx.context.players.raw_players().iter()
-                .filter(|p| p.team_id == ctx.player.team_id && p.player_id != ctx.player.player_id)
+                .filter(|p| p.team_id == ctx.player.team_id && p.id != ctx.player.id)
                 .any(|teammate| {
                     let distance = (ctx.player.position - teammate.position).magnitude();
                     distance < PASSING_DISTANCE_THRESHOLD

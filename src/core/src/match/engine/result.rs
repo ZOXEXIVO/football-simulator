@@ -43,7 +43,7 @@ impl MatchResultRaw {
         for player in players.iter().filter(|p| !p.statistics.is_empty()) {
             for stat in &player.statistics.items            {
                 let detail = GoalDetail{
-                    player_id: player.player_id,
+                    player_id: player.id,
                     match_second: stat.match_second,
                     stat_type: stat.stat_type
                 };
@@ -77,8 +77,8 @@ impl FieldSquad {
 
     pub fn from_team(squad: &TeamSquad) -> Self {
         FieldSquad {
-            main: squad.main_squad.iter().map(|p| p.player_id).collect(),
-            substitutes: squad.substitutes.iter().map(|p| p.player_id).collect(),
+            main: squad.main_squad.iter().map(|p| p.id).collect(),
+            substitutes: squad.substitutes.iter().map(|p| p.id).collect(),
         }
     }
 

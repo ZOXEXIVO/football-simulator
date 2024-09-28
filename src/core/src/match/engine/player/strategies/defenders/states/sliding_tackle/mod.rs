@@ -49,7 +49,7 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
                 let mut state_change = StateChangeResult::with_defender_state(DefenderState::Standing);
 
                 // Gain possession of the ball
-                state_change.events.add(PlayerUpdateEvent::GainBall);
+                state_change.events.add(PlayerUpdateEvent::GainBall(ctx.player.id));
 
                 // Update opponent's state to reflect loss of possession
                 // This assumes you have a mechanism to update other players' states

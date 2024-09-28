@@ -28,7 +28,7 @@ impl StateProcessingHandler for MidfielderShortPassingState {
             // Create an event to change the ball's velocity and update possession
             let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::Standing);
 
-            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.player_id, pass_velocity));
+            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.id, pass_velocity));
 
             // Transition to the next appropriate state (e.g., Standing)
             Some(state_change)

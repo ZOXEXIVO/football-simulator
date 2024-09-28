@@ -12,7 +12,7 @@ use crate::r#match::player::statistics::MatchPlayerStatistics;
 
 #[derive(Debug, Clone)]
 pub struct MatchPlayer {
-    pub player_id: u32,
+    pub id: u32,
     pub position: Vector3<f32>,
     pub start_position: Vector3<f32>,
     pub attributes: PersonAttributes,
@@ -37,7 +37,7 @@ pub enum PlayerSide {
 impl MatchPlayer {
     pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType) -> Self {
         MatchPlayer {
-            player_id: player.id,
+            id: player.id,
             position: Vector3::new(0.0, 0.0, 0.0),
             start_position: Vector3::new(0.0, 0.0, 0.0),
             attributes: player.attributes.clone(),
@@ -52,8 +52,7 @@ impl MatchPlayer {
                 PlayerFieldPositionGroup::Goalkeeper => PlayerState::Goalkeeper(GoalkeeperState::Standing),
                 PlayerFieldPositionGroup::Defender => PlayerState::Defender(DefenderState::Standing),
                 PlayerFieldPositionGroup::Midfielder => PlayerState::Midfielder(MidfielderState::Standing),
-                PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::Standing),
-                _ => PlayerState::Returning
+                PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::Standing)
             },
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new()

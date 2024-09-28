@@ -38,25 +38,20 @@ impl StateProcessingHandler for MidfielderWalkingState {
         if ctx.in_state_time == 0 {
             let wander_behavior = SteeringBehavior::Wander {
                 target: ctx.player.start_position,
-                radius: IntegerUtils::random(5, 15) as f32,
+                radius: IntegerUtils::random(5, 100) as f32,
                 jitter: IntegerUtils::random(1, 5) as f32,
-                distance: IntegerUtils::random(10, 20) as f32,
+                distance: IntegerUtils::random(10, 150) as f32,
                 angle: IntegerUtils::random(0, 360) as f32,
             };
 
             // Store the wander behavior in the player's state if needed
             // For simplicity, we'll calculate and return the velocity directly
             let velocity = wander_behavior.calculate(ctx.player).velocity;
+
             return Some(velocity);
         }
 
-        // 2. Continue wandering
-        // Implement continuous wandering behavior if needed
-        // For now, return a default walking speed towards the start position
-
-        let direction = (ctx.player.start_position - ctx.player.position).normalize();
-        let speed = ctx.player.skills.physical.stamina / 10.0; // Adjust scaling as needed
-        Some(direction * speed)
+        None
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {

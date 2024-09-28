@@ -35,7 +35,7 @@ impl StateProcessingHandler for MidfielderShootingState {
 
         let ball_velocity = shot_direction * shot_power;
 
-        state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.player_id, ball_velocity));
+        state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.id, ball_velocity));
 
         // Transition to the next appropriate state (e.g., Standing)
         Some(state_change)

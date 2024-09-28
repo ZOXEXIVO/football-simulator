@@ -2,9 +2,9 @@ use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::ForwardStrategies;
 use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStrategies};
 use crate::r#match::midfielders::states::{MidfielderState, MidfielderStrategies};
-use crate::r#match::player::events::{PlayerUpdateEventCollection};
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::player::state::PlayerState::{Defender, Goalkeeper, Midfielder};
+use crate::r#match::player::state::PlayerState::{Defender, Goalkeeper, Midfielder, Forward};
 use crate::r#match::{
     BallOperationsImpl, CommonInjuredState, CommonReturningState, CommonRunningState,
     CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer,
@@ -48,7 +48,7 @@ impl PlayerFieldPositionGroup {
             Goalkeeper(state) => GoalkeeperStrategies::process(state, state_processor),
             Defender(state) => DefenderStrategies::process(state, state_processor),
             Midfielder(state) => MidfielderStrategies::process(state, state_processor),
-            PlayerState::Forward(state) => ForwardStrategies::process(state, state_processor),
+            Forward(state) => ForwardStrategies::process(state, state_processor),
         }
     }
 }
@@ -214,6 +214,14 @@ impl StateChangeResult {
             state: Some(Defender(state)),
             velocity: None,
             events: PlayerUpdateEventCollection::new()
+        }
+    }
+
+    pub fn with_defender_state_and_event(state: DefenderState, event: PlayerUpdateEvent) -> Self {
+        StateChangeResult {
+            state: Some(Defender(state)),
+            velocity: None,
+            events: PlayerUpdateEventCollection::with_event(event)
         }
     }
 

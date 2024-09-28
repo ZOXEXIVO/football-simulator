@@ -67,7 +67,7 @@ impl GoalkeeperPressureState {
             .distance_to(&player.position)
             < 10.0
         {
-            result.push(PlayerUpdateEvent::TacklingBall(player.player_id))
+            result.push(PlayerUpdateEvent::TacklingBall(player.id))
         }
     }
 }
