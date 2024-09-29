@@ -57,21 +57,51 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn distance_to_own_goal(&self) -> f32 {
-        let own_goal_position = if self.ctx.player.side.unwrap() == PlayerSide::Left {
-            Vector3::new(0.0, self.ctx.context.field_size.height as f32 / 2.0, 0.0)
-        } else {
-            Vector3::new(
-                self.ctx.context.field_size.width as f32,
-                self.ctx.context.field_size.height as f32 / 2.0f32,
-                0.0,
-            )
+        let target_goal = match self.ctx.player.side {
+            Some(PlayerSide::Left) => {
+                Vector3::new(self.ctx.context.goal_positions.left.x,
+                             self.ctx.context.goal_positions.left.y,
+                             0.0)
+            },
+            Some(PlayerSide::Right) =>  {
+                Vector3::new(self.ctx.context.goal_positions.right.x,
+                             self.ctx.context.goal_positions.right.y,
+                             0.0)
+            },
+            _ => {
+                Vector3::new(0.0, 0.0, 0.0)
+            }
         };
 
         self.ctx
             .tick_context
             .object_positions
             .ball_position
-            .distance_to(&own_goal_position)
+            .distance_to(&target_goal)
+    }
+
+    pub fn distance_to_opponent_goal(&self) -> f32 {
+        let target_goal = match self.ctx.player.side {
+            Some(PlayerSide::Left) => {
+                Vector3::new(self.ctx.context.goal_positions.right.x,
+                             self.ctx.context.goal_positions.right.y,
+                             0.0)
+            },
+            Some(PlayerSide::Right) =>  {
+                Vector3::new(self.ctx.context.goal_positions.left.x,
+                             self.ctx.context.goal_positions.left.y,
+                             0.0)
+            },
+            _ => {
+                Vector3::new(0.0, 0.0, 0.0)
+            }
+        };
+
+        self.ctx
+            .tick_context
+            .object_positions
+            .ball_position
+            .distance_to(&target_goal)
     }
 }
 

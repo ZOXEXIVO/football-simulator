@@ -128,9 +128,7 @@ impl ForwardStandingState {
 
     /// Calculates the distance from the forward to the opponent's goal.
     fn distance_to_opponent_goal(&self, ctx: &StateProcessingContext) -> f32 {
-        let player_position = ctx.player.position;
-        let goal_position = self.get_opponent_goal_position(ctx);
-        (player_position - goal_position).magnitude()
+        ctx.ball().distance_to_opponent_goal()
     }
 }
 
