@@ -11,13 +11,13 @@ pub enum PlayerUpdateEvent {
     PassTo(u32, Vector3<f32>, f64),
     ClearBall(Vector3<f32>),
     RushOut(u32),
+    Shoot(u32),
     StayInGoal(u32),
     MoveBall(u32, Vector3<f32>),
     BallMoveTowardsPlayer(u32),
     CommunicateMessage(u32, &'static str),
     OfferSupport(u32),
     ClaimBall(u32),
-    ConflictResolution(u32, u32),
     GainBall(u32),
     CommitFoul
 }
@@ -57,8 +57,6 @@ impl PlayerUpdateEventCollection {
 
     pub fn process<'p>(&self, ball: &mut Ball, context: &mut MatchContext,
     ) {
-        let mut ball_claims: HashMap<u32, f32> = HashMap::new();
-
         for event in &self.events {
             match event {
                 PlayerUpdateEvent::Goal(player_id) => {
@@ -107,24 +105,6 @@ impl PlayerUpdateEventCollection {
                     // let priority = player.calculate_ball_priority(ball);
                     // ball_claims.insert(player_id, priority);
                 }
-                PlayerUpdateEvent::ConflictResolution(player1_id, player2_id) => {
-                    let priority1 = ball_claims.get(&player1_id).cloned().unwrap_or(0.0);
-                    let priority2 = ball_claims.get(&player2_id).cloned().unwrap_or(0.0);
-
-                    let winner_id = if priority1 >= priority2 {
-                        player1_id
-                    } else {
-                        player2_id
-                    };
-
-                    let winner = context.players.get_mut(*winner_id).unwrap();
-                    winner.has_ball = true;
-                    ball.velocity = Vector3::<f32>::zeros();
-
-                    let loser_id = if winner_id == player1_id { player2_id } else { player1_id };
-                    let loser = context.players.get_mut(*loser_id).unwrap();
-                    loser.has_ball = false;
-                }
                 PlayerUpdateEvent::ClearBall(ball_velocity) => {
                     ball.velocity = *ball_velocity;
                 }
@@ -146,21 +126,7 @@ impl PlayerUpdateEventCollection {
                     ball.owned = true;
                     ball.last_owner = Some(*player_id)
                 }
-            }
-        }
-
-        if !ball_claims.is_empty() {
-            if let Some((&winner_id, &_)) = ball_claims.iter().max_by(|a, b| a.1.partial_cmp(b.1).unwrap()) {
-                let winner = context.players.get_mut(winner_id).unwrap();
-                winner.has_ball = true;
-                ball.velocity = Vector3::<f32>::zeros();
-
-                for (&player_id, _) in ball_claims.iter() {
-                    if player_id != winner_id {
-                        let player = context.players.get_mut(player_id).unwrap();
-                        player.has_ball = false;
-                    }
-                }
+                PlayerUpdateEvent::Shoot(_) => {}
             }
         }
     }

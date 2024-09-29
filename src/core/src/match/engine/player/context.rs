@@ -192,32 +192,17 @@ impl PlayerDistanceClosure {
             .map(|dist| dist.distance)
     }
 
-    pub fn players_within_distance(
-        &self,
-        current_player: &MatchPlayer,
-        max_distance: f32,
-    ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
-        let (teammates, opponents): (Vec<(u32, f32)>, Vec<(u32, f32)>) = self
-            .distances
-            .iter()
-            .filter(|&p| p.distance < max_distance)
-            .fold(
-                (Vec::with_capacity(10), Vec::with_capacity(10)),
-                |(mut teammates, mut opponents), distance| {
-                    if distance.player_from_team == current_player.team_id {
-                        if distance.player_from_id != current_player.id {
-                            teammates.push((distance.player_from_id, distance.distance));
-                        }
-                    } else {
-                        if distance.player_to_id != current_player.id {
-                            opponents.push((distance.player_from_id, distance.distance));
-                        }
-                    }
-                    (teammates, opponents)
-                },
-            );
-
-        (teammates, opponents)
+    pub fn players_within_distance(&self, current_player: &MatchPlayer, max_distance: f32) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
+        self.distances.iter()
+            .filter(|item| item.player_from_id == current_player.id && item.distance < max_distance)
+            .fold((Vec::new(), Vec::new()), |(mut teammates, mut opponents), item| {
+                if item.player_to_team == current_player.team_id {
+                    teammates.push((item.player_to_id, item.distance));
+                } else {
+                    opponents.push((item.player_to_id, item.distance));
+                }
+                (teammates, opponents)
+            })
     }
 
     pub fn get_collisions(&self, max_distance: f32) -> Vec<&PlayerDistanceItem> {
@@ -256,87 +241,41 @@ impl PlayerDistanceClosure {
     }
 
     pub fn find_closest_opponent(&self, player: &MatchPlayer) -> Option<(u32, f32)> {
-        self.distances
-            .iter()
-            .filter(|distance| {
-                distance.player_from_id == player.id
-                    || distance.player_to_id == player.id
-            })
-            .filter(|distance| distance.player_from_id != player.id)
-            .filter_map(|distance| {
-                let opponent_id = if distance.player_from_id == player.id {
-                    distance.player_to_id
-                } else {
-                    distance.player_from_id
-                };
-                let distance_to_opponent = self.get(player.id, opponent_id)?;
-                Some((opponent_id, distance_to_opponent))
-            })
-            .min_by(|&(_, distance1), &(_, distance2)| distance1.partial_cmp(&distance2).unwrap())
+        self.distances.iter()
+            .filter(|item| item.player_from_id == player.id && item.player_from_team != item.player_to_team)
+            .min_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap())
+            .map(|item| (item.player_to_id, item.distance))
     }
 
     pub fn find_closest_opponents(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
-        let mut opponents: Vec<(u32, f32)> = self.distances
-            .iter()
-            .filter(|distance| {
-                distance.player_from_id == player.id
-                    || distance.player_to_id == player.id
-            })
-            .filter(|distance| distance.player_from_id != player.id)
-            .filter_map(|distance| {
-                let opponent_id = if distance.player_from_id == player.id {
-                    distance.player_to_id
-                } else {
-                    distance.player_from_id
-                };
-                let distance_to_opponent = self.get(player.id, opponent_id)?;
-                Some((opponent_id, distance_to_opponent))
-            }).collect();
-
-        // Sort teammates by distance
-        opponents.sort_by(|&(_, dist1), &(_, dist2)| dist1.partial_cmp(&dist2).unwrap());
-
-        if opponents.is_empty() {
-            None
-        } else {
-            Some(opponents)
-        }
+        let mut opponents: Vec<_> = self.distances.iter()
+            .filter(|item| item.player_from_id == player.id && item.player_from_team != item.player_to_team)
+            .map(|item| (item.player_to_id, item.distance))
+            .collect();
+        opponents.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        if opponents.is_empty() { None } else { Some(opponents) }
     }
 
     pub fn find_closest_teammates(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
-        let mut teammates: Vec<(u32, f32)> = self.distances
-            .iter()
-            // Filter distances that involve the current player
-            .filter(|distance| {
-                distance.player_from_id == player.id || distance.player_to_id == player.id
-            })
-            // Filter distances where the other player is a teammate and not the same player
-            .filter(|distance| {
-                if distance.player_from_id == player.id {
-                    distance.player_to_team == player.team_id && distance.player_to_id != player.id
+        let mut teammates: Vec<_> = self.distances.iter()
+            .filter(|item| item.player_from_id == player.id && item.player_from_team == item.player_to_team)
+            .map(|item| (item.player_to_id, item.distance))
+            .collect();
+        teammates.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        if teammates.is_empty() { None } else { Some(teammates) }
+    }
+
+    pub fn find_closest_to_ball(&self, ball_position: Vector3<f32>) -> Option<(u32, f32)> {
+        self.distances.iter()
+            .map(|item| {
+                let dist_from = (item.player_from_position - ball_position).length();
+                let dist_to = (item.player_to_position - ball_position).length();
+                if dist_from < dist_to {
+                    (item.player_from_id, dist_from)
                 } else {
-                    distance.player_from_team == player.team_id && distance.player_from_id != player.id
+                    (item.player_to_id, dist_to)
                 }
             })
-            // Map to (teammate_id, distance)
-            .map(|distance| {
-                let teammate_id = if distance.player_from_id == player.id {
-                    distance.player_to_id
-                } else {
-                    distance.player_from_id
-                };
-                let distance_to_teammate = distance.distance;
-                (teammate_id, distance_to_teammate)
-            })
-            .collect();
-
-        // Sort teammates by distance
-        teammates.sort_by(|&(_, dist1), &(_, dist2)| dist1.partial_cmp(&dist2).unwrap());
-
-        if teammates.is_empty() {
-            None
-        } else {
-            Some(teammates)
-        }
+            .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap())
     }
 }

@@ -1,8 +1,11 @@
-use crate::r#match::{Ball, MatchContext};
+use crate::r#match::{MatchContext};
+use crate::r#match::player::events::PlayerUpdateEvent;
 
 #[derive(Copy, Clone)]
 pub enum BallUpdateEvent {
-    Goal(GoalSide, Option<u32>)
+    Goal(GoalSide, Option<u32>),
+    Claimed(u32),
+    Gained(u32),
 }
 
 #[derive(Copy, Clone)]
@@ -18,7 +21,9 @@ impl BallEvents {
         _current_time: u64,
         events: impl Iterator<Item = BallUpdateEvent>,
         context: &MatchContext,
-    ) {
+    ) -> Vec<PlayerUpdateEvent> {
+        let mut player_events = Vec::new();
+
         for event in events {
             match event {
                 BallUpdateEvent::Goal(side, goalscorer_player_id) => {
@@ -31,7 +36,15 @@ impl BallEvents {
                         }
                     }
                 }
+                BallUpdateEvent::Claimed(player_id) => {
+                    player_events.push(PlayerUpdateEvent::ClaimBall(player_id));
+                }
+                BallUpdateEvent::Gained(player_id) => {
+                    player_events.push(PlayerUpdateEvent::GainBall(player_id));
+                }
             }
         }
+
+        player_events
     }
 }
