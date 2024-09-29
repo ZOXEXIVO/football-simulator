@@ -15,6 +15,7 @@ static FORWARD_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct ForwardRunningState {}
 
 const BALL_DISTANCE_THRESHOLD: f32 = 10.0;
+const MAX_PLAYER_SPEED: f32 = 50.0;
 
 impl StateProcessingHandler for ForwardRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
@@ -52,6 +53,9 @@ impl StateProcessingHandler for ForwardRunningState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         let player_acceleration = ctx.player.skills.physical.acceleration;
+        let player_pace = ctx.player.skills.physical.pace;
+        let player_stamina = ctx.player.skills.physical.stamina;
+        let player_agility = ctx.player.skills.physical.agility;
 
         // Get current positions
         let player_position = ctx.player.position;
@@ -59,16 +63,32 @@ impl StateProcessingHandler for ForwardRunningState {
 
         // Calculate the direction vector towards the ball
         let direction_to_ball = (ball_position - player_position).normalize();
-        let player_velocity = (direction_to_ball * player_acceleration).normalize();
 
-        Some(
-            SteeringBehavior::Pursuit {
-                target: ctx.tick_context.object_positions.ball_position,
-                velocity: player_velocity,
-            }
-            .calculate(ctx.player)
-            .velocity
-        )
+        // Calculate player speed based on their attributes
+        // Normalize each attribute to a 0-1 range assuming they're on a 0-100 scale
+        let normalized_pace = player_pace / 100.0;
+        let normalized_acceleration = player_acceleration / 100.0;
+        let normalized_stamina = player_stamina / 100.0;
+        let normalized_agility = player_agility / 100.0;
+
+        // Combine attributes to determine speed
+        // We're giving more weight to pace and acceleration
+        let speed = (normalized_pace * 0.4 +
+            normalized_acceleration * 0.3 +
+            normalized_stamina * 0.2 +
+            normalized_agility * 0.1) * MAX_PLAYER_SPEED;
+
+        // Calculate player velocity
+        let player_velocity = direction_to_ball * speed;
+
+        // Apply pursuit behavior
+        let pursuit_result = SteeringBehavior::Pursuit {
+            target: ball_position,
+            velocity: player_velocity,
+        }
+            .calculate(ctx.player);
+
+        Some(pursuit_result.velocity)
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}
