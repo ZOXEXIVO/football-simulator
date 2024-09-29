@@ -20,7 +20,7 @@ impl Ball {
         Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(x, y, 0.0),
-            velocity: Vector3::new(0.2, 0.02, 0.1),
+            velocity: Vector3::zeros(),
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
             height: 0.0,

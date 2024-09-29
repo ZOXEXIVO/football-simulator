@@ -54,11 +54,6 @@ async fn main() {
 
     let mut current_frame = 0u64;
 
-    const average_fps_bucket_size: usize = 50;
-
-    let mut max_fps: u128 = 0;
-
-    let mut fps_data = [0u128; average_fps_bucket_size];
 
     loop {
         current_frame += 1;
@@ -81,6 +76,17 @@ async fn main() {
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
 
         let elapsed = start.elapsed();
+
+        draw_goals(offset_x, offset_y, &context);
+        draw_players(offset_x, offset_y, &field);
+
+        // FPS
+        const average_fps_bucket_size: usize = 50;
+
+        let mut max_fps: u128 = 0;
+
+        let mut fps_data = [0u128; average_fps_bucket_size];
+
         let fps_data_current_idx = (current_frame % average_fps_bucket_size as u64) as usize;
 
         let elapsed_mcs = elapsed.as_micros() as u128;
@@ -91,83 +97,7 @@ async fn main() {
             max_fps = elapsed_mcs;
         }
 
-        draw_text(
-            &format!("FPS AVG: {} mcs", average(&fps_data)),
-            offset_x + 10.0,
-            offset_y + 20.0,
-            20.0,
-            BLACK,
-        );
-
-        draw_text(
-            &format!("FPS MAX: {} mcs", max_fps),
-            offset_x + 10.0,
-            offset_y + 40.0,
-            20.0,
-            BLACK,
-        );
-
-        draw_goals(offset_x, offset_y, &context);
-
-        field.players.iter().for_each(|player| {
-            let mut color = if player.side.unwrap() == PlayerSide::Left {
-                Color::from_rgba(0, 184, 186, 255)
-            } else {
-                Color::from_rgba(208, 139, 255, 255)
-            };
-
-            if player.tactics_position == PlayerPositionType::Goalkeeper {
-                color = YELLOW;
-            }
-
-            draw_circle(offset_x + player.position.x, offset_y + player.position.y, 16.0, color);
-
-            let state = &player.tactics_position.get_short_name();
-
-            let left_offset = if state.len() == 3 { 12.0 } else { 8.0 };
-
-            draw_text(
-                state,
-                offset_x + player.position.x - left_offset,
-                offset_y + player.position.y + 5.0,
-                19.0,
-                BLACK,
-            );
-
-            draw_text(
-                &format!("{}", player_state(player)),
-                offset_x + player.position.x - left_offset - 15.0,
-                offset_y + player.position.y + 27.0,
-                15.0,
-                DARKGRAY,
-            );
-
-            draw_text(
-                &format!("distance = {}", distance(&ball.position, &player.position)) ,
-                offset_x + player.position.x - 27.0,
-                offset_y + player.position.y + 40.0,
-                11.0,
-                DARKGRAY
-            );
-            //
-            // let (is_towards, angle) = is_towards_player(&ball.position, &ball.velocity, &player.position);
-            //
-            // draw_text(
-            //     &format!("is_ball_towards = {}", is_towards),
-            //     offset_x + player.position.x - 27.0,
-            //     offset_y + player.position.y + 50.0,
-            //     11.0,
-            //     DARKGRAY,
-            // );
-
-            // draw_text(
-            //     &format!("on_own_side = {}", on_own_side(&context, &ball, &player)),
-            //     offset_x + player.position.x - 27.0,
-            //     offset_y + player.position.y + 50.0,
-            //     11.0,
-            //     DARKGRAY,
-            // );
-        });
+        draw_fps(offset_x, offset_y, &fps_data, max_fps);
 
         ball.update(&mut context);
 
@@ -286,6 +216,25 @@ fn window_conf() -> Conf {
 
 // draw
 
+
+fn draw_fps(offset_x: f32, offset_y: f32, fps_data: &[u128], max_fps: u128){
+    draw_text(
+        &format!("FPS AVG: {} mcs", average(&fps_data)),
+        offset_x + 10.0,
+        offset_y + 20.0,
+        20.0,
+        BLACK,
+    );
+
+    draw_text(
+        &format!("FPS MAX: {} mcs", max_fps),
+        offset_x + 10.0,
+        offset_y + 40.0,
+        20.0,
+        BLACK,
+    );
+}
+
 fn draw_goals(offset_x: f32, offset_y: f32, context: &MatchContext){
     draw_line(offset_x,
               offset_y + context.goal_positions.left.y - GOAL_WIDTH,
@@ -300,4 +249,48 @@ fn draw_goals(offset_x: f32, offset_y: f32, context: &MatchContext){
               offset_y + context.goal_positions.right.y + GOAL_WIDTH,
               3.0,
               BLACK);
+}
+
+fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField){
+    field.players.iter().for_each(|player| {
+        let mut color = if player.side.unwrap() == PlayerSide::Left {
+            Color::from_rgba(0, 184, 186, 255)
+        } else {
+            Color::from_rgba(208, 139, 255, 255)
+        };
+
+        if player.tactics_position == PlayerPositionType::Goalkeeper {
+            color = YELLOW;
+        }
+
+        draw_circle(offset_x + player.position.x, offset_y + player.position.y, 16.0, color);
+
+        let state = &player.tactics_position.get_short_name();
+
+        let left_offset = if state.len() == 3 { 12.0 } else { 8.0 };
+
+        draw_text(
+            state,
+            offset_x + player.position.x - left_offset,
+            offset_y + player.position.y + 5.0,
+            19.0,
+            BLACK,
+        );
+
+        draw_text(
+            &format!("{}", player_state(player)),
+            offset_x + player.position.x - left_offset - 15.0,
+            offset_y + player.position.y + 27.0,
+            15.0,
+            DARKGRAY,
+        );
+
+        draw_text(
+            &format!("distance = {}", distance(&field.ball.position, &player.position)) ,
+            offset_x + player.position.x - 27.0,
+            offset_y + player.position.y + 40.0,
+            11.0,
+            DARKGRAY
+        );
+    });
 }
