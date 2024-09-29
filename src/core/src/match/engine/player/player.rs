@@ -79,29 +79,6 @@ impl MatchPlayer {
         self.state = state;
     }
 
-    fn update_state(
-        &mut self,
-        context: &mut MatchContext,
-        tick_context: &GameTickContext
-    ) {
-        let state_result = self.tactics_position.position_group().process(
-            self.in_state_time,
-            self,
-            context,
-            tick_context
-        );
-
-        if let Some(state) = state_result.state {
-            self.change_state(state);
-        } else {
-            self.in_state_time += 1;
-        }
-
-        if let Some(velocity) = state_result.velocity {
-            self.velocity = velocity;
-        }
-    }
-
     fn move_to(&mut self) {
         self.position.x += self.velocity.x;
         self.position.y += self.velocity.y;

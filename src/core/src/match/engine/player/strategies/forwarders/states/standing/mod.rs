@@ -29,9 +29,9 @@ impl StateProcessingHandler for ForwardStandingState {
 
             // If unable to shoot or pass, decide to dribble or hold position
             if self.should_dribble(ctx) {
-                return Some(StateChangeResult::with_forward_state(ForwardState::Dribbling));
+                Some(StateChangeResult::with_forward_state(ForwardState::Dribbling))
             } else {
-                return None;
+                None
                 // Hold possession
                 //return Some(StateChangeResult::with_forward_state(ForwardState::HoldingPossession));
             }
@@ -41,7 +41,7 @@ impl StateProcessingHandler for ForwardStandingState {
                 // Transition to Pressing state
                 Some(StateChangeResult::with_forward_state(ForwardState::Pressing))
             } else {
-                None
+                Some(StateChangeResult::with_forward_state(ForwardState::Running))
                 // Transition to Positioning state
                 //Some(StateChangeResult::with_forward_state(ForwardState::Positioning))
             }
@@ -71,7 +71,7 @@ impl ForwardStandingState {
     }
 
     /// Finds the best teammate to pass to based on proximity and position.
-    fn find_best_teammate_to_pass(&self, ctx: &StateProcessingContext) -> Option<&MatchPlayer> {
+    fn find_best_teammate_to_pass<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
         // Utilize the find_closest_teammate method from PlayerDistanceClosure
         let closest_teammates = ctx.tick_context
             .object_positions
@@ -79,7 +79,9 @@ impl ForwardStandingState {
             .find_closest_teammates(&ctx.player);
 
         if let Some(closest_teammates) = closest_teammates {
-
+            if let Some((teammate_id, distance)) = closest_teammates.first() {
+                return Some(ctx.context.players.get(*teammate_id)?);
+            }
         }
 
         None

@@ -1,4 +1,4 @@
-use crate::r#match::{BallSide, MatchContext};
+use crate::r#match::{MatchContext};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 use crate::r#match::ball::events::BallUpdateEvent;
@@ -116,6 +116,7 @@ impl Ball {
     pub fn reset(&mut self) {
         self.position.x = self.start_position.x;
         self.position.y = self.start_position.y;
+
         self.velocity = Vector3::zeros();
     }
 }

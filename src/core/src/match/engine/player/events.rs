@@ -6,16 +6,15 @@ pub enum PlayerUpdateEvent {
     Goal(u32),
     Assist(u32),
     BallCollision(u32),
-    TryAroundPlayer(u32, Vector3<f32>),
     TacklingBall(u32),
     BallOwnerChange(u32),
-    PassTo(Vector3<f32>, f64),
+    PassTo(u32, Vector3<f32>, f64),
     ClearBall(Vector3<f32>),
     RushOut(u32),
     StayInGoal(u32),
     MoveBall(u32, Vector3<f32>),
+    BallMoveTowardsPlayer(u32),
     CommunicateMessage(u32, &'static str),
-    RequestBall(u32),
     OfferSupport(u32),
     ClaimBall(u32),
     ConflictResolution(u32, u32),
@@ -80,35 +79,27 @@ impl PlayerUpdateEventCollection {
                         ball.velocity = Vector3::<f32>::zeros();
                     }
                 },
-                PlayerUpdateEvent::TacklingBall(_player_id) => {
-                    ball.velocity = Vector3::<f32>::zeros();
+                PlayerUpdateEvent::TacklingBall(player_id) => {
+                    ball.owned = true;
+                    ball.last_owner = Some(*player_id);
+
+                    let mut player = context.players.get_mut(*player_id).unwrap();
+                    player.has_ball = true;
                 },
                 PlayerUpdateEvent::BallOwnerChange(player_id) => {
                    ball.owned = true;
                    ball.last_owner = Some(*player_id);
                 }
-                PlayerUpdateEvent::PassTo(pass_target, pass_power) => {
+                PlayerUpdateEvent::PassTo(player_id, pass_target, pass_power) => {
                     let ball_pass_vector = pass_target - ball.position;
                     ball.velocity = ball_pass_vector.normalize();
+
+                    let mut player = context.players.get_mut(*player_id).unwrap();
+                    player.has_ball = false;
                 }
                 PlayerUpdateEvent::RushOut(_) => {}
                 PlayerUpdateEvent::StayInGoal(_) => {},
-                PlayerUpdateEvent::TryAroundPlayer(player_id, player_position) => {
-
-                },
                 PlayerUpdateEvent::CommunicateMessage(player_id, message) => {}
-                PlayerUpdateEvent::RequestBall(requester_id) => {
-                    // Логика для обработки запроса мяча
-                    // Например, найти игрока с мячом и отправить ему сообщение
-                    // let player_with_ball = context.players.raw_players().iter().find(|p| p.has_ball);
-                    // if let Some(passer) = player_with_ball {
-                    //     // Добавляем событие передачи мяча
-                    //     // passer.add_event(PlayerUpdateEvent::PassTo(
-                    //     //     context.players.get(requester_id).unwrap().position,
-                    //     //     passer.calculate_pass_power(),
-                    //     // ));
-                    // }
-                }
                 PlayerUpdateEvent::OfferSupport(_) => {}
                 PlayerUpdateEvent::ClaimBall(player_id) => {
                     let player = context.players.get(*player_id).unwrap();
@@ -140,14 +131,21 @@ impl PlayerUpdateEventCollection {
                 PlayerUpdateEvent::MoveBall(player_id, ball_velocity) => {
                     ball.velocity = *ball_velocity;
 
-                    let mut player = context.players.get_mut(*player_id).unwrap();
-                    player.has_ball = false;
+                    ball.owned = true;
+                    ball.last_owner = Some(*player_id)
                 }
                 PlayerUpdateEvent::GainBall(player_id) => {
                     ball.owned = true;
                     ball.last_owner = Some(*player_id);
                 }
                 PlayerUpdateEvent::CommitFoul => {}
+                PlayerUpdateEvent::BallMoveTowardsPlayer(player_id) => {
+                    let player = context.players.get_mut(*player_id).unwrap();
+
+                    ball.velocity = player.velocity;
+                    ball.owned = true;
+                    ball.last_owner = Some(*player_id)
+                }
             }
         }
 

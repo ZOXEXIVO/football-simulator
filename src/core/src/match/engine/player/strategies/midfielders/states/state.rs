@@ -1,4 +1,4 @@
-use crate::r#match::midfielders::states::{MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState, MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState, MidfielderPressingState, MidfielderReturningState, MidfielderShortPassingState, MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState, MidfielderTrackingRunnerState, MidfielderWalkingState};
+use crate::r#match::midfielders::states::{MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState, MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState, MidfielderPressingState, MidfielderReturningState, MidfielderRunningState, MidfielderShortPassingState, MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState, MidfielderTrackingRunnerState, MidfielderWalkingState};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
@@ -11,6 +11,7 @@ pub enum MidfielderState {
     SwitchingPlay,     // Switching the play to the other side of the field
     Crossing,          // Delivering a cross into the box
     LongPassing,       // Executing a long pass
+    Running,             // Running in the direction of the ball
     ShortPassing,      // Executing a short pass
     DistanceShooting,  // Taking a shot from a long distance
     Pressing,          // Pressing the opponent to regain possession
@@ -74,6 +75,9 @@ impl MidfielderStrategies {
             MidfielderState::Walking => {
                 state_processor.process(MidfielderWalkingState::default())
             }
+            MidfielderState::Running => {
+                state_processor.process(MidfielderRunningState::default())
+            }
         }
     }
 }
@@ -97,6 +101,7 @@ impl Display for MidfielderState {
             MidfielderState::Returning => write!(f, "Returning"),
             MidfielderState::Resting => write!(f, "Resting"),
             MidfielderState::Walking => write!(f, "Walking"),
+            MidfielderState::Running => write!(f, "Running"),
         }
     }
 }

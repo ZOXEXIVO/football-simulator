@@ -275,6 +275,34 @@ impl PlayerDistanceClosure {
             .min_by(|&(_, distance1), &(_, distance2)| distance1.partial_cmp(&distance2).unwrap())
     }
 
+    pub fn find_closest_opponents(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
+        let mut opponents: Vec<(u32, f32)> = self.distances
+            .iter()
+            .filter(|distance| {
+                distance.player_from_id == player.id
+                    || distance.player_to_id == player.id
+            })
+            .filter(|distance| distance.player_from_id != player.id)
+            .filter_map(|distance| {
+                let opponent_id = if distance.player_from_id == player.id {
+                    distance.player_to_id
+                } else {
+                    distance.player_from_id
+                };
+                let distance_to_opponent = self.get(player.id, opponent_id)?;
+                Some((opponent_id, distance_to_opponent))
+            }).collect();
+
+        // Sort teammates by distance
+        opponents.sort_by(|&(_, dist1), &(_, dist2)| dist1.partial_cmp(&dist2).unwrap());
+
+        if opponents.is_empty() {
+            None
+        } else {
+            Some(opponents)
+        }
+    }
+
     pub fn find_closest_teammates(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
         let mut teammates: Vec<(u32, f32)> = self.distances
             .iter()

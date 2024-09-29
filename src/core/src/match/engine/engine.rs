@@ -1,12 +1,11 @@
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, MatchObjectsPositions, MatchPlayer, MatchResultRaw, StateManager};
+use crate::r#match::{GameState, GameTickContext, MatchPlayer, MatchResultRaw, StateManager};
 use std::collections::HashMap;
-use nalgebra::{Point2, Vector3};
+use nalgebra::{Vector3};
 use rayon::prelude::IntoParallelRefMutIterator;
-use crate::r#match::ball::events::{BallEvents, BallUpdateEvent, GoalSide};
-use crate::r#match::engine::collisions::ObjectCollisionsDetector;
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use crate::r#match::ball::events::{BallEvents, GoalSide};
+use crate::r#match::player::events::{PlayerUpdateEventCollection};
 use rayon::iter::ParallelIterator;
 use crate::PlayerFieldPositionGroup;
 
@@ -59,39 +58,30 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn game_tick(field: &mut MatchField, context: &mut MatchContext) {
         let game_tick_context = GameTickContext::new(field);
 
-        let (collision_ball_events, collision_player_events) =
-            ObjectCollisionsDetector::process(&game_tick_context);
-
-        Self::play_ball(field, context, collision_ball_events);
-        Self::play_players(field, context, &game_tick_context, collision_player_events);
+        Self::play_ball(field, context);
+        Self::play_players(field, context, &game_tick_context);
 
         field.write_match_positions(&mut context.result, context.time.time);
     }
 
     fn play_ball(
         field: &mut MatchField,
-        context: &MatchContext,
-        ball_collision_events: Vec<BallUpdateEvent>
+        context: &MatchContext
     ) {
         let ball_events = field.ball.update(context);
-
-        let all_ball_events =  ball_events.iter().chain(&ball_collision_events);
-
-        BallEvents::handle_events(context.time.time, &mut field.ball, all_ball_events, context);
+        BallEvents::handle_events(context.time.time, ball_events.into_iter(), context);
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        player_collision_events: Vec<PlayerUpdateEvent>
+        tick_context: &GameTickContext
     ){
         let player_events: Vec<PlayerUpdateEventCollection> = field.players
             //.par_iter_mut()
             .iter_mut()
             .map(|player| player.update(context, tick_context))
             .collect();
-
 
         for events in player_events {
             events.process(&mut field.ball, context)
