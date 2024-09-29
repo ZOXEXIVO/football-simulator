@@ -236,19 +236,21 @@ fn draw_fps(offset_x: f32, offset_y: f32, fps_data: &[u128], max_fps: u128){
 }
 
 fn draw_goals(offset_x: f32, offset_y: f32, context: &MatchContext){
+    let color = Color::from_rgba(0, 184, 186, 255);
+
     draw_line(offset_x,
               offset_y + context.goal_positions.left.y - GOAL_WIDTH,
               offset_x,
               offset_y + context.goal_positions.left.y + GOAL_WIDTH,
-              3.0,
-              BLACK);
+              5.0,
+              color);
 
     draw_line(offset_x + context.goal_positions.right.x,
               offset_y + context.goal_positions.right.y - GOAL_WIDTH,
               offset_x + context.goal_positions.right.x,
               offset_y + context.goal_positions.right.y + GOAL_WIDTH,
-              3.0,
-              BLACK);
+              5.0,
+              color);
 }
 
 fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField){

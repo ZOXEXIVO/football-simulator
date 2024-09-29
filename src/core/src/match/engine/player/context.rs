@@ -275,7 +275,7 @@ impl PlayerDistanceClosure {
             .min_by(|&(_, distance1), &(_, distance2)| distance1.partial_cmp(&distance2).unwrap())
     }
 
-    pub fn find_closest_teammate(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
+    pub fn find_closest_teammates(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
         let mut teammates: Vec<(u32, f32)> = self.distances
             .iter()
             // Filter distances that involve the current player

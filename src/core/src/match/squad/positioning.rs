@@ -3,8 +3,8 @@ use crate::PlayerPositionType;
 pub const POSITION_POSITIONING: &[(PlayerPositionType, PositionType, PositionType)] = &[
     (
         PlayerPositionType::Goalkeeper,
-        PositionType::Home(0, 275),
-        PositionType::Away(840, 275),
+        PositionType::Home(20, 275),
+        PositionType::Away(820, 275),
     ),
     (
         PlayerPositionType::Sweeper,
