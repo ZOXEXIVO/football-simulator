@@ -5,7 +5,7 @@ use crate::r#match::forwarders::states::{
     ForwardRunningInBehindState, ForwardRunningState, ForwardShootingState, ForwardStandingState,
     ForwardTacklingState,
 };
-use crate::r#match::{StateChangeResult, StateProcessingResult, StateProcessor};
+use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy)]

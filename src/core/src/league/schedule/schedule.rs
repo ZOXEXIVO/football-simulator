@@ -3,7 +3,7 @@ use crate::league::round::RoundSchedule;
 use crate::league::{LeagueMatch, LeagueSettings, ScheduleGenerator, ScheduleResult, Season};
 use crate::r#match::TeamScore;
 use chrono::{Datelike, NaiveDate, NaiveDateTime};
-use log::{debug, error};
+use log::error;
 
 #[derive(Debug)]
 pub struct Schedule {

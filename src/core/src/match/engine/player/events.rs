@@ -79,7 +79,7 @@ impl PlayerUpdateEventCollection {
                     ball.owned = true;
                     ball.last_owner = Some(*player_id);
 
-                    let mut player = context.players.get_mut(*player_id).unwrap();
+                    let player = context.players.get_mut(*player_id).unwrap();
                     player.has_ball = true;
                 }
                 PlayerUpdateEvent::BallOwnerChange(player_id) => {
@@ -90,7 +90,7 @@ impl PlayerUpdateEventCollection {
                     let ball_pass_vector = pass_target - ball.position;
                     ball.velocity = ball_pass_vector.normalize();
 
-                    let mut player = context.players.get_mut(*player_id).unwrap();
+                    let player = context.players.get_mut(*player_id).unwrap();
                     player.has_ball = false;
                 }
                 PlayerUpdateEvent::RushOut(_) => {}

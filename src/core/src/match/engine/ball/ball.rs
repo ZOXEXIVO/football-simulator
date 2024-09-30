@@ -1,8 +1,7 @@
-use crate::r#match::{MatchBallLogic, MatchContext, MatchPlayer, PlayerDistanceFromStartPosition};
+use crate::r#match::MatchContext;
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 use crate::r#match::ball::events::BallUpdateEvent;
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 
 pub struct Ball {
     pub start_position: Vector3<f32>,

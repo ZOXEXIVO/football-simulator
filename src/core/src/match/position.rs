@@ -2,7 +2,6 @@
 use nalgebra::Vector3;
 use rand::Rng;
 use rand_distr::num_traits::real::Real;
-use rand_distr::num_traits::Pow;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]

@@ -7,7 +7,7 @@ use crate::r#match::goalkeepers::states::{
     GoalkeeperStandingState, GoalkeeperSweepingState, GoalkeeperTacklingState,
     GoalkeeperThrowingState, GoalkeeperWalkingState,
 };
-use crate::r#match::{StateChangeResult, StateProcessingResult, StateProcessor};
+use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy)]

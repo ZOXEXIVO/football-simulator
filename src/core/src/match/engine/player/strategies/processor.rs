@@ -35,7 +35,7 @@ impl PlayerFieldPositionGroup {
     ) -> StateProcessingResult {
         let player_state = player.state;
 
-        let mut state_processor =  StateProcessor::new(in_state_time, player, context, tick_context);
+        let state_processor =  StateProcessor::new(in_state_time, player, context, tick_context);
 
         match player_state {
             // Common states

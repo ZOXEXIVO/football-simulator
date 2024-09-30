@@ -54,7 +54,7 @@ impl StateProcessingHandler for DefenderRunningState {
         None
     }
 
-    fn process_conditions(&self, mut ctx: ConditionContext) {
+    fn process_conditions(&self, ctx: ConditionContext) {
         if ctx.player.skills.physical.stamina == 0.0 {
             return;
         }

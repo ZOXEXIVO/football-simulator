@@ -1,4 +1,3 @@
-use log::{debug, info};
 use std::sync::LazyLock;
 
 use nalgebra::Vector3;

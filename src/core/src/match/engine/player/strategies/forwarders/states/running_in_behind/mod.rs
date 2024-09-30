@@ -4,7 +4,7 @@ use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;

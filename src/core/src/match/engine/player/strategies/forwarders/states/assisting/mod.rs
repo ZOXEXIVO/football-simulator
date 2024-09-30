@@ -2,10 +2,8 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::position::VectorExtensions;
 
 static FORWARD_ASSISTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_assisting_data.json")));
@@ -15,7 +13,7 @@ pub struct ForwardAssistingState {}
 
 impl StateProcessingHandler for ForwardAssistingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let mut result = StateChangeResult::new();
+        let result = StateChangeResult::new();
 
         // Check if the player still has the ball
         if !ctx.player.has_ball {

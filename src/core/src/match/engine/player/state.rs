@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter};
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use crate::r#match::player::events::PlayerUpdateEventCollection;
 use crate::r#match::{
     GameTickContext, MatchContext, MatchPlayer,
 };
@@ -45,7 +45,7 @@ impl PlayerMatchState {
         context: &MatchContext,
         tick_context: &GameTickContext
     ) -> PlayerUpdateEventCollection {
-        let mut state_change_result = player.tactics_position.position_group().process(
+        let state_change_result = player.tactics_position.position_group().process(
             player.in_state_time,
             player,
             context,

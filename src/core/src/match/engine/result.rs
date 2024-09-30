@@ -1,5 +1,4 @@
-﻿use std::cell::Cell;
-use std::sync::atomic::{AtomicU8, Ordering};
+﻿use std::sync::atomic::{AtomicU8, Ordering};
 use crate::league::LeagueMatch;
 use crate::r#match::position::MatchPositionData;
 use crate::r#match::{MatchPlayer, TeamSquad};

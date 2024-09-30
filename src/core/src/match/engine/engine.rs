@@ -6,7 +6,6 @@ use crate::r#match::{GameState, GameTickContext, MatchPlayer, MatchResultRaw, St
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use rayon::iter::ParallelIterator;
-use rayon::prelude::IntoParallelRefMutIterator;
 use std::collections::HashMap;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}

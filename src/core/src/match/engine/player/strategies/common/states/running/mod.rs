@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::strategies::processor::StateChangeResult;
 
 static COMMON_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -24,7 +24,7 @@ impl StateProcessingHandler for CommonRunningState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, mut ctx: ConditionContext) {
+    fn process_conditions(&self, ctx: ConditionContext) {
        ctx.player.skills.physical.acceleration = 0.0;
     }
 }

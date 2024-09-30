@@ -60,7 +60,7 @@ impl MidfielderShortPassingState {
         let max_pass_distance = MAX_PASS_DISTANCE;
         let player_position = ctx.player.position;
 
-        if let Some((distances))  = ctx.tick_context.object_positions.player_distances.find_closest_teammates(ctx.player) {
+        if let Some(distances)  = ctx.tick_context.object_positions.player_distances.find_closest_teammates(ctx.player) {
             for (teammate_id, distance) in distances {
                 let player = ctx.context.players.get(teammate_id)?;
 
@@ -72,7 +72,7 @@ impl MidfielderShortPassingState {
                     continue;
                 }
 
-                if (distance < max_pass_distance) {
+                if distance < max_pass_distance {
                     return Some(player);
                 }
             }

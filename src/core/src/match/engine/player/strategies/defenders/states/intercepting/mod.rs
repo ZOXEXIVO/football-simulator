@@ -1,7 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior,
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;

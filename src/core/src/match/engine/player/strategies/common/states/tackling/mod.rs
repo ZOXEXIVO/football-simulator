@@ -21,7 +21,7 @@ impl StateProcessingHandler for CommonTacklingState {
         None
     }
 
-    fn velocity(&self, mut ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
