@@ -4,15 +4,12 @@ use core::r#match::FootballEngine;
 use core::r#match::MatchContext;
 use core::r#match::MatchField;
 use macroquad::prelude::*;
-use core::Vector2;
-use core::r#match::BallSide;
 
 //tactics
 use core::club::player::Player;
 use core::club::player::PlayerPositionType;
 use core::club::team::tactics::{Tactics, TacticsPositioning};
 use core::r#match::squad::TeamSquad;
-use core::r#match::MatchObjectsPositions;
 use core::r#match::MatchPlayerCollection;
 use std::time::Instant;
 use env_logger::Env;
