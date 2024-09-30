@@ -58,19 +58,17 @@ impl<'b> BallOperationsImpl<'b> {
 
     pub fn distance_to_own_goal(&self) -> f32 {
         let target_goal = match self.ctx.player.side {
-            Some(PlayerSide::Left) => {
-                Vector3::new(self.ctx.context.goal_positions.left.x,
-                             self.ctx.context.goal_positions.left.y,
-                             0.0)
-            },
-            Some(PlayerSide::Right) =>  {
-                Vector3::new(self.ctx.context.goal_positions.right.x,
-                             self.ctx.context.goal_positions.right.y,
-                             0.0)
-            },
-            _ => {
-                Vector3::new(0.0, 0.0, 0.0)
-            }
+            Some(PlayerSide::Left) => Vector3::new(
+                self.ctx.context.goal_positions.left.x,
+                self.ctx.context.goal_positions.left.y,
+                0.0,
+            ),
+            Some(PlayerSide::Right) => Vector3::new(
+                self.ctx.context.goal_positions.right.x,
+                self.ctx.context.goal_positions.right.y,
+                0.0,
+            ),
+            _ => Vector3::new(0.0, 0.0, 0.0),
         };
 
         self.ctx
@@ -80,21 +78,27 @@ impl<'b> BallOperationsImpl<'b> {
             .distance_to(&target_goal)
     }
 
+    pub fn direction_to_own_goal(&self) -> Vector3<f32> {
+        match self.ctx.player.side {
+            Some(PlayerSide::Left) => self.ctx.context.goal_positions.left,
+            Some(PlayerSide::Right) => self.ctx.context.goal_positions.right,
+            _ => Vector3::new(0.0, 0.0, 0.0),
+        }
+    }
+
     pub fn distance_to_opponent_goal(&self) -> f32 {
         let target_goal = match self.ctx.player.side {
-            Some(PlayerSide::Left) => {
-                Vector3::new(self.ctx.context.goal_positions.right.x,
-                             self.ctx.context.goal_positions.right.y,
-                             0.0)
-            },
-            Some(PlayerSide::Right) =>  {
-                Vector3::new(self.ctx.context.goal_positions.left.x,
-                             self.ctx.context.goal_positions.left.y,
-                             0.0)
-            },
-            _ => {
-                Vector3::new(0.0, 0.0, 0.0)
-            }
+            Some(PlayerSide::Left) => Vector3::new(
+                self.ctx.context.goal_positions.right.x,
+                self.ctx.context.goal_positions.right.y,
+                0.0,
+            ),
+            Some(PlayerSide::Right) => Vector3::new(
+                self.ctx.context.goal_positions.left.x,
+                self.ctx.context.goal_positions.left.y,
+                0.0,
+            ),
+            _ => Vector3::new(0.0, 0.0, 0.0),
         };
 
         self.ctx
