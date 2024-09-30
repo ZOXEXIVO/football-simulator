@@ -20,6 +20,7 @@ pub enum PlayerUpdateEvent {
     GainBall(u32),
     CommitFoul,
     RequestPass(u32, u32),
+    RequestHeading(u32, Vector3<f32>),
 }
 
 pub struct PlayerUpdateEventCollection {
@@ -125,6 +126,7 @@ impl PlayerUpdateEventCollection {
                 }
                 PlayerUpdateEvent::Shoot(_) => {}
                 PlayerUpdateEvent::RequestPass(_, _) => {}
+                PlayerUpdateEvent::RequestHeading(_, _) => {}
             }
         }
     }

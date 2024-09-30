@@ -1,13 +1,13 @@
+use crate::r#match::ball::events::{BallEvents, GoalSide};
 use crate::r#match::field::MatchField;
+use crate::r#match::player::events::PlayerUpdateEventCollection;
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, GameTickContext, MatchPlayer, MatchResultRaw, StateManager};
-use std::collections::HashMap;
-use nalgebra::{Vector3};
-use rayon::prelude::IntoParallelRefMutIterator;
-use crate::r#match::ball::events::{BallEvents, GoalSide};
-use crate::r#match::player::events::{PlayerUpdateEventCollection};
-use rayon::iter::ParallelIterator;
 use crate::PlayerFieldPositionGroup;
+use nalgebra::Vector3;
+use rayon::iter::ParallelIterator;
+use rayon::prelude::IntoParallelRefMutIterator;
+use std::collections::HashMap;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -64,10 +64,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         field.write_match_positions(&mut context.result, context.time.time);
     }
 
-    fn play_ball(
-        field: &mut MatchField,
-        context: &MatchContext
-    ) {
+    fn play_ball(field: &mut MatchField, context: &MatchContext) {
         let ball_events = field.ball.update(context);
         BallEvents::handle_events(context.time.time, ball_events.into_iter(), context);
     }
@@ -75,9 +72,10 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
-        tick_context: &GameTickContext
-    ){
-        let player_events: Vec<PlayerUpdateEventCollection> = field.players
+        tick_context: &GameTickContext,
+    ) {
+        let player_events: Vec<PlayerUpdateEventCollection> = field
+            .players
             //.par_iter_mut()
             .iter_mut()
             .map(|player| player.update(context, tick_context))
@@ -102,18 +100,27 @@ pub struct MatchContext {
     pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
     pub players: MatchPlayerCollection,
-    pub goal_positions: GoalPosition
+    pub goal_positions: GoalPosition,
 }
 
 impl MatchContext {
-    pub fn new(field_size: &MatchFieldSize, players: MatchPlayerCollection, team_left_id: u32, team_right_id: u32) -> Self {
+    pub fn new(
+        field_size: &MatchFieldSize,
+        players: MatchPlayerCollection,
+        team_left_id: u32,
+        team_right_id: u32,
+    ) -> Self {
         MatchContext {
             state: GameState::new(),
             time: MatchTime::new(),
-            result: MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS, team_left_id, team_right_id),
+            result: MatchResultRaw::with_match_time(
+                MATCH_HALF_TIME_MS,
+                team_left_id,
+                team_right_id,
+            ),
             field_size: MatchFieldSize::clone(&field_size),
             players,
-            goal_positions: GoalPosition::from(field_size)
+            goal_positions: GoalPosition::from(field_size),
         }
     }
 
@@ -129,14 +136,14 @@ impl MatchContext {
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum BallSide {
     Left,
-    Right
+    Right,
 }
 
 impl From<BallSide> for u8 {
     fn from(side: BallSide) -> Self {
         match side {
             BallSide::Left => 0,
-            BallSide::Right => 1
+            BallSide::Right => 1,
         }
     }
 }
@@ -144,7 +151,7 @@ impl From<BallSide> for u8 {
 #[derive(Clone)]
 pub struct GoalPosition {
     pub left: Vector3<f32>,
-    pub right: Vector3<f32>
+    pub right: Vector3<f32>,
 }
 
 impl From<&MatchFieldSize> for GoalPosition {
@@ -173,13 +180,13 @@ impl GoalPosition {
             let bottom_goal_bound = self.left.y + GOAL_WIDTH;
 
             if ball_position.y >= top_goal_bound && ball_position.y <= bottom_goal_bound {
-               return Some(GoalSide::Home);
+                return Some(GoalSide::Home);
             }
         }
 
-        if (ball_position.x - self.right.x).abs() < EPSILON  {
-            let top_goal_bound =  self.right.y - GOAL_WIDTH;
-            let bottom_goal_bound =  self.right.y + GOAL_WIDTH;
+        if (ball_position.x - self.right.x).abs() < EPSILON {
+            let top_goal_bound = self.right.y - GOAL_WIDTH;
+            let bottom_goal_bound = self.right.y + GOAL_WIDTH;
 
             if ball_position.y >= top_goal_bound && ball_position.y <= bottom_goal_bound {
                 return Some(GoalSide::Away);
@@ -246,18 +253,32 @@ impl MatchPlayerCollection {
     }
 
     pub fn get_by_position(&self, position_group: PlayerFieldPositionGroup) -> Vec<&MatchPlayer> {
-        self.players.values()
+        self.players
+            .values()
             .filter(|player| player.tactics_position.position_group() == position_group)
             .collect()
     }
 
+    pub fn get_by_team(&self, team_id: u32) -> Vec<&MatchPlayer> {
+        let teammates = self
+            .players
+            .values()
+            .filter(|player| player.team_id == team_id);
+
+        teammates.collect()
+    }
+
     pub fn get_by_not_team(&self, team_id: u32, has_ball: Option<bool>) -> Vec<&MatchPlayer> {
-        let opponents= self.players.values()
+        let opponents = self
+            .players
+            .values()
             .filter(|player| player.team_id != team_id);
 
-        if has_ball.is_some()  {
+        if has_ball.is_some() {
             let ball_val = has_ball.unwrap();
-            return opponents.filter(|player| player.has_ball == ball_val).collect();
+            return opponents
+                .filter(|player| player.has_ball == ball_val)
+                .collect();
         }
 
         opponents.collect()

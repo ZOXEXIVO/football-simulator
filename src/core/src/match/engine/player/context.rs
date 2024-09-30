@@ -4,14 +4,14 @@ use nalgebra::Vector3;
 
 pub struct GameTickContext {
     pub object_positions: MatchObjectsPositions,
-    pub ball: BallMetadata
+    pub ball: BallMetadata,
 }
 
 impl GameTickContext {
     pub fn new(field: &MatchField) -> Self {
         GameTickContext {
             ball: BallMetadata::from_field(field),
-            object_positions: MatchObjectsPositions::from(field)
+            object_positions: MatchObjectsPositions::from(field),
         }
     }
 }
@@ -20,7 +20,7 @@ impl GameTickContext {
 pub enum PlayerDistanceFromStartPosition {
     Small,
     Medium,
-    Big
+    Big,
 }
 
 pub struct MatchObjectsPositions {
@@ -87,7 +87,7 @@ impl MatchObjectsPositions {
 pub struct BallMetadata {
     pub side: BallSide,
     pub is_owned: bool,
-    pub last_owner: Option<u32>
+    pub last_owner: Option<u32>,
 }
 
 impl BallMetadata {
@@ -95,7 +95,7 @@ impl BallMetadata {
         BallMetadata {
             side: Self::calculate_side(field),
             is_owned: field.ball.owned,
-            last_owner: field.ball.last_owner
+            last_owner: field.ball.last_owner,
         }
     }
 
@@ -115,7 +115,7 @@ pub struct PlayerPositionsClosure {
 impl PlayerPositionsClosure {
     pub fn new(players_positions: Vec<PlayerFieldPosition>) -> Self {
         PlayerPositionsClosure {
-            items: players_positions
+            items: players_positions,
         }
     }
 
@@ -192,17 +192,25 @@ impl PlayerDistanceClosure {
             .map(|dist| dist.distance)
     }
 
-    pub fn players_within_distance(&self, current_player: &MatchPlayer, max_distance: f32) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
-        self.distances.iter()
+    pub fn players_within_distance(
+        &self,
+        current_player: &MatchPlayer,
+        max_distance: f32,
+    ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
+        self.distances
+            .iter()
             .filter(|item| item.player_from_id == current_player.id && item.distance < max_distance)
-            .fold((Vec::new(), Vec::new()), |(mut teammates, mut opponents), item| {
-                if item.player_to_team == current_player.team_id {
-                    teammates.push((item.player_to_id, item.distance));
-                } else {
-                    opponents.push((item.player_to_id, item.distance));
-                }
-                (teammates, opponents)
-            })
+            .fold(
+                (Vec::new(), Vec::new()),
+                |(mut teammates, mut opponents), item| {
+                    if item.player_to_team == current_player.team_id {
+                        teammates.push((item.player_to_id, item.distance));
+                    } else {
+                        opponents.push((item.player_to_id, item.distance));
+                    }
+                    (teammates, opponents)
+                },
+            )
     }
 
     pub fn get_collisions(&self, max_distance: f32) -> Vec<&PlayerDistanceItem> {
@@ -241,32 +249,52 @@ impl PlayerDistanceClosure {
     }
 
     pub fn find_closest_opponent(&self, player: &MatchPlayer) -> Option<(u32, f32)> {
-        self.distances.iter()
-            .filter(|item| item.player_from_id == player.id && item.player_from_team != item.player_to_team)
+        self.distances
+            .iter()
+            .filter(|item| {
+                item.player_from_id == player.id && item.player_from_team != item.player_to_team
+            })
             .min_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap())
             .map(|item| (item.player_to_id, item.distance))
     }
 
     pub fn find_closest_opponents(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
-        let mut opponents: Vec<_> = self.distances.iter()
-            .filter(|item| item.player_from_id == player.id && item.player_from_team != item.player_to_team)
+        let mut opponents: Vec<_> = self
+            .distances
+            .iter()
+            .filter(|item| {
+                item.player_from_id == player.id && item.player_from_team != item.player_to_team
+            })
             .map(|item| (item.player_to_id, item.distance))
             .collect();
-        opponents.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
-        if opponents.is_empty() { None } else { Some(opponents) }
+        opponents.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
+        if opponents.is_empty() {
+            None
+        } else {
+            Some(opponents)
+        }
     }
 
     pub fn find_closest_teammates(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
-        let mut teammates: Vec<_> = self.distances.iter()
-            .filter(|item| item.player_from_id == player.id && item.player_from_team == item.player_to_team)
+        let mut teammates: Vec<_> = self
+            .distances
+            .iter()
+            .filter(|item| {
+                item.player_from_id == player.id && item.player_from_team == item.player_to_team
+            })
             .map(|item| (item.player_to_id, item.distance))
             .collect();
         teammates.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
-        if teammates.is_empty() { None } else { Some(teammates) }
+        if teammates.is_empty() {
+            None
+        } else {
+            Some(teammates)
+        }
     }
 
     pub fn find_closest_to_ball(&self, ball_position: Vector3<f32>) -> Option<(u32, f32)> {
-        self.distances.iter()
+        self.distances
+            .iter()
             .map(|item| {
                 let dist_from = (item.player_from_position - ball_position).length();
                 let dist_to = (item.player_to_position - ball_position).length();
