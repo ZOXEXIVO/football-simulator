@@ -4,7 +4,7 @@ use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
@@ -136,7 +136,15 @@ impl ForwardHeadingUpPlayState {
     }
 
     fn scoring_chance(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> f32 {
+        let goal_position = match teammate.side {
+            Some(PlayerSide::Left) => ctx.context.goal_positions.right,
+            Some(PlayerSide::Right) => ctx.context.goal_positions.left,
+            _ => Vector3::new(0.0, 0.0, 0.0),
+        };
+
+        let distance_to_goal = teammate.position.distance_to(&goal_position);
+
         // Calculate the scoring chance based on distance to the goal
-        1.0 - ctx.ball().distance_to_opponent_goal() / ctx.context.field_size.width as f32
+        1.0 - distance_to_goal / ctx.context.field_size.width as f32
     }
 }
