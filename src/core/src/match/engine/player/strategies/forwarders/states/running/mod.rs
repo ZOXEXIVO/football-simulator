@@ -1,5 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
@@ -19,17 +20,13 @@ const MAX_PLAYER_SPEED: f32 = 50.0;
 
 impl StateProcessingHandler for ForwardRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let mut result = StateChangeResult::new();
+        // if !ctx.player.has_ball {
+        //     return Some(StateChangeResult::with_forward_state(
+        //         ForwardState::Assisting,
+        //     ));
+        // }
 
-        if ctx.player.has_ball {
-            result
-                .events
-                .add(PlayerUpdateEvent::BallMoveTowardsPlayer(ctx.player.id));
-
-            return Some(result);
-        }
-
-        Some(result)
+        None
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
@@ -64,14 +61,14 @@ impl StateProcessingHandler for ForwardRunningState {
             // Calculate player speed based on their attributes
             // Normalize each attribute to a 0-1 range assuming they're on a 0-100 scale
             let normalized_pace = player_pace / 100.0;
-            let normalized_acceleration = player_acceleration / 100.0;
+            let normalized_acceleration = player_acceleration / 20.0;
             let normalized_stamina = player_stamina / 100.0;
             let normalized_agility = player_agility / 100.0;
 
             // Combine attributes to determine speed
             // We're giving more weight to pace and acceleration
             let speed = (normalized_pace * 0.4
-                + normalized_acceleration * 0.3
+                + normalized_acceleration * 1.3
                 + normalized_stamina * 0.2
                 + normalized_agility * 0.1)
                 * MAX_PLAYER_SPEED;

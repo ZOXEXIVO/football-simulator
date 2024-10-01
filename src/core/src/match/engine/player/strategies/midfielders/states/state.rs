@@ -1,8 +1,14 @@
-use crate::r#match::midfielders::states::{MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState, MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState, MidfielderPressingState, MidfielderReturningState, MidfielderRunningState, MidfielderShortPassingState, MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState, MidfielderTrackingRunnerState, MidfielderWalkingState};
+use crate::r#match::midfielders::states::{
+    MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState,
+    MidfielderDistributingState, MidfielderHoldingPossessionState, MidfielderLongPassingState,
+    MidfielderPressingState, MidfielderReturningState, MidfielderRunningState,
+    MidfielderShortPassingState, MidfielderStandingState, MidfielderSwitchingPlayState,
+    MidfielderTacklingState, MidfielderTrackingRunnerState, MidfielderWalkingState,
+};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum MidfielderState {
     Standing,          // Standing still
     Distributing,      // Distributing the ball to teammates
@@ -11,7 +17,7 @@ pub enum MidfielderState {
     SwitchingPlay,     // Switching the play to the other side of the field
     Crossing,          // Delivering a cross into the box
     LongPassing,       // Executing a long pass
-    Running,             // Running in the direction of the ball
+    Running,           // Running in the direction of the ball
     ShortPassing,      // Executing a short pass
     DistanceShooting,  // Taking a shot from a long distance
     Pressing,          // Pressing the opponent to regain possession
@@ -68,16 +74,12 @@ impl MidfielderStrategies {
             }
             MidfielderState::Returning => {
                 state_processor.process(MidfielderReturningState::default())
-            },
+            }
             MidfielderState::Resting => {
                 state_processor.process(MidfielderDistributingState::default())
             }
-            MidfielderState::Walking => {
-                state_processor.process(MidfielderWalkingState::default())
-            }
-            MidfielderState::Running => {
-                state_processor.process(MidfielderRunningState::default())
-            }
+            MidfielderState::Walking => state_processor.process(MidfielderWalkingState::default()),
+            MidfielderState::Running => state_processor.process(MidfielderRunningState::default()),
         }
     }
 }

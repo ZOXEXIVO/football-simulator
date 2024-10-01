@@ -1,38 +1,28 @@
-use std::fmt::{Display, Formatter};
-use crate::r#match::player::events::PlayerUpdateEventCollection;
-use crate::r#match::{
-    GameTickContext, MatchContext, MatchPlayer,
-};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
+use crate::r#match::player::events::PlayerUpdateEventCollection;
+use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
+use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PlayerState {
-    Running,
-    Tackling,
-    Shooting,
-    Returning,
     Injured,
     Goalkeeper(GoalkeeperState),
     Defender(DefenderState),
     Midfielder(MidfielderState),
-    Forward(ForwardState)
+    Forward(ForwardState),
 }
 
 impl Display for PlayerState {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match self {
-            PlayerState::Running => write!(f, "Running"),
-            PlayerState::Tackling => write!(f, "Tackling"),
-            PlayerState::Shooting => write!(f, "Shooting"),
-            PlayerState::Returning => write!(f, "Returning"),
             PlayerState::Injured => write!(f, "Injured"),
             PlayerState::Goalkeeper(state) => write!(f, "Goalkeeper: {}", state),
             PlayerState::Defender(state) => write!(f, "Defender: {}", state),
             PlayerState::Midfielder(state) => write!(f, "Midfielder: {}", state),
-            PlayerState::Forward(state) => write!(f, "Forward: {}", state)
+            PlayerState::Forward(state) => write!(f, "Forward: {}", state),
         }
     }
 }
@@ -43,13 +33,13 @@ impl PlayerMatchState {
     pub fn process(
         player: &mut MatchPlayer,
         context: &MatchContext,
-        tick_context: &GameTickContext
+        tick_context: &GameTickContext,
     ) -> PlayerUpdateEventCollection {
         let state_change_result = player.tactics_position.position_group().process(
             player.in_state_time,
             player,
             context,
-            tick_context
+            tick_context,
         );
 
         if let Some(state) = state_change_result.state {

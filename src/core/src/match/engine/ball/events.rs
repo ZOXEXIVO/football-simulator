@@ -5,6 +5,7 @@ use crate::r#match::MatchContext;
 pub enum BallUpdateEvent {
     Goal(GoalSide, Option<u32>),
     Claimed(u32),
+    UnClaim(u32),
     Gained(u32),
 }
 
@@ -35,6 +36,9 @@ impl BallEvents {
                 }
                 BallUpdateEvent::Gained(player_id) => {
                     player_events.add(PlayerUpdateEvent::GainBall(player_id));
+                }
+                BallUpdateEvent::UnClaim(player_id) => {
+                    player_events.add(PlayerUpdateEvent::UnClaimBall(player_id));
                 }
             }
         }

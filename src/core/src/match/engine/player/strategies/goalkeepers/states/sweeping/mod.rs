@@ -1,10 +1,14 @@
-use crate::common::NeuralNetwork;
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
+use crate::common::NeuralNetwork;
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::{ConditionContext, GameTickContext, MatchContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{
+    ConditionContext, GameTickContext, MatchContext, MatchPlayer, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_SWEEPING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_sweeping_data.json")));
@@ -25,9 +29,7 @@ impl StateProcessingHandler for GoalkeeperSweepingState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl GoalkeeperSweepingState {
@@ -63,7 +65,7 @@ impl GoalkeeperSweepingState {
             result.push(PlayerUpdateEvent::TacklingBall(*opponent_to_tackle));
 
             // TODO Own strategy
-            StateChangeResult::with(PlayerState::Running)
+            StateChangeResult::with_goalkeeper_state(GoalkeeperState::ReturningToGoal)
         } else {
             StateChangeResult::new()
         }

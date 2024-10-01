@@ -1,8 +1,14 @@
-use crate::r#match::defenders::states::{DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState, DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState, DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderReturningState, DefenderSlidingTackleState, DefenderStandingState, DefenderTacklingState, DefenderTrackingBackState, DefenderWalkingState};
+use crate::r#match::defenders::states::{
+    DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState,
+    DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState,
+    DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderReturningState,
+    DefenderSlidingTackleState, DefenderStandingState, DefenderTacklingState,
+    DefenderTrackingBackState, DefenderWalkingState,
+};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum DefenderState {
     Standing,      // Standing
     Resting,       // Resting after an attack

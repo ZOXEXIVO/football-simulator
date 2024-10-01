@@ -1,6 +1,7 @@
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::{BallSide, MatchField, MatchPlayer};
 use nalgebra::Vector3;
+use std::cmp::Ordering;
 
 pub struct GameTickContext {
     pub object_positions: MatchObjectsPositions,
@@ -105,8 +106,8 @@ impl BallMetadata {
     pub fn from_field(field: &MatchField) -> Self {
         BallMetadata {
             side: Self::calculate_side(field),
-            is_owned: field.ball.owned,
-            last_owner: field.ball.last_owner,
+            is_owned: field.ball.current_owner.is_some(),
+            last_owner: field.ball.previous_owner,
         }
     }
 
@@ -265,7 +266,11 @@ impl PlayerDistanceClosure {
             .filter(|item| {
                 item.player_from_id == player.id && item.player_from_team != item.player_to_team
             })
-            .min_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap())
+            .min_by(|a, b| {
+                a.distance
+                    .partial_cmp(&b.distance)
+                    .unwrap_or(Ordering::Equal)
+            })
             .map(|item| (item.player_to_id, item.distance))
     }
 

@@ -4,10 +4,9 @@ use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStra
 use crate::r#match::midfielders::states::{MidfielderState, MidfielderStrategies};
 use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::player::state::PlayerState::{Defender, Goalkeeper, Midfielder, Forward};
+use crate::r#match::player::state::PlayerState::{Defender, Forward, Goalkeeper, Midfielder};
 use crate::r#match::{
-    BallOperationsImpl, CommonInjuredState, CommonReturningState, CommonRunningState,
-    CommonShootingState, CommonTacklingState, GameTickContext, MatchContext, MatchPlayer,
+    BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer,
     PlayerOperationsImpl,
 };
 use crate::PlayerFieldPositionGroup;
@@ -31,18 +30,14 @@ impl PlayerFieldPositionGroup {
         in_state_time: u64,
         player: &mut MatchPlayer,
         context: &MatchContext,
-        tick_context: &GameTickContext
+        tick_context: &GameTickContext,
     ) -> StateProcessingResult {
         let player_state = player.state;
 
-        let state_processor =  StateProcessor::new(in_state_time, player, context, tick_context);
+        let state_processor = StateProcessor::new(in_state_time, player, context, tick_context);
 
         match player_state {
             // Common states
-            PlayerState::Running => state_processor.process(CommonRunningState::default()),
-            PlayerState::Tackling => state_processor.process(CommonTacklingState::default()),
-            PlayerState::Shooting => state_processor.process(CommonShootingState::default()),
-            PlayerState::Returning => state_processor.process(CommonReturningState::default()),
             PlayerState::Injured => state_processor.process(CommonInjuredState::default()),
             // // Specific states
             Goalkeeper(state) => GoalkeeperStrategies::process(state, state_processor),
@@ -57,7 +52,7 @@ pub struct StateProcessor<'p> {
     in_state_time: u64,
     player: &'p mut MatchPlayer,
     context: &'p MatchContext,
-    tick_context: &'p GameTickContext
+    tick_context: &'p GameTickContext,
 }
 
 impl<'p> StateProcessor<'p> {
@@ -65,20 +60,20 @@ impl<'p> StateProcessor<'p> {
         in_state_time: u64,
         player: &'p mut MatchPlayer,
         context: &'p MatchContext,
-        tick_context: &'p GameTickContext
+        tick_context: &'p GameTickContext,
     ) -> Self {
         StateProcessor {
             in_state_time,
             player,
             context,
-            tick_context
+            tick_context,
         }
     }
 
     pub fn process<H: StateProcessingHandler>(self, handler: H) -> StateProcessingResult {
         let condition_ctx = ConditionContext {
             in_state_time: self.in_state_time,
-            player: self.player
+            player: self.player,
         };
 
         // Process player conditions
@@ -96,7 +91,8 @@ impl<'p> StateProcessor<'p> {
         }
 
         // common logic
-        let complete_result = |state_results: StateChangeResult, mut result: StateProcessingResult|  {
+        let complete_result = |state_results: StateChangeResult,
+                               mut result: StateProcessingResult| {
             if let Some(state) = state_results.state {
                 result.state = Some(state);
                 result.events = state_results.events;
@@ -122,19 +118,21 @@ impl<'p> StateProcessor<'p> {
 
 pub struct ConditionContext<'sp> {
     pub in_state_time: u64,
-    pub player: &'sp mut MatchPlayer
+    pub player: &'sp mut MatchPlayer,
 }
 
 pub struct StateProcessingContext<'sp> {
     pub in_state_time: u64,
     pub player: &'sp MatchPlayer,
     pub context: &'sp MatchContext,
-    pub tick_context: &'sp GameTickContext
+    pub tick_context: &'sp GameTickContext,
 }
 
 impl<'sp> StateProcessingContext<'sp> {
     #[inline]
-    pub fn ball(&self) -> BallOperationsImpl<'_> { BallOperationsImpl::new(self) }
+    pub fn ball(&self) -> BallOperationsImpl<'_> {
+        BallOperationsImpl::new(self)
+    }
 
     #[inline]
     pub fn player(&self) -> PlayerOperationsImpl<'_> {
@@ -156,7 +154,7 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
 pub struct StateProcessingResult {
     pub state: Option<PlayerState>,
     pub velocity: Option<Vector3<f32>>,
-    pub events: PlayerUpdateEventCollection
+    pub events: PlayerUpdateEventCollection,
 }
 
 impl StateProcessingResult {
@@ -164,7 +162,7 @@ impl StateProcessingResult {
         StateProcessingResult {
             state: None,
             velocity: None,
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 }
@@ -173,7 +171,7 @@ pub struct StateChangeResult {
     pub state: Option<PlayerState>,
     pub velocity: Option<Vector3<f32>>,
 
-    pub events: PlayerUpdateEventCollection
+    pub events: PlayerUpdateEventCollection,
 }
 
 impl StateChangeResult {
@@ -181,7 +179,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: None,
             velocity: None,
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 
@@ -197,7 +195,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(state),
             velocity: None,
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 
@@ -205,7 +203,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Goalkeeper(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 
@@ -213,7 +211,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Defender(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 
@@ -221,7 +219,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Defender(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::with_event(event)
+            events: PlayerUpdateEventCollection::with_event(event),
         }
     }
 
@@ -229,7 +227,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Midfielder(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 
@@ -237,7 +235,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Forward(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 
@@ -245,7 +243,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: None,
             velocity: Some(velocity),
-            events: PlayerUpdateEventCollection::new()
+            events: PlayerUpdateEventCollection::new(),
         }
     }
 
@@ -253,7 +251,7 @@ impl StateChangeResult {
         StateChangeResult {
             state: None,
             velocity: None,
-            events
+            events,
         }
     }
 }

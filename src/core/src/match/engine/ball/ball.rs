@@ -1,7 +1,7 @@
 use crate::r#match::ball::events::BallUpdateEvent;
+use crate::r#match::player::state::PlayerState;
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
-use crate::Player;
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
 
@@ -13,8 +13,8 @@ pub struct Ball {
     pub center_field_position: f32,
     pub height: f32,
 
-    pub last_owner: Option<u32>,
-    pub owned: bool,
+    pub previous_owner: Option<u32>,
+    pub current_owner: Option<u32>,
 }
 
 impl Ball {
@@ -26,23 +26,25 @@ impl Ball {
             ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
             height: 0.0,
-            last_owner: None,
-            owned: false,
+            previous_owner: None,
+            current_owner: None,
         }
     }
 
     pub fn update(
         &mut self,
         context: &MatchContext,
+        players: &[MatchPlayer],
         tick_context: &GameTickContext,
     ) -> Vec<BallUpdateEvent> {
         let mut result = Vec::with_capacity(10);
 
         self.update_velocity(&mut result);
-        self.move_to(context);
         self.check_goal(context, &mut result);
         self.check_boundary_collision(&mut result, context);
-        self.check_ball_ownership(context, tick_context, &mut result);
+        self.check_ball_ownership(context, players, &mut result);
+
+        self.move_to(tick_context);
 
         result
     }
@@ -68,51 +70,61 @@ impl Ball {
     fn check_ball_ownership(
         &mut self,
         context: &MatchContext,
-        tick_context: &GameTickContext,
+        players: &[MatchPlayer],
         result: &mut Vec<BallUpdateEvent>,
     ) {
         const BALL_DISTANCE_THRESHOLD: f32 = 5.0;
 
-        if let Some(owner_player_id) = self.last_owner {
+        if let Some(owner_player_id) = self.previous_owner {
             let owner = context.players.get(owner_player_id).unwrap();
             if owner.position.distance_to(&self.position) > BALL_DISTANCE_THRESHOLD {
-                self.last_owner = None;
+                self.previous_owner = None;
             }
         } else {
-            let nearby_players: Vec<(u32, &PlayerFieldPosition)> = tick_context
-                .object_positions
-                .players_positions
-                .items
+            let mut nearby_players: Vec<&MatchPlayer> = players
                 .iter()
+                //.filter(|p| p.state != PlayerState::Injured)
                 .filter(|player_position| {
                     let dx = player_position.position.x - self.position.x;
                     let dy = player_position.position.y - self.position.y;
 
                     dx * dx + dy * dy < BALL_DISTANCE_THRESHOLD * BALL_DISTANCE_THRESHOLD
                 })
-                .map(|player_position| (player_position.player_id, player_position))
                 .collect();
 
-            let best_tackler =
-                nearby_players
-                    .iter()
-                    .max_by(|(player_id_a, _), (player_id_b, _)| {
-                        let player_a = context.players.get(*player_id_a).unwrap();
-                        let player_b = context.players.get(*player_id_b).unwrap();
+            let is_nearby_already_has_ball = nearby_players.iter().any(|player| player.has_ball);
+            if is_nearby_already_has_ball {
+                return;
+            }
 
-                        let tackling_score_a = Self::calculate_tackling_score(player_a);
-                        let tackling_score_b = Self::calculate_tackling_score(player_b);
+            let best_tackler = nearby_players.iter().max_by(|player_a, player_b| {
+                let player_a = context.players.get(player_a.id).unwrap();
+                let player_b = context.players.get(player_b.id).unwrap();
 
-                        tackling_score_a
-                            .partial_cmp(&tackling_score_b)
-                            .unwrap_or(std::cmp::Ordering::Equal)
-                    });
+                let tackling_score_a = Self::calculate_tackling_score(player_a);
+                let tackling_score_b = Self::calculate_tackling_score(player_b);
 
-            if let Some((player_id, _)) = best_tackler {
-                self.last_owner = Some(*player_id);
-                self.owned = true;
+                tackling_score_a
+                    .partial_cmp(&tackling_score_b)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
 
-                result.push(BallUpdateEvent::Claimed(*player_id));
+            if let Some(player) = best_tackler {
+                self.previous_owner = self.current_owner;
+                self.current_owner = Some(player.id);
+
+                if is_nearby_already_has_ball {
+                    nearby_players
+                        .iter()
+                        .filter(|p| !p.has_ball)
+                        .for_each(|mut player| {
+                            result.push(BallUpdateEvent::UnClaim(player.id));
+                        });
+
+                    return;
+                }
+
+                result.push(BallUpdateEvent::Claimed(player.id));
             }
         }
     }
@@ -137,7 +149,7 @@ impl Ball {
 
     fn check_goal(&mut self, context: &MatchContext, result: &mut Vec<BallUpdateEvent>) {
         if let Some(goal_side) = context.goal_positions.is_goal(self.position) {
-            result.push(BallUpdateEvent::Goal(goal_side, self.last_owner));
+            result.push(BallUpdateEvent::Goal(goal_side, self.previous_owner));
             self.reset();
         }
     }
@@ -168,13 +180,15 @@ impl Ball {
         }
     }
 
-    fn move_to(&mut self, context: &MatchContext) {
-        if self.owned {
-            if let Some(owner_player_id) = self.last_owner {
-                if let Some(owner) = context.players.get(owner_player_id) {
-                    self.position.x += owner.position.x;
-                    self.position.y += owner.position.y;
-                }
+    fn move_to(&mut self, tick_context: &GameTickContext) {
+        if let Some(owner_player_id) = self.current_owner {
+            if let Some(owner_position) = tick_context
+                .object_positions
+                .players_positions
+                .get_player_position(owner_player_id)
+            {
+                self.position.x = owner_position.x;
+                self.position.y = owner_position.y;
             }
         } else {
             self.position.x += self.velocity.x;
@@ -188,15 +202,6 @@ impl Ball {
         } else {
             BallPosition::Away
         }
-    }
-
-    pub fn move_towards_player(&mut self, player_pos: &Vector3<f32>) {
-        let position_diff = *player_pos - self.position;
-
-        let distance = (position_diff.x.pow(2.0) + position_diff.y.pow(2.0)).sqrt();
-
-        self.position.x += (position_diff.x / distance) * self.velocity.x;
-        self.position.y += (position_diff.y / distance) * self.velocity.y;
     }
 
     pub fn reset(&mut self) {

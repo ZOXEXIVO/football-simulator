@@ -2,7 +2,7 @@
 pub mod context;
 pub mod events;
 pub mod player;
-mod state;
+pub mod state;
 pub mod statistics;
 pub mod strategies;
 

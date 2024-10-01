@@ -68,7 +68,9 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         context: &MatchContext,
         tick_context: &GameTickContext,
     ) -> PlayerUpdateEventCollection {
-        let ball_events = field.ball.update(context, tick_context);
+        let players = &field.players;
+
+        let ball_events = field.ball.update(context, &players, tick_context);
 
         BallEvents::handle_events(context.time.time, ball_events.into_iter(), context)
     }

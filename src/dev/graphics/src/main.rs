@@ -36,7 +36,7 @@ async fn main() {
     let offset_y = (height - field_height) / 2.0;
 
     //840, 545
-    let mut ball = Ball::with_coord(field_width / 2.0, field_height / 2.0);
+    // let mut ball = Ball::with_coord(field_width / 2.0, field_height / 2.0);
 
     let home_squad = get_home_squad();
     let away_squad = get_away_squad();
@@ -73,13 +73,6 @@ async fn main() {
             },
         );
 
-        draw_circle(
-            offset_x + ball.position.x,
-            offset_y + ball.position.y,
-            7.0,
-            ORANGE,
-        );
-
         let start = Instant::now();
 
         FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
@@ -88,6 +81,8 @@ async fn main() {
 
         draw_goals(offset_x, offset_y, &context);
         draw_players(offset_x, offset_y, &field);
+
+        draw_ball(offset_x, offset_y, &field.ball);
 
         // FPS
         const average_fps_bucket_size: usize = 50;
@@ -123,7 +118,7 @@ pub fn get_home_squad() -> TeamSquad {
         get_player(PlayerPositionType::MidfielderCenterLeft),
         get_player(PlayerPositionType::MidfielderCenterRight),
         get_player(PlayerPositionType::MidfielderRight),
-        get_player(PlayerPositionType::ForwardLeft),
+        get_player(PlayerPositionType::WingbackLeft),
         get_player(PlayerPositionType::ForwardRight),
     ];
 
@@ -154,8 +149,8 @@ pub fn get_away_squad() -> TeamSquad {
         get_player(PlayerPositionType::MidfielderCenterLeft),
         get_player(PlayerPositionType::MidfielderCenterRight),
         get_player(PlayerPositionType::MidfielderRight),
-        get_player(PlayerPositionType::ForwardLeft),
-        get_player(PlayerPositionType::ForwardRight),
+        get_player(PlayerPositionType::WingbackLeft),
+        get_player(PlayerPositionType::WingbackRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players
@@ -323,4 +318,13 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField) {
             DARKGRAY,
         );
     });
+}
+
+fn draw_ball(offset_x: f32, offset_y: f32, ball: &Ball) {
+    draw_circle(
+        offset_x + ball.position.x,
+        offset_y + ball.position.y,
+        7.0,
+        ORANGE,
+    );
 }
