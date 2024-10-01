@@ -1,4 +1,4 @@
-use crate::r#match::{Ball, MatchContext};
+use crate::r#match::{Ball, MatchContext, MatchField};
 use nalgebra::Vector3;
 
 pub enum PlayerUpdateEvent {
@@ -56,43 +56,43 @@ impl PlayerUpdateEventCollection {
         self.events.extend(events)
     }
 
-    pub fn process<'p>(&self, ball: &mut Ball, context: &mut MatchContext) {
+    pub fn process<'p>(&self, field: &mut MatchField, context: &mut MatchContext) {
         for event in &self.events {
             match event {
                 PlayerUpdateEvent::Goal(player_id) => {
-                    let player = context.players.get_mut(*player_id).unwrap();
+                    let player = field.get_player_mut(*player_id).unwrap();
 
                     player.statistics.add_goal(context.time.time)
                 }
                 PlayerUpdateEvent::Assist(player_id) => {
-                    let player = context.players.get_mut(*player_id).unwrap();
+                    let player = field.get_player_mut(*player_id).unwrap();
 
                     player.statistics.add_assist(context.time.time)
                 }
                 PlayerUpdateEvent::BallCollision(player_id) => {
-                    let player = context.players.get_mut(*player_id).unwrap();
+                    let player = field.get_player_mut(*player_id).unwrap();
 
                     if player.skills.technical.first_touch > 10.0 {
                         player.has_ball = true;
-                        ball.velocity = Vector3::<f32>::zeros();
+                        field.ball.velocity = Vector3::<f32>::zeros();
                     }
                 }
                 PlayerUpdateEvent::TacklingBall(player_id) => {
-                    ball.owned = true;
-                    ball.last_owner = Some(*player_id);
+                    field.ball.owned = true;
+                    field.ball.last_owner = Some(*player_id);
 
-                    let player = context.players.get_mut(*player_id).unwrap();
+                    let player = field.get_player_mut(*player_id).unwrap();
                     player.has_ball = true;
                 }
                 PlayerUpdateEvent::BallOwnerChange(player_id) => {
-                    ball.owned = true;
-                    ball.last_owner = Some(*player_id);
+                    field.ball.owned = true;
+                    field.ball.last_owner = Some(*player_id);
                 }
                 PlayerUpdateEvent::PassTo(player_id, pass_target, pass_power) => {
-                    let ball_pass_vector = pass_target - ball.position;
-                    ball.velocity = ball_pass_vector.normalize();
+                    let ball_pass_vector = pass_target - field.ball.position;
+                    field.ball.velocity = ball_pass_vector.normalize();
 
-                    let player = context.players.get_mut(*player_id).unwrap();
+                    let player = field.get_player_mut(*player_id).unwrap();
                     player.has_ball = false;
                 }
                 PlayerUpdateEvent::RushOut(_) => {}
@@ -100,31 +100,40 @@ impl PlayerUpdateEventCollection {
                 PlayerUpdateEvent::CommunicateMessage(player_id, message) => {}
                 PlayerUpdateEvent::OfferSupport(_) => {}
                 PlayerUpdateEvent::ClaimBall(player_id) => {
-                    let player = context.players.get(*player_id).unwrap();
-                    // Рассчитываем приоритет на основе позиции, скорости и навыков
-                    // let priority = player.calculate_ball_priority(ball);
-                    // ball_claims.insert(player_id, priority);
+                    // TODO
+
+                    field.players.iter_mut().for_each(|player| {
+                        player.has_ball = false;
+                    });
+
+                    let mut player = field.get_player_mut(*player_id).unwrap();
+
+                    player.has_ball = true;
+
+                    field.ball.velocity = player.velocity;
+                    field.ball.owned = true;
+                    field.ball.last_owner = Some(*player_id)
                 }
                 PlayerUpdateEvent::ClearBall(ball_velocity) => {
-                    ball.velocity = *ball_velocity;
+                    field.ball.velocity = *ball_velocity;
                 }
                 PlayerUpdateEvent::MoveBall(player_id, ball_velocity) => {
-                    ball.velocity = *ball_velocity;
+                    field.ball.velocity = *ball_velocity;
 
-                    ball.owned = true;
-                    ball.last_owner = Some(*player_id)
+                    field.ball.owned = true;
+                    field.ball.last_owner = Some(*player_id)
                 }
                 PlayerUpdateEvent::GainBall(player_id) => {
-                    ball.owned = true;
-                    ball.last_owner = Some(*player_id);
+                    field.ball.owned = true;
+                    field.ball.last_owner = Some(*player_id);
                 }
                 PlayerUpdateEvent::CommitFoul => {}
                 PlayerUpdateEvent::BallMoveTowardsPlayer(player_id) => {
-                    let player = context.players.get_mut(*player_id).unwrap();
+                    let player = field.get_player_mut(*player_id).unwrap();
 
-                    ball.velocity = player.velocity;
-                    ball.owned = true;
-                    ball.last_owner = Some(*player_id)
+                    field.ball.velocity = player.velocity;
+                    field.ball.owned = true;
+                    field.ball.last_owner = Some(*player_id)
                 }
                 PlayerUpdateEvent::Shoot(_) => {}
                 PlayerUpdateEvent::RequestPass(_, _) => {}

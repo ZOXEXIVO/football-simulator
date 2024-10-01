@@ -53,6 +53,7 @@ impl MatchObjectsPositions {
             .for_each(|(i, outer_player)| {
                 field.players.iter().skip(i + 1).for_each(|inner_player| {
                     let distance = outer_player.position.distance_to(&inner_player.position);
+
                     distances.add(
                         outer_player.id,
                         outer_player.team_id,
@@ -60,6 +61,16 @@ impl MatchObjectsPositions {
                         inner_player.id,
                         inner_player.team_id,
                         inner_player.position,
+                        distance,
+                    );
+
+                    distances.add(
+                        inner_player.id,
+                        inner_player.team_id,
+                        inner_player.position,
+                        outer_player.id,
+                        outer_player.team_id,
+                        outer_player.position,
                         distance,
                     );
                 });
@@ -263,10 +274,21 @@ impl PlayerDistanceClosure {
             .distances
             .iter()
             .filter(|item| {
-                item.player_from_id == player.id && item.player_from_team != item.player_to_team
+                (item.player_from_id == player.id && item.player_from_team != item.player_to_team)
+                    || (item.player_to_id == player.id
+                        && item.player_from_team != item.player_to_team)
             })
-            .map(|item| (item.player_to_id, item.distance))
+            .map(|item| {
+                if item.player_from_id == player.id {
+                    (item.player_to_id, item.distance)
+                } else {
+                    (item.player_from_id, item.distance)
+                }
+            })
             .collect();
+
+        println!("COUNT = {}", opponents.len());
+
         opponents.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
         if opponents.is_empty() {
             None

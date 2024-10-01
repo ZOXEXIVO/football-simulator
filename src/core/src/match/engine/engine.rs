@@ -1,6 +1,6 @@
 use crate::r#match::ball::events::{BallEvents, GoalSide};
 use crate::r#match::field::MatchField;
-use crate::r#match::player::events::PlayerUpdateEventCollection;
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, GameTickContext, MatchPlayer, MatchResultRaw, StateManager};
 use crate::PlayerFieldPositionGroup;
@@ -57,21 +57,27 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn game_tick(field: &mut MatchField, context: &mut MatchContext) {
         let game_tick_context = GameTickContext::new(field);
 
-        Self::play_ball(field, context);
-        Self::play_players(field, context, &game_tick_context);
+        let player_affected_events = Self::play_ball(field, context, &game_tick_context);
+        Self::play_players(field, context, &game_tick_context, player_affected_events);
 
         field.write_match_positions(&mut context.result, context.time.time);
     }
 
-    fn play_ball(field: &mut MatchField, context: &MatchContext) {
-        let ball_events = field.ball.update(context);
-        BallEvents::handle_events(context.time.time, ball_events.into_iter(), context);
+    fn play_ball(
+        field: &mut MatchField,
+        context: &MatchContext,
+        tick_context: &GameTickContext,
+    ) -> PlayerUpdateEventCollection {
+        let ball_events = field.ball.update(context, tick_context);
+
+        BallEvents::handle_events(context.time.time, ball_events.into_iter(), context)
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
+        ball_player_events: PlayerUpdateEventCollection,
     ) {
         let player_events: Vec<PlayerUpdateEventCollection> = field
             .players
@@ -81,8 +87,10 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             .collect();
 
         for events in player_events {
-            events.process(&mut field.ball, context)
+            events.process(field, context)
         }
+
+        ball_player_events.process(field, context)
     }
 }
 
