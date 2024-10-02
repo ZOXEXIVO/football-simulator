@@ -22,7 +22,7 @@ impl StateProcessingHandler for DefenderInterceptingState {
 
         // 3. If the defender has intercepted the ball, transition to appropriate state
         let ball_distance = ball_ops.distance();
-        if ball_distance < 5.0 {
+        if ball_distance < 10.0 {
             if ctx.tick_context.ball.is_owned {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Tackling,
@@ -33,7 +33,7 @@ impl StateProcessingHandler for DefenderInterceptingState {
                         DefenderState::Running,
                     );
 
-                    state.events.add(PlayerUpdateEvent::GainBall(ctx.player.id));
+                    state.events.add(PlayerUpdateEvent::ClaimBall(ctx.player.id));
 
                     return Some(state);
                 }

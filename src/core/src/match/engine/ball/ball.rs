@@ -92,6 +92,8 @@ impl Ball {
                 })
                 .collect();
 
+            //println!("NEARBY = {}", nearby_players.len());
+
             let is_nearby_already_has_ball = nearby_players.iter().any(|player| player.has_ball);
             if is_nearby_already_has_ball {
                 return;

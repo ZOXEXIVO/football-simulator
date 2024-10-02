@@ -26,9 +26,9 @@ impl StateProcessingHandler for DefenderRunningState {
             }
         }
 
-        if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
-            return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
-        }
+        // if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
+        //     return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
+        // }
 
         None
     }
