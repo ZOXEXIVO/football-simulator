@@ -26,6 +26,12 @@ impl StateProcessingHandler for ForwardRunningState {
         //     ));
         // }
 
+        if ctx.ball().distance_to_opponent_goal() < 300.0 {
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Shooting,
+            ));
+        }
+
         None
     }
 

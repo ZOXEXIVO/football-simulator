@@ -1,5 +1,5 @@
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::{Ball, MatchContext, MatchField};
+use crate::r#match::{Ball, MatchContext, MatchField, PlayerSide};
 use nalgebra::Vector3;
 
 pub enum PlayerUpdateEvent {
@@ -11,7 +11,7 @@ pub enum PlayerUpdateEvent {
     PassTo(u32, Vector3<f32>, f64),
     ClearBall(Vector3<f32>),
     RushOut(u32),
-    Shoot(u32),
+    Shoot(u32, Vector3<f32>),
     StayInGoal(u32),
     MoveBall(u32, Vector3<f32>),
     CommunicateMessage(u32, &'static str),
@@ -125,7 +125,16 @@ impl PlayerUpdateEventCollection {
                     field.ball.current_owner = Some(*player_id);
                 }
                 PlayerUpdateEvent::CommitFoul => {}
-                PlayerUpdateEvent::Shoot(_) => {}
+                PlayerUpdateEvent::Shoot(player_id, target_direction) => {
+                    let ball_pass_vector = target_direction - field.ball.position;
+
+                    field.ball.previous_owner = Some(*player_id);
+                    field.ball.current_owner = None;
+                    field.ball.velocity = ball_pass_vector.normalize();
+
+                    let player = field.get_player_mut(*player_id).unwrap();
+                    player.has_ball = false;
+                }
                 PlayerUpdateEvent::RequestPass(_, _) => {}
                 PlayerUpdateEvent::RequestHeading(_, _) => {}
                 PlayerUpdateEvent::RequestShot(_, _) => {}

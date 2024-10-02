@@ -311,7 +311,7 @@ impl PlayerDistanceClosure {
             })
             .map(|item| (item.player_to_id, item.distance))
             .collect();
-        teammates.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        teammates.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(Ordering::Equal));
         if teammates.is_empty() {
             None
         } else {

@@ -239,6 +239,14 @@ impl StateChangeResult {
         }
     }
 
+    pub fn with_forward_state_and_event(state: ForwardState, event: PlayerUpdateEvent) -> Self {
+        StateChangeResult {
+            state: Some(Forward(state)),
+            velocity: None,
+            events: PlayerUpdateEventCollection::with_event(event),
+        }
+    }
+
     pub fn with_velocity(velocity: Vector3<f32>) -> Self {
         StateChangeResult {
             state: None,
