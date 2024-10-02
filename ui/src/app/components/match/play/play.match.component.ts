@@ -165,8 +165,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         const screen_field_width = POLE_COORDS.tr.x - POLE_COORDS.tl.x;
         const screen_field_height = POLE_COORDS.br.y - POLE_COORDS.tr.y;
 
-        const scaleX = screen_field_width / 665;
-        const scaleY = screen_field_height / 460;
+        const scaleX = screen_field_width / 840;
+        const scaleY = screen_field_height / 545;
 
         return {
             x: POLE_COORDS.tl.x + (x * scaleX),

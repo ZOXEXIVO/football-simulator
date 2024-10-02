@@ -6,6 +6,8 @@ use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, Team};
 use chrono::{Datelike, NaiveDate};
+use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
+use rayon::iter::IntoParallelRefIterator;
 
 #[derive(Debug)]
 pub struct League {
@@ -73,11 +75,9 @@ impl League {
         scheduled_matches: &mut Vec<LeagueMatch>,
         clubs: &[Club],
     ) -> Vec<MatchResult> {
-        let mut result = Vec::with_capacity(scheduled_matches.len());
-
-        scheduled_matches
-            .iter_mut()
-            .for_each(|scheduled_match| {
+         scheduled_matches
+            .par_iter_mut()
+            .map(|scheduled_match| {
                 let home_team = self.get_team(clubs, scheduled_match.home_team_id);
                 let away_team = self.get_team(clubs, scheduled_match.away_team_id);
 
@@ -95,12 +95,11 @@ impl League {
 
                 let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
-                scheduled_match.result = Some(LeagueMatchResultResult::new(&match_result.score.home_team, &match_result.score.away_team));
+                scheduled_match.result = Some(
+                    LeagueMatchResultResult::new(&match_result.score.home_team, &match_result.score.away_team));
 
-                result.push(match_result);
-            });
-
-        result
+                match_result
+            }).collect::<Vec<MatchResult>>()
     }
 
     fn get_team<'c>(&self, clubs: &'c [Club], id: u32) -> &'c Team {

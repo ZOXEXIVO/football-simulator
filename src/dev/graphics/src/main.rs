@@ -149,8 +149,8 @@ pub fn get_away_squad() -> TeamSquad {
         get_player(PlayerPositionType::MidfielderCenterLeft),
         get_player(PlayerPositionType::MidfielderCenterRight),
         get_player(PlayerPositionType::MidfielderRight),
-        get_player(PlayerPositionType::WingbackLeft),
-        get_player(PlayerPositionType::WingbackRight),
+        get_player(PlayerPositionType::ForwardLeft),
+        get_player(PlayerPositionType::ForwardRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players

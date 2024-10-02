@@ -22,12 +22,14 @@ pub async fn game_process_action(State(state): State<GameAppData>) -> impl IntoR
     })
     .await;
 
-    let estimated = process_result.unwrap();
-
     let mut headers = HeaderMap::new();
 
     headers.insert("Location", "/".parse().unwrap());
-    headers.insert("Estimated", estimated.to_string().parse().unwrap());
 
-    (StatusCode::OK, headers, Json(()))
+    if let Ok(estimated) = process_result {
+        headers.insert("Estimated", estimated.to_string().parse().unwrap());
+        return (StatusCode::OK, headers, Json(()));
+    }
+
+    (StatusCode::BAD_REQUEST, headers, Json(()))
 }
