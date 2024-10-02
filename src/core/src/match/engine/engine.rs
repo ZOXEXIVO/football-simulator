@@ -5,7 +5,7 @@ use crate::r#match::squad::TeamSquad;
 use crate::r#match::{GameState, GameTickContext, MatchPlayer, MatchResultRaw, StateManager};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
-use rayon::iter::ParallelIterator;
+use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use std::collections::HashMap;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -83,7 +83,6 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     ) {
         let player_events: Vec<PlayerUpdateEventCollection> = field
             .players
-            //.par_iter_mut()
             .iter_mut()
             .map(|player| player.update(context, tick_context))
             .collect();
@@ -295,7 +294,12 @@ impl MatchPlayerCollection {
 }
 
 const MATCH_TIME_INCREMENT_MS: u64 = 10;
+
+#[cfg(debug_assertions)]
+pub const MATCH_HALF_TIME_MS: u64 = 1 * 60 * 1000;
+#[cfg(not(debug_assertions))]
 pub const MATCH_HALF_TIME_MS: u64 = 45 * 60 * 1000;
+
 pub const MATCH_TIME_MS: u64 = MATCH_HALF_TIME_MS * 2;
 
 pub struct MatchTime {

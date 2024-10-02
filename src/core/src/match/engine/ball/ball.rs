@@ -97,17 +97,21 @@ impl Ball {
                 return;
             }
 
-            let best_tackler = nearby_players.iter().max_by(|player_a, player_b| {
-                let player_a = context.players.get(player_a.id).unwrap();
-                let player_b = context.players.get(player_b.id).unwrap();
+            let best_tackler = if nearby_players.len() == 1 {
+                nearby_players.first()
+            } else {
+                nearby_players.iter().max_by(|player_a, player_b| {
+                    let player_a = context.players.get(player_a.id).unwrap();
+                    let player_b = context.players.get(player_b.id).unwrap();
 
-                let tackling_score_a = Self::calculate_tackling_score(player_a);
-                let tackling_score_b = Self::calculate_tackling_score(player_b);
+                    let tackling_score_a = Self::calculate_tackling_score(player_a);
+                    let tackling_score_b = Self::calculate_tackling_score(player_b);
 
-                tackling_score_a
-                    .partial_cmp(&tackling_score_b)
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            });
+                    tackling_score_a
+                        .partial_cmp(&tackling_score_b)
+                        .unwrap_or(std::cmp::Ordering::Equal)
+                })
+            };
 
             if let Some(player) = best_tackler {
                 self.previous_owner = self.current_owner;
