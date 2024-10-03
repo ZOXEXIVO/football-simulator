@@ -109,17 +109,17 @@ async fn main() {
 
 pub fn get_home_squad() -> TeamSquad {
     let players = [
-        get_player(PlayerPositionType::Goalkeeper),
-        get_player(PlayerPositionType::DefenderLeft),
-        get_player(PlayerPositionType::DefenderCenterLeft),
-        get_player(PlayerPositionType::DefenderCenterRight),
-        get_player(PlayerPositionType::DefenderRight),
-        get_player(PlayerPositionType::MidfielderLeft),
-        get_player(PlayerPositionType::MidfielderCenterLeft),
-        get_player(PlayerPositionType::MidfielderCenterRight),
-        get_player(PlayerPositionType::MidfielderRight),
-        get_player(PlayerPositionType::WingbackLeft),
-        get_player(PlayerPositionType::ForwardRight),
+        get_player(101, PlayerPositionType::Goalkeeper),
+        get_player(102,PlayerPositionType::DefenderLeft),
+        get_player(103,PlayerPositionType::DefenderCenterLeft),
+        get_player(104,PlayerPositionType::DefenderCenterRight),
+        get_player(105,PlayerPositionType::DefenderRight),
+        get_player(106,PlayerPositionType::MidfielderLeft),
+        get_player(107,PlayerPositionType::MidfielderCenterLeft),
+        get_player(108,PlayerPositionType::MidfielderCenterRight),
+        get_player(109,PlayerPositionType::MidfielderRight),
+        get_player(111,PlayerPositionType::WingbackLeft),
+        get_player(112,PlayerPositionType::ForwardRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players
@@ -140,17 +140,17 @@ pub fn get_home_squad() -> TeamSquad {
 
 pub fn get_away_squad() -> TeamSquad {
     let players = [
-        get_player(PlayerPositionType::Goalkeeper),
-        get_player(PlayerPositionType::DefenderLeft),
-        get_player(PlayerPositionType::DefenderCenterLeft),
-        get_player(PlayerPositionType::DefenderCenterRight),
-        get_player(PlayerPositionType::DefenderRight),
-        get_player(PlayerPositionType::MidfielderLeft),
-        get_player(PlayerPositionType::MidfielderCenterLeft),
-        get_player(PlayerPositionType::MidfielderCenterRight),
-        get_player(PlayerPositionType::MidfielderRight),
-        get_player(PlayerPositionType::ForwardLeft),
-        get_player(PlayerPositionType::ForwardRight),
+        get_player(113,PlayerPositionType::Goalkeeper),
+        get_player(114,PlayerPositionType::DefenderLeft),
+        get_player(115,PlayerPositionType::DefenderCenterLeft),
+        get_player(116,PlayerPositionType::DefenderCenterRight),
+        get_player(117,PlayerPositionType::DefenderRight),
+        get_player(118,PlayerPositionType::MidfielderLeft),
+        get_player(119,PlayerPositionType::MidfielderCenterLeft),
+        get_player(120,PlayerPositionType::MidfielderCenterRight),
+        get_player(121,PlayerPositionType::MidfielderRight),
+        get_player(122,PlayerPositionType::ForwardLeft),
+        get_player(123, PlayerPositionType::ForwardRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players
@@ -169,13 +169,17 @@ pub fn get_away_squad() -> TeamSquad {
     away_squad
 }
 
-fn get_player(position: PlayerPositionType) -> Player {
-    PlayerGenerator::generate(
+fn get_player(id: u32, position: PlayerPositionType) -> Player {
+    let mut player = PlayerGenerator::generate(
         1,
         NaiveDate::from_ymd_opt(2023, 1, 1).unwrap(),
         position,
         20,
-    )
+    );
+
+    player.id = id;
+
+    player
 }
 
 fn average(numbers: &[u128]) -> u128 {
@@ -269,6 +273,14 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField) {
         if player.tactics_position == PlayerPositionType::Goalkeeper {
             color = YELLOW;
         }
+
+        draw_text(
+            &player.id.to_string(),
+            offset_x + player.position.x - 8.0,
+            offset_y + player.position.y - 20.0,
+            12.0,
+            DARKGRAY
+        );
 
         draw_circle(
             offset_x + player.position.x,
