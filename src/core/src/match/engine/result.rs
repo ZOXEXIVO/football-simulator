@@ -6,9 +6,9 @@ use bytes::Bytes;
 
 #[derive(Debug)]
 pub struct MatchResultRaw {
-    pub score: Score,
+    pub score: Option<Score>,
 
-    pub position_data: Option<MatchPositionData>,
+    pub position_data: MatchPositionData,
 
     pub left_team_players: FieldSquad,
     pub right_team_players: FieldSquad,
@@ -32,10 +32,10 @@ impl Clone for MatchResultRaw {
 
 
 impl MatchResultRaw {
-    pub fn with_match_time(match_time_ms: u64, home_team_id: u32, away_team_id: u32) -> Self {
+    pub fn with_match_time(match_time_ms: u64) -> Self {
         MatchResultRaw {
-            score: Score::new(home_team_id, away_team_id),
-            position_data: None,
+            score: None,
+            position_data: MatchPositionData::new(),
             left_team_players: FieldSquad::new(),
             right_team_players: FieldSquad::new(),
             match_time_ms,
@@ -50,20 +50,6 @@ impl MatchResultRaw {
     ) {
         self.left_team_players = FieldSquad::from(home_team_players);
         self.right_team_players = FieldSquad::from(away_team_players);
-    }
-
-    pub fn fill_details(&mut self, players: Vec<&MatchPlayer>){
-        for player in players.iter().filter(|p| !p.statistics.is_empty()) {
-            for stat in &player.statistics.items            {
-                let detail = GoalDetail{
-                    player_id: player.id,
-                    match_second: stat.match_second,
-                    stat_type: stat.stat_type
-                };
-
-                self.score.add_goal_detail(detail);
-            }
-        }
     }
 }
 

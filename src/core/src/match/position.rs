@@ -3,9 +3,9 @@ use nalgebra::Vector3;
 use rand::Rng;
 use rand_distr::num_traits::real::Real;
 use std::collections::HashMap;
-use std::io::Bytes;
+use serde::Serialize;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PositionDataItem {
     pub timestamp: u64,
     pub position: Vector3<f32>,
@@ -26,7 +26,7 @@ impl PartialEq<PositionDataItem> for PositionDataItem {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct MatchPositionData {
     ball_positions: Vec<PositionDataItem>,
     player_positions: HashMap<u32, Vec<PositionDataItem>>,

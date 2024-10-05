@@ -28,8 +28,8 @@ impl BallEvents {
         for event in events {
             match event {
                 BallUpdateEvent::Goal(side, goalscorer_player_id) => match side {
-                    GoalSide::Home => context.result.score.increment_home_goals(),
-                    GoalSide::Away => context.result.score.increment_away_goals(),
+                    GoalSide::Home => context.score.increment_home_goals(),
+                    GoalSide::Away => context.score.increment_away_goals(),
                 },
                 BallUpdateEvent::Claimed(player_id) => {
                     player_events.add(PlayerUpdateEvent::ClaimBall(player_id));

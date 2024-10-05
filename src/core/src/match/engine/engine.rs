@@ -2,7 +2,7 @@ use crate::r#match::ball::events::{BallEvents, GoalSide};
 use crate::r#match::field::MatchField;
 use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, MatchPlayer, MatchResultRaw, StateManager};
+use crate::r#match::{GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
@@ -17,11 +17,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn play(left_squad: TeamSquad, right_squad: TeamSquad) -> MatchResultRaw {
-        let result =  MatchResultRaw::with_match_time(
-            MATCH_HALF_TIME_MS,
-            left_squad.team_id,
-            right_squad.team_id,
-        );
+        let score = Score::new(left_squad.team_id,  right_squad.team_id);
 
         let players = MatchPlayerCollection::from_squads(&left_squad, &right_squad);
 
@@ -29,7 +25,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let mut field = MatchField::new(W, H, left_squad, right_squad);
 
-        let mut context = MatchContext::new(&field.size, players);
+        let mut context = MatchContext::new(&field.size, players, score);
 
         let mut state_manager = StateManager::new();
 
@@ -41,13 +37,18 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             StateManager::handle_state_finish(&mut context, &mut field, play_state_result);
         }
 
-        // TODO
-        context.result.left_team_players = field.left_side_players.unwrap();
-        context.result.right_team_players = field.right_side_players.unwrap();
+        let mut result =  MatchResultRaw::with_match_time(
+            MATCH_HALF_TIME_MS
+        );
 
-        context.result.fill_details(context.players.raw_players());
+        context.fill_details();
 
-        context.result
+        result.score = Some(context.score.clone());
+
+        result.left_team_players = field.left_side_players.unwrap();
+        result.right_team_players = field.right_side_players.unwrap();
+
+        result
     }
 
     fn play_inner(field: &mut MatchField, context: &mut MatchContext, match_date: &mut MatchPositionData) -> PlayMatchStateResult {
@@ -130,6 +131,7 @@ pub enum MatchEvent {
 pub struct MatchContext {
     pub state: GameState,
     pub time: MatchTime,
+    pub score: Score,
     pub field_size: MatchFieldSize,
     pub players: MatchPlayerCollection,
     pub goal_positions: GoalPosition,
@@ -138,11 +140,13 @@ pub struct MatchContext {
 impl MatchContext {
     pub fn new(
         field_size: &MatchFieldSize,
-        players: MatchPlayerCollection
+        players: MatchPlayerCollection,
+        score: Score
     ) -> Self {
         MatchContext {
             state: GameState::new(),
             time: MatchTime::new(),
+            score,
             field_size: MatchFieldSize::clone(&field_size),
             players,
             goal_positions: GoalPosition::from(field_size),
@@ -155,6 +159,21 @@ impl MatchContext {
 
     pub fn add_time(&mut self, time: u64) {
         self.time.increment(time);
+    }
+
+
+    pub fn fill_details(&mut self){
+        for player in self.players.raw_players().iter().filter(|p| !p.statistics.is_empty()) {
+            for stat in &player.statistics.items            {
+                let detail = GoalDetail{
+                    player_id: player.id,
+                    match_second: stat.match_second,
+                    stat_type: stat.stat_type
+                };
+
+                self.score.add_goal_detail(detail);
+            }
+        }
     }
 }
 

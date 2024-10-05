@@ -1,6 +1,6 @@
 ﻿use crate::GameAppData;
 use axum::extract::{Path, State};
-use axum::http::StatusCode;
+use axum::Json;
 use axum::response::{IntoResponse, Response};
 use serde::Deserialize;
 
@@ -10,7 +10,7 @@ pub struct MatchDataRequest {
     pub match_id: String,
 }
 
-pub async fn match_get_action(
+pub async fn match_data_action(
     State(state): State<GameAppData>,
     Path(route_params): Path<MatchDataRequest>,
 ) -> Response {
@@ -32,18 +32,20 @@ pub async fn match_get_action(
 
     let result_details = match_result.details.as_ref().unwrap();
 
-    if let Some(result_details) = match_result.details.as_ref() {
-        let mut response = (StatusCode::OK, result_details.position_data.clone()).into_response();
+    // if let Some(result_details) = match_result.details.as_ref() {
+    //     let mut response = (StatusCode::OK, Json(&result_details.position_data.clone())).into_response();
+    //
+    //     response
+    //         .headers_mut()
+    //         .append("Content-Type", "application/json".parse().unwrap());
+    //     response
+    //         .headers_mut()
+    //         .append("Content-Encoding", "gzip".parse().unwrap());
+    //
+    //     return response;
+    // }
 
-        response
-            .headers_mut()
-            .append("Content-Type", "application/json".parse().unwrap());
-        response
-            .headers_mut()
-            .append("Content-Encoding", "gzip".parse().unwrap());
+    Json("result_details.position_data").into_response()
 
-        return response;
-    }
-
-    (StatusCode::NOT_FOUND, result_details.position_data.clone()).into_response()
+    // (StatusCode::NOT_FOUND, result_details.position_data.clone()).into_response()
 }

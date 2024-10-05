@@ -29,20 +29,21 @@ impl Match {
 
         let match_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
 
+        let score = match_result.score.as_ref().unwrap();;
+
         debug!(
             "match played: {} {}:{} {}",
             home_team_name,
-            match_result.score.home_team.get(),
+            score.home_team.get(),
             away_team_name,
-            match_result.score.away_team.get(),
+            score.away_team.get(),
         );
-
         MatchResult {
             id: String::from(self.id),
             league_id: self.league_id,
             home_team_id,
             away_team_id,
-            score: match_result.score.clone(),
+            score: score.clone(),
             details: Some(match_result),
         }
     }

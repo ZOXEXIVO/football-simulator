@@ -1,6 +1,4 @@
-extern crate nalgebra;
-
-mod simulator;
+pub mod simulator;
 pub use simulator::*;
 
 pub mod club;

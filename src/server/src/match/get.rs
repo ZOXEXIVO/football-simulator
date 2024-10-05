@@ -32,8 +32,8 @@ pub async fn match_get_action(
 
     let result = MatchGetResponse {
         score: LineupScore {
-            home_goals: result_details.score.home_team.get(),
-            away_goals: result_details.score.away_team.get(),
+            home_goals: result_details.score.as_ref().unwrap().home_team.get(),
+            away_goals: result_details.score.as_ref().unwrap().away_team.get()
         },
         match_time_ms: result_details.match_time_ms,
         home_team_name: &home_team.name,

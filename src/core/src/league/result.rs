@@ -1,6 +1,6 @@
 use crate::league::{LeagueTableResult, ScheduleItem};
 use crate::simulator::SimulatorData;
-use crate::MatchHistoryItem;
+use crate::{MatchHistoryItem, SimulationResult};
 use chrono::NaiveDateTime;
 use crate::r#match::{MatchResult, TeamScore};
 
@@ -31,10 +31,12 @@ impl LeagueResult {
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {
+    pub fn process(&self, data: &mut SimulatorData, result: &mut SimulationResult) {
         if let Some(match_results) = &self.match_results {
             for match_result in match_results {
                 self.process_match_results(match_result, data);
+
+                result.match_results.push(match_result.clone());
             }
         }
     }
