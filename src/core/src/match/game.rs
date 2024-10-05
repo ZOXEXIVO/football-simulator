@@ -27,14 +27,14 @@ impl Match {
         let away_team_id = self.away_squad.team_id;
         let away_team_name = String::from(&self.away_squad.team_name);
 
-        let match_raw_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
+        let match_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
 
         debug!(
             "match played: {} {}:{} {}",
             home_team_name,
-            match_raw_result.score.home_team.get(),
+            match_result.score.home_team.get(),
             away_team_name,
-            match_raw_result.score.away_team.get(),
+            match_result.score.away_team.get(),
         );
 
         MatchResult {
@@ -42,8 +42,8 @@ impl Match {
             league_id: self.league_id,
             home_team_id,
             away_team_id,
-            score: match_raw_result.score.clone(),
-            result_details: Some(match_raw_result),
+            score: match_result.score.clone(),
+            details: Some(match_result),
         }
     }
 }

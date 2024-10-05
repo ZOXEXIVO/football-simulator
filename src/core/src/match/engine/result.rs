@@ -1,6 +1,6 @@
 ﻿use std::sync::atomic::{AtomicU8, Ordering};
 use crate::league::LeagueMatch;
-use crate::r#match::{MatchPlayer, TeamSquad};
+use crate::r#match::{MatchPlayer, MatchPositionData, TeamSquad};
 use crate::r#match::statistics::MatchStatisticType;
 use bytes::Bytes;
 
@@ -8,7 +8,7 @@ use bytes::Bytes;
 pub struct MatchResultRaw {
     pub score: Score,
 
-    pub position_data: Bytes,
+    pub position_data: Option<MatchPositionData>,
 
     pub left_team_players: FieldSquad,
     pub right_team_players: FieldSquad,
@@ -35,7 +35,7 @@ impl MatchResultRaw {
     pub fn with_match_time(match_time_ms: u64, home_team_id: u32, away_team_id: u32) -> Self {
         MatchResultRaw {
             score: Score::new(home_team_id, away_team_id),
-            position_data: Bytes::new(),
+            position_data: None,
             left_team_players: FieldSquad::new(),
             right_team_players: FieldSquad::new(),
             match_time_ms,
@@ -203,7 +203,7 @@ pub struct MatchResult {
     pub league_id: u32,
     pub home_team_id: u32,
     pub away_team_id: u32,
-    pub result_details: Option<MatchResultRaw>,
+    pub details: Option<MatchResultRaw>,
     pub score: Score
 }
 
@@ -215,7 +215,7 @@ impl From<&LeagueMatch> for MatchResult {
             home_team_id: m.home_team_id,
             away_team_id: m.away_team_id,
             score: Score::new(m.home_team_id, m.away_team_id),
-            result_details: None
+            details: None
         }
     }
 }

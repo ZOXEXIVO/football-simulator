@@ -40,7 +40,7 @@ mod tests {
             id: "match_1".to_string(),
             // Fill in other fields as needed
             league_id: 0,
-            result_details: None,
+            details: None,
             score: Score {
                 home_team: TeamScore::new_with_score(0, 0),
                 away_team: TeamScore::new_with_score(0, 0),
@@ -61,7 +61,7 @@ mod tests {
             id: "match_1".to_string(),
 
             league_id: 0,
-            result_details: None,
+            details: None,
             score: Score {
                 home_team: TeamScore::new_with_score(0, 0),
                 away_team: TeamScore::new_with_score(0, 0),

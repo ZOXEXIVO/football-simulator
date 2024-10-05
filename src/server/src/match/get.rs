@@ -5,51 +5,7 @@ use axum::Json;
 use core::SimulatorData;
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize)]
-pub struct MatchGetRequest {
-    pub league_slug: String,
-    pub match_id: String,
-}
-
-#[derive(Serialize)]
-pub struct MatchGetResponse<'p> {
-    // home
-    pub home_team_name: &'p str,
-    pub home_team_slug: &'p str,
-    pub home_squad: LineupSquad<'p>,
-
-    // away
-    pub away_team_name: &'p str,
-    pub away_team_slug: &'p str,
-    pub away_squad: LineupSquad<'p>,
-
-    pub match_time_ms: u64,
-
-    pub score: LineupScore,
-}
-
-#[derive(Serialize)]
-pub struct LineupScore {
-    pub home_goals: u8,
-    pub away_goals: u8,
-}
-
-#[derive(Serialize)]
-pub struct LineupSquad<'p> {
-    pub main: Vec<LineupPlayer<'p>>,
-    pub substitutes: Vec<LineupPlayer<'p>>,
-}
-
-#[derive(Serialize)]
-pub struct LineupPlayer<'p> {
-    pub id: u32,
-    pub first_name: &'p str,
-    pub last_name: &'p str,
-    pub middle_name: Option<&'p str>,
-    pub position: &'p str,
-}
-
-pub async fn match_lineup_action(
+pub async fn match_get_action(
     State(state): State<GameAppData>,
     Path(route_params): Path<MatchGetRequest>,
 ) -> Response {
@@ -72,7 +28,7 @@ pub async fn match_lineup_action(
     let home_team = simulator_data.team(match_result.home_team_id).unwrap();
     let away_team = simulator_data.team(match_result.away_team_id).unwrap();
 
-    let result_details = match_result.result_details.as_ref().unwrap();
+    let result_details = match_result.details.as_ref().unwrap();
 
     let result = MatchGetResponse {
         score: LineupScore {
@@ -130,4 +86,49 @@ fn to_lineup_player(
         middle_name: player.full_name.middle_name.as_deref(),
         position: player.position().get_short_name(),
     })
+}
+
+
+#[derive(Deserialize)]
+pub struct MatchGetRequest {
+    pub league_slug: String,
+    pub match_id: String,
+}
+
+#[derive(Serialize)]
+pub struct MatchGetResponse<'p> {
+    // home
+    pub home_team_name: &'p str,
+    pub home_team_slug: &'p str,
+    pub home_squad: LineupSquad<'p>,
+
+    // away
+    pub away_team_name: &'p str,
+    pub away_team_slug: &'p str,
+    pub away_squad: LineupSquad<'p>,
+
+    pub match_time_ms: u64,
+
+    pub score: LineupScore,
+}
+
+#[derive(Serialize)]
+pub struct LineupScore {
+    pub home_goals: u8,
+    pub away_goals: u8,
+}
+
+#[derive(Serialize)]
+pub struct LineupSquad<'p> {
+    pub main: Vec<LineupPlayer<'p>>,
+    pub substitutes: Vec<LineupPlayer<'p>>,
+}
+
+#[derive(Serialize)]
+pub struct LineupPlayer<'p> {
+    pub id: u32,
+    pub first_name: &'p str,
+    pub last_name: &'p str,
+    pub middle_name: Option<&'p str>,
+    pub position: &'p str,
 }

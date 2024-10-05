@@ -17,8 +17,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn play(left_squad: TeamSquad, right_squad: TeamSquad) -> MatchResultRaw {
-        let left_team_id = left_squad.team_id;
-        let right_team_id = right_squad.team_id;
+        let result =  MatchResultRaw::with_match_time(
+            MATCH_HALF_TIME_MS,
+            left_squad.team_id,
+            right_squad.team_id,
+        );
 
         let players = MatchPlayerCollection::from_squads(&left_squad, &right_squad);
 
@@ -26,7 +29,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let mut field = MatchField::new(W, H, left_squad, right_squad);
 
-        let mut context = MatchContext::new(&field.size, players, left_team_id, right_team_id);
+        let mut context = MatchContext::new(&field.size, players);
 
         let mut state_manager = StateManager::new();
 
@@ -127,7 +130,6 @@ pub enum MatchEvent {
 pub struct MatchContext {
     pub state: GameState,
     pub time: MatchTime,
-    pub result: MatchResultRaw,
     pub field_size: MatchFieldSize,
     pub players: MatchPlayerCollection,
     pub goal_positions: GoalPosition,
@@ -136,18 +138,11 @@ pub struct MatchContext {
 impl MatchContext {
     pub fn new(
         field_size: &MatchFieldSize,
-        players: MatchPlayerCollection,
-        team_left_id: u32,
-        team_right_id: u32,
+        players: MatchPlayerCollection
     ) -> Self {
         MatchContext {
             state: GameState::new(),
             time: MatchTime::new(),
-            result: MatchResultRaw::with_match_time(
-                MATCH_HALF_TIME_MS,
-                team_left_id,
-                team_right_id,
-            ),
             field_size: MatchFieldSize::clone(&field_size),
             players,
             goal_positions: GoalPosition::from(field_size),

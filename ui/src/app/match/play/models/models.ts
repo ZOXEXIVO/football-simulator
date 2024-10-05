@@ -1,4 +1,4 @@
-﻿import {ObjectPositionDto} from "../../services/match.api.service";
+﻿import {ObjectPositionDto} from "../../services/match.service";
 import {Container, Sprite} from "pixi.js";
 
 export class MatchModel {

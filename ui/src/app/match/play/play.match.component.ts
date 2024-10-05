@@ -1,7 +1,7 @@
 ﻿import {
     AfterViewInit,
     Component,
-    ElementRef,
+    ElementRef, Input,
     NgZone,
     OnDestroy, OnInit,
     ViewChild
@@ -12,9 +12,10 @@ import {POLE_COORDS} from "./models/constants";
 import {UntilDestroy} from "@ngneat/until-destroy";
 import {MatchLineupModel, PlayerModel} from "./models/models";
 import {MatchPlayService} from "../services/match.play.service";
-import {MatchDataService} from "../services/match.data.service";
+import {MatchDataResultModel, MatchDataService} from "../services/match.data.service";
 import {TitleService} from "../../shared/services/title.service";
 import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
+import {MatchService} from "../services/match.service";
 
 @UntilDestroy()
 @Component({
@@ -29,16 +30,20 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     isDisposed = false;
 
-    lineupLoaded: boolean = false;
-
     matchTimeMs: number = -1;
 
     currentTime = 0;
 
     isFullscreen: boolean = false;
 
+    @Input()
+    leagueSlug: string = '';
+    @Input()
+    matchId: string = '';
+
     constructor(private zone: NgZone,
                 public matchPlayService: MatchPlayService,
+                public matchService: MatchService,
                 public matchDataService: MatchDataService,
                 private titleService: TitleService,
                 private topHeaderService: TopHeaderService) {
@@ -46,18 +51,14 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.matchPlayService.lineupCompleted$.subscribe(async lineupData => {
-            this.matchTimeMs = lineupData.matchTimeMs;
-
+        this.matchService.data(this.leagueSlug, this.matchId).subscribe(async matchData => {
             const data = this.matchDataService.matchData;
 
             this.titleService.setTitle(`${data.home_team.name} : ${data.away_team.name}`)
             this.topHeaderService.setContent(`${data.home_team.name} ${data.score.home_goals} : ${data.score.away_goals} ${data.away_team.name}`, '', '/', false);
 
-            this.lineupLoaded = true;
-
             await this.initGraphics();
-            await this.initLineupGraphics(lineupData);
+            await this.initGraphics(matchData);
 
             //this.application!.resizeTo = this.matchContainer.nativeElement;
         });
@@ -72,16 +73,16 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         document.addEventListener('MSFullscreenChange', this.onFullscreenChange.bind(this));
     }
 
-    async initLineupGraphics(lineupData: MatchLineupModel) {
+    async initGraphics(data: MatchDataResultModel) {
         // create ball
-        const ball = await this.createBall(lineupData);
+        const ball = await this.createBall(data);
 
         this.matchDataService.matchData.ball.obj = ball;
         this.application!.stage.addChild(ball);
 
         //create players
-        lineupData.players.forEach(player => {
-            let translatedCoords = this.translateToField(player.data[0].x, player.data[0].y);
+        data.players.forEach(player => {
+            let translatedCoords = this.translateToField(player.position.x, player.data[0].y);
 
             const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
 

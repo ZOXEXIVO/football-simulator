@@ -149,7 +149,7 @@ mod tests {
                 away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
-            result_details: None,
+            details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -199,7 +199,7 @@ mod tests {
                 away_team: TeamScore::new_with_score(2, 0),
                 details: vec![],
             },
-            result_details: None,
+            details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -257,7 +257,7 @@ mod tests {
                 away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
-            result_details: None,
+            details: None,
         }];
 
         table.update_from_results(&match_results);

@@ -1,60 +1,17 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-2">
-            <ul class="list-group squad-list">
-                <li class="list-group-item bg-transparent"
-                    *ngFor="let player of this.matchDataService.matchData.squad.home">
-                    <a [routerLink]="['/teams/' + this.matchDataService.matchData.home_team.slug + '/players/' + player.id]">
-                        {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
-                    </a>
-                </li>
-            </ul>
-            <hr/>
-            <ul class="list-group squad-list">
-                <li class="list-group-item bg-transparent"
-                    *ngFor="let player of this.matchDataService.matchData.squad.home_subs">
-                    <a [routerLink]="['/teams/' + this.matchDataService.matchData.home_team.slug + '/players/' + player.id]">
-                        {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
-                    </a>
-                </li>
-            </ul>
+        <div class="range">
+            <input type="range" class="form-range" min="0" [max]="matchTimeMs"
+                   [value]="currentTime"/>
+            {{ currentTime / 1000 }}
         </div>
-        <div class="col">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="range">
-                        <input type="range" class="form-range" min="0" [max]="matchTimeMs"
-                               [value]="currentTime"/>
-                        {{ currentTime / 1000 }}
-                    </div>
-                </div>
-                <div class="row text-center">
-                    <div class="col-12" >
-                        <div id="match-container" *ngIf="lineupLoaded">
-                            <div #matchContainer  class="match-container"></div>
-                        </div>
-                    </div>
-                </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-12">
+            <div id="match-container" *ngIf="lineupLoaded">
+                <div #matchContainer class="match-container"></div>
             </div>
-        </div>
-        <div class="col-2">
-            <ul class="list-group squad-list">
-                <li class="list-group-item bg-transparent"
-                    *ngFor="let player of this.matchDataService.matchData.squad.away">
-                    <a [routerLink]="['/teams/' + this.matchDataService.matchData.away_team.slug + '/players/' + player.id]">
-                        {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
-                    </a>
-                </li>
-            </ul>
-            <hr/>
-            <ul class="list-group squad-list">
-                <li class="list-group-item bg-transparent"
-                    *ngFor="let player of this.matchDataService.matchData.squad.away_subs">
-                    <a [routerLink]="['/teams/' + this.matchDataService.matchData.away_team.slug + '/players/' + player.id]">
-                        {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
-                    </a>
-                </li>
-            </ul>
         </div>
     </div>
 </div>
+

@@ -1,5 +1,51 @@
 <div>
     <div class="content match-content">
-        <play-match></play-match>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-2">
+                    <ul class="list-group squad-list">
+                        <li class="list-group-item bg-transparent"
+                            *ngFor="let player of this.match?.home_squad.main">
+                            <a [routerLink]="['/teams/' + this.match?.home_team_slug + '/players/' + player.id]">
+                                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+                            </a>
+                        </li>
+                    </ul>
+                    <hr/>
+                    <ul class="list-group squad-list">
+                        <li class="list-group-item bg-transparent"
+                            *ngFor="let player of this.match?.home_squad.substitutes">
+                            <a [routerLink]="['/teams/' + this.match?.home_team_slug + '/players/' + player.id]">
+                                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <div *ngIf="this.match">
+                        <play-match leagueSlug="leagueSlug" matchId="matchId"></play-match>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <ul class="list-group squad-list">
+                        <li class="list-group-item bg-transparent"
+                            *ngFor="let player of this.match?.away_squad.main">
+                            <a [routerLink]="['/teams/' + this.match?.away_team_slug + '/players/' + player.id]">
+                                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+                            </a>
+                        </li>
+                    </ul>
+                    <hr/>
+                    <ul class="list-group squad-list">
+                        <li class="list-group-item bg-transparent"
+                            *ngFor="let player of this.match?.away_squad.substitutes">
+                            <a [routerLink]="['/teams/' + this.match?.away_team_slug + '/players/' + player.id]">
+                                {{ player.last_name }} {{ player.first_name }}  ({{ player.position }})
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
