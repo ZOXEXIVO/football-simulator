@@ -1,14 +1,14 @@
 ﻿use std::sync::atomic::{AtomicU8, Ordering};
 use crate::league::LeagueMatch;
-use crate::r#match::position::MatchPositionData;
 use crate::r#match::{MatchPlayer, TeamSquad};
 use crate::r#match::statistics::MatchStatisticType;
+use bytes::Bytes;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct MatchResultRaw {
     pub score: Score,
 
-    pub position_data: MatchPositionData,
+    pub position_data: Bytes,
 
     pub left_team_players: FieldSquad,
     pub right_team_players: FieldSquad,
@@ -17,11 +17,25 @@ pub struct MatchResultRaw {
     pub additional_time_ms: u64,
 }
 
+impl Clone for MatchResultRaw {
+    fn clone(&self) -> Self {
+        MatchResultRaw {
+            score: self.score.clone(),
+            position_data: self.position_data.clone(),
+            left_team_players: self.left_team_players.clone(),
+            right_team_players: self.right_team_players.clone(),
+            match_time_ms: self.match_time_ms,
+            additional_time_ms: self.additional_time_ms,
+        }
+    }
+}
+
+
 impl MatchResultRaw {
     pub fn with_match_time(match_time_ms: u64, home_team_id: u32, away_team_id: u32) -> Self {
         MatchResultRaw {
             score: Score::new(home_team_id, away_team_id),
-            position_data: MatchPositionData::new(),
+            position_data: Bytes::new(),
             left_team_players: FieldSquad::new(),
             right_team_players: FieldSquad::new(),
             match_time_ms,
@@ -52,6 +66,7 @@ impl MatchResultRaw {
         }
     }
 }
+
 
 #[derive(Debug, Clone)]
 pub struct FieldSquad {

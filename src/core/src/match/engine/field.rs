@@ -54,29 +54,6 @@ impl MatchField {
     pub fn get_player_mut(&mut self, id: u32) -> Option<&mut MatchPlayer> {
         self.players.iter_mut().find(|p| p.id == id)
     }
-
-    pub fn write_match_positions(&self, result: &mut MatchResultRaw, timestamp: u64) {
-        // player positions
-        self.players.iter().for_each(|player| {
-            result
-                .position_data
-                .add_player_positions(player.id, timestamp, player.position);
-        });
-
-        // player positions
-        self.substitutes.iter().for_each(|sub_player| {
-            result.position_data.add_player_positions(
-                sub_player.id,
-                timestamp,
-                sub_player.position,
-            );
-        });
-
-        // write positions
-        result
-            .position_data
-            .add_ball_positions(timestamp, self.ball.position);
-    }
 }
 
 fn setup_player_on_field(

@@ -3,6 +3,7 @@ use nalgebra::Vector3;
 use rand::Rng;
 use rand_distr::num_traits::real::Real;
 use std::collections::HashMap;
+use std::io::Bytes;
 
 #[derive(Debug, Clone)]
 pub struct PositionDataItem {
@@ -27,8 +28,8 @@ impl PartialEq<PositionDataItem> for PositionDataItem {
 
 #[derive(Debug, Clone)]
 pub struct MatchPositionData {
-    pub ball_positions: Vec<PositionDataItem>,
-    pub player_positions: HashMap<u32, Vec<PositionDataItem>>,
+    ball_positions: Vec<PositionDataItem>,
+    player_positions: HashMap<u32, Vec<PositionDataItem>>,
 }
 
 impl MatchPositionData {
@@ -38,6 +39,8 @@ impl MatchPositionData {
             player_positions: HashMap::with_capacity(22 * 2 * 9000),
         }
     }
+
+    pub fn compress(&mut self) {}
 
     pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, position: Vector3<f32>) {
         if let Some(player_data) = self.player_positions.get_mut(&player_id) {

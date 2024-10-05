@@ -7,6 +7,7 @@ use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use std::collections::HashMap;
+use crate::r#match::position::MatchPositionData;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -21,6 +22,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let players = MatchPlayerCollection::from_squads(&left_squad, &right_squad);
 
+        let mut match_data = MatchPositionData::new();
+
         let mut field = MatchField::new(W, H, left_squad, right_squad);
 
         let mut context = MatchContext::new(&field.size, players, left_team_id, right_team_id);
@@ -30,7 +33,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         while let Some(state) = state_manager.next() {
             context.state.set(state);
 
-            let play_state_result = Self::play_inner(&mut field, &mut context);
+            let play_state_result = Self::play_inner(&mut field, &mut context, &mut match_data);
 
             StateManager::handle_state_finish(&mut context, &mut field, play_state_result);
         }
@@ -44,23 +47,42 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         context.result
     }
 
-    fn play_inner(field: &mut MatchField, context: &mut MatchContext) -> PlayMatchStateResult {
+    fn play_inner(field: &mut MatchField, context: &mut MatchContext, match_date: &mut MatchPositionData) -> PlayMatchStateResult {
         let result = PlayMatchStateResult::new();
 
         while context.increment_time() {
-            Self::game_tick(field, context);
+            Self::game_tick(field, context, match_date);
         }
 
         result
     }
 
-    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext) {
+    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext, match_date: &mut MatchPositionData) {
         let game_tick_context = GameTickContext::new(field);
 
         let player_affected_events = Self::play_ball(field, context, &game_tick_context);
         Self::play_players(field, context, &game_tick_context, player_affected_events);
 
-        field.write_match_positions(&mut context.result, context.time.time);
+        Self::write_match_positions(field, context.time.time, match_date);
+    }
+
+    pub fn write_match_positions(field: &mut MatchField, timestamp: u64, match_date: &mut MatchPositionData) {
+        // player positions
+        field.players.iter().for_each(|player| {
+            match_date.add_player_positions(player.id, timestamp, player.position);
+        });
+
+        // player positions
+        field.substitutes.iter().for_each(|sub_player| {
+            match_date.add_player_positions(
+                sub_player.id,
+                timestamp,
+                sub_player.position,
+            );
+        });
+
+        // write positions
+        match_date.add_ball_positions(timestamp, field.ball.position);
     }
 
     fn play_ball(
