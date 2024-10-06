@@ -223,7 +223,8 @@ mod tests {
     fn test_schedule_tour_played() {
         let item1 = ScheduleItem {
             id: "".to_string(),
-            league_slug: 0,
+            league_id: 0,
+            league_slug: "slug".to_string(),
             date: NaiveDate::from_ymd_opt(2024, 3, 15)
                 .unwrap()
                 .and_hms_opt(0, 0, 0)
@@ -238,6 +239,7 @@ mod tests {
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
+            league_slug: "slug".to_string(),
             date: NaiveDate::from_ymd_opt(2024, 3, 16)
                 .unwrap()
                 .and_hms_opt(0, 0, 0)
@@ -262,6 +264,7 @@ mod tests {
         let item3 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
+            league_slug: "slug".to_string(),
             date: NaiveDate::from_ymd_opt(2024, 3, 17)
                 .unwrap()
                 .and_hms_opt(0, 0, 0)
@@ -286,6 +289,7 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
+            league_slug: "slug".to_string(),
             date: NaiveDate::from_ymd_opt(2024, 3, 15)
                 .unwrap()
                 .and_hms_opt(0, 0, 0)
@@ -300,6 +304,7 @@ mod tests {
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
+            league_slug: "slug".to_string(),
             date: NaiveDate::from_ymd_opt(2024, 3, 16)
                 .unwrap()
                 .and_hms_opt(0, 0, 0)
@@ -323,6 +328,7 @@ mod tests {
         let item1 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
+            league_slug: "slug".to_string(),
             date: NaiveDate::from_ymd_opt(2024, 3, 15)
                 .unwrap()
                 .and_hms_opt(0, 0, 0)
@@ -337,6 +343,7 @@ mod tests {
         let item2 = ScheduleItem {
             id: "".to_string(),
             league_id: 0,
+            league_slug: "slug".to_string(),
             date: NaiveDate::from_ymd(2024, 3, 16)
                 .and_hms_opt(0, 0, 0)
                 .unwrap(),

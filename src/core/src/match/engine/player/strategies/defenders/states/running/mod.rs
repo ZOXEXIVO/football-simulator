@@ -105,7 +105,7 @@ mod tests {
             velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
             side: None,
-            state: PlayerState::Running,
+            state: PlayerState::Injured,
             in_state_time: 0,
             statistics: MatchPlayerStatistics::default(),
         }

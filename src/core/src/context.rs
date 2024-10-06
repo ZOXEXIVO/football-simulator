@@ -229,7 +229,7 @@ mod tests {
         let updated_global_ctx = global_ctx
             .with_continent(1)
             .with_country(1)
-            .with_league(1, "slug", &[1, 2])
+            .with_league(1, "slug".to_owned(), &[1, 2])
             .with_club(1, "Test Club")
             .with_team(1)
             .with_finance()

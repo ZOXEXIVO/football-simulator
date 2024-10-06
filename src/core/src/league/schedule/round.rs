@@ -170,6 +170,7 @@ mod tests {
         let schedule_tours = schedule
             .generate(
                 LEAGUE_ID,
+                "slug",
                 Season::TwoYear(2020, 2021),
                 &teams,
                 &league_settings,

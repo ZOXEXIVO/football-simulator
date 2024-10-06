@@ -38,6 +38,7 @@ mod tests {
         let mut match_storage = MatchStorage::new();
         let match_result = MatchResult {
             id: "match_1".to_string(),
+            league_slug: "slug".to_string(),
             // Fill in other fields as needed
             league_id: 0,
             details: None,
@@ -59,7 +60,7 @@ mod tests {
         let mut match_storage = MatchStorage::new();
         let match_result = MatchResult {
             id: "match_1".to_string(),
-
+            league_slug: "slug".to_string(),
             league_id: 0,
             details: None,
             score: Score {
@@ -69,6 +70,7 @@ mod tests {
             },
             home_team_id: 0,
             away_team_id: 0,
+
         };
 
         match_storage.push(match_result.clone());
