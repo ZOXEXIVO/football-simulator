@@ -1,7 +1,6 @@
 import {Injectable} from "@angular/core";
 import {MatchDataDto, MatchDto, ObjectPositionDto} from "./match.service";
 import {Container} from "pixi.js";
-import {POLE_COORDS} from "../play/models/constants";
 
 @Injectable({
     providedIn: 'root',
@@ -9,6 +8,9 @@ import {POLE_COORDS} from "../play/models/constants";
 export class MatchDataService {
     public match: MatchDto | null = null;
     public matchData: MatchDataDto | null = null;
+
+    public width: number = 0;
+    public height: number = 0;
 
     setMatch(match: MatchDto) {
         this.match = match;
@@ -18,20 +20,15 @@ export class MatchDataService {
         this.matchData = data;
     }
 
-    setPlayerGraphicsObject(playerId: number, container: Container){
-        const player = this.match!.players.find((player) => player.id == playerId);
-        if(player) {
-            player.obj = container;
-        } else {
-            console.error('player not found, playerId = ' + playerId);
-        }
+    setResolution(width: number, height: number){
+        this.width = width;
+        this.height = height;
     }
 
     refreshData(timestamp: number){
         let lastData = this.getData(timestamp);
 
         // update ball position
-
         if (lastData.ball) {
             let ballPosition = this.translateToField(lastData.ball.position[0], lastData.ball.position[1]);
 
@@ -40,12 +37,11 @@ export class MatchDataService {
         }
 
         // update players position
-
         this.match?.players.forEach(player => {
-            let player_position = lastData.players[player.id];
+            let player_data = lastData.players.find((p) => p.id == player.id);
 
-            if (player_position) {
-                let playerPosition = this.translateToField(player_position.position.position[0], player_position.position.position[1]);
+            if (player_data?.position) {
+                let playerPosition = this.translateToField(player_data.position.position[0], player_data.position.position[1]);
 
                 player.obj!.x = playerPosition.x;
                 player.obj!.y = playerPosition.y;
@@ -54,18 +50,20 @@ export class MatchDataService {
     }
 
     translateToField(x: number, y: number) {
-        const real_field_width = 840;
-        const real_field_height = 545;
+        const real_field_width = this.width - 100;
+        const real_field_height = this.height;
 
-        const screen_field_width = POLE_COORDS.tr.x - POLE_COORDS.tl.x;
-        const screen_field_height = POLE_COORDS.br.y - POLE_COORDS.tr.y;
+        const inner_field_width = 840;
+        const inner_field_height = 545;
 
-        const scaleX = screen_field_width / 840;
-        const scaleY = screen_field_height / 545;
+        // Calculate the scaling factors
+        const scale_x = real_field_width / inner_field_width;
+        const scale_y = real_field_height / inner_field_height;
 
+        // Apply the scaling to translate coordinates
         return {
-            x: POLE_COORDS.tl.x + (x * scaleX),
-            y: POLE_COORDS.tl.y + (y * scaleY)
+            x: 50 + x * scale_x,
+            y: y * scale_y
         };
     }
 
@@ -81,12 +79,10 @@ export class MatchDataService {
 
         let players_results: PlayerDataResultModel[] = [];
 
-        let playerResults = [];
-
         Object.entries(this.matchData?.player_positions!).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
-            const player = this.match!.players.find((player) => player.id == Number(key));
+            const player = this.match!.players.find((player) => player.id == Number(key))!;
 
-            if(player) {
+            if(player){
                 let dt = value![player.currentCoordIdx];
 
                 if(dt) {
@@ -100,20 +96,24 @@ export class MatchDataService {
                             player.currentCoordIdx++;
                         }
                     }
+
+                    const playerPosition = value![player.currentCoordIdx];
+
+                    players_results.push(new PlayerDataResultModel(player.id, playerPosition));
                 }
-
-
-                const playerPosition = value![player.currentCoordIdx];
-
-                playerResults.push(new PlayerDataResultModel(player.id, playerPosition));
             }
         });
 
-        for (const player of this.match!.players) {
-
-        }
-
         return new MatchResultData(players_results, ballResult);
+    }
+
+    setPlayerGraphicsObject(playerId: number, container: Container){
+        const player = this.match!.players.find((player) => player.id == playerId);
+        if(player) {
+            player.obj = container;
+        } else {
+            console.error('player not found, playerId = ' + playerId);
+        }
     }
 }
 
@@ -129,10 +129,10 @@ export class MatchResultData {
 
 export class PlayerDataResultModel {
     constructor(playerId: number, position: ObjectPositionDto) {
-        this.playerId = playerId;
+        this.id = playerId;
         this.position = position;
     }
 
-    public playerId: number;
+    public id: number;
     public position: ObjectPositionDto;
 }

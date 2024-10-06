@@ -1,14 +1,13 @@
 ﻿import {
     AfterViewInit,
     Component,
-    ElementRef, Input,
+    ElementRef, HostListener, Input,
     NgZone,
     OnDestroy, OnInit,
     ViewChild
 } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import {Assets, Container, Graphics, Sprite, TextStyle} from "pixi.js";
-import {POLE_COORDS} from "./models/constants";
 import {UntilDestroy} from "@ngneat/until-destroy";
 import {MatchPlayService} from "../services/match.play.service";
 import {MatchDataService} from "../services/match.data.service";
@@ -58,26 +57,36 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         document.addEventListener('MSFullscreenChange', this.onFullscreenChange.bind(this));
     }
 
+    // @HostListener('window:resize', ['$event'])
+    // onResize(event: Event) {
+    //     const width = (event.target as Window).innerWidth;
+    //     const height = (event.target as Window).innerHeight;
+    //
+    //     this.matchDataService.setResolution(width, height);
+    // }
+
     async setupGraphics(data: MatchDataDto) {
-        // create ball
-        const ball = await this.createBall(data);
-
-        this.application!.stage.addChild(ball);
-
-        this.matchDataService.match!.ball.obj = ball;
-
         //create players1
         Object.entries(data.player_positions).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
             let translatedCoords = this.matchDataService.translateToField(value[0].position[0], value[0].position[1]);
 
             let player = this.getPlayer(Number(key));
 
-            const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
+            if(player) {
+                const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
 
-            this.matchDataService.setPlayerGraphicsObject(Number(key), playerObj);
+                this.matchDataService.setPlayerGraphicsObject(Number(key), playerObj);
 
-            this.application!.stage.addChild(playerObj);
+                this.application!.stage.addChild(playerObj);
+            }
         });
+
+        // create ball
+        const ball = await this.createBall(data);
+
+        this.application!.stage.addChild(ball);
+
+        this.matchDataService.match!.ball.obj = ball;
 
         this.matchPlayService.startMatch();
     }
@@ -87,6 +96,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     public ngAfterViewInit(): void {
+        this.matchDataService.setResolution(1400, 890);
+
         this.matchService.data(this.leagueSlug, this.matchId).subscribe(async matchData => {
             this.dataLoaded = true;
 
@@ -151,7 +162,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
             align: 'center'
         });
 
-        const text = new PIXI.Text({text: player.displayName, style});
+        const text = new PIXI.Text({text: player.last_name + ' ' + player.first_name.charAt(0).toUpperCase() + '.', style});
 
         text.x = 10;
         text.y = 30;
