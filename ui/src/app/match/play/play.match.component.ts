@@ -37,9 +37,9 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     isFullscreen: boolean = false;
 
-    private aspectRatio: number = 16 / 11; // Typical aspect ratio for a football field
-    private maxWidth: number = 1400; // Maximum width of the game area
-    private maxHeight: number = 890; // Maximum height of the game area
+    private aspectRatio: number = 16 / 10;
+    private maxWidth: number = 1400;
+    private maxHeight: number = 890;
 
     @Input()
     leagueSlug: string = '';
@@ -90,31 +90,24 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         // Update the application size
         this.application.renderer.resize(width, height);
 
-        // Scale the background to fill the screen
-        const scaleX = width / this.background.texture.width;
-        const scaleY = height / this.background.texture.height;
-        const scale = Math.max(scaleX, scaleY);
-        this.background.scale.set(scale);
+        // Scale the entire stage (including background and game container)
+        const scale = Math.min(width / this.maxWidth, height / this.maxHeight);
+        this.application.stage.scale.set(scale);
 
-        // Center the background
-        this.background.position.set(
-            (width - this.background.width) / 2,
-            (height - this.background.height) / 2
+        // Center the stage
+        this.application.stage.position.set(
+            (width - this.maxWidth * scale) / 2,
+            (height - this.maxHeight * scale) / 2
         );
 
-        // Scale the game container
-        const gameScale = Math.min(width / this.maxWidth, height / this.maxHeight);
-        this.gameContainer.scale.set(gameScale);
-
-        // Center the game container
-        this.gameContainer.position.set(
-            (width - this.maxWidth * gameScale) / 2,
-            (height - this.maxHeight * gameScale) / 2
-        );
-
-        console.log("SET SIZE: " + width + ", " + height);
+        // Ensure the background covers the entire original size
+        this.background.width = this.maxWidth;
+        this.background.height = this.maxHeight;
 
         this.matchDataService.setResolution(this.maxWidth, this.maxHeight);
+
+        // Force a redraw
+        this.forceRedraw();
     }
 
     async setupGraphics(data: MatchDataDto) {
@@ -160,6 +153,18 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
+    forceRedraw() {
+        if (!this.application) return;
+
+        // Remove and re-add all children to force a redraw
+        const children = [...this.application.stage.children];
+        this.application.stage.removeChildren();
+        children.forEach(child => this.application!.stage.addChild(child));
+
+        // Render the stage
+        this.application!.render();
+    }
+
     initGraphics(): Promise<void> {
         return this.zone.runOutsideAngular(
             async () => {
@@ -171,7 +176,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                     resolution: window.devicePixelRatio,
                     width: this.maxWidth,
                     height: this.maxHeight,
-                    backgroundColor: 0x022C0D // Dark green background color
+                    backgroundColor: 0x283238 // Dark green background color
                 });
 
                 this.matchContainer.nativeElement.appendChild(this.application.canvas);
@@ -190,9 +195,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                     }
 
                     this.matchPlayService.tick();
+                    //this.application!.render();
                 });
-
-                this.application.render();
             }
         );
     }

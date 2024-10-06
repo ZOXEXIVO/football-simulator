@@ -10,7 +10,7 @@ pub struct MatchStore;
 
 impl MatchStore {
     pub async fn get(league_slug: &str, match_id: &str) -> Vec<u8> {
-        let match_file = format!("{}/{}/{}", MATCH_DIRECTORY, league_slug, match_id);
+        let match_file = format!("{}/{}/{}.json.gz", MATCH_DIRECTORY, league_slug, match_id);
 
         let mut file = File::options()
             .read(true)
@@ -31,7 +31,7 @@ impl MatchStore {
         if let Ok(_) = tokio::fs::create_dir_all(&out_dir).await {
         }
 
-        let out_file = format!("{}/{}", out_dir, result.id);
+        let out_file = format!("{}/{}.json.gz", out_dir, result.id);
 
         let file = File::options()
             .write(true)

@@ -62,15 +62,14 @@ export class MatchDataService {
 
         // Apply the scaling to translate coordinates
         return {
-            x: 50 + x * scale_x,
-            y: y * scale_y
+            x: 42 + x * scale_x,
+            y: y * scale_y - 5
         };
     }
 
     getData(timestamp: number): MatchResultData {
         // ball
         let ts = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx].timestamp;
-
 
         while (ts < timestamp && this.match!.ball.currentCoordIdx < this.matchData!.ball_positions.length) {
             ts = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx].timestamp;
@@ -86,7 +85,6 @@ export class MatchDataService {
 
             if(player){
                 let dt = value![player.currentCoordIdx];
-
                 if(dt) {
                     let pts = dt.timestamp;
 
