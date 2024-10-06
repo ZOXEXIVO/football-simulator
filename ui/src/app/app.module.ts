@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {routes} from './app.routing.module';
 import { AppComponent } from './app.component';
 import { APP_BASE_HREF } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -12,10 +12,9 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
     routes
   ],
-  providers: [{provide: APP_BASE_HREF, useValue: '/'}],
+  providers: [{provide: APP_BASE_HREF, useValue: '/'}, provideHttpClient(withInterceptorsFromDi())],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

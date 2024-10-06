@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClientModule, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
@@ -16,15 +16,13 @@ import {CommonModule} from "@angular/common";
   ],
   imports: [
     RouterModule,
-    CommonModule,
-    HttpClientModule
+    CommonModule
   ],
   exports: [
     LeftMenuComponent,
     TopHeaderComponent,
     ProcessComponent
   ],
-
-  providers: [LeftMenuService]
+  providers:[provideHttpClient(withInterceptorsFromDi())]
 })
 export class SharedModule { }

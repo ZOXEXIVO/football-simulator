@@ -12,12 +12,12 @@ impl CountryResult {
         CountryResult { leagues, clubs }
     }
 
-    pub fn process(&self, data: &mut SimulatorData, result: &mut SimulationResult) {
-        for league_result in &self.leagues {
+    pub fn process(self, data: &mut SimulatorData, result: &mut SimulationResult) {
+        for league_result in self.leagues {
             league_result.process(data, result);
         }
 
-        for club_result in &self.clubs {
+        for club_result in self.clubs {
             club_result.process(data, result);
         }
     }

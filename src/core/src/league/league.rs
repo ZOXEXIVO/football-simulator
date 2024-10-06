@@ -60,8 +60,9 @@ impl League {
             let match_results = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
             self.table.update_from_results(&match_results);
 
-            match_results.clone().into_iter().for_each(|m| {
-                self.matches.push(m);
+            match_results.iter().for_each(|mr| {
+                // copy without match details, that store in separate gzipped file
+                self.matches.push(mr.copy_without_data_positions());
             });
 
             return LeagueResult::with_match_result(self.id, table_result, match_results);

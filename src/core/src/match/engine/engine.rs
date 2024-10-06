@@ -53,11 +53,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         result
     }
 
-    fn play_inner(field: &mut MatchField, context: &mut MatchContext, match_date: &mut MatchPositionData) -> PlayMatchStateResult {
+    fn play_inner(field: &mut MatchField, context: &mut MatchContext, match_data: &mut MatchPositionData) -> PlayMatchStateResult {
         let result = PlayMatchStateResult::new();
 
         while context.increment_time() {
-            Self::game_tick(field, context, match_date);
+            Self::game_tick(field, context, match_data);
         }
 
         result

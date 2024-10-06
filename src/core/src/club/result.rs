@@ -25,7 +25,7 @@ impl ClubResult {
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData, result: &mut SimulationResult) {
+    pub fn process(self, data: &mut SimulatorData, result: &mut SimulationResult) {
         self.finance.process(data);
 
         for team_result in &self.teams {

@@ -86,7 +86,7 @@ impl MidfielderShootingState {
         let field_length = ctx.context.field_size.width as f32;
         let field_width = ctx.context.field_size.width as f32;
 
-        if ctx.player.side.unwrap() == PlayerSide::Left {
+        if ctx.player.side == Some(PlayerSide::Left) {
             // Attacking towards the right (positive x)
             Vector3::new(field_length, field_width / 2.0, 0.0)
         } else {

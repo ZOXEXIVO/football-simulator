@@ -24,6 +24,9 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     @ViewChild('matchContainer') matchContainer!: ElementRef;
 
+    private background: PIXI.Sprite | null = null;
+    private gameContainer: PIXI.Container | null = null;
+
     application: PIXI.Application | null = null;
 
     dataLoaded = false;
@@ -33,6 +36,10 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     currentTime = 0;
 
     isFullscreen: boolean = false;
+
+    private aspectRatio: number = 16 / 11; // Typical aspect ratio for a football field
+    private maxWidth: number = 1400; // Maximum width of the game area
+    private maxHeight: number = 890; // Maximum height of the game area
 
     @Input()
     leagueSlug: string = '';
@@ -57,34 +64,79 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         document.addEventListener('MSFullscreenChange', this.onFullscreenChange.bind(this));
     }
 
-    // @HostListener('window:resize', ['$event'])
-    // onResize(event: Event) {
-    //     const width = (event.target as Window).innerWidth;
-    //     const height = (event.target as Window).innerHeight;
-    //
-    //     this.matchDataService.setResolution(width, height);
-    // }
+    @HostListener('window:resize', ['$event'])
+    onResize(event: Event) {
+        this.resizePixiApp();
+    }
+
+    resizePixiApp() {
+        if (!this.application || !this.background || !this.gameContainer) return;
+
+        const parent = this.matchContainer.nativeElement.parentElement;
+        let width = parent.clientWidth;
+        let height = parent.clientHeight;
+
+        // Calculate the dimensions while maintaining aspect ratio
+        const containerAspectRatio = width / height;
+
+        if (containerAspectRatio > this.aspectRatio) {
+            // Container is wider than needed
+            width = height * this.aspectRatio;
+        } else {
+            // Container is taller than needed
+            height = width / this.aspectRatio;
+        }
+
+        // Update the application size
+        this.application.renderer.resize(width, height);
+
+        // Scale the background to fill the screen
+        const scaleX = width / this.background.texture.width;
+        const scaleY = height / this.background.texture.height;
+        const scale = Math.max(scaleX, scaleY);
+        this.background.scale.set(scale);
+
+        // Center the background
+        this.background.position.set(
+            (width - this.background.width) / 2,
+            (height - this.background.height) / 2
+        );
+
+        // Scale the game container
+        const gameScale = Math.min(width / this.maxWidth, height / this.maxHeight);
+        this.gameContainer.scale.set(gameScale);
+
+        // Center the game container
+        this.gameContainer.position.set(
+            (width - this.maxWidth * gameScale) / 2,
+            (height - this.maxHeight * gameScale) / 2
+        );
+
+        console.log("SET SIZE: " + width + ", " + height);
+
+        this.matchDataService.setResolution(this.maxWidth, this.maxHeight);
+    }
 
     async setupGraphics(data: MatchDataDto) {
-        //create players1
-        Object.entries(data.player_positions).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
-            let translatedCoords = this.matchDataService.translateToField(value[0].position[0], value[0].position[1]);
+        if (!this.gameContainer) return;
 
+        //create players
+        Object.entries(data.player_positions).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
             let player = this.getPlayer(Number(key));
 
             if(player) {
-                const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
+                const playerObj = this.createPlayer(value[0].position[0], value[0].position[1], player);
 
                 this.matchDataService.setPlayerGraphicsObject(Number(key), playerObj);
 
-                this.application!.stage.addChild(playerObj);
+                this.gameContainer!.addChild(playerObj);
             }
         });
 
         // create ball
         const ball = await this.createBall(data);
 
-        this.application!.stage.addChild(ball);
+        this.gameContainer.addChild(ball);
 
         this.matchDataService.match!.ball.obj = ball;
 
@@ -96,7 +148,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     public ngAfterViewInit(): void {
-        this.matchDataService.setResolution(1400, 890);
+        this.matchDataService.setResolution(this.maxWidth, this.maxHeight);
 
         this.matchService.data(this.leagueSlug, this.matchId).subscribe(async matchData => {
             this.dataLoaded = true;
@@ -117,15 +169,20 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                     antialias: true,
                     autoDensity: true,
                     resolution: window.devicePixelRatio,
-                    resizeTo: this.matchContainer.nativeElement,
-                    width: 1000,
-                    height: 900
+                    width: this.maxWidth,
+                    height: this.maxHeight,
+                    backgroundColor: 0x022C0D // Dark green background color
                 });
 
                 this.matchContainer.nativeElement.appendChild(this.application.canvas);
 
-                this.application.stage.addChild(await this.createBackground(this.application));
-                this.application!.resizeTo = this.matchContainer.nativeElement;
+                this.background = await this.createBackground();
+                this.application.stage.addChild(this.background);
+
+                this.gameContainer = new PIXI.Container();
+                this.application.stage.addChild(this.gameContainer);
+
+                this.resizePixiApp();
 
                 this.application.ticker.add((delta) => {
                     if (this.isDisposed) {
@@ -135,7 +192,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.matchPlayService.tick();
                 });
 
-                this.application!.render();
+                this.application.render();
             }
         );
     }
@@ -149,14 +206,14 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         const circle: Graphics = new PIXI.Graphics();
 
         circle
-            .circle(6, 6, 12)
+            .circle(6, 6, 15)
             .fill(this.getColor(player));
 
         container.addChild(circle);
 
         const style = new TextStyle({
             fontFamily: 'Arial',
-            fontSize: 13,
+            fontSize: 15,
             fill: 'white',
             wordWrap: false,
             align: 'center'
@@ -185,12 +242,12 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         return player.is_home ? homeColor : awayColor;
     }
 
-    async createBackground(app: PIXI.Application) {
+    async createBackground() {
         const landscapeTexture = await Assets.load('assets/images/match/field.svg');
         const background = new PIXI.Sprite(landscapeTexture);
 
-        background.width = app.screen.width;
-        background.height = app.screen.height;
+        background.width = this.maxWidth;
+        background.height = this.maxHeight;
 
         return background;
     }

@@ -74,8 +74,7 @@
             let mut rng = rand::thread_rng();
 
             // Determine if the player should move based on their concentration and positioning
-            let should_move = rng.gen_bool((ctx.player.skills.mental.positioning / 20.0) as f64)
-                && rng.gen_bool((ctx.player.skills.mental.concentration / 20.0) as f64);
+            let should_move = self.calculate_movement_probability(&mut rng, &ctx);
 
             if should_move {
                 // Get player's agility and stamina to adjust movement
@@ -107,6 +106,16 @@
         fn should_hold_possession(&self, ctx: &StateProcessingContext) -> bool {
             // For simplicity, let's assume the midfielder holds possession if there are no immediate passing options
             !self.has_passing_options(ctx)
+        }
+
+        fn calculate_movement_probability(&self, rng: &mut impl Rng, ctx: &StateProcessingContext) -> bool {
+            let positioning_probability = (ctx.player.skills.mental.positioning as f64) / 20.0;
+            let concentration_probability = (ctx.player.skills.mental.concentration as f64) / 20.0;
+
+            let positioning_roll = rng.gen_range(0.0..1.0);
+            let concentration_roll = rng.gen_range(0.0..1.0);
+
+            positioning_roll < positioning_probability && concentration_roll < concentration_probability
         }
 
         /// Determines if the midfielder has passing options.

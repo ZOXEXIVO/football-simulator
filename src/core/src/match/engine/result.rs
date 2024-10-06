@@ -43,6 +43,17 @@ impl MatchResultRaw {
         }
     }
 
+    pub fn copy_without_data_positions(&self) -> Self {
+        MatchResultRaw {
+            score: self.score.clone(),
+            position_data: MatchPositionData::new(),
+            left_team_players: self.left_team_players.clone(),
+            right_team_players: self.right_team_players.clone(),
+            match_time_ms: self.match_time_ms,
+            additional_time_ms: self.additional_time_ms,
+        }
+    }
+
     pub fn write_team_players(
         &mut self,
         home_team_players: &FieldSquad,
@@ -192,6 +203,24 @@ pub struct MatchResult {
     pub away_team_id: u32,
     pub details: Option<MatchResultRaw>,
     pub score: Score
+}
+
+impl MatchResult {
+    pub fn copy_without_data_positions(&self) -> Self {
+        MatchResult {
+            id: String::from(&self.id),
+            league_id: self.league_id,
+            league_slug: String::from(&self.league_slug),
+            home_team_id: self.home_team_id,
+            away_team_id: self.away_team_id,
+            details: if self.details.is_some() {
+                Some(self.details.as_ref().unwrap().copy_without_data_positions())
+            } else {
+                None
+            },
+            score: self.score.clone()
+        }
+    }
 }
 
 impl From<&LeagueMatch> for MatchResult {

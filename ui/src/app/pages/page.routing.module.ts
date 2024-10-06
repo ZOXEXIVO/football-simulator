@@ -9,5 +9,5 @@ export const pageRoutes: Routes = [
   ...leagueRoutes,
   ...teamRoutes,
   ...playerRoutes,
-
+  {path: '', redirectTo: '/countries', pathMatch: 'full'}
 ];

@@ -6,6 +6,7 @@ use server::{FootballSimulatorServer, GameAppData};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
+
 #[tokio::main]
 async fn main() {
     color_eyre::install().unwrap();

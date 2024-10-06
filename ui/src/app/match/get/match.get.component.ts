@@ -37,7 +37,16 @@ export class MatchGetComponent implements OnInit {
 
             match_data.players = [];
 
+            // add home players
+            match_data.home_squad.main.forEach(player => {
+                player.is_home = true;
+            });
             match_data.players.push(...match_data.home_squad.main);
+
+            // add away players
+            match_data.away_squad.main.forEach(player => {
+                player.is_home = false;
+            });
             match_data.players.push(...match_data.away_squad.main);
 
             match_data.players.forEach(player => {

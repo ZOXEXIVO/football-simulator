@@ -1,6 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { MatchGetComponent } from './get/match.get.component';
 import {MatchPlayComponent} from "./play/play.match.component";
@@ -19,7 +17,6 @@ import {SharedModule} from "../shared/shared.module";
     RouterModule,
     CommonModule,
     SharedModule,
-    HttpClientModule,
     RouterModule.forChild(matchRoutes)
   ],
   providers: [],

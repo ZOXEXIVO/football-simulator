@@ -31,17 +31,17 @@ impl LeagueResult {
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData, result: &mut SimulationResult) {
-        if let Some(match_results) = &self.match_results {
+    pub fn process(self, data: &mut SimulatorData, result: &mut SimulationResult) {
+        if let Some(match_results) = self.match_results {
             for match_result in match_results {
-                self.process_match_results(match_result, data);
+                Self::process_match_results(&match_result, data);
 
-                result.match_results.push(match_result.clone());
+                result.match_results.push(match_result);
             }
         }
     }
 
-    fn process_match_results(&self, result: &MatchResult, data: &mut SimulatorData) {
+    fn process_match_results(result: &MatchResult, data: &mut SimulatorData) {
         let now = data.date;
 
         let league = data.league_mut(result.league_id).unwrap();

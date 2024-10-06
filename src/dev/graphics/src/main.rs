@@ -20,6 +20,8 @@ use core::r#match::PlayerSide;
 use core::r#match::GOAL_WIDTH;
 use core::NaiveDate;
 use core::PlayerGenerator;
+use core::r#match::MatchPositionData;
+use core::r#match::Score;
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -52,9 +54,13 @@ async fn main() {
 
     let field_size = field.size.clone();
 
-    let mut context = MatchContext::new(&field_size, players, 0, 0);
+    let score = Score::new(1,  2);
+
+    let mut context = MatchContext::new(&field_size, players, score);
 
     let mut current_frame = 0u64;
+
+    let mut match_data = MatchPositionData::new();
 
     loop {
         current_frame += 1;
@@ -75,7 +81,7 @@ async fn main() {
 
         let start = Instant::now();
 
-        FootballEngine::<840, 545>::game_tick(&mut field, &mut context);
+        FootballEngine::<840, 545>::game_tick(&mut field, &mut context, &mut match_data);
 
         let elapsed = start.elapsed();
 
