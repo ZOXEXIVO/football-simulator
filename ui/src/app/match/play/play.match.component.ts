@@ -12,9 +12,7 @@ import {POLE_COORDS} from "./models/constants";
 import {UntilDestroy} from "@ngneat/until-destroy";
 import {MatchPlayService} from "../services/match.play.service";
 import {MatchDataService} from "../services/match.data.service";
-import {TitleService} from "../../shared/services/title.service";
-import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
-import {MatchDataDto, MatchPlayerDto, MatchService} from "../services/match.service";
+import {MatchDataDto, MatchPlayerDto, MatchService, ObjectPositionDto} from "../services/match.service";
 
 @UntilDestroy()
 @Component({
@@ -50,14 +48,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.matchService.data(this.leagueSlug, this.matchId).subscribe(async matchData => {
-            await this.initGraphics();
-            await this.setupGraphics(matchData);
-
-            this.dataLoaded = true;
-            //this.application!.resizeTo = this.matchContainer.nativeElement;
-        });
-
         this.matchPlayService.timeChanged$.subscribe(time => {
             this.currentTime = time;
         });
@@ -72,56 +62,39 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         // create ball
         const ball = await this.createBall(data);
 
-        //this.matchDataService.matchData.ball.obj = ball;
         this.application!.stage.addChild(ball);
 
+        this.matchDataService.match!.ball.obj = ball;
+
         //create players1
-        data.player_data.forEach((playerData: number[][], playerId: number) => {
-            let translatedCoords = this.translateToField(playerData[0][0], playerData[0][1]);
+        Object.entries(data.player_positions).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
+            let translatedCoords = this.matchDataService.translateToField(value[0].position[0], value[0].position[1]);
 
-            //const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, playerData);
+            let player = this.getPlayer(Number(key));
 
-            //this.matchDataService.setPlayerGraphicsObject(playerId, playerObj);
+            const playerObj = this.createPlayer(translatedCoords.x, translatedCoords.y, player);
 
-            //this.application!.stage.addChild(playerObj);
+            this.matchDataService.setPlayerGraphicsObject(Number(key), playerObj);
+
+            this.application!.stage.addChild(playerObj);
         });
 
-        //this.matchPlayService.startMatch();
+        this.matchPlayService.startMatch();
+    }
+
+    getPlayer(playerId: number): MatchPlayerDto{
+        return this.matchDataService.match!.players.find((player) => player.id == playerId)!;
     }
 
     public ngAfterViewInit(): void {
-        // this.matchPlayService.objectPositionChanged$.subscribe(data => {
-        //     const ballObject = this.matchDataService.matchData.ball.obj!;
-        //
-        //     let ballCoord = this.translateToField(data.ball.x, data.ball.y);
-        //
-        //     ballObject.x = ballCoord.x;
-        //     ballObject.y = ballCoord.y;
-        //
-        //     this.matchDataService.matchData.players.forEach((player, index) => {
-        //         const playerObject = player.obj!;
-        //
-        //         if (!playerObject) {
-        //             return;
-        //         }
-        //
-        //         const playerData = data.players.find(p => p.playerId == player.id);
-        //
-        //         if (playerData && playerData.position) {
-        //             const playerPosition = playerData.position;
-        //
-        //             if (playerPosition) {
-        //                 let playerTranslatedPositions = this.translateToField(
-        //                     playerPosition.x,
-        //                     playerPosition.y
-        //                 );
-        //
-        //                 playerObject.x = playerTranslatedPositions.x;
-        //                 playerObject.y = playerTranslatedPositions.y;
-        //             }
-        //         }
-        //     });
-        // });
+        this.matchService.data(this.leagueSlug, this.matchId).subscribe(async matchData => {
+            this.dataLoaded = true;
+
+            this.matchDataService.setMatchData(matchData);
+
+            await this.initGraphics();
+            await this.setupGraphics(matchData);
+        });
     }
 
     initGraphics(): Promise<void> {
@@ -135,12 +108,13 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                     resolution: window.devicePixelRatio,
                     resizeTo: this.matchContainer.nativeElement,
                     width: 1000,
-                    height: 700
+                    height: 900
                 });
 
                 this.matchContainer.nativeElement.appendChild(this.application.canvas);
 
                 this.application.stage.addChild(await this.createBackground(this.application));
+                this.application!.resizeTo = this.matchContainer.nativeElement;
 
                 this.application.ticker.add((delta) => {
                     if (this.isDisposed) {
@@ -155,22 +129,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         );
     }
 
-    translateToField(x: number, y: number) {
-        const real_field_width = 840;
-        const real_field_height = 545;
-
-        const screen_field_width = POLE_COORDS.tr.x - POLE_COORDS.tl.x;
-        const screen_field_height = POLE_COORDS.br.y - POLE_COORDS.tr.y;
-
-        const scaleX = screen_field_width / 840;
-        const scaleY = screen_field_height / 545;
-
-        return {
-            x: POLE_COORDS.tl.x + (x * scaleX),
-            y: POLE_COORDS.tl.y + (y * scaleY)
-        };
-    }
-
     createPlayer(x: number, y: number, player: MatchPlayerDto): Container {
         const container = new Container();
 
@@ -179,9 +137,9 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
         const circle: Graphics = new PIXI.Graphics();
 
-        // circle
-        //     .circle(6, 6, 12)
-        //     .fill(this.getColor(player));
+        circle
+            .circle(6, 6, 12)
+            .fill(this.getColor(player));
 
         container.addChild(circle);
 
@@ -205,16 +163,16 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         return container;
     }
 
-    // getColor(player: PlayerModel) {
-    //     if (player.position == "GK") {
-    //         return 0xf7e300;
-    //     }
-    //
-    //     const homeColor = 0x00307d;
-    //     const awayColor = 0xb33f00;
-    //
-    //     return player.isHome ? homeColor : awayColor;
-    // }
+    getColor(player: MatchPlayerDto) {
+        if (player.position == "GK") {
+            return 0xf7e300;
+        }
+
+        const homeColor = 0x00307d;
+        const awayColor = 0xb33f00;
+
+        return player.is_home ? homeColor : awayColor;
+    }
 
     async createBackground(app: PIXI.Application) {
         const landscapeTexture = await Assets.load('assets/images/match/field.svg');
@@ -230,8 +188,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         const texture = await Assets.load('assets/images/match/ball.png');
         const ball: PIXI.Sprite = new Sprite(texture);
 
-        ball.position.x = data.ball_data[0][0];
-        ball.position.y = data.ball_data[0][1];
+        ball.position.x = data.ball_positions[0].position[0];
+        ball.position.y = data.ball_positions[0].position[1];
 
         return ball;
     }

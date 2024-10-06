@@ -1,6 +1,7 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
+import {Container} from "pixi.js";
 
 @Injectable({
     providedIn: 'root',
@@ -19,22 +20,18 @@ export class MatchService {
 }
 
 export interface MatchDataDto {
-    player_data: Map<number, number[][]>,
-    ball_data: number[][]
+    player_positions: Map<number, ObjectPositionDto[]>,
+    ball_positions: ObjectPositionDto[]
 }
 
 export class ObjectPositionDto {
-    constructor(timestamp: number, x: number, y: number, z: number) {
+    constructor(timestamp: number, position: number[]) {
         this.timestamp = timestamp;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.position = position;
     }
 
     timestamp: number;
-    x: number;
-    y: number;
-    z: number;
+    position: number[];
 }
 
 // Lineup
@@ -50,7 +47,10 @@ export interface MatchDto {
 
     score: MatchScoreDto,
 
-    match_time_ms: number
+    match_time_ms: number,
+
+    players: MatchPlayerDto[]
+    ball: MatchBallDto
 }
 
 export interface MatchScoreDto {
@@ -73,4 +73,18 @@ export interface MatchPlayerDto {
     team_slug: string
     start_position: number[],
     is_home: boolean
+
+    obj: Container,
+    currentCoordIdx: number
 }
+
+export class MatchBallDto {
+    public obj: Container | null;
+    public currentCoordIdx: number;
+
+    constructor() {
+        this.obj = null;
+        this.currentCoordIdx = 0;
+    }
+}
+

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {UntilDestroy} from '@ngneat/until-destroy';
-import {MatchDto, MatchService} from "../services/match.service";
+import {MatchBallDto, MatchDto, MatchService} from "../services/match.service";
 import {MatchPlayService} from "../services/match.play.service";
 import {MatchDataService} from "../services/match.data.service";
 import {TitleService} from "../../shared/services/title.service";
@@ -33,8 +33,21 @@ export class MatchGetComponent implements OnInit {
 
     ngOnInit(): void {
         this.matchService.get(this.leagueSlug, this.matchId).subscribe(data => {
-            this.match = data;
-            this.matchDataService.setData(data);
+            let match_data = data;
+
+            match_data.players = [];
+
+            match_data.players.push(...match_data.home_squad.main);
+            match_data.players.push(...match_data.home_squad.substitutes);
+
+            match_data.players.push(...match_data.away_squad.main);
+            match_data.players.push(...match_data.away_squad.substitutes);
+
+            match_data.ball = new MatchBallDto();
+
+            this.match = match_data;
+
+            this.matchDataService.setMatch(match_data);
 
             this.titleService.setTitle(`${data?.home_team_name} : ${data?.away_team_name}`)
             this.topHeaderService.setContent(`${data?.home_team_name} ${data?.score.home_goals} : ${data?.score.away_goals} ${data?.away_team_name}`, '', '/', false);
