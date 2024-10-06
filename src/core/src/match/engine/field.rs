@@ -1,5 +1,8 @@
 ﻿use crate::r#match::ball::Ball;
-use crate::r#match::{FieldSquad, MatchFieldSize, MatchPlayer, MatchResultRaw, PlayerSide, PositionType, TeamSquad, POSITION_POSITIONING};
+use crate::r#match::{
+    FieldSquad, MatchFieldSize, MatchPlayer, MatchResultRaw, PlayerSide, PositionType, TeamSquad,
+    POSITION_POSITIONING,
+};
 use nalgebra::Vector3;
 
 pub struct MatchField {
@@ -13,11 +16,17 @@ pub struct MatchField {
 }
 
 impl MatchField {
-    pub fn new(width: usize, height: usize, left_team_squad: TeamSquad, right_team_squad: TeamSquad) -> Self {
+    pub fn new(
+        width: usize,
+        height: usize,
+        left_team_squad: TeamSquad,
+        right_team_squad: TeamSquad,
+    ) -> Self {
         let left_squad = FieldSquad::from_team(&left_team_squad);
         let away_squad = FieldSquad::from_team(&right_team_squad);
 
-        let (players_on_field, substitutes) = setup_player_on_field(left_team_squad, right_team_squad);
+        let (players_on_field, substitutes) =
+            setup_player_on_field(left_team_squad, right_team_squad);
 
         MatchField {
             size: MatchFieldSize::new(width, height),
@@ -32,7 +41,7 @@ impl MatchField {
     pub fn swap_squads(&mut self) {
         std::mem::swap(&mut self.left_side_players, &mut self.right_side_players);
 
-        self.players.iter_mut().for_each(|p|  {
+        self.players.iter_mut().for_each(|p| {
             if let Some(side) = &p.side {
                 p.side = Some(match side {
                     PlayerSide::Left => PlayerSide::Right,
@@ -42,27 +51,8 @@ impl MatchField {
         });
     }
 
-    pub fn write_match_positions(&self, result: &mut MatchResultRaw, timestamp: u64) {
-        // player positions
-        self.players.iter().for_each(|player| {
-            result
-                .position_data
-                .add_player_positions(player.player_id, timestamp, player.position);
-        });
-
-        // player positions
-        self.substitutes.iter().for_each(|sub_player| {
-            result.position_data.add_player_positions(
-                sub_player.player_id,
-                timestamp,
-                sub_player.position,
-            );
-        });
-
-        // write positions
-        result
-            .position_data
-            .add_ball_positions(timestamp, self.ball.position);
+    pub fn get_player_mut(&mut self, id: u32) -> Option<&mut MatchPlayer> {
+        self.players.iter_mut().find(|p| p.id == id)
     }
 }
 
@@ -106,8 +96,20 @@ fn get_player_position(player: &MatchPlayer, side: PlayerSide) -> Option<Vector3
         .iter()
         .find(|(pos, _, _)| *pos == player.tactics_position)
         .and_then(|(_, home, away)| match side {
-            PlayerSide::Left => if let PositionType::Home(x, y) = home { Some((*x as f32, *y as f32)) } else { None },
-            PlayerSide::Right => if let PositionType::Away(x, y) = away { Some((*x as f32, *y as f32)) } else { None },
+            PlayerSide::Left => {
+                if let PositionType::Home(x, y) = home {
+                    Some((*x as f32, *y as f32))
+                } else {
+                    None
+                }
+            }
+            PlayerSide::Right => {
+                if let PositionType::Away(x, y) = away {
+                    Some((*x as f32, *y as f32))
+                } else {
+                    None
+                }
+            }
         })
         .map(|(x, y)| Vector3::new(x, y, 0.0))
 }

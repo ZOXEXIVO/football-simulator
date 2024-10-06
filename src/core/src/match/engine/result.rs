@@ -1,13 +1,12 @@
-﻿use std::cell::Cell;
-use std::sync::atomic::{AtomicU8, Ordering};
+﻿use std::sync::atomic::{AtomicU8, Ordering};
 use crate::league::LeagueMatch;
-use crate::r#match::position::MatchPositionData;
-use crate::r#match::{MatchPlayer, TeamSquad};
+use crate::r#match::{MatchPlayer, MatchPositionData, TeamSquad};
 use crate::r#match::statistics::MatchStatisticType;
+use bytes::Bytes;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct MatchResultRaw {
-    pub score: Score,
+    pub score: Option<Score>,
 
     pub position_data: MatchPositionData,
 
@@ -18,10 +17,24 @@ pub struct MatchResultRaw {
     pub additional_time_ms: u64,
 }
 
-impl MatchResultRaw {
-    pub fn with_match_time(match_time_ms: u64, home_team_id: u32, away_team_id: u32) -> Self {
+impl Clone for MatchResultRaw {
+    fn clone(&self) -> Self {
         MatchResultRaw {
-            score: Score::new(home_team_id, away_team_id),
+            score: self.score.clone(),
+            position_data: self.position_data.clone(),
+            left_team_players: self.left_team_players.clone(),
+            right_team_players: self.right_team_players.clone(),
+            match_time_ms: self.match_time_ms,
+            additional_time_ms: self.additional_time_ms,
+        }
+    }
+}
+
+
+impl MatchResultRaw {
+    pub fn with_match_time(match_time_ms: u64) -> Self {
+        MatchResultRaw {
+            score: None,
             position_data: MatchPositionData::new(),
             left_team_players: FieldSquad::new(),
             right_team_players: FieldSquad::new(),
@@ -38,21 +51,8 @@ impl MatchResultRaw {
         self.left_team_players = FieldSquad::from(home_team_players);
         self.right_team_players = FieldSquad::from(away_team_players);
     }
-
-    pub fn fill_details(&mut self, players: Vec<&MatchPlayer>){
-        for player in players.iter().filter(|p| !p.statistics.is_empty()) {
-            for stat in &player.statistics.items            {
-                let detail = GoalDetail{
-                    player_id: player.player_id,
-                    match_second: stat.match_second,
-                    stat_type: stat.stat_type
-                };
-
-                self.score.add_goal_detail(detail);
-            }
-        }
-    }
 }
+
 
 #[derive(Debug, Clone)]
 pub struct FieldSquad {
@@ -77,8 +77,8 @@ impl FieldSquad {
 
     pub fn from_team(squad: &TeamSquad) -> Self {
         FieldSquad {
-            main: squad.main_squad.iter().map(|p| p.player_id).collect(),
-            substitutes: squad.substitutes.iter().map(|p| p.player_id).collect(),
+            main: squad.main_squad.iter().map(|p| p.id).collect(),
+            substitutes: squad.substitutes.iter().map(|p| p.id).collect(),
         }
     }
 
@@ -187,9 +187,10 @@ impl Score {
 pub struct MatchResult {
     pub id: String,
     pub league_id: u32,
+    pub league_slug: String,
     pub home_team_id: u32,
     pub away_team_id: u32,
-    pub result_details: Option<MatchResultRaw>,
+    pub details: Option<MatchResultRaw>,
     pub score: Score
 }
 
@@ -198,10 +199,11 @@ impl From<&LeagueMatch> for MatchResult {
         MatchResult {
             id: m.id.clone(),
             league_id: m.league_id,
+            league_slug: m.league_slug.clone(),
             home_team_id: m.home_team_id,
             away_team_id: m.away_team_id,
             score: Score::new(m.home_team_id, m.away_team_id),
-            result_details: None
+            details: None
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿use nalgebra::Vector3;
+﻿use crate::r#match::PlayerSide;
+use nalgebra::Vector3;
 use rand::Rng;
 use rand_distr::num_traits::real::Real;
-use rand_distr::num_traits::Pow;
 use std::collections::HashMap;
-use crate::r#match::PlayerSide;
+use serde::Serialize;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PositionDataItem {
     pub timestamp: u64,
     pub position: Vector3<f32>,
@@ -26,10 +26,10 @@ impl PartialEq<PositionDataItem> for PositionDataItem {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct MatchPositionData {
-    pub ball_positions: Vec<PositionDataItem>,
-    pub player_positions: HashMap<u32, Vec<PositionDataItem>>,
+    ball_positions: Vec<PositionDataItem>,
+    player_positions: HashMap<u32, Vec<PositionDataItem>>,
 }
 
 impl MatchPositionData {
@@ -39,6 +39,8 @@ impl MatchPositionData {
             player_positions: HashMap::with_capacity(22 * 2 * 9000),
         }
     }
+
+    pub fn compress(&mut self) {}
 
     pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, position: Vector3<f32>) {
         if let Some(player_data) = self.player_positions.get_mut(&player_id) {
@@ -85,25 +87,24 @@ pub trait VectorExtensions {
 
 impl VectorExtensions for Vector3<f32> {
     fn length(&self) -> f32 {
-        (self.x.pow(2.0) + self.y.pow(2.0) + self.z.pow(2.0)) as f32
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
     fn random_in_unit_circle() -> Vector3<f32> {
         let mut rng = rand::thread_rng();
 
-        let r: f32 = rng.gen_range(0.0..1.0).powf(1.0 / 3.0) as f32;
-        let theta: f32 = rng.gen_range(0.0..2.0 * std::f32::consts::PI);
-        let phi: f32 = rng.gen_range(0.0..std::f32::consts::PI);
+        let u = rng.gen::<f32>();
+        let v = rng.gen::<f32>();
 
-        Vector3::new(
-            r * phi.sin() * theta.cos(),
-            r * phi.sin() * theta.sin(),
-            r * phi.cos(),
-        )
+        let phi = std::f32::consts::PI * 2.0 * u;
+        let costheta = (1.0 - 2.0 * v).sqrt();
+        let sintheta = (1.0 - costheta * costheta).sqrt();
+
+        Vector3::new(sintheta * phi.cos(), sintheta * phi.sin(), costheta)
     }
 
     fn distance_to(&self, other: &Vector3<f32>) -> f32 {
-        ((self.x - other.x).powi(2) + (self.y - other.y).powi(2) + (self.z - other.z).powi(2))
-            .sqrt()
+        let diff = self - other;
+        diff.dot(&diff).sqrt()
     }
 }

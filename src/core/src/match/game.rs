@@ -6,15 +6,17 @@ use log::debug;
 pub struct Match {
     id: String,
     league_id: u32,
+    league_slug: String,
     pub home_squad: TeamSquad,
     pub away_squad: TeamSquad,
 }
 
 impl Match {
-    pub fn make(id: String, league_id: u32, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
+    pub fn make(id: String, league_id: u32, league_slug: &str, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         Match {
             id,
             league_id,
+            league_slug: String::from(league_slug),
             home_squad,
             away_squad,
         }
@@ -27,23 +29,26 @@ impl Match {
         let away_team_id = self.away_squad.team_id;
         let away_team_name = String::from(&self.away_squad.team_name);
 
-        let match_raw_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
+        let match_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
+
+        let score = match_result.score.as_ref().unwrap();;
 
         debug!(
             "match played: {} {}:{} {}",
             home_team_name,
-            match_raw_result.score.home_team.get(),
+            score.home_team.get(),
             away_team_name,
-            match_raw_result.score.away_team.get(),
+            score.away_team.get(),
         );
 
         MatchResult {
             id: String::from(self.id),
             league_id: self.league_id,
+            league_slug: String::from(&self.league_slug),
             home_team_id,
             away_team_id,
-            score: match_raw_result.score.clone(),
-            result_details: Some(match_raw_result),
+            score: score.clone(),
+            details: Some(match_result),
         }
     }
 }

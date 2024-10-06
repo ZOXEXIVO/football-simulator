@@ -19,7 +19,7 @@ pub struct DefenderHeadingState {}
 impl StateProcessingHandler for DefenderHeadingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // 1. Check if the ball is within heading distance and at the correct height
-        let ball_position = ctx.tick_context.objects_positions.ball_position;
+        let ball_position = ctx.tick_context.object_positions.ball_position;
         let player_position = ctx.player.position;
         let distance_to_ball = (ball_position - player_position).magnitude();
 
@@ -41,7 +41,7 @@ impl StateProcessingHandler for DefenderHeadingState {
             let mut state_change = StateChangeResult::with_defender_state(DefenderState::HoldingLine);
             let new_ball_velocity = self.calculate_heading_velocity(ctx);
 
-            state_change.events.add(PlayerUpdateEvent::MoveBall(new_ball_velocity));
+            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.id, new_ball_velocity));
 
             // 4. Update player's stamina or condition if needed
             // (e.g., heading might cost some stamina)

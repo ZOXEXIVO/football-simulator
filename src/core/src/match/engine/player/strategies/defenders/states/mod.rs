@@ -15,6 +15,7 @@ pub mod state;
 pub mod tracking_back;
 pub mod returning;
 pub mod walking;
+pub mod tackling;
 
 pub use blocking::*;
 pub use clearing::*;
@@ -33,3 +34,4 @@ pub use state::*;
 pub use tracking_back::*;
 pub use returning::*;
 pub use walking::*;
+pub use tackling::*;

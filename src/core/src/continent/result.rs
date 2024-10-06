@@ -1,4 +1,5 @@
 use crate::country::CountryResult;
+use crate::SimulationResult;
 use crate::simulator::SimulatorData;
 
 pub struct ContinentResult {
@@ -12,9 +13,9 @@ impl ContinentResult {
         }
     }
     
-    pub fn process(&self, data: &mut SimulatorData){
-        for result in &self.countries {
-            result.process(data);
+    pub fn process(&self, data: &mut SimulatorData, result: &mut SimulationResult){
+        for country_result in &self.countries {
+            country_result.process(data, result);
         }
     }
 }

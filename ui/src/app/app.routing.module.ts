@@ -1,22 +1,20 @@
-import { NgModule } from '@angular/core';
+import {ModuleWithProviders} from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { countryRoutes } from './components/countries/country.routes';
-import { leagueRoutes } from './components/leagues/league.routes';
-import { matchRoutes } from './components/match/match.routes';
-import { playerRoutes } from './components/players/player.routes';
-import { teamRoutes } from './components/teams/team.routes';
+import {PageComponent} from "./pages/page.component";
+import {MatchComponent} from "./match/match.component";
+import {AppModule} from "./app.module";
 
-const routes: Routes = [
-  ...countryRoutes,
-  ...leagueRoutes,
-  ...teamRoutes,
-  ...playerRoutes,
-  ...matchRoutes,
-  {path: '**', redirectTo: '/countries', pathMatch: 'full'}
+export const rootRoutes: Routes = [
+  {
+    path: '',
+    component: PageComponent,
+    loadChildren: () => import("./pages/page.module").then(m => m.PageModule)
+  },
+  {
+    path: 'match',
+    component: MatchComponent,
+    loadChildren: () => import("./match/match.module").then(m => m.MatchModule)
+  }
 ];
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
+export const routes: ModuleWithProviders<AppModule> = RouterModule.forRoot(rootRoutes);

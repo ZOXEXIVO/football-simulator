@@ -6,6 +6,8 @@ use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, Team};
 use chrono::{Datelike, NaiveDate};
+use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
+use rayon::iter::IntoParallelRefIterator;
 
 #[derive(Debug)]
 pub struct League {
@@ -52,7 +54,7 @@ impl League {
 
         let mut schedule_result = self
             .schedule
-            .simulate(&self.settings, ctx.with_league(self.id, &league_teams));
+            .simulate(&self.settings, ctx.with_league(self.id, String::from(&self.slug), &league_teams));
 
         if schedule_result.is_match_scheduled() {
             let match_results = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
@@ -73,17 +75,16 @@ impl League {
         scheduled_matches: &mut Vec<LeagueMatch>,
         clubs: &[Club],
     ) -> Vec<MatchResult> {
-        let mut result = Vec::with_capacity(scheduled_matches.len());
-
-        scheduled_matches
-            .iter_mut()
-            .for_each(|scheduled_match| {
+         scheduled_matches
+            .par_iter_mut()
+            .map(|scheduled_match| {
                 let home_team = self.get_team(clubs, scheduled_match.home_team_id);
                 let away_team = self.get_team(clubs, scheduled_match.away_team_id);
 
                 let match_to_play = Match::make(
                     scheduled_match.id.clone(),
                     scheduled_match.league_id,
+                    &scheduled_match.league_slug,
                     home_team.get_match_squad(),
                     away_team.get_match_squad(),
                 );
@@ -95,12 +96,12 @@ impl League {
 
                 let match_result = Logging::estimate_result(|| match_to_play.play(), message);
 
-                scheduled_match.result = Some(LeagueMatchResultResult::new(&match_result.score.home_team, &match_result.score.away_team));
+                // Set match result in schedule
+                scheduled_match.result = Some(
+                    LeagueMatchResultResult::new(&match_result.score.home_team, &match_result.score.away_team));
 
-                result.push(match_result);
-            });
-
-        result
+                match_result
+            }).collect::<Vec<MatchResult>>()
     }
 
     fn get_team<'c>(&self, clubs: &'c [Club], id: u32) -> &'c Team {

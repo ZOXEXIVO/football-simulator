@@ -1,7 +1,7 @@
 use crate::club::academy::result::ClubAcademyResult;
 use crate::club::{BoardResult, ClubFinanceResult};
 use crate::simulator::SimulatorData;
-use crate::{PlayerContractProposal, PlayerMessage, PlayerMessageType, PlayerResult, TeamResult};
+use crate::{PlayerContractProposal, PlayerMessage, PlayerMessageType, PlayerResult, SimulationResult, TeamResult};
 
 pub struct ClubResult {
     pub finance: ClubFinanceResult,
@@ -25,7 +25,7 @@ impl ClubResult {
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {
+    pub fn process(&self, data: &mut SimulatorData, result: &mut SimulationResult) {
         self.finance.process(data);
 
         for team_result in &self.teams {

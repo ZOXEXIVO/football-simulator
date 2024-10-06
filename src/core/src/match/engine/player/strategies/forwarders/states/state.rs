@@ -2,12 +2,13 @@ use crate::r#match::forwarders::states::{
     ForwardAssistingState, ForwardCreatingSpaceState, ForwardCrossReceivingState,
     ForwardDribblingState, ForwardFinishingState, ForwardHeadingState, ForwardHeadingUpPlayState,
     ForwardOffsideTrapBreakingState, ForwardPassingState, ForwardPressingState,
-    ForwardRunningInBehindState, ForwardShootingState, ForwardStandingState, ForwardTacklingState,
+    ForwardRunningInBehindState, ForwardRunningState, ForwardShootingState, ForwardStandingState,
+    ForwardTacklingState,
 };
-use crate::r#match::{StateChangeResult, StateProcessingResult, StateProcessor};
+use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ForwardState {
     Standing,            // Standing still
     Passing,             // Passing the ball
@@ -16,6 +17,7 @@ pub enum ForwardState {
     Heading,             // Heading the ball, often during crosses or set pieces
     HoldingUpPlay,       // Holding up the ball to allow teammates to join the attack
     RunningInBehind,     // Making a run behind the defense to receive a pass
+    Running,             // Running in the direction of the ball
     Pressing,            // Pressing defenders to force a mistake or regain possession
     Finishing,           // Attempting to score from a close range
     CreatingSpace,       // Creating space for teammates by pulling defenders away
@@ -54,6 +56,7 @@ impl ForwardStrategies {
             }
             ForwardState::Tackling => state_processor.process(ForwardTacklingState::default()),
             ForwardState::Assisting => state_processor.process(ForwardAssistingState::default()),
+            ForwardState::Running => state_processor.process(ForwardRunningState::default()),
         }
     }
 }
@@ -75,6 +78,7 @@ impl Display for ForwardState {
             ForwardState::Assisting => write!(f, "Assisting"),
             ForwardState::Passing => write!(f, "Passing"),
             ForwardState::Tackling => write!(f, "Tackling"),
+            ForwardState::Running => write!(f, "Running"),
         }
     }
 }

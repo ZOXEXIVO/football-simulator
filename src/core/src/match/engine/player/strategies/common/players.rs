@@ -44,16 +44,16 @@ impl<'p> PlayerOperationsImpl<'p> {
     pub fn distances(&self) -> (usize, usize) {
         self.ctx
             .tick_context
-            .objects_positions
+            .object_positions
             .player_distances
             .players_within_distance_count(self.ctx.player, 10.0)
     }
 
     pub fn is_team_loosing(&self) -> bool {
-        if self.ctx.player.team_id == self.ctx.context.result.score.home_team.team_id {
-            self.ctx.context.result.score.home_team < self.ctx.context.result.score.away_team
+        if self.ctx.player.team_id == self.ctx.context.score.home_team.team_id {
+            self.ctx.context.score.home_team < self.ctx.context.score.away_team
         } else {
-            self.ctx.context.result.score.away_team < self.ctx.context.result.score.home_team
+            self.ctx.context.score.away_team < self.ctx.context.score.home_team
         }
     }
 

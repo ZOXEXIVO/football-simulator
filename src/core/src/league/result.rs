@@ -1,6 +1,6 @@
 use crate::league::{LeagueTableResult, ScheduleItem};
 use crate::simulator::SimulatorData;
-use crate::MatchHistoryItem;
+use crate::{MatchHistoryItem, SimulationResult};
 use chrono::NaiveDateTime;
 use crate::r#match::{MatchResult, TeamScore};
 
@@ -31,10 +31,12 @@ impl LeagueResult {
         }
     }
 
-    pub fn process(&self, data: &mut SimulatorData) {
+    pub fn process(&self, data: &mut SimulatorData, result: &mut SimulationResult) {
         if let Some(match_results) = &self.match_results {
             for match_result in match_results {
                 self.process_match_results(match_result, data);
+
+                result.match_results.push(match_result.clone());
             }
         }
     }
@@ -93,7 +95,9 @@ impl LeagueResult {
 
 pub struct LeagueMatch {
     pub id: String,
+
     pub league_id: u32,
+    pub league_slug: String,
 
     pub date: NaiveDateTime,
 
@@ -122,6 +126,7 @@ impl From<ScheduleItem> for LeagueMatch {
         let mut result = LeagueMatch {
             id: item.id.clone(),
             league_id: item.league_id,
+            league_slug: item.league_slug,
             date: item.date,
             home_team_id: item.home_team_id,
             away_team_id: item.away_team_id,

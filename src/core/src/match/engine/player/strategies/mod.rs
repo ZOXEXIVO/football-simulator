@@ -7,8 +7,5 @@ pub mod processor;
 
 pub use common::*;
 pub use defenders::*;
-pub use forwarders::*;
-pub use goalkeepers::*;
-pub use midfielders::*;
 pub use processor::*;
 

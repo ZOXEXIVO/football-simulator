@@ -16,7 +16,6 @@ pub use board::*;
 pub use club::*;
 pub use context::*;
 pub use finance::*;
-pub use history::*;
 pub use mood::*;
 pub use person::*;
 pub use player::*;

@@ -10,6 +10,7 @@ pub trait ScheduleGenerator {
     fn generate(
         &self,
         league_id: u32,
+        league_slug: &str,
         season: Season,
         teams: &[u32],
         league_settings: &LeagueSettings,

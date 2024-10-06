@@ -1,12 +1,18 @@
-use nalgebra::Vector3;
-use crate::r#match::{Ball, BallPosition, MatchContext};
+use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use crate::r#match::MatchContext;
 
 #[derive(Copy, Clone)]
 pub enum BallUpdateEvent {
-    Goal(u32),
-    ChangeBallSide(BallPosition),
-    PlayerCollision(u32),
-    UpdateVelocity(Vector3<f32>)
+    Goal(GoalSide, Option<u32>),
+    Claimed(u32),
+    UnClaim(u32),
+    Gained(u32),
+}
+
+#[derive(Copy, Clone)]
+pub enum GoalSide {
+    Home,
+    Away,
 }
 
 pub struct BallEvents;
@@ -14,36 +20,29 @@ pub struct BallEvents;
 impl BallEvents {
     pub fn handle_events<'a>(
         _current_time: u64,
-        ball: &mut Ball,
-        events: impl Iterator<Item = &'a BallUpdateEvent>,
+        events: impl Iterator<Item = BallUpdateEvent>,
         context: &MatchContext,
-    ) {
+    ) -> PlayerUpdateEventCollection {
+        let mut player_events = PlayerUpdateEventCollection::new();
+
         for event in events {
-            match *event {
-                BallUpdateEvent::Goal(team_id) => {
-                    if context.result.score.home_team.team_id == team_id {
-                        context.result.score.increment_home_goals()
-                    } else {
-                        context.result.score.increment_away_goals()
-                    }
+            match event {
+                BallUpdateEvent::Goal(side, goalscorer_player_id) => match side {
+                    GoalSide::Home => context.score.increment_home_goals(),
+                    GoalSide::Away => context.score.increment_away_goals(),
+                },
+                BallUpdateEvent::Claimed(player_id) => {
+                    player_events.add(PlayerUpdateEvent::ClaimBall(player_id));
                 }
-                BallUpdateEvent::ChangeBallSide(_position) => {
-                    // let ball_state = match position {
-                    //     BallPosition::Home => BallState::HomeSide,
-                    //     BallPosition::Away => BallState::AwaySide,
-                    // };
-
-                    //context.state.set_ball_state(ball_state)
-                },
-                BallUpdateEvent::PlayerCollision(player_id) => {
-
-                },
-
-                BallUpdateEvent::UpdateVelocity(new_ball_velocity) => {
-                    ball.velocity = new_ball_velocity;
+                BallUpdateEvent::Gained(player_id) => {
+                    player_events.add(PlayerUpdateEvent::GainBall(player_id));
+                }
+                BallUpdateEvent::UnClaim(player_id) => {
+                    player_events.add(PlayerUpdateEvent::UnClaimBall(player_id));
                 }
             }
         }
-    }
 
+        player_events
+    }
 }

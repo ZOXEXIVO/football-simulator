@@ -26,7 +26,7 @@ impl PlayerGenerator {
         };
 
         Player {
-            id: 0,
+            id: IntegerUtils::random(0, 100000) as u32,
             full_name: FullName::with_full("".to_string(), "".to_string(), "".to_string()),
             birth_date: NaiveDate::from_ymd_opt(year as i32, month, day).unwrap(),
             country_id,

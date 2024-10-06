@@ -12,7 +12,7 @@ pub struct TeamSquad {
 
 impl TeamSquad {
     pub fn contains_player(&self, player_id: u32) -> bool {
-        self.main_squad.iter().any(|p| p.player_id == player_id)
-            || self.substitutes.iter().any(|p| p.player_id == player_id)
+        self.main_squad.iter().any(|p| p.id == player_id)
+            || self.substitutes.iter().any(|p| p.id == player_id)
     }
 }

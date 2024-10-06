@@ -6,11 +6,14 @@ use crate::transfers::TransferPool;
 use crate::utils::Logging;
 use crate::{Club, Country, Player, Team};
 use chrono::{Duration, NaiveDateTime};
+use crate::r#match::MatchResult;
 
 pub struct FootballSimulator;
 
 impl FootballSimulator {
-    pub fn simulate(data: &mut SimulatorData) {
+    pub fn simulate(data: &mut SimulatorData) -> SimulationResult {
+        let mut result = SimulationResult::new();
+
         let current_data = data.date;
 
         Logging::estimate(
@@ -23,14 +26,16 @@ impl FootballSimulator {
                     .map(|continent| continent.simulate(ctx.with_continent(continent.id)))
                     .collect();
 
-                for result in results {
-                    result.process(data);
+                for continent_result in results {
+                    continent_result.process(data, &mut result);
                 }
 
                 data.next_date();
             },
             &format!("simulate date {}", current_data),
         );
+
+        result
     }
 }
 
@@ -254,5 +259,17 @@ impl SimulatorData {
                     .find(|team| team.id == player_team_id)
             })
             .and_then(|team| team.players.players.iter_mut().find(|c| c.id == id))
+    }
+}
+
+pub struct SimulationResult {
+    pub match_results: Vec<MatchResult>
+}
+
+impl SimulationResult {
+    pub fn new() -> Self {
+        SimulationResult {
+            match_results: Vec::new()
+        }
     }
 }

@@ -51,7 +51,7 @@ impl StateProcessingHandler for DefenderMarkingState {
             }
 
             // 6. If the ball is close to the defender, consider intercepting
-            let ball_distance = (ctx.tick_context.objects_positions.ball_position
+            let ball_distance = (ctx.tick_context.object_positions.ball_position
                 - ctx.player.position)
                 .magnitude();
             if ball_distance < BALL_PROXIMITY_THRESHOLD && !opponent_to_mark.has_ball {
@@ -107,7 +107,7 @@ impl DefenderMarkingState {
     fn find_opponent_to_mark<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
         if let Some((opponent_id, _)) = ctx
             .tick_context
-            .objects_positions
+            .object_positions
             .player_distances
             .find_closest_opponent(ctx.player)
         {

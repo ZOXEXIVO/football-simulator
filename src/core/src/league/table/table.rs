@@ -142,6 +142,7 @@ mod tests {
         let match_results = vec![MatchResult {
             league_id: 0,
             id: "123".to_string(),
+            league_slug: "slug".to_string(),
             home_team_id: 1,
             away_team_id: 2,
             score: Score{
@@ -149,7 +150,7 @@ mod tests {
                 away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
-            result_details: None,
+            details: None
         }];
 
         table.update_from_results(&match_results);
@@ -192,6 +193,7 @@ mod tests {
         let match_results = vec![MatchResult {
             league_id: 0,
             id: "123".to_string(),
+            league_slug: "slug".to_string(),
             home_team_id,
             away_team_id,
             score: Score{
@@ -199,7 +201,7 @@ mod tests {
                 away_team: TeamScore::new_with_score(2, 0),
                 details: vec![],
             },
-            result_details: None,
+            details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -250,6 +252,7 @@ mod tests {
         let match_results = vec![MatchResult {
             league_id: 0,
             id: "123".to_string(),
+            league_slug: "slug".to_string(),
             home_team_id,
             away_team_id,
             score: Score{
@@ -257,7 +260,7 @@ mod tests {
                 away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
-            result_details: None,
+            details: None
         }];
 
         table.update_from_results(&match_results);

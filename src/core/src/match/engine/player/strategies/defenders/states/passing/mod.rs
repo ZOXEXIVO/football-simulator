@@ -19,7 +19,7 @@ impl StateProcessingHandler for DefenderPassingState {
         }
 
         let (nearest_teammates, opponents) = ctx.tick_context
-            .objects_positions
+            .object_positions
             .player_distances
             .players_within_distance(ctx.player, 30.0);
 
@@ -39,9 +39,9 @@ impl StateProcessingHandler for DefenderPassingState {
         }
 
         if let Some(player_id) = best_player_id {
-            if let Some(teammate_player_position) = ctx.tick_context.objects_positions.players_positions.get_player_position(player_id) {
+            if let Some(teammate_player_position) = ctx.tick_context.object_positions.players_positions.get_player_position(player_id) {
                 let events = PlayerUpdateEventCollection::with_event(
-                    PlayerUpdateEvent::PassTo(teammate_player_position, 0.0)
+                    PlayerUpdateEvent::PassTo(ctx.player.id, teammate_player_position, 0.0)
                 );
 
                 return Some(StateChangeResult::with_events(events));

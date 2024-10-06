@@ -71,16 +71,24 @@ impl SteeringBehavior {
                 }
             }
             SteeringBehavior::Pursuit { target, velocity } => {
-                let distance = (target - player.position).length();
-                let prediction = distance / player.skills.max_speed();
-                let target_position = target + (velocity * prediction);
-                let desired_velocity =
-                    (target_position - player.position).normalize() * player.skills.max_speed();
-                let mut steering = desired_velocity - player.velocity;
+                let to_target = target - player.position;
+                let distance = to_target.length();
 
-                if steering.x.is_nan() || steering.y.is_nan() {
-                    steering = Vector3::zeros();
-                }
+                // Define a slowing radius
+                let slowing_radius = 5.0; // Adjust this value as needed
+
+                let target_speed = if distance > slowing_radius {
+                    player.skills.max_speed()
+                } else {
+                    player.skills.max_speed() * (distance / slowing_radius)
+                };
+
+                let desired_velocity = to_target.normalize() * target_speed;
+                let steering = desired_velocity - player.velocity;
+
+                // Apply a maximum force to the steering
+                let max_force: f32 = 10.0; // Adjust this value as needed
+                let steering = steering.normalize() * max_force.min(steering.length());
 
                 SteeringOutput {
                     velocity: steering,

@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
 
 static DEFENDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -26,9 +26,9 @@ impl StateProcessingHandler for DefenderRunningState {
             }
         }
 
-        if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
-            return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
-        }
+        // if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
+        //     return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
+        // }
 
         None
     }
@@ -38,10 +38,23 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        if ctx.in_state_time == 0 {
+            let target = match ctx.player.side {
+                Some(PlayerSide::Left) => ctx.context.goal_positions.left,
+                Some(PlayerSide::Right) => ctx.context.goal_positions.right,
+                _ => Vector3::new(0.0, 0.0, 0.0)
+            };
+
+            Some(SteeringBehavior::Arrive {
+                target,
+                slowing_distance: 10.0,
+            }.calculate(ctx.player).velocity);
+        }
+
+        None
     }
 
-    fn process_conditions(&self, mut ctx: ConditionContext) {
+    fn process_conditions(&self, ctx: ConditionContext) {
         if ctx.player.skills.physical.stamina == 0.0 {
             return;
         }
@@ -75,7 +88,7 @@ mod tests {
 
     fn create_test_player() -> MatchPlayer {
         MatchPlayer {
-            player_id: 1,
+            id: 1,
             position: Vector3::new(0.0, 0.0, 0.0),
             start_position: Vector3::new(0.0, 0.0, 0.0),
             attributes: PersonAttributes::default(),
@@ -92,7 +105,7 @@ mod tests {
             velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
             side: None,
-            state: PlayerState::Running,
+            state: PlayerState::Injured,
             in_state_time: 0,
             statistics: MatchPlayerStatistics::default(),
         }
