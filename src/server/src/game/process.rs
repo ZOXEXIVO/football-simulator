@@ -1,5 +1,4 @@
 ﻿use crate::GameAppData;
-use async_compression::tokio::write::GzipEncoder;
 use axum::extract::State;
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::IntoResponse;
@@ -8,9 +7,13 @@ use core::utils::TimeEstimation;
 use core::FootballSimulator;
 use core::SimulationResult;
 use std::sync::Arc;
-use tokio::fs::File;
+use std::time::Instant;
+use log::info;
 use tokio::io::AsyncWriteExt;
+use tokio::stream;
 use crate::stores::MatchStore;
+use futures::stream::{FuturesUnordered, StreamExt};
+use tokio::task::JoinSet;
 
 pub async fn game_process_action(State(state): State<GameAppData>) -> impl IntoResponse {
     let data = Arc::clone(&state.data);
@@ -41,7 +44,11 @@ pub async fn game_process_action(State(state): State<GameAppData>) -> impl IntoR
 
 
 async fn write_match_results(result: SimulationResult) {
+    let mut tasks = JoinSet::new();
+
     for match_result in result.match_results {
-        MatchStore::store(match_result).await;
+        tasks.spawn(MatchStore::store(match_result));
     }
+
+    tasks.join_all().await;
 }

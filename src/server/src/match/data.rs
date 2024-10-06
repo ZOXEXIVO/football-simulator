@@ -16,8 +16,6 @@ pub async fn match_data_action(
     State(state): State<GameAppData>,
     Path(route_params): Path<MatchDataRequest>,
 ) -> Response {
-    tokio::time::sleep(Duration::from_secs(5)).await;
-
     let match_data = MatchStore::get(&route_params.league_slug, &route_params.match_id).await;
 
     let mut response = (StatusCode::OK, match_data).into_response();

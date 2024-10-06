@@ -15,3 +15,4 @@ serde_json = "1.0.128"
 chrono= "0.4.38"
 itertools = "0.13.0"
 async-compression = { version = "0.4.13", features = ["gzip", "tokio"] }
+futures = "0.3.31"
