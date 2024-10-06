@@ -9,6 +9,10 @@
     <div class="row text-center">
         <div class="col-12">
             <div id="match-container">
+                <div *ngIf="!dataLoaded" class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading match data...</p>
+                </div>
                 <div #matchContainer class="match-container"></div>
             </div>
         </div>
