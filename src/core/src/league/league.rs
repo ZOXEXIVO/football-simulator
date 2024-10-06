@@ -54,7 +54,7 @@ impl League {
 
         let mut schedule_result = self
             .schedule
-            .simulate(&self.settings, ctx.with_league(self.id, &league_teams));
+            .simulate(&self.settings, ctx.with_league(self.id, String::from(&self.slug), &league_teams));
 
         if schedule_result.is_match_scheduled() {
             let match_results = self.play_matches(&mut schedule_result.scheduled_matches, clubs);
@@ -84,6 +84,7 @@ impl League {
                 let match_to_play = Match::make(
                     scheduled_match.id.clone(),
                     scheduled_match.league_id,
+                    &scheduled_match.league_slug,
                     home_team.get_match_squad(),
                     away_team.get_match_squad(),
                 );

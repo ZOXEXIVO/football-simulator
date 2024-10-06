@@ -19,7 +19,9 @@ pub struct ScheduleTour {
 #[derive(Debug, Clone)]
 pub struct ScheduleItem {
     pub id: String,
+
     pub league_id: u32,
+    pub league_slug: String,
 
     pub date: NaiveDateTime,
 
@@ -54,6 +56,7 @@ impl Schedule {
 
             match generator.generate(
                 league_ctx.id,
+                &league_ctx.slug,
                 Season::OneYear(ctx.simulation.date.year() as u16),
                 league_ctx.team_ids,
                 league_settings,
@@ -74,6 +77,7 @@ impl Schedule {
             .map(|sm| LeagueMatch {
                 id: sm.id.clone(),
                 league_id: sm.league_id,
+                league_slug: String::from(&sm.league_slug),
                 date: sm.date,
                 home_team_id: sm.home_team_id,
                 away_team_id: sm.away_team_id,
@@ -89,7 +93,7 @@ impl Schedule {
             .iter()
             .flat_map(|t| &t.items)
             .filter(|s| s.date == date)
-            .map(|s| ScheduleItem::new(s.league_id, s.home_team_id, s.away_team_id, s.date, None))
+            .map(|s| ScheduleItem::new(s.league_id, String::from(&s.league_slug), s.home_team_id, s.away_team_id, s.date, None))
             .collect()
     }
 
@@ -104,7 +108,7 @@ impl Schedule {
                     None => None,
                 };
 
-                ScheduleItem::new(s.league_id, s.home_team_id, s.away_team_id, s.date, res)
+                ScheduleItem::new(s.league_id, String::from(&s.league_slug), s.home_team_id, s.away_team_id, s.date, res)
             })
             .collect()
     }
@@ -143,6 +147,7 @@ impl ScheduleError {
 impl ScheduleItem {
     pub fn new(
         league_id: u32,
+        league_slug: String,
         home_team_id: u32,
         away_team_id: u32,
         date: NaiveDateTime,
@@ -153,6 +158,7 @@ impl ScheduleItem {
         ScheduleItem {
             id,
             league_id,
+            league_slug: String::from(league_slug),
             date,
             result,
             home_team_id,
@@ -217,7 +223,7 @@ mod tests {
     fn test_schedule_tour_played() {
         let item1 = ScheduleItem {
             id: "".to_string(),
-            league_id: 0,
+            league_slug: 0,
             date: NaiveDate::from_ymd_opt(2024, 3, 15)
                 .unwrap()
                 .and_hms_opt(0, 0, 0)

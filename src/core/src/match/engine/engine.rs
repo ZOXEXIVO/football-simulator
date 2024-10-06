@@ -21,7 +21,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let players = MatchPlayerCollection::from_squads(&left_squad, &right_squad);
 
-        let mut match_data = MatchPositionData::new();
+        let mut match_position_data = MatchPositionData::new();
 
         let mut field = MatchField::new(W, H, left_squad, right_squad);
 
@@ -32,7 +32,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         while let Some(state) = state_manager.next() {
             context.state.set(state);
 
-            let play_state_result = Self::play_inner(&mut field, &mut context, &mut match_data);
+            let play_state_result = Self::play_inner(&mut field, &mut context, &mut match_position_data);
 
             StateManager::handle_state_finish(&mut context, &mut field, play_state_result);
         }
@@ -48,6 +48,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         result.left_team_players = field.left_side_players.unwrap();
         result.right_team_players = field.right_side_players.unwrap();
 
+        result.position_data = match_position_data;
+
         result
     }
 
@@ -61,24 +63,24 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         result
     }
 
-    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext, match_date: &mut MatchPositionData) {
+    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext, match_data: &mut MatchPositionData) {
         let game_tick_context = GameTickContext::new(field);
 
         let player_affected_events = Self::play_ball(field, context, &game_tick_context);
         Self::play_players(field, context, &game_tick_context, player_affected_events);
 
-        Self::write_match_positions(field, context.time.time, match_date);
+        Self::write_match_positions(field, context.time.time, match_data);
     }
 
-    pub fn write_match_positions(field: &mut MatchField, timestamp: u64, match_date: &mut MatchPositionData) {
+    pub fn write_match_positions(field: &mut MatchField, timestamp: u64, match_data: &mut MatchPositionData) {
         // player positions
         field.players.iter().for_each(|player| {
-            match_date.add_player_positions(player.id, timestamp, player.position);
+            match_data.add_player_positions(player.id, timestamp, player.position);
         });
 
         // player positions
         field.substitutes.iter().for_each(|sub_player| {
-            match_date.add_player_positions(
+            match_data.add_player_positions(
                 sub_player.id,
                 timestamp,
                 sub_player.position,
@@ -86,7 +88,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         });
 
         // write positions
-        match_date.add_ball_positions(timestamp, field.ball.position);
+        match_data.add_ball_positions(timestamp, field.ball.position);
     }
 
     fn play_ball(

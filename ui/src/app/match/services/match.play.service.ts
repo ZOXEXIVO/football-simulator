@@ -1,7 +1,6 @@
 import {Injectable} from "@angular/core";
 import {Subject} from "rxjs";
-import {MatchDataResultModel, MatchDataService} from "./match.data.service";
-import {MatchLineupModel} from "../play/models/models";
+import {MatchDataService} from "./match.data.service";
 
 @Injectable({
     providedIn: 'root',
@@ -9,17 +8,17 @@ import {MatchLineupModel} from "../play/models/models";
 export class MatchPlayService {
     currentState: MatchEvent = MatchEvent.None;
 
-    matchEvents = new Subject<MatchEvent>();
-    public matchEvents$ = this.matchEvents.asObservable();
-
-    lineupCompleted = new Subject<MatchLineupModel>();
-    public lineupCompleted$ = this.lineupCompleted.asObservable();
+    // matchEvents = new Subject<MatchEvent>();
+    // public matchEvents$ = this.matchEvents.asObservable();
+    //
+    // lineupCompleted = new Subject<MatchLineupModel>();
+    // public lineupCompleted$ = this.lineupCompleted.asObservable();
 
     timeChanged = new Subject<number>();
     public timeChanged$ = this.timeChanged.asObservable();
 
-    public objectPositionChanged = new Subject<MatchDataResultModel>();
-    public objectPositionChanged$ = this.objectPositionChanged.asObservable();
+    // public objectPositionChanged = new Subject<MatchDataResultModel>();
+    // public objectPositionChanged$ = this.objectPositionChanged.asObservable();
 
     currentTime = 0;
     changeTimeStamp = 10;
@@ -27,20 +26,20 @@ export class MatchPlayService {
     constructor(private matchDataService: MatchDataService) {
     }
 
-    init(leagueSlug: string, matchId: string) {
-        this.matchDataService.init(leagueSlug, matchId).subscribe(lineupData => {
-            this.lineupCompleted.next(lineupData);
-        });
-    }
+    // init(leagueSlug: string, matchId: string) {
+    //     this.matchDataService.init(leagueSlug, matchId).subscribe(lineupData => {
+    //         this.lineupCompleted.next(lineupData);
+    //     });
+    // }
 
     tick() {
-        if (this.currentState === MatchEvent.InProcess) {
-            this.incrementTime();
-
-            this.matchDataService.getData(this.currentTime).subscribe(data => {
-                this.objectPositionChanged.next(data);
-            });
-        }
+        // if (this.currentState === MatchEvent.InProcess) {
+        //     this.incrementTime();
+        //
+        //     this.matchDataService.getData(this.currentTime).subscribe(data => {
+        //         this.objectPositionChanged.next(data);
+        //     });
+        // }
     }
 
     incrementTime() {
@@ -48,18 +47,18 @@ export class MatchPlayService {
         this.timeChanged.next(this.currentTime);
     }
 
-    startMatch() {
-        this.currentState = MatchEvent.InProcess;
-        this.matchEvents.next(MatchEvent.InProcess);
-    }
-
-    pause() {
-        this.matchEvents.next(MatchEvent.Paused);
-    }
-
-    stop() {
-        this.matchEvents.next(MatchEvent.Ended);
-    }
+    // startMatch() {
+    //     this.currentState = MatchEvent.InProcess;
+    //     this.matchEvents.next(MatchEvent.InProcess);
+    // }
+    //
+    // pause() {
+    //     this.matchEvents.next(MatchEvent.Paused);
+    // }
+    //
+    // stop() {
+    //     this.matchEvents.next(MatchEvent.Ended);
+    //}
 }
 
 export enum MatchEvent {

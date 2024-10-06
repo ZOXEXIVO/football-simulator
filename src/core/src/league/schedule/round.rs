@@ -21,6 +21,7 @@ impl ScheduleGenerator for RoundSchedule {
     fn generate(
         &self,
         league_id: u32,
+        league_slug: &str,
         season: Season,
         teams: &[u32],
         league_settings: &LeagueSettings,
@@ -55,6 +56,7 @@ impl ScheduleGenerator for RoundSchedule {
 
         result.extend(generate_tours(
             league_id,
+            String::from(league_slug),
             teams,
             tours_count,
             current_date_time,
@@ -66,6 +68,7 @@ impl ScheduleGenerator for RoundSchedule {
 
 fn generate_tours(
     league_id: u32,
+    league_slug: String,
     teams: &[u32],
     tours_count: usize,
     mut current_date: NaiveDateTime,
@@ -87,6 +90,7 @@ fn generate_tours(
 
             tour.items.push(ScheduleItem::new(
                 league_id,
+                String::from(&league_slug),
                 home_team_id,
                 away_team_id,
                 current_date,

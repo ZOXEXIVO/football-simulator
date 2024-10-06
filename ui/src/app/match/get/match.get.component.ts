@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {UntilDestroy} from '@ngneat/until-destroy';
-import {MatchDto, MatchService, ObjectPositionDto} from "../services/match.service";
+import {MatchDto, MatchService} from "../services/match.service";
 import {MatchPlayService} from "../services/match.play.service";
-import {PlayerModel, SquadPlayerModel, TeamModel} from "../play/models/models";
+import {MatchDataService} from "../services/match.data.service";
 
 @UntilDestroy()
 @Component({
@@ -19,6 +19,7 @@ export class MatchGetComponent implements OnInit {
     matchTimeMs: number = 0;
 
     constructor(private matchPlayService: MatchPlayService,
+                private matchDataService: MatchDataService,
                 private matchService: MatchService,
                 private route: ActivatedRoute) {
 
@@ -28,7 +29,7 @@ export class MatchGetComponent implements OnInit {
 
     ngOnInit(): void {
         this.matchService.get(this.leagueSlug, this.matchId).subscribe(data => {
-           this.match = data;
+           this.matchDataService.setData(data);
         });
     }
 }

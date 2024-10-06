@@ -1,7 +1,6 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {MatchDataResultModel} from "./match.data.service";
 
 @Injectable({
     providedIn: 'root',
@@ -14,14 +13,13 @@ export class MatchService {
         return this.http.get<MatchDto>(`/api/match/${league_slug}/${match_id}`);
     }
 
-    data(league_slug: string, match_id: string): Observable<MatchDataResultModel> {
-        return this.http.get<MatchDataResultModel>(`/api/match/${league_slug}/${match_id}/data`);
+    data(league_slug: string, match_id: string): Observable<MatchDataDto> {
+        return this.http.get<MatchDataDto>(`/api/match/${league_slug}/${match_id}/data`);
     }
 }
 
 export interface MatchDataDto {
     player_data: Map<number, number[][]>,
-    player_data_len: number,
     ball_data: number[][]
 }
 
@@ -70,6 +68,7 @@ export interface MatchPlayerDto {
     first_name: string
     last_name: string
     middle_name: string,
+    displayName: string;
     position: string
     team_slug: string
     start_position: number[],

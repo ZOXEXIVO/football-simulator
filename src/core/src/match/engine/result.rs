@@ -187,6 +187,7 @@ impl Score {
 pub struct MatchResult {
     pub id: String,
     pub league_id: u32,
+    pub league_slug: String,
     pub home_team_id: u32,
     pub away_team_id: u32,
     pub details: Option<MatchResultRaw>,
@@ -198,6 +199,7 @@ impl From<&LeagueMatch> for MatchResult {
         MatchResult {
             id: m.id.clone(),
             league_id: m.league_id,
+            league_slug: m.league_slug.clone(),
             home_team_id: m.home_team_id,
             away_team_id: m.away_team_id,
             score: Score::new(m.home_team_id, m.away_team_id),

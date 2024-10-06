@@ -6,15 +6,17 @@ use log::debug;
 pub struct Match {
     id: String,
     league_id: u32,
+    league_slug: String,
     pub home_squad: TeamSquad,
     pub away_squad: TeamSquad,
 }
 
 impl Match {
-    pub fn make(id: String, league_id: u32, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
+    pub fn make(id: String, league_id: u32, league_slug: &str, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
         Match {
             id,
             league_id,
+            league_slug: String::from(league_slug),
             home_squad,
             away_squad,
         }
@@ -38,9 +40,11 @@ impl Match {
             away_team_name,
             score.away_team.get(),
         );
+
         MatchResult {
             id: String::from(self.id),
             league_id: self.league_id,
+            league_slug: String::from(&self.league_slug),
             home_team_id,
             away_team_id,
             score: score.clone(),

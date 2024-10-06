@@ -1,6 +1,6 @@
 use crate::context::GlobalContext;
 use crate::league::{League, LeagueResult};
-use crate::Club;
+use crate::{Club, Logging};
 
 pub struct LeagueCollection {
     pub leagues: Vec<League>,
@@ -28,8 +28,11 @@ impl LeagueCollection {
                     .collect();
                 {
                     let message = &format!("simulate league: {}", &league.name);
-                    crate::utils::Logging::estimate_result(
-                        || league.simulate(clubs, ctx.with_league(league.id, &league_team_ids)),
+
+                    let league_slug = String::from(&league.slug);
+
+                    Logging::estimate_result(
+                        || league.simulate(clubs, ctx.with_league(league.id, league_slug, &league_team_ids)),
                         message,
                     )
                 }
