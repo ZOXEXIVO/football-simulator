@@ -82,22 +82,35 @@ export class MatchDataService {
         let players_results: PlayerDataResultModel[] = [];
 
         let playerResults = [];
+
+        Object.entries(this.matchData?.player_positions!).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
+            const player = this.match!.players.find((player) => player.id == Number(key));
+
+            if(player) {
+                let dt = value![player.currentCoordIdx];
+
+                if(dt) {
+                    let pts = dt.timestamp;
+
+                    while (pts < timestamp && player.currentCoordIdx < value!.length) {
+                        dt = value![player.currentCoordIdx];
+
+                        if(dt) {
+                            pts = dt.timestamp;
+                            player.currentCoordIdx++;
+                        }
+                    }
+                }
+
+
+                const playerPosition = value![player.currentCoordIdx];
+
+                playerResults.push(new PlayerDataResultModel(player.id, playerPosition));
+            }
+        });
+
         for (const player of this.match!.players) {
 
-
-            let pts = -1;
-            while (pts < timestamp && player.currentCoordIdx < player.position.length) {
-                pts = this.matchData!.player_positions[player.currentCoordIdx];
-                player.currentCoordIdx++;
-            }
-
-            if (pts == -1) {
-                continue;
-            }
-
-            const playerData = player.data[player.currentCoordIdx - 1];
-
-            playerResults.push(new PlayerDataResultModel(player.id, playerData));
         }
 
         return new MatchResultData(players_results, ballResult);

@@ -43,6 +43,10 @@ export class MatchGetComponent implements OnInit {
             match_data.players.push(...match_data.away_squad.main);
             match_data.players.push(...match_data.away_squad.substitutes);
 
+            match_data.players.forEach(player => {
+                player.currentCoordIdx = 0;
+            });
+
             match_data.ball = new MatchBallDto();
 
             this.match = match_data;
