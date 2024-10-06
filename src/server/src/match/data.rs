@@ -1,8 +1,10 @@
 ﻿use crate::GameAppData;
 use axum::extract::{Path, State};
+use axum::http::StatusCode;
 use axum::Json;
 use axum::response::{IntoResponse, Response};
 use serde::Deserialize;
+use crate::stores::MatchStore;
 
 #[derive(Deserialize)]
 pub struct MatchDataRequest {
@@ -14,38 +16,16 @@ pub async fn match_data_action(
     State(state): State<GameAppData>,
     Path(route_params): Path<MatchDataRequest>,
 ) -> Response {
-    let guard = state.data.read().await;
+    let match_data = MatchStore::get(&route_params.league_slug, &route_params.match_id).await;
 
-    let simulator_data = guard.as_ref().unwrap();
+    let mut response = (StatusCode::OK, match_data).into_response();
 
-    let league_id = simulator_data
-        .indexes
-        .as_ref()
-        .unwrap()
-        .slug_indexes
-        .get_league_by_slug(&route_params.league_slug)
-        .unwrap();
+    response
+        .headers_mut()
+        .append("Content-Type", "application/json".parse().unwrap());
+    response
+        .headers_mut()
+        .append("Content-Encoding", "gzip".parse().unwrap());
 
-    let league = simulator_data.league(league_id).unwrap();
-
-    let match_result = league.matches.get(route_params.match_id).unwrap();
-
-    let result_details = match_result.details.as_ref().unwrap();
-
-    // if let Some(result_details) = match_result.details.as_ref() {
-    //     let mut response = (StatusCode::OK, Json(&result_details.position_data.clone())).into_response();
-    //
-    //     response
-    //         .headers_mut()
-    //         .append("Content-Type", "application/json".parse().unwrap());
-    //     response
-    //         .headers_mut()
-    //         .append("Content-Encoding", "gzip".parse().unwrap());
-    //
-    //     return response;
-    // }
-
-    Json("result_details.position_data").into_response()
-
-    // (StatusCode::NOT_FOUND, result_details.position_data.clone()).into_response()
+    return response;
 }

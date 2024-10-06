@@ -45,19 +45,12 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     constructor(private zone: NgZone,
                 public matchPlayService: MatchPlayService,
                 public matchService: MatchService,
-                public matchDataService: MatchDataService,
-                private titleService: TitleService,
-                private topHeaderService: TopHeaderService) {
+                public matchDataService: MatchDataService) {
         console.log(PIXI.VERSION);
     }
 
     ngOnInit(): void {
         this.matchService.data(this.leagueSlug, this.matchId).subscribe(async matchData => {
-            const data = this.matchDataService.match;
-
-            this.titleService.setTitle(`${data?.home_team_name} : ${data?.away_team_name}`)
-            this.topHeaderService.setContent(`${data?.home_team_name} ${data?.score.home_goals} : ${data?.score.away_goals} ${data?.away_team_name}`, '', '/', false);
-
             await this.initGraphics();
             await this.setupGraphics(matchData);
 

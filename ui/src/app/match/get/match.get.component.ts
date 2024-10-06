@@ -4,6 +4,8 @@ import {UntilDestroy} from '@ngneat/until-destroy';
 import {MatchDto, MatchService} from "../services/match.service";
 import {MatchPlayService} from "../services/match.play.service";
 import {MatchDataService} from "../services/match.data.service";
+import {TitleService} from "../../shared/services/title.service";
+import {TopHeaderService} from "../../shared/top-header/services/top.header.service";
 
 @UntilDestroy()
 @Component({
@@ -19,8 +21,10 @@ export class MatchGetComponent implements OnInit {
     matchTimeMs: number = 0;
 
     constructor(private matchPlayService: MatchPlayService,
-                private matchDataService: MatchDataService,
+                public matchDataService: MatchDataService,
                 private matchService: MatchService,
+                private titleService: TitleService,
+                private topHeaderService: TopHeaderService,
                 private route: ActivatedRoute) {
 
         this.leagueSlug = this.route.snapshot.params["league_slug"];
@@ -29,7 +33,11 @@ export class MatchGetComponent implements OnInit {
 
     ngOnInit(): void {
         this.matchService.get(this.leagueSlug, this.matchId).subscribe(data => {
-           this.matchDataService.setData(data);
+            this.match = data;
+            this.matchDataService.setData(data);
+
+            this.titleService.setTitle(`${data?.home_team_name} : ${data?.away_team_name}`)
+            this.topHeaderService.setContent(`${data?.home_team_name} ${data?.score.home_goals} : ${data?.score.away_goals} ${data?.away_team_name}`, '', '/', false);
         });
     }
 }

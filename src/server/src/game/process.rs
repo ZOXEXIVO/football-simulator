@@ -7,11 +7,10 @@ use axum::Json;
 use core::utils::TimeEstimation;
 use core::FootballSimulator;
 use core::SimulationResult;
-use log::info;
-use std::io;
 use std::sync::Arc;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
+use crate::stores::MatchStore;
 
 pub async fn game_process_action(State(state): State<GameAppData>) -> impl IntoResponse {
     let data = Arc::clone(&state.data);
@@ -40,31 +39,9 @@ pub async fn game_process_action(State(state): State<GameAppData>) -> impl IntoR
     (StatusCode::BAD_REQUEST, headers, Json(()))
 }
 
-const MATCH_DIRECTORY: &str = "matches";
 
 async fn write_match_results(result: SimulationResult) {
     for match_result in result.match_results {
-        let out_dir = format!("{}/{}", MATCH_DIRECTORY, match_result.league_slug);
-
-        if let Ok(_) = tokio::fs::create_dir_all(&out_dir).await {
-        }
-
-        let out_file = format!("{}/{}", out_dir, match_result.id);
-
-        let file = File::options()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(out_file)
-            .await
-            .unwrap();
-
-        let mut compressed_file = GzipEncoder::new(file);
-
-        if let Some(res) = match_result.details {
-            //serialize and write compressed data
-            let file_data = serde_json::to_vec(&res.position_data).unwrap();
-            compressed_file.write(&file_data).await.unwrap();
-        }
+        MatchStore::store(match_result).await;
     }
 }
