@@ -46,6 +46,10 @@ open chrome at http://localhost:18000
 
 ![alt text](docs/images/league.jpg "League page")
 
+[Match page example](https://football-simulator.org/match/tinkoff-premier_league/2024-07-06_1_24)
+
+![alt text](docs/images/match.jpg "Match page")
+
 ### License
 
 Apache License 2.0
