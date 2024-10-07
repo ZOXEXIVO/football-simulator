@@ -163,7 +163,6 @@ impl MatchContext {
         self.time.increment(time);
     }
 
-
     pub fn fill_details(&mut self){
         for player in self.players.raw_players().iter().filter(|p| !p.statistics.is_empty()) {
             for stat in &player.statistics.items            {
@@ -176,6 +175,42 @@ impl MatchContext {
                 self.score.add_goal_detail(detail);
             }
         }
+    }
+
+    pub fn penalty_area(&self, is_home_team: bool) -> PenaltyArea {
+        let field_width = self.field_size.width as f32;
+        let field_height = self.field_size.height as f32;
+        let penalty_area_width = 16.5; // Standard width of penalty area
+        let penalty_area_depth = 40.3; // Standard depth of penalty area
+
+        if is_home_team {
+            PenaltyArea::new(
+                Vector3::new(0.0, (field_height - penalty_area_width) / 2.0, 0.0),
+                Vector3::new(penalty_area_depth, (field_height + penalty_area_width) / 2.0, 0.0)
+            )
+        } else {
+            PenaltyArea::new(
+                Vector3::new(field_width - penalty_area_depth, (field_height - penalty_area_width) / 2.0, 0.0),
+                Vector3::new(field_width, (field_height + penalty_area_width) / 2.0, 0.0)
+            )
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct PenaltyArea {
+    pub min: Vector3<f32>,
+    pub max: Vector3<f32>,
+}
+
+impl PenaltyArea {
+    pub fn new(min: Vector3<f32>, max: Vector3<f32>) -> Self {
+        PenaltyArea { min, max }
+    }
+
+    pub fn contains(&self, point: &Vector3<f32>) -> bool {
+        point.x >= self.min.x && point.x <= self.max.x &&
+            point.y >= self.min.y && point.y <= self.max.y
     }
 }
 

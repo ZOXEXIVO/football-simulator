@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, SteeringOutput, VectorExtensions};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 
 static GOALKEEPER_PRESAVE_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -13,11 +13,35 @@ pub struct GoalkeeperPreSaveState {}
 
 impl StateProcessingHandler for GoalkeeperPreSaveState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        let result = StateChangeResult::new();
+
+        // Transition to Walking if the ball is far away
         if ctx.ball().distance() > 150.0 {
             return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Walking));
         }
 
-        None
+        // Transition to Diving if the ball is close and moving fast towards goal
+        if self.should_dive(ctx) {
+            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Diving));
+        }
+
+        // Transition to Catching if the ball is catchable
+        if self.is_ball_catchable(ctx) {
+            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Catching));
+        }
+
+        // Transition to Coming Out if necessary
+        if self.should_come_out(ctx) {
+            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ComingOut));
+        }
+
+        // Adjust position if needed
+        let optimal_position = self.calculate_optimal_position(ctx);
+        if ctx.player.position.distance_to(&optimal_position) > 1.0 {
+            //result.events.add(PlayerUpdateEvent::Move(ctx.player.id, optimal_position));
+        }
+
+        Some(result)
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
@@ -25,27 +49,82 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let player_acceleration = ctx.player.skills.physical.acceleration;
+        let to_target = ctx.tick_context.object_positions.ball_position - ctx.player.position;
+        let distance = to_target.length();
 
-        // Get current positions
-        let player_position = ctx.player.position;
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        // Define a slowing radius
+        let slowing_radius = 5.0; // Adjust this value as needed
 
-        // Calculate the direction vector towards the ball
-        let direction_to_ball = (ball_position - player_position).normalize();
-        let player_velocity = (direction_to_ball * player_acceleration).normalize();
+        let target_speed = if distance > slowing_radius {
+            ctx.player.skills.max_speed()
+        } else {
+            ctx.player.skills.max_speed() * (distance / slowing_radius)
+        };
 
-        Some(
-            SteeringBehavior::Pursuit {
-                target: ctx.tick_context.object_positions.ball_position,
-                velocity: player_velocity,
-            }
-                .calculate(ctx.player)
-                .velocity,
-        )
+        let desired_velocity = to_target.normalize() * target_speed;
+        let steering = desired_velocity - ctx.player.velocity;
+
+        // Apply a maximum force to the steering
+        let max_force: f32 = 10.0; // Adjust this value as needed
+        let steering = steering.normalize() * max_force.min(steering.length());
+
+        Some(SteeringOutput {
+            velocity: steering,
+            rotation: 0.0,
+        }.velocity)
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
 
+    }
+}
+
+impl GoalkeeperPreSaveState {
+    fn should_dive(&self, ctx: &StateProcessingContext) -> bool {
+        let ball_velocity = ctx.tick_context.object_positions.ball_velocity;
+        let ball_distance = ctx.ball().distance();
+        let ball_speed = ball_velocity.norm();
+
+        // Check if the ball is moving fast towards the goal
+        let towards_goal = ball_velocity.dot(&(ctx.ball().direction_to_own_goal() - ctx.player.position)) > 0.0;
+
+        ball_distance < 10.0 && ball_speed > 15.0 && towards_goal
+    }
+
+    fn is_ball_catchable(&self, ctx: &StateProcessingContext) -> bool {
+        let ball_distance = ctx.ball().distance();
+        let ball_speed = ctx.tick_context.object_positions.ball_velocity.norm();
+        let goalkeeper_reach = ctx.player.skills.physical.jumping * 0.5 + 2.0; // Adjust as needed
+
+        ball_distance < goalkeeper_reach && ball_speed < 10.0
+    }
+
+    fn should_come_out(&self, ctx: &StateProcessingContext) -> bool {
+        let ball_distance = ctx.ball().distance();
+        let goalkeeper_skills = &ctx.player.skills;
+        let ball_in_penalty_area = self.is_ball_in_penalty_area(ctx);
+
+        ball_distance < 30.0 &&
+            ball_in_penalty_area &&
+            goalkeeper_skills.mental.decisions > 10.0 &&
+            goalkeeper_skills.physical.acceleration > 10.0
+    }
+
+    fn is_ball_in_penalty_area(&self, ctx: &StateProcessingContext) -> bool {
+        // Implement logic to check if the ball is in the penalty area
+        // This will depend on your field dimensions and coordinate system
+        true // Placeholder
+    }
+
+    fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
+        let goal_position = ctx.ball().direction_to_own_goal();
+        let ball_position = ctx.tick_context.object_positions.ball_position;
+
+        // Calculate a position on the line between the ball and the center of the goal
+        let to_ball = ball_position - goal_position;
+        let goal_line_width = 7.32; // Standard goal width in meters
+        let optimal_distance = (goal_line_width / 2.0) * 0.9; // Position slightly inside the goal
+
+        goal_position + to_ball.normalize() * optimal_distance
     }
 }

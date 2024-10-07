@@ -12,6 +12,7 @@ pub enum PlayerUpdateEvent {
     ClearBall(Vector3<f32>),
     RushOut(u32),
     Shoot(u32, Vector3<f32>),
+    MovePlayer(u32, Vector3<f32>),
     StayInGoal(u32),
     MoveBall(u32, Vector3<f32>),
     CommunicateMessage(u32, &'static str),
@@ -19,6 +20,7 @@ pub enum PlayerUpdateEvent {
     ClaimBall(u32),
     UnClaimBall(u32),
     GainBall(u32),
+    CaughtBall(u32),
     CommitFoul,
     RequestPass(u32, u32),
     RequestHeading(u32, Vector3<f32>),
@@ -143,6 +145,23 @@ impl PlayerUpdateEventCollection {
                     let mut player = field.get_player_mut(*player_id).unwrap();
 
                     player.state = PlayerState::Injured
+                }
+                PlayerUpdateEvent::CaughtBall(player_id) => {
+                    // TODO
+                    field.players.iter_mut().for_each(|player| {
+                        player.has_ball = false;
+                    });
+
+                    let mut player = field.get_player_mut(*player_id).unwrap();
+
+                    player.has_ball = true;
+
+                    field.ball.previous_owner = field.ball.current_owner;
+                    field.ball.previous_owner = Some(*player_id);
+                }
+                PlayerUpdateEvent::MovePlayer(player_id, position) => {
+                    let player = field.get_player_mut(*player_id).unwrap();
+                    player.position = *position
                 }
             }
         }

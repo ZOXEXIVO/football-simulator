@@ -1,6 +1,7 @@
 ﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::MatchPlayer;
 use nalgebra::Vector3;
+use rand::Rng;
 
 pub enum SteeringBehavior {
     Seek {
@@ -117,20 +118,50 @@ impl SteeringBehavior {
                 radius,
                 jitter,
                 distance,
-                angle: _,
+                angle: f32,
             } => {
-                let rand_vec = Vector3::random_in_unit_circle().normalize() * *jitter;
+                let mut rng = rand::thread_rng();
 
-                let target_position = *target + rand_vec;
+                // Generate a random angle each time
+                let angle = rng.gen::<f32>() * std::f32::consts::PI * 2.0;
 
-                let target_offset = target_position - player.position;
+                // Create a displacement based on the random angle
+                let displacement = Vector3::new(
+                    angle.cos() * *radius,
+                    angle.sin() * *radius,
+                    0.0
+                );
 
-                let adjusted_offset = target_offset.normalize() * *distance;
-                let steering = adjusted_offset.add_scalar(player.heading() * *radius);
+                // Add some randomness to the displacement
+                let jitter_offset = Vector3::new(
+                    rng.gen::<f32>() * *jitter - *jitter * 0.5,
+                    rng.gen::<f32>() * *jitter - *jitter * 0.5,
+                    0.0
+                );
+
+                // Calculate the wander target
+                let wander_target = *target + displacement + jitter_offset;
+
+                // Calculate the wandering force
+                let wandering_force = wander_target - player.position;
+
+                // Calculate the steering force
+                let steering_force = wandering_force - player.velocity;
+
+                // Limit the magnitude of the steering force
+                let max_force = 1.0; // Adjust this value as needed
+                let steering_force = if steering_force.magnitude() > max_force {
+                    steering_force.normalize() * max_force
+                } else {
+                    steering_force
+                };
+
+                // Calculate the new velocity
+                let new_velocity = (player.velocity + steering_force).normalize() * *distance;
 
                 SteeringOutput {
-                    velocity: steering.normalize(),
-                    rotation: 0.0,
+                    velocity: new_velocity,
+                    rotation: new_velocity.y.atan2(new_velocity.x),
                 }
             }
             SteeringBehavior::Flee { target } => {

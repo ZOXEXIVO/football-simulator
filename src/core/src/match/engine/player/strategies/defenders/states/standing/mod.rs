@@ -4,9 +4,10 @@ use nalgebra::Vector3;
 
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::IntegerUtils;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -86,7 +87,17 @@ impl StateProcessingHandler for DefenderStandingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        if ctx.in_state_time % 10 == 0 {
+            return Some(SteeringBehavior::Wander {
+                target: ctx.player.start_position,
+                radius: IntegerUtils::random(5, 10) as f32,
+                jitter: IntegerUtils::random(0, 3) as f32,
+                distance: IntegerUtils::random(10, 50) as f32,
+                angle: IntegerUtils::random(0, 90) as f32,
+            }.calculate(ctx.player).velocity)
+        }
+
+        None
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
