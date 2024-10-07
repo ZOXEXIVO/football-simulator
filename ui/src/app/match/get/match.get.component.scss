@@ -14,9 +14,13 @@
 
 .squad-list {
   margin-top: 20px;
-  font-size: 12px;
+  font-size: 14px;
 
   a {
     color: #fff;
+  }
+
+  &.squad-list-left {
+    text-align: right;
   }
 }
