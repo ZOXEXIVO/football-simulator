@@ -39,7 +39,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private aspectRatio: number = 16 / 10;
     private maxWidth: number = 1400;
-    private maxHeight: number = 890;
+    private maxHeight: number = 950;
 
     @Input()
     leagueSlug: string = '';
@@ -207,26 +207,52 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         container.position.x = x - 10;
         container.position.y = y - 10;
 
-        const circle: Graphics = new PIXI.Graphics();
+        const playerColor = this.getColor(player)
+        const borderColor = this.getBorderColor(playerColor);
 
+        // Create border circle
+        const border = new Graphics();
+        border
+            .circle(6, 6, 19)  // Slightly larger radius for the border
+            .fill(borderColor);
+
+        container.addChild(border);
+
+        // Create player circle
+        const circle = new Graphics();
         circle
-            .circle(6, 6, 15)
-            .fill(this.getColor(player));
+            .circle(6, 6, 16)
+            .fill(playerColor);
 
         container.addChild(circle);
 
+        const numberStyle = new TextStyle({
+            fontFamily: 'Arial, sans-serif',
+            fontSize: 14,
+            fontWeight: 'bold',
+            fill: this.getShirtNumber(player),
+            align: 'center'
+        });
+
+        const numberText = new PIXI.Text({text:  player.shirt_number.toString(), style: numberStyle});
+
+        numberText.anchor.set(0.5);
+        numberText.position.set(6, 6); // Center of the circle
+
+        container.addChild(numberText);
+
         const style = new TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 15,
+            fontFamily: 'Verdana, sans-serif',
+            fontSize: 17,
             fill: 'white',
             wordWrap: false,
             align: 'center'
         });
 
-        const text = new PIXI.Text({text: player.last_name + ' ' + player.first_name.charAt(0).toUpperCase() + '.', style});
+        const text = new PIXI.Text({text: player.last_name, style});
 
         text.x = 10;
-        text.y = 30;
+        text.y = 40;
 
         text.anchor.set(0.5); // Set anchor to center for center alignment
 
@@ -246,6 +272,23 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         return player.is_home ? homeColor : awayColor;
     }
 
+    getShirtNumber(player: MatchPlayerDto) {
+        if (player.position == "GK") {
+            return 'black';
+        }
+
+        return 'white';
+    }
+
+
+    getBorderColor(color: number): number {
+       if (color == 0xf7e300){
+           return 0x000000;
+       }
+
+        return 0xffffff;
+    }
+
     async createBackground() {
         const landscapeTexture = await Assets.load('assets/images/match/field.svg');
         const background = new PIXI.Sprite(landscapeTexture);
@@ -259,6 +302,9 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     async createBall(data: MatchDataDto): Promise<Sprite> {
         const texture = await Assets.load('assets/images/match/ball.png');
         const ball: PIXI.Sprite = new Sprite(texture);
+
+        ball.width = 20;
+        ball.height = 20;
 
         ball.position.x = data.ball_positions[0].position[0];
         ball.position.y = data.ball_positions[0].position[1];

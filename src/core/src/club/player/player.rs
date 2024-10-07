@@ -117,6 +117,14 @@ impl Player {
         PlayerMailbox::process(self, result, now);
     }
 
+    pub fn shirt_number(&self) -> u8 {
+        if let Some(contract) = &self.contract {
+            return contract.shirt_number.unwrap_or(0);
+        }
+
+        0
+    }
+
     pub fn value(&self, date: NaiveDate) -> f64 {
         PlayerValueCalculator::calculate(self, date)
     }

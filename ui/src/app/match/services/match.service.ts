@@ -65,14 +65,15 @@ export interface MatchSquadDto {
 
 export interface MatchPlayerDto {
     id: number,
-    first_name: string
-    last_name: string
+    shirt_number: number,
+    first_name: string,
+    last_name: string,
     middle_name: string,
-    displayName: string;
-    position: string
-    team_slug: string
+    displayName: string,
+    position: string,
+    team_slug: string,
     start_position: number[],
-    is_home: boolean
+    is_home: boolean,
 
     obj: Container,
     currentCoordIdx: number

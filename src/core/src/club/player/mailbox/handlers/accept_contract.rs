@@ -6,6 +6,7 @@ pub struct AcceptContractHandler;
 impl AcceptContractHandler {
     pub fn process(player: &mut Player, proposal: PlayerContractProposal, now: NaiveDate) {
         player.contract = Some(PlayerClubContract {
+            shirt_number: None,
             salary: proposal.salary,
             contract_type: ContractType::FullTime,
             squad_status: PlayerSquadStatus::FirstTeamRegular,

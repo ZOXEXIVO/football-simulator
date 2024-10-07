@@ -8,7 +8,7 @@ use core::FootballSimulator;
 use core::SimulationResult;
 use std::sync::Arc;
 use std::time::Instant;
-use log::info;
+use log::{debug, info};
 use tokio::io::AsyncWriteExt;
 use tokio::stream;
 use crate::stores::MatchStore;
@@ -50,5 +50,11 @@ async fn write_match_results(result: SimulationResult) {
         tasks.spawn(MatchStore::store(match_result));
     }
 
+    let now = Instant::now();
+
     tasks.join_all().await;
+
+    let elapsed = now.elapsed().as_millis();
+
+    info!("match results stored in {} ms", elapsed);
 }

@@ -31,41 +31,41 @@ pub async fn match_get_action(
     let result_details = match_result.details.as_ref().unwrap();
 
     let result = MatchGetResponse {
-        score: LineupScore {
+        score: MatchScore {
             home_goals: result_details.score.as_ref().unwrap().home_team.get(),
             away_goals: result_details.score.as_ref().unwrap().away_team.get()
         },
         match_time_ms: result_details.match_time_ms,
         home_team_name: &home_team.name,
         home_team_slug: &home_team.slug,
-        home_squad: LineupSquad {
+        home_squad: MatchSquad {
             main: result_details
                 .left_team_players
                 .main
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, simulator_data))
+                .filter_map(|player_id| to_match_player(*player_id, simulator_data))
                 .collect(),
             substitutes: result_details
                 .left_team_players
                 .substitutes
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, simulator_data))
+                .filter_map(|player_id| to_match_player(*player_id, simulator_data))
                 .collect(),
         },
         away_team_name: &away_team.name,
         away_team_slug: &away_team.slug,
-        away_squad: LineupSquad {
+        away_squad: MatchSquad {
             main: result_details
                 .right_team_players
                 .main
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, simulator_data))
+                .filter_map(|player_id| to_match_player(*player_id, simulator_data))
                 .collect(),
             substitutes: result_details
                 .right_team_players
                 .substitutes
                 .iter()
-                .filter_map(|player_id| to_lineup_player(*player_id, simulator_data))
+                .filter_map(|player_id| to_match_player(*player_id, simulator_data))
                 .collect(),
         },
     };
@@ -73,14 +73,15 @@ pub async fn match_get_action(
     Json(result).into_response()
 }
 
-fn to_lineup_player(
+fn to_match_player(
     player_id: u32,
     simulator_data: &SimulatorData,
-) -> Option<LineupPlayer> {
+) -> Option<MatchPlayer> {
     let player = simulator_data.player(player_id)?;
 
-    Some(LineupPlayer {
+    Some(MatchPlayer {
         id: player.id,
+        shirt_number: player.shirt_number(),
         first_name: &player.full_name.first_name,
         last_name: &player.full_name.last_name,
         middle_name: player.full_name.middle_name.as_deref(),
@@ -100,33 +101,34 @@ pub struct MatchGetResponse<'p> {
     // home
     pub home_team_name: &'p str,
     pub home_team_slug: &'p str,
-    pub home_squad: LineupSquad<'p>,
+    pub home_squad: MatchSquad<'p>,
 
     // away
     pub away_team_name: &'p str,
     pub away_team_slug: &'p str,
-    pub away_squad: LineupSquad<'p>,
+    pub away_squad: MatchSquad<'p>,
 
     pub match_time_ms: u64,
 
-    pub score: LineupScore,
+    pub score: MatchScore,
 }
 
 #[derive(Serialize)]
-pub struct LineupScore {
+pub struct MatchScore {
     pub home_goals: u8,
     pub away_goals: u8,
 }
 
 #[derive(Serialize)]
-pub struct LineupSquad<'p> {
-    pub main: Vec<LineupPlayer<'p>>,
-    pub substitutes: Vec<LineupPlayer<'p>>,
+pub struct MatchSquad<'p> {
+    pub main: Vec<MatchPlayer<'p>>,
+    pub substitutes: Vec<MatchPlayer<'p>>,
 }
 
 #[derive(Serialize)]
-pub struct LineupPlayer<'p> {
+pub struct MatchPlayer<'p> {
     pub id: u32,
+    pub shirt_number: u8,
     pub first_name: &'p str,
     pub last_name: &'p str,
     pub middle_name: Option<&'p str>,

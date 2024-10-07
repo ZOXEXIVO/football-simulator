@@ -38,14 +38,18 @@ export class MatchGetComponent implements OnInit {
             match_data.players = [];
 
             // add home players
+            let shirtNumber = 1;
             match_data.home_squad.main.forEach(player => {
                 player.is_home = true;
+                player.shirt_number = shirtNumber++;
             });
             match_data.players.push(...match_data.home_squad.main);
 
             // add away players
+            shirtNumber = 1;
             match_data.away_squad.main.forEach(player => {
                 player.is_home = false;
+                player.shirt_number = shirtNumber++;
             });
             match_data.players.push(...match_data.away_squad.main);
 

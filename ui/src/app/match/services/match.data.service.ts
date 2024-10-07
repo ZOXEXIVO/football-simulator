@@ -63,7 +63,7 @@ export class MatchDataService {
         // Apply the scaling to translate coordinates
         return {
             x: 42 + x * scale_x,
-            y: y * scale_y - 5
+            y: y * scale_y - 10
         };
     }
 

@@ -34,6 +34,8 @@ pub enum PlayerTransferStatus {
 
 #[derive(Debug)]
 pub struct PlayerClubContract {
+    pub shirt_number: Option<u8>,
+
     pub salary: u32,
     pub contract_type: ContractType,
     pub squad_status: PlayerSquadStatus,
@@ -51,6 +53,7 @@ pub struct PlayerClubContract {
 impl PlayerClubContract {
     pub fn new(salary: u32, expired: NaiveDate) -> Self {
         PlayerClubContract {
+            shirt_number: None,
             salary,
             contract_type: ContractType::FullTime,
             squad_status: PlayerSquadStatus::NotYetSet,
