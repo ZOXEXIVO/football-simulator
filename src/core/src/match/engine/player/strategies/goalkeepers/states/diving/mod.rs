@@ -1,10 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_DIVING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_diving_data.json")));
@@ -19,25 +21,40 @@ impl StateProcessingHandler for GoalkeeperDivingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
+        if ctx.ball().distance() > 100.0 {
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::ReturningToGoal,
+            ));
+        }
+
         let elapsed_time = ctx.in_state_time as f32 / 1000.0; // Convert to seconds
 
         if elapsed_time > DIVE_DURATION + RECOVERY_TIME {
             // Dive and recovery completed, signal state change
             //result.events.add(PlayerUpdateEvent::DiveCompleted(ctx.player.id));
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Standing,
+            ));
         }
 
         if elapsed_time <= DIVE_DURATION {
             // Still diving
             let dive_direction = self.calculate_dive_direction(ctx);
-            let dive_position = ctx.player.position + dive_direction * self.calculate_dive_distance(ctx);
-            result.events.add(PlayerUpdateEvent::MovePlayer(ctx.player.id, dive_position));
+            let dive_position =
+                ctx.player.position + dive_direction * self.calculate_dive_distance(ctx);
+            result
+                .events
+                .add(PlayerUpdateEvent::MovePlayer(ctx.player.id, dive_position));
         } else {
             // In recovery phase
             if self.is_ball_caught(ctx) {
-                result.events.add(PlayerUpdateEvent::CaughtBall(ctx.player.id));
+                result
+                    .events
+                    .add(PlayerUpdateEvent::CaughtBall(ctx.player.id));
             } else if self.is_ball_nearby(ctx) {
-                result.events.add(PlayerUpdateEvent::ClaimBall(ctx.player.id));
+                result
+                    .events
+                    .add(PlayerUpdateEvent::ClaimBall(ctx.player.id));
             }
         }
 
@@ -62,9 +79,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
         }
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl GoalkeeperDivingState {
@@ -81,7 +96,8 @@ impl GoalkeeperDivingState {
 
     fn calculate_dive_speed(&self, ctx: &StateProcessingContext) -> f32 {
         // Base the dive speed on the goalkeeper's reflexes and agility
-        (ctx.player.skills.physical.acceleration + ctx.player.skills.physical.agility) * 0.05 // Adjust this multiplier as needed
+        (ctx.player.skills.physical.acceleration + ctx.player.skills.physical.agility) * 0.05
+        // Adjust this multiplier as needed
     }
 
     fn is_ball_caught(&self, ctx: &StateProcessingContext) -> bool {
