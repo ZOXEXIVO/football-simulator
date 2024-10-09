@@ -115,6 +115,19 @@ impl<'b> BallOperationsImpl<'b> {
             .ball_position
             .distance_to(&target_goal)
     }
+
+    pub fn on_own_third(&self) -> bool {
+        let field_length = self.ctx.context.field_size.width as f32;
+        let ball_x = self.ctx.tick_context.object_positions.ball_position.x;
+
+        if self.ctx.player.side == Some(PlayerSide::Left) {
+            // Home team defends the left side (negative X)
+            ball_x < -field_length / 3.0
+        } else {
+            // Away team defends the right side (positive X)
+            ball_x > field_length / 3.0
+        }
+    }
 }
 
 pub struct MatchBallLogic;

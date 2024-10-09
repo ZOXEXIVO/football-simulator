@@ -8,17 +8,17 @@ use crate::r#match::defenders::states::DefenderState;
 static DEFENDER_TRACKING_BACK_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_tracking_back_data.json")));
 
+const CLOSE_TO_START_DISTANCE: f32 = 10.0;
+const BALL_INTERCEPTION_DISTANCE: f32 = 30.0;
+const MARKING_DISTANCE: f32 = 20.0;
+const CRITICAL_TIME_REMAINING: f32 = 300.0; // 5 minutes
+
 #[derive(Default)]
 pub struct DefenderTrackingBackState {}
 
 impl StateProcessingHandler for DefenderTrackingBackState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult>
     {
-        const CLOSE_TO_START_DISTANCE: f32 = 10.0;
-        const BALL_INTERCEPTION_DISTANCE: f32 = 30.0;
-        const MARKING_DISTANCE: f32 = 20.0;
-        const CRITICAL_TIME_REMAINING: f32 = 300.0; // 5 minutes
-
         // Check if the defender has reached their starting position
         if ctx.player().distance_from_start_position() < CLOSE_TO_START_DISTANCE {
             return Some(StateChangeResult::with_defender_state(DefenderState::Standing));

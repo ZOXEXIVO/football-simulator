@@ -73,6 +73,7 @@ impl Ball {
         players: &[MatchPlayer],
         result: &mut Vec<BallUpdateEvent>,
     ) {
+
         const BALL_DISTANCE_THRESHOLD: f32 = 1.0;
 
         if let Some(owner_player_id) = self.previous_owner {

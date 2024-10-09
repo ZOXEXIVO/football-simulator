@@ -1,3 +1,4 @@
+use log::info;
 use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::{ForwardState, ForwardStrategies};
 use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStrategies};
@@ -83,6 +84,9 @@ impl<'p> StateProcessor<'p> {
     }
 
     pub fn process_inner<H: StateProcessingHandler>(self, handler: H) -> StateProcessingResult {
+        let player_id = self.player.id;
+        let need_extended_state_logging =  self.player.use_extended_state_logging;
+
         let processing_ctx = self.into_ctx();
         let mut result = StateProcessingResult::new();
 
@@ -94,6 +98,9 @@ impl<'p> StateProcessor<'p> {
         let complete_result = |state_results: StateChangeResult,
                                mut result: StateProcessingResult| {
             if let Some(state) = state_results.state {
+                if need_extended_state_logging {
+                    info!("Player, Id={}, State {:?}", player_id, state);
+                }
                 result.state = Some(state);
                 result.events = state_results.events;
             }

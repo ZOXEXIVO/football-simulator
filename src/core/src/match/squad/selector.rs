@@ -67,7 +67,7 @@ impl SquadSelector {
             }
 
             if let Some(player) = best_player {
-                squad.push(MatchPlayer::from_player(team_id, player, *player_position));
+                squad.push(MatchPlayer::from_player(team_id, player, *player_position, false));
                 players.retain(|p| p.id != player.id);
             }
         }
@@ -92,6 +92,7 @@ impl SquadSelector {
                 team_id,
                 goalkeeper,
                 PlayerPositionType::Goalkeeper,
+                false
             ));
             players.retain(|p| p.id != goalkeeper.id);
         }
@@ -111,7 +112,7 @@ impl SquadSelector {
             }
 
             if let Some(player) = best_player {
-                squad.push(MatchPlayer::from_player(team_id, player, *player_position));
+                squad.push(MatchPlayer::from_player(team_id, player, *player_position, false));
                 players.retain(|p| p.id != player.id);
             }
         }

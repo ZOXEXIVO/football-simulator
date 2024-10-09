@@ -1,8 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -12,6 +16,46 @@ pub struct GoalkeeperPassingState {}
 
 impl StateProcessingHandler for GoalkeeperPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        let mut result = StateChangeResult::new();
+
+        // 1. Check if the goalkeeper has the ball
+        if !ctx.player.has_ball {
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Standing,
+            ));
+        }
+
+        // 2. Find the best teammate to pass to
+        let (nearest_teammates, opponents) = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .players_within_distance(ctx.player, 30.0);
+
+        if let Some((teammate_id, teammate_distance)) = nearest_teammates.first() {
+            let pass_skill = ctx.player.skills.technical.passing;
+
+            let pass_power = (teammate_distance / pass_skill as f32 * 10.0) as f64;
+
+            result
+                .events
+                .add(PlayerUpdateEvent::UnClaimBall(ctx.player.id));
+
+            if let Some(teammate_positions) = ctx
+                .tick_context
+                .object_positions
+                .players_positions
+                .get_player_position(*teammate_id)
+            {
+                result.events.add(PlayerUpdateEvent::PassTo(
+                    *teammate_id,
+                    teammate_positions,
+                    pass_power,
+                ));
+            }
+            return Some(result);
+        }
+
         None
     }
 
@@ -23,7 +67,5 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }

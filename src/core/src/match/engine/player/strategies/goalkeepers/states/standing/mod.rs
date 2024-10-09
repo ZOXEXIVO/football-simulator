@@ -12,7 +12,7 @@ use crate::r#match::player::events::PlayerUpdateEvent;
 static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
-const BALL_PROXIMITY_THRESHOLD: f32 = 200.0;
+const BALL_PROXIMITY_THRESHOLD: f32 = 100.0;
 const DANGER_ZONE_RADIUS: f32 = 30.0;
 const REACTION_TIME_THRESHOLD: u64 = 1000; // in milliseconds
 const OPTIMAL_DISTANCE_FROM_GOAL: f32 = 200.0; //
@@ -41,10 +41,6 @@ impl StateProcessingHandler for GoalkeeperStandingState {
         }
 
         if ctx.ball().distance() > BALL_PROXIMITY_THRESHOLD * 2.0 {
-            if ctx.player.side == Some(PlayerSide::Right) {
-                let distance = ctx.ball().distance();
-            }
-
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Walking,
             ));

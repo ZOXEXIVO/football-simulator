@@ -1,5 +1,4 @@
-﻿use crate::r#match::ball::events::BallUpdateEvent;
-use crate::r#match::defenders::states::DefenderState;
+﻿use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
@@ -30,6 +29,7 @@ pub struct MatchPlayer {
     pub state: PlayerState,
     pub in_state_time: u64,
     pub statistics: MatchPlayerStatistics,
+    pub use_extended_state_logging: bool
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -39,7 +39,7 @@ pub enum PlayerSide {
 }
 
 impl MatchPlayer {
-    pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType) -> Self {
+    pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType, use_extended_state_logging: bool) -> Self {
         MatchPlayer {
             id: player.id,
             position: Vector3::new(0.0, 0.0, 0.0),
@@ -66,6 +66,7 @@ impl MatchPlayer {
             },
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new(),
+            use_extended_state_logging
         }
     }
 

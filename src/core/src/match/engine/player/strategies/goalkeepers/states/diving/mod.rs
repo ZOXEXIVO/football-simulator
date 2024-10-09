@@ -21,13 +21,19 @@ impl StateProcessingHandler for GoalkeeperDivingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
+        if ctx.player.has_ball {
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Passing
+            ));
+        }
+
         if ctx.ball().distance() > 100.0 {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::ReturningToGoal,
             ));
         }
 
-        let elapsed_time = ctx.in_state_time as f32 / 1000.0; // Convert to seconds
+        let elapsed_time = ctx.in_state_time as f32 / 100.0; // Convert to seconds
 
         if elapsed_time > DIVE_DURATION + RECOVERY_TIME {
             // Dive and recovery completed, signal state change
@@ -102,7 +108,7 @@ impl GoalkeeperDivingState {
 
     fn is_ball_caught(&self, ctx: &StateProcessingContext) -> bool {
         let ball_distance = ctx.ball().distance();
-        let catch_probability = ctx.player.skills.technical.first_touch / 100.0; // Using first_touch as a proxy for catching skill
+        let catch_probability = ctx.player.skills.technical.first_touch / 20.0; // Using first_touch as a proxy for catching skill
 
         ball_distance < 1.0 && rand::random::<f32>() < catch_probability
     }

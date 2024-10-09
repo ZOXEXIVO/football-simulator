@@ -3,7 +3,7 @@ use rand::Rng;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerUpdateEvent;
 
@@ -80,23 +80,10 @@ impl StateProcessingHandler for MidfielderTacklingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Move towards the opponent to attempt the tackle
-
-        // Identify the opponent player with the ball
-        let players = ctx.player();
-        let opponent_with_ball = players.opponent_with_ball();
-
-        if let Some(opponent) = opponent_with_ball.first() {
-            // Calculate direction towards the opponent
-            let direction = (opponent.position - ctx.player.position).normalize();
-            // Set speed based on player's pace
-            let speed = ctx.player.skills.physical.pace; // Use the midfielder's pace
-            Some(direction * speed)
-        } else {
-            // No opponent with the ball found
-            // Remain stationary or move back to position
-            Some(Vector3::new(0.0, 0.0, 0.0))
-        }
+        Some(SteeringBehavior::Pursuit {
+            target: ctx.tick_context.object_positions.ball_position,
+            velocity: ctx.player.velocity,
+        }.calculate(ctx.player).velocity)
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {

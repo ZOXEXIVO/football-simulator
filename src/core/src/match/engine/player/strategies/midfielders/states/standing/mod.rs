@@ -9,9 +9,9 @@
     static MIDFIELDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
         LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
-    const POSSESSION_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust based on simulation scale
+    const POSSESSION_DISTANCE_THRESHOLD: f32 = 100.0; // Adjust based on simulation scale
     const PASSING_DISTANCE_THRESHOLD: f32 = 30.0; // Adjust as needed
-    const PRESSING_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust as needed
+    const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0; // Adjust as needed
     const STAMINA_THRESHOLD: u32 = 20; // Minimum stamina percentage before resting
 
     #[derive(Default)]
@@ -61,7 +61,6 @@
                 return Some(StateChangeResult::with_midfielder_state(MidfielderState::SupportingAttack));
             }
 
-            // 5. Remain in Standing state
             None
         }
 
