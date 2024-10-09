@@ -14,22 +14,18 @@ pub struct GoalkeeperWalkingState {}
 
 impl StateProcessingHandler for GoalkeeperWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let mut result = StateChangeResult::new();
-
         // Check if the ball is close and not owned by a teammate
         if self.is_ball_close(ctx) && !ctx.ball().is_owned() {
-            if self.should_come_out(ctx) {
-                return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ComingOut));
+            return if self.should_come_out(ctx) {
+                Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ComingOut))
             } else {
-                return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::PreparingForSave));
+                Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::PreparingForSave))
             }
         }
 
         // Check if the goalkeeper is out of position
         if self.is_out_of_position(ctx) {
-            let optimal_position = self.calculate_optimal_position(ctx);
-            //result.events.add(PlayerUpdateEvent::Move(ctx.player.id, optimal_position));
-            return Some(result);
+            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ReturningToGoal));
         }
 
         // Check if there's an immediate threat
@@ -42,7 +38,6 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
             return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
         }
 
-        // If none of the above, continue walking
         None
     }
 
@@ -64,7 +59,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
 
 impl GoalkeeperWalkingState {
     fn is_ball_close(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.ball().distance() < 20.0 // Adjust this value based on your game's scale
+        ctx.ball().distance() < 20.0
     }
 
     fn is_out_of_position(&self, ctx: &StateProcessingContext) -> bool {
@@ -90,7 +85,7 @@ impl GoalkeeperWalkingState {
         let goalkeeper_skills = &ctx.player.skills;
 
         // Decision based on ball distance and goalkeeper's skills
-        ball_distance < 15.0 && goalkeeper_skills.mental.decisions > 70.0 && goalkeeper_skills.physical.acceleration > 60.0
+        ball_distance < 50.0 && goalkeeper_skills.mental.decisions > 10.0 && goalkeeper_skills.physical.acceleration > 10.0
     }
 
     fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
