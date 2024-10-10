@@ -4,7 +4,8 @@ use core::r#match::FootballEngine;
 use core::r#match::MatchContext;
 use core::r#match::MatchField;
 use macroquad::prelude::*;
-
+use std::thread;
+use std::time::Duration;
 //tactics
 use core::club::player::Player;
 use core::club::player::PlayerPositionType;
@@ -109,7 +110,9 @@ async fn main() {
 
         draw_fps(offset_x, offset_y, &fps_data, max_fps);
 
-        next_frame().await
+        next_frame().await;
+
+        //thread::sleep(Duration::from_millis(10));
     }
 }
 

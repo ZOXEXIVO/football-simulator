@@ -1,3 +1,4 @@
+use crate::r#match::engine::dispatcher::Event;
 use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::MatchContext;
 
@@ -15,15 +16,14 @@ pub enum GoalSide {
     Away,
 }
 
-pub struct BallEvents;
+pub struct BallEventDispatcher;
 
-impl BallEvents {
-    pub fn handle_events<'a>(
+impl BallEventDispatcher {
+    pub fn dispatch<'a>(
         _current_time: u64,
-        events: impl Iterator<Item = BallUpdateEvent>,
+        events: impl Iterator<Item = Event(_)>,
         context: &MatchContext,
-    ) -> PlayerUpdateEventCollection {
-        let mut player_events = PlayerUpdateEventCollection::new();
+    ) -> Vec<Event(_)> {
 
         for event in events {
             match event {

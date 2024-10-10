@@ -1,5 +1,5 @@
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::{Ball, MatchContext, MatchField, PlayerSide};
+use crate::r#match::{MatchContext, MatchField};
 use nalgebra::Vector3;
 
 pub enum PlayerUpdateEvent {
@@ -28,37 +28,9 @@ pub enum PlayerUpdateEvent {
     RequestBallReceive(u32),
 }
 
-pub struct PlayerUpdateEventCollection {
-    pub events: Vec<PlayerUpdateEvent>,
-}
+pub struct PlayerEventDispatcher;
 
-impl PlayerUpdateEventCollection {
-    pub fn new() -> Self {
-        PlayerUpdateEventCollection {
-            events: Vec::with_capacity(10),
-        }
-    }
-
-    pub fn with_event(event: PlayerUpdateEvent) -> Self {
-        let mut vec = Vec::with_capacity(10);
-
-        vec.push(event);
-
-        PlayerUpdateEventCollection { events: vec }
-    }
-
-    pub fn add(&mut self, event: PlayerUpdateEvent) {
-        self.events.push(event)
-    }
-
-    pub fn join(&mut self, events: PlayerUpdateEventCollection) {
-        self.events.extend(events.events)
-    }
-
-    pub fn add_range(&mut self, events: impl Iterator<Item = PlayerUpdateEvent>) {
-        self.events.extend(events)
-    }
-
+impl PlayerEventDispatcher {
     pub fn process<'p>(&self, field: &mut MatchField, context: &mut MatchContext) {
         for event in &self.events {
             match event {
@@ -147,7 +119,6 @@ impl PlayerUpdateEventCollection {
                     player.state = PlayerState::Injured
                 }
                 PlayerUpdateEvent::CaughtBall(player_id) => {
-                    // TODO
                     field.players.iter_mut().for_each(|player| {
                         player.has_ball = false;
                     });

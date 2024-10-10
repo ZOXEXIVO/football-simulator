@@ -73,8 +73,11 @@ impl Ball {
         players: &[MatchPlayer],
         result: &mut Vec<BallUpdateEvent>,
     ) {
-
         const BALL_DISTANCE_THRESHOLD: f32 = 1.0;
+
+        if let Some(owner_player_id) = self.current_owner {
+            let t = owner_player_id;
+        }
 
         if let Some(owner_player_id) = self.previous_owner {
             let owner = context.players.get(owner_player_id).unwrap();
@@ -196,6 +199,8 @@ impl Ball {
             {
                 self.position.x = owner_position.x;
                 self.position.y = owner_position.y;
+
+                println!("move to player = {}", owner_player_id);
             }
         } else {
             self.position.x += self.velocity.x;

@@ -1,4 +1,4 @@
-use crate::r#match::ball::events::{BallEvents, GoalSide};
+use crate::r#match::ball::events::{BallEventDispatcher, GoalSide};
 use crate::r#match::field::MatchField;
 use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::squad::TeamSquad;
@@ -7,6 +7,7 @@ use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use std::collections::HashMap;
+use crate::r#match::engine::dispatcher::EventCollection;
 use crate::r#match::position::MatchPositionData;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -66,7 +67,9 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn game_tick(field: &mut MatchField, context: &mut MatchContext, match_data: &mut MatchPositionData) {
         let game_tick_context = GameTickContext::new(field);
 
-        let player_affected_events = Self::play_ball(field, context, &game_tick_context);
+        let events = EventCollection::new();
+
+        Self::play_ball(field, context, &game_tick_context);
         Self::play_players(field, context, &game_tick_context, player_affected_events);
 
         Self::write_match_positions(field, context.time.time, match_data);
@@ -95,19 +98,20 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         field: &mut MatchField,
         context: &MatchContext,
         tick_context: &GameTickContext,
+        events: &mut EventCollection
     ) -> PlayerUpdateEventCollection {
         let players = &field.players;
 
         let ball_events = field.ball.update(context, &players, tick_context);
 
-        BallEvents::handle_events(context.time.time, ball_events.into_iter(), context)
+        BallEventDispatcher::dispatch(context.time.time, ball_events.into_iter(), context)
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        ball_player_events: PlayerUpdateEventCollection,
+        events: &mut EventCollection
     ) {
         let player_events: Vec<PlayerUpdateEventCollection> = field
             .players
@@ -115,11 +119,6 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
             .map(|player| player.update(context, tick_context))
             .collect();
 
-        for events in player_events {
-            events.process(field, context)
-        }
-
-        ball_player_events.process(field, context)
     }
 }
 

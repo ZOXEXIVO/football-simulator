@@ -23,6 +23,6 @@ async fn main() {
         database: Arc::new(database),
         data: Arc::new(RwLock::new(Some(game_data))),
     };
-
+    
     FootballSimulatorServer::new(data).run().await;
 }

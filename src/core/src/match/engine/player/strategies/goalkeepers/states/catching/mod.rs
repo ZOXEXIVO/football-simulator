@@ -1,9 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_CATCHING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_catching_data.json")));
@@ -14,15 +17,18 @@ pub struct GoalkeeperCatchingState {}
 impl StateProcessingHandler for GoalkeeperCatchingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if self.is_catch_successful(ctx) {
-            //result.events.add(PlayerUpdateEvent::BallCaught(ctx.player.id));
-            Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::HoldingBall))
+            let mut holding_result =
+                StateChangeResult::with_goalkeeper_state(GoalkeeperState::HoldingBall);
+
+            holding_result
+                .events
+                .add(PlayerUpdateEvent::CaughtBall(ctx.player.id));
+
+            Some(holding_result)
         } else {
-            // If catch fails, transition to appropriate state based on ball position
-            if ctx.ball().distance() < 5.0 {
-                Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Diving))
-            } else {
-                Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::PreparingForSave))
-            }
+            Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Standing,
+            ))
         }
     }
 
@@ -40,24 +46,30 @@ impl StateProcessingHandler for GoalkeeperCatchingState {
         Some(direction * speed)
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl GoalkeeperCatchingState {
     fn is_catch_successful(&self, ctx: &StateProcessingContext) -> bool {
-        let catch_skill =   (ctx.player.skills.technical.first_touch + ctx.player.skills.technical.technique) / 2.0;
+        let catch_skill =
+            (ctx.player.skills.technical.first_touch + ctx.player.skills.technical.technique) / 2.0;
         let ball_speed = ctx.tick_context.object_positions.ball_velocity.norm();
         let distance_to_ball = ctx.ball().distance();
 
-        // Calculate catch probability based on skill, ball speed, and distance
-        let catch_probability = catch_skill / 100.0 * (1.0 - (ball_speed / 30.0)) * (1.0 - (distance_to_ball / 5.0));
+        // Scale catch_skill from 1-20 range to 0-1 range
+        let scaled_catch_skill = (catch_skill - 1.0) / 19.0;
+
+        // Calculate catch probability based on scaled skill, ball speed, and distance
+        let catch_probability =
+            scaled_catch_skill * (1.0 - (ball_speed / 30.0)) * (1.0 - (distance_to_ball / 5.0));
+
+        // Ensure catch probability is within the range of 0 to 1
+        let clamped_catch_probability = catch_probability.clamp(0.0, 1.0);
 
         // Random number between 0 and 1
         let random_factor = rand::random::<f32>();
 
-        catch_probability > random_factor
+        clamped_catch_probability > random_factor
     }
 
     fn calculate_catch_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
