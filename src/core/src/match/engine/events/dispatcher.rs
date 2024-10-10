@@ -9,13 +9,13 @@ pub enum Event {
 }
 
 pub struct EventCollection {
-    pub events: Vec<Event>,
+    events: Vec<Event>,
 }
 
 impl EventCollection {
     pub fn new() -> Self {
         EventCollection {
-            events: Vec::with_capacity(100),
+            events: Vec::with_capacity(10),
         }
     }
 
@@ -43,8 +43,14 @@ impl EventCollection {
         }
     }
 
-    pub fn into_iter(self) -> impl Iterator<Item = Event> {
-        self.events.into_iter()
+    pub fn add_from_collection(&mut self, events: EventCollection) {
+        for event in events.events {
+            self.events.push(event);
+        }
+    }
+
+    pub fn to_vec(self) -> Vec<Event> {
+        self.events
     }
 }
 
@@ -52,7 +58,7 @@ pub struct EventDispatcher;
 
 impl EventDispatcher {
     pub fn dispatch(
-        events: impl Iterator<Item = Event>,
+        events: Vec<Event>,
         field: &mut MatchField,
         context: &MatchContext,
         process_remaining_events: bool,
@@ -81,7 +87,7 @@ impl EventDispatcher {
         }
 
         if process_remaining_events {
-            Self::dispatch(&mut remaining_events.into_iter(), field, context, false)
+            Self::dispatch(remaining_events, field, context, false)
         }
     }
 }

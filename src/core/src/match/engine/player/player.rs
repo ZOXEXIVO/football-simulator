@@ -76,7 +76,9 @@ impl MatchPlayer {
         tick_context: &GameTickContext,
         events: &mut EventCollection
     ) {
-        events.add_range(PlayerMatchState::process(self, context, tick_context).events);
+        let player_events = PlayerMatchState::process(self, context, tick_context);
+
+        events.add_from_collection(player_events);
 
         self.check_boundary_collision(context);
         self.move_to();
