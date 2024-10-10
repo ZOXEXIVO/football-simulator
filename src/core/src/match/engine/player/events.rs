@@ -1,8 +1,10 @@
+use log::info;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{MatchContext, MatchField};
 use nalgebra::Vector3;
 use crate::r#match::events::Event;
 
+#[derive(Debug)]
 pub enum PlayerEvent {
     Goal(u32),
     Assist(u32),
@@ -39,6 +41,8 @@ impl PlayerEventDispatcher {
     ) -> Vec<Event> {
         let mut remaining_events = Vec::new();
 
+        info!("PLAYER EVENT: {:?}", event);
+
         match event {
             PlayerEvent::Goal(player_id) => {
                 let player = field.get_player_mut(player_id).unwrap();
@@ -54,7 +58,7 @@ impl PlayerEventDispatcher {
                 let player = field.get_player_mut(player_id).unwrap();
 
                 if player.skills.technical.first_touch > 10.0 {
-                    player.has_ball = true;
+                    //player.has_ball = true;
                     //field.ball.velocity = Vector3::<f32>::zeros();
                 }
             }
@@ -91,7 +95,7 @@ impl PlayerEventDispatcher {
                 player.has_ball = true;
 
                 field.ball.previous_owner = field.ball.current_owner;
-                field.ball.previous_owner = Some(player_id);
+                field.ball.current_owner = Some(player_id);
             }
             PlayerEvent::ClearBall(ball_velocity) => {
                 //field.ball.velocity = *ball_velocity;
@@ -134,7 +138,7 @@ impl PlayerEventDispatcher {
                 player.has_ball = true;
 
                 field.ball.previous_owner = field.ball.current_owner;
-                field.ball.previous_owner = Some(player_id);
+                field.ball.current_owner = Some(player_id);
             }
             PlayerEvent::MovePlayer(player_id, position) => {
                 let player = field.get_player_mut(player_id).unwrap();

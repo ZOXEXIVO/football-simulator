@@ -1,16 +1,13 @@
 use crate::r#match::ball::events::BallEvent;
-use crate::r#match::player::state::PlayerState;
-use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
+use crate::r#match::events::EventCollection;
+use crate::r#match::position::VectorExtensions;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use nalgebra::Vector3;
-use rand_distr::num_traits::Pow;
-use crate::r#match::events::EventCollection;
 
 pub struct Ball {
     pub start_position: Vector3<f32>,
     pub position: Vector3<f32>,
     pub velocity: Vector3<f32>,
-    pub ball_position: BallPosition,
     pub center_field_position: f32,
     pub height: f32,
 
@@ -24,7 +21,6 @@ impl Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(x, y, 0.0),
             velocity: Vector3::zeros(),
-            ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
             height: 0.0,
             previous_owner: None,
@@ -194,8 +190,7 @@ impl Ball {
                 .players_positions
                 .get_player_position(owner_player_id)
             {
-                self.position.x = owner_position.x;
-                self.position.y = owner_position.y;
+                self.position = owner_position;
             }
         } else {
             self.position.x += self.velocity.x;
@@ -203,13 +198,6 @@ impl Ball {
         }
     }
 
-    fn position(&self) -> BallPosition {
-        if self.position.x <= self.center_field_position {
-            BallPosition::Home
-        } else {
-            BallPosition::Away
-        }
-    }
 
     pub fn reset(&mut self) {
         self.position.x = self.start_position.x;
@@ -217,10 +205,4 @@ impl Ball {
 
         self.velocity = Vector3::zeros();
     }
-}
-
-#[derive(Eq, PartialEq, Copy, Clone)]
-pub enum BallPosition {
-    Home,
-    Away,
 }

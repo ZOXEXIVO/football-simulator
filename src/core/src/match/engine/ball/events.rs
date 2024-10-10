@@ -1,8 +1,9 @@
+use log::info;
 use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::MatchContext;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum BallEvent {
     Goal(GoalSide, Option<u32>),
     Claimed(u32),
@@ -10,7 +11,7 @@ pub enum BallEvent {
     Gained(u32),
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum GoalSide {
     Home,
     Away,
@@ -21,6 +22,8 @@ pub struct BallEventDispatcher;
 impl BallEventDispatcher {
     pub fn dispatch(event: BallEvent, context: &MatchContext) -> Vec<Event> {
         let mut remaining_events = Vec::new();
+
+        info!("BALL EVENT: {:?}", event);
 
         match event {
             BallEvent::Goal(side, goalscorer_player_id) => match side {

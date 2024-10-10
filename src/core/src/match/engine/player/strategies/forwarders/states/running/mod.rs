@@ -19,11 +19,11 @@ const MAX_PLAYER_SPEED: f32 = 50.0;
 
 impl StateProcessingHandler for ForwardRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // if !ctx.player.has_ball {
-        //     return Some(StateChangeResult::with_forward_state(
-        //         ForwardState::Assisting,
-        //     ));
-        // }
+        if !ctx.player.has_ball {
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Assisting,
+            ));
+        }
 
         if ctx.ball().distance_to_opponent_goal() < 300.0 {
             return Some(StateChangeResult::with_forward_state(

@@ -1,4 +1,4 @@
-use crate::r#match::defenders::states::{DefenderBlockingState, DefenderClearingState, DefenderCoveringState, DefenderHeadingState, DefenderHoldingLineState, DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState, DefenderPassingState, DefenderPressingState, DefenderPushingUpState, DefenderRestingState, DefenderReturningState, DefenderSlidingTackleState, DefenderStandingState, DefenderTacklingState, DefenderTrackingBackState, DefenderWalkingState};
+use crate::r#match::defenders::states::{DefenderBlockingState, DefenderClearingState, DefenderCoveringState, DefenderHeadingState, DefenderHoldingLineState, DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState, DefenderPassingState, DefenderPressingState, DefenderPushingUpState, DefenderRestingState, DefenderReturningState, DefenderRunningState, DefenderSlidingTackleState, DefenderStandingState, DefenderTacklingState, DefenderTrackingBackState, DefenderWalkingState};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
@@ -53,7 +53,7 @@ impl DefenderStrategies {
             DefenderState::OffsideTrap => {
                 state_processor.process(DefenderOffsideTrapState::default())
             }
-            DefenderState::Running => state_processor.process(DefenderOffsideTrapState::default()),
+            DefenderState::Running => state_processor.process(DefenderRunningState::default()),
             DefenderState::Returning => state_processor.process(DefenderReturningState::default()),
             DefenderState::Walking => state_processor.process(DefenderWalkingState::default()),
             DefenderState::Tackling => state_processor.process(DefenderTacklingState::default()),

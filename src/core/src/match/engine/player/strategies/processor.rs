@@ -214,6 +214,14 @@ impl StateChangeResult {
         }
     }
 
+    pub fn with_goalkeeper_state_and_event(state: GoalkeeperState, event: Event) -> Self {
+        StateChangeResult {
+            state: Some(Goalkeeper(state)),
+            velocity: None,
+            events: EventCollection::with_event(event),
+        }
+    }
+
     pub fn with_defender_state(state: DefenderState) -> Self {
         StateChangeResult {
             state: Some(Defender(state)),

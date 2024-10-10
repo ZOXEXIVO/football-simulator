@@ -90,7 +90,13 @@ impl ForwardDribblingState {
         // Check if there are no opponents within the dribble distance
         opponents
             .iter()
-            .all(|opponent| ctx.tick_context.object_positions.player_distances.get(ctx.player.id, opponent.id).unwrap() > dribble_distance)
+            .all(|opponent| {
+                if let Some(distance) = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, opponent.id) {
+                    return distance > dribble_distance;
+                }
+
+                false
+            })
     }
 
     fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {

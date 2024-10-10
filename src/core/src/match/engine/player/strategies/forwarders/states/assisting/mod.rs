@@ -44,7 +44,7 @@ impl StateProcessingHandler for ForwardAssistingState {
         }
 
         // If no good assist opportunity, consider other options
-        if self.is_in_shooting_range(ctx) {
+        if self.is_in_shooting_range(ctx) && ctx.player.has_ball {
             return Some(StateChangeResult::with_forward_state(ForwardState::Shooting));
         } else if self.should_create_space(ctx) {
             return Some(StateChangeResult::with_forward_state(ForwardState::CreatingSpace));

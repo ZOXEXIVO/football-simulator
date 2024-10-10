@@ -6,6 +6,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -54,6 +55,23 @@ impl StateProcessingHandler for GoalkeeperPassingState {
                 ));
             }
             return Some(result);
+        }
+
+        if ctx.in_state_time > 500 {
+            let (nearest_teammates, opponents) = ctx.tick_context
+                .object_positions
+                .player_distances
+                .players_within_distance(ctx.player, 300.0);
+
+            let (teammate_id, distance) = nearest_teammates.first().unwrap();
+
+            let teammaste_position = ctx.tick_context.object_positions.players_positions.get_player_position(*teammate_id).unwrap();
+
+            let pass_power = (distance / ctx.player.skills.technical.passing as f32 * 10.0) as f64;
+
+            return Some(StateChangeResult::with_goalkeeper_state_and_event(
+                GoalkeeperState::Standing,
+                Event::PlayerEvent(PlayerEvent::PassTo(*teammate_id, teammaste_position, pass_power))));
         }
 
         None

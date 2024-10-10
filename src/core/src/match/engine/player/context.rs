@@ -140,7 +140,7 @@ impl PlayerPositionsClosure {
 }
 
 pub struct PlayerDistanceClosure {
-    distances: Vec<PlayerDistanceItem>,
+    pub distances: Vec<PlayerDistanceItem>,
 }
 
 pub struct PlayerDistanceItem {
@@ -152,7 +152,7 @@ pub struct PlayerDistanceItem {
     player_to_team: u32,
     pub player_to_position: Vector3<f32>,
 
-    distance: f32,
+    pub distance: f32,
 }
 
 impl PartialEq for PlayerDistanceItem {

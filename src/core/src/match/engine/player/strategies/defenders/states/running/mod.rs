@@ -40,8 +40,8 @@ impl StateProcessingHandler for DefenderRunningState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         if ctx.in_state_time == 0 {
             let target = match ctx.player.side {
-                Some(PlayerSide::Left) => ctx.context.goal_positions.left,
-                Some(PlayerSide::Right) => ctx.context.goal_positions.right,
+                Some(PlayerSide::Left) => ctx.context.goal_positions.right,
+                Some(PlayerSide::Right) => ctx.context.goal_positions.left,
                 _ => Vector3::new(0.0, 0.0, 0.0)
             };
 

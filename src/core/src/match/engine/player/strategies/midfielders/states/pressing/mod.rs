@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::midfielders::states::MidfielderState;
 
 static MIDFIELDER_PRESSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -24,11 +24,10 @@ impl StateProcessingHandler for MidfielderPressingState {
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.context.players.raw_players();
-        let opponent_with_ball = players.iter()
-            .find(|p| p.team_id != ctx.player.team_id && p.has_ball);
+        let players = ctx.player();
+        let opponent_with_ball = players.opponent_with_ball();
 
-        if let Some(opponent) = opponent_with_ball {
+        if let Some(opponent) = opponent_with_ball.first() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 
@@ -37,14 +36,13 @@ impl StateProcessingHandler for MidfielderPressingState {
                 // Transition to Standing state
                 return Some(StateChangeResult::with_midfielder_state(MidfielderState::Standing));
             }
-
-            // 5. Continue pressing (no state change)
-            None
         } else {
-            // No opponent with the ball found (perhaps ball is free)
-            // Transition to Standing state
-            Some(StateChangeResult::with_midfielder_state(MidfielderState::Standing))
+            if ctx.ball().distance() > 200.0 {
+                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+            }
         }
+
+        None
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
@@ -53,24 +51,16 @@ impl StateProcessingHandler for MidfielderPressingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Move towards the opponent with the ball
-
-        // Identify the opponent player with the ball
-        let players = ctx.context.players.raw_players();
-        let opponent_with_ball = players
-            .iter()
-            .find(|p| p.team_id != ctx.player.team_id && p.has_ball);
-
-        if let Some(opponent) = opponent_with_ball {
-            // Calculate direction towards the opponent
-            let direction = (opponent.position - ctx.player.position).normalize();
-            // Set speed based on player's acceleration and pace
-            let speed = ctx.player.skills.physical.pace; // Use pace attribute
-            Some(direction * speed)
+        return if ctx.ball().distance() < 150.0 {
+            Some(SteeringBehavior::Pursuit {
+                target: ctx.tick_context.object_positions.ball_position,
+                velocity: ctx.player.velocity,
+            }.calculate(ctx.player).velocity)
         } else {
-            // No opponent with the ball found
-            // Remain stationary or move back to position
-            Some(Vector3::new(0.0, 0.0, 0.0))
+            Some(SteeringBehavior::Arrive {
+                target: ctx.player.position,
+                slowing_distance: 30.0
+            }.calculate(ctx.player).velocity)
         }
     }
 

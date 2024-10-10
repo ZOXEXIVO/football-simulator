@@ -17,11 +17,9 @@ pub struct ForwardShootingState {}
 
 impl StateProcessingHandler for ForwardShootingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let direction = ctx.ball().direction_to_opponent_goal();
-
         return Some(StateChangeResult::with_forward_state_and_event(
-            ForwardState::Assisting,
-            Event::PlayerEvent(PlayerEvent::Shoot(ctx.player.id, direction)),
+            ForwardState::Standing,
+            Event::PlayerEvent(PlayerEvent::Shoot(ctx.player.id, ctx.ball().direction_to_opponent_goal())),
         ));
 
         // // Check if the player still has the ball

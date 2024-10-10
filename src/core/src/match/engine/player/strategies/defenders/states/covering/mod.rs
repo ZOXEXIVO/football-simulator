@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -14,34 +11,28 @@ static DEFENDER_COVERING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 const MARKING_DISTANCE: f32 = 15.0;
 const INTERCEPTION_DISTANCE: f32 = 100.0;
 const FIELD_THIRD_THRESHOLD: f32 = 0.33;
+const PUSH_UP_HYSTERESIS: f32 = 0.05;
 
 #[derive(Default)]
 pub struct DefenderCoveringState {}
 
 impl StateProcessingHandler for DefenderCoveringState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.in_state_time < 300 {
+            return None;
+        }
+
         let ball_ops = ctx.ball();
-        let player_ops = ctx.player();
-
-        // Check if the ball has moved to the defensive third
         if ball_ops.on_own_side() {
-            return Some(StateChangeResult::with_defender_state(
-                DefenderState::Standing,
-            ));
+            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
         }
 
-        // Check if the ball has moved to the attacking third
-        if ball_ops.distance_to_opponent_goal()
-            < ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD
+        if ball_ops.distance_to_opponent_goal() < ctx.context.field_size.width as f32 * (FIELD_THIRD_THRESHOLD - PUSH_UP_HYSTERESIS)
+            && self.should_push_up(ctx)
         {
-            if self.should_push_up(ctx) {
-                return Some(StateChangeResult::with_defender_state(
-                    DefenderState::PushingUp,
-                ));
-            }
+            return Some(StateChangeResult::with_defender_state(DefenderState::PushingUp));
         }
 
-        // Check if there's an immediate threat to mark
         if let Some(opponent) = self.find_nearby_opponent(ctx) {
             if ctx
                 .tick_context
@@ -51,47 +42,31 @@ impl StateProcessingHandler for DefenderCoveringState {
                 .unwrap()
                 < MARKING_DISTANCE
             {
-                return Some(StateChangeResult::with_defender_state(
-                    DefenderState::Marking,
-                ));
+                return Some(StateChangeResult::with_defender_state(DefenderState::Marking));
             }
         }
 
-        // Check if the ball is moving towards the player and close enough to intercept
         if ball_ops.is_towards_player() && ball_ops.distance() < INTERCEPTION_DISTANCE {
-            return Some(StateChangeResult::with_defender_state(
-                DefenderState::Intercepting,
-            ));
+            return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
         }
 
-        // If none of the above conditions are met, stay in the covering state
         None
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // Implement neural network processing if needed
         None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Calculate the optimal covering position
         let optimal_position = self.calculate_optimal_covering_position(ctx);
 
-        // Calculate the vector from the current position to the optimal position
-        let current_position = ctx.player.position;
-        let movement_vector = optimal_position - current_position;
-
-        // Return the movement vector if it's significant, otherwise stay still
-        if movement_vector.magnitude() > 1.0 {
-            Some(movement_vector.normalize() * ctx.player.skills.physical.acceleration)
-        } else {
-            None
-        }
+        Some(SteeringBehavior::Pursuit {
+            target: optimal_position,
+            velocity: ctx.player.velocity,
+        }.calculate(ctx.player).velocity)
     }
 
-    fn process_conditions(&self, _ctx: ConditionContext) {
-        // No additional conditions to process in this state
-    }
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl DefenderCoveringState {
@@ -108,7 +83,7 @@ impl DefenderCoveringState {
             && team_in_possession
             && defender_not_last_man
             && player_ops.distance_from_start_position()
-                < ctx.context.field_size.width as f32 * 0.25
+            < ctx.context.field_size.width as f32 * 0.25
     }
 
     fn find_nearby_opponent<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
@@ -137,6 +112,7 @@ impl DefenderCoveringState {
             .iter()
             .all(|d| d.position.x >= ctx.player.position.x)
     }
+    // ... (keep other existing methods)
 
     fn calculate_optimal_covering_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let ball_position = ctx.tick_context.object_positions.ball_position;
