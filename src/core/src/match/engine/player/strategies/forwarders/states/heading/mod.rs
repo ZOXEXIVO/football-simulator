@@ -1,7 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
@@ -9,6 +8,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_HEADING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_heading_data.json")));
@@ -36,7 +36,7 @@ impl StateProcessingHandler for ForwardHeadingState {
         let heading_direction = self.calculate_heading_direction(ctx);
 
         // Perform the heading action
-        result.events.add(PlayerUpdateEvent::RequestHeading(
+        result.events.add_player_event(PlayerEvent::RequestHeading(
             ctx.player.id,
             heading_direction,
         ));

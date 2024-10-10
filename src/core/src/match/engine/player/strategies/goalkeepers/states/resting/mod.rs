@@ -1,6 +1,5 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use std::sync::LazyLock;
@@ -42,8 +41,7 @@ impl GoalkeeperRestingState {
         in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        tick_context: &GameTickContext
     ) -> StateChangeResult {
         if in_state_time < 5 {
             StateChangeResult::new();

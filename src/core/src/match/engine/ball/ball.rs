@@ -1,9 +1,10 @@
-use crate::r#match::ball::events::BallUpdateEvent;
+use crate::r#match::ball::events::BallEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use nalgebra::Vector3;
 use rand_distr::num_traits::Pow;
+use crate::r#match::events::EventCollection;
 
 pub struct Ball {
     pub start_position: Vector3<f32>,
@@ -36,7 +37,8 @@ impl Ball {
         context: &MatchContext,
         players: &[MatchPlayer],
         tick_context: &GameTickContext,
-    ) -> Vec<BallUpdateEvent> {
+        events: &mut EventCollection
+    ) -> Vec<BallEvent> {
         let mut result = Vec::with_capacity(10);
 
         self.update_velocity(&mut result);
@@ -51,7 +53,7 @@ impl Ball {
 
     fn check_boundary_collision(
         &mut self,
-        _result: &mut Vec<BallUpdateEvent>,
+        _result: &mut Vec<BallEvent>,
         context: &MatchContext,
     ) {
         let field_width = context.field_size.width as f32 + 1.0;
@@ -71,7 +73,7 @@ impl Ball {
         &mut self,
         context: &MatchContext,
         players: &[MatchPlayer],
-        result: &mut Vec<BallUpdateEvent>,
+        result: &mut Vec<BallEvent>,
     ) {
         const BALL_DISTANCE_THRESHOLD: f32 = 1.0;
 
@@ -128,13 +130,13 @@ impl Ball {
                         .iter()
                         .filter(|p| !p.has_ball)
                         .for_each(|mut player| {
-                            result.push(BallUpdateEvent::UnClaim(player.id));
+                            result.push(BallEvent::UnClaim(player.id));
                         });
 
                     return;
                 }
 
-                result.push(BallUpdateEvent::Claimed(player.id));
+                result.push(BallEvent::Claimed(player.id));
             }
         }
     }
@@ -157,14 +159,14 @@ impl Ball {
             + physical_skills.agility * agility_weight
     }
 
-    fn check_goal(&mut self, context: &MatchContext, result: &mut Vec<BallUpdateEvent>) {
+    fn check_goal(&mut self, context: &MatchContext, result: &mut Vec<BallEvent>) {
         if let Some(goal_side) = context.goal_positions.is_goal(self.position) {
-            result.push(BallUpdateEvent::Goal(goal_side, self.previous_owner));
+            result.push(BallEvent::Goal(goal_side, self.previous_owner));
             self.reset();
         }
     }
 
-    fn update_velocity(&mut self, _result: &mut Vec<BallUpdateEvent>) {
+    fn update_velocity(&mut self, _result: &mut Vec<BallEvent>) {
         let gravity = Vector3::new(0.0, 0.0, -9.81);
 
         const FRICTION_COEFFICIENT: f32 = 1.5;

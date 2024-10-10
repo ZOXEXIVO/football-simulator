@@ -1,12 +1,12 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_CATCHING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_catching_data.json")));
@@ -22,7 +22,7 @@ impl StateProcessingHandler for GoalkeeperCatchingState {
 
             holding_result
                 .events
-                .add(PlayerUpdateEvent::CaughtBall(ctx.player.id));
+                .add_player_event(PlayerEvent::CaughtBall(ctx.player.id));
 
             Some(holding_result)
         } else {

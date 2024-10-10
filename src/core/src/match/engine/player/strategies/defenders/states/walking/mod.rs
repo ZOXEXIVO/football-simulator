@@ -5,7 +5,7 @@ use crate::common::NeuralNetwork;
 use crate::IntegerUtils;
 use crate::r#match::{ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
@@ -68,7 +68,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         // Adjust position if needed
         let optimal_position = self.calculate_optimal_position(ctx);
         if ctx.player.position.distance_to(&optimal_position) > 2.0 {
-            result.events.add(PlayerUpdateEvent::MovePlayer(ctx.player.id, optimal_position));
+            result.events.add_player_event(PlayerEvent::MovePlayer(ctx.player.id, optimal_position));
             return Some(result);
         }
 

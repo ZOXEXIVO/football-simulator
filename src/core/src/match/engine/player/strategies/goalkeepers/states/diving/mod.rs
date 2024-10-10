@@ -1,12 +1,12 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_DIVING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_diving_data.json")));
@@ -37,7 +37,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
 
         if elapsed_time > DIVE_DURATION + RECOVERY_TIME {
             // Dive and recovery completed, signal state change
-            //result.events.add(PlayerUpdateEvent::DiveCompleted(ctx.player.id));
+            //result.events.add_player_event(PlayerEvent::DiveCompleted(ctx.player.id));
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Standing,
             ));
@@ -50,17 +50,17 @@ impl StateProcessingHandler for GoalkeeperDivingState {
                 ctx.player.position + dive_direction * self.calculate_dive_distance(ctx);
             result
                 .events
-                .add(PlayerUpdateEvent::MovePlayer(ctx.player.id, dive_position));
+                .add_player_event(PlayerEvent::MovePlayer(ctx.player.id, dive_position));
         } else {
             // In recovery phase
             if self.is_ball_caught(ctx) {
                 result
                     .events
-                    .add(PlayerUpdateEvent::CaughtBall(ctx.player.id));
+                    .add_player_event(PlayerEvent::CaughtBall(ctx.player.id));
             } else if self.is_ball_nearby(ctx) {
                 result
                     .events
-                    .add(PlayerUpdateEvent::ClaimBall(ctx.player.id));
+                    .add_player_event(PlayerEvent::ClaimBall(ctx.player.id));
             }
         }
 

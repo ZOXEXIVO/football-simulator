@@ -1,13 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult,
     StateProcessingContext, StateProcessingHandler, VectorExtensions,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -63,7 +63,7 @@ impl StateProcessingHandler for GoalkeeperStandingState {
         // Adjust position if needed
         let optimal_position = self.calculate_optimal_position(ctx);
         if ctx.player.position.distance_to(&optimal_position) > 0.5 {
-            result.events.add(PlayerUpdateEvent::MovePlayer(
+            result.events.add_player_event(PlayerEvent::MovePlayer(
                 ctx.player.id,
                 optimal_position,
             ));

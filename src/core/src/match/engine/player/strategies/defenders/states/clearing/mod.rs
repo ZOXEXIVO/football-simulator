@@ -1,13 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_CLEARING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_clearing_data.json")));
@@ -47,7 +47,7 @@ impl StateProcessingHandler for DefenderClearingState {
         // Add the clear ball event with the calculated velocity
         state
             .events
-            .add(PlayerUpdateEvent::ClearBall(ball_velocity));
+            .add_player_event(PlayerEvent::ClearBall(ball_velocity));
 
         // Return the updated state with the clearing event
         Some(state)

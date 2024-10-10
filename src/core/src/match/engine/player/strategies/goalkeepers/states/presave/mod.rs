@@ -38,7 +38,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
         // Adjust position if needed
         let optimal_position = self.calculate_optimal_position(ctx);
         if ctx.player.position.distance_to(&optimal_position) > 1.0 {
-            //result.events.add(PlayerUpdateEvent::Move(ctx.player.id, optimal_position));
+            //result.events.add_player_event(PlayerEvent::Move(ctx.player.id, optimal_position));
         }
 
         Some(result)

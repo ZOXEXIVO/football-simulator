@@ -108,6 +108,7 @@ mod tests {
             state: PlayerState::Injured,
             in_state_time: 0,
             statistics: MatchPlayerStatistics::default(),
+            use_extended_state_logging: false,
         }
     }
 

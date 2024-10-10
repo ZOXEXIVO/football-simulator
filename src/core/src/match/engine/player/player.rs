@@ -2,7 +2,6 @@
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerUpdateEventCollection;
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 use crate::r#match::{GameTickContext, MatchContext};
@@ -12,6 +11,7 @@ use crate::{
 };
 use nalgebra::Vector3;
 use std::fmt::*;
+use crate::r#match::events::EventCollection;
 
 #[derive(Debug, Clone)]
 pub struct MatchPlayer {
@@ -74,16 +74,12 @@ impl MatchPlayer {
         &mut self,
         context: &MatchContext,
         tick_context: &GameTickContext,
-    ) -> PlayerUpdateEventCollection {
-        let mut result = PlayerUpdateEventCollection::new();
-
-        // change move
-        result.join(PlayerMatchState::process(self, context, tick_context));
+        events: &mut EventCollection
+    ) {
+        events.add_range(PlayerMatchState::process(self, context, tick_context).events);
 
         self.check_boundary_collision(context);
         self.move_to();
-
-        result
     }
 
     fn check_boundary_collision(&mut self, context: &MatchContext) {

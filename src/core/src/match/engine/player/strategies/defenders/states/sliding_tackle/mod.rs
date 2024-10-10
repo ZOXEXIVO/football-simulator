@@ -5,7 +5,8 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::events::Event;
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_SLIDING_TACKLE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_sliding_tackle_data.json")));
@@ -49,7 +50,7 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
                 let mut state_change = StateChangeResult::with_defender_state(DefenderState::Standing);
 
                 // Gain possession of the ball
-                state_change.events.add(PlayerUpdateEvent::GainBall(ctx.player.id));
+                state_change.events.add(Event::PlayerEvent(PlayerEvent::GainBall(ctx.player.id)));
 
                 // Update opponent's state to reflect loss of possession
                 // This assumes you have a mechanism to update other players' states
@@ -64,7 +65,7 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
                 let mut state_change = StateChangeResult::with_defender_state(DefenderState::Standing);
 
                 // Generate a foul event
-                state_change.events.add(PlayerUpdateEvent::CommitFoul);
+                state_change.events.add(Event::PlayerEvent(PlayerEvent::CommitFoul));
 
                 // Transition to appropriate state (e.g., ReactingToFoul)
                 // You may need to define additional states for handling fouls

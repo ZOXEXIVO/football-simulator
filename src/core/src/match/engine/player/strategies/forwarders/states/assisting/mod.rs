@@ -26,7 +26,7 @@ impl StateProcessingHandler for ForwardAssistingState {
             // If under high pressure, decide between quick pass or dribbling
             if self.should_make_quick_pass(ctx) {
                 if let Some(teammate_id) = self.find_best_teammate_to_assist(ctx) {
-                    //result.events.add(PlayerUpdateEvent::Pass(ctx.player.player_id, teammate_id));
+                    //result.events.add_player_event(PlayerEvent::Pass(ctx.player.player_id, teammate_id));
                     return Some(result);
                 }
             }
@@ -38,7 +38,7 @@ impl StateProcessingHandler for ForwardAssistingState {
         if let Some(teammate_id) = self.find_best_teammate_to_assist(ctx) {
             if self.is_good_assisting_position(ctx, teammate_id) {
                 // Make the assist
-                //result.events.add(PlayerUpdateEvent::Pass(ctx.player.player_id, teammate_id));
+                //result.events.add_player_event(PlayerEvent::Pass(ctx.player.player_id, teammate_id));
                 return Some(result);
             }
         }

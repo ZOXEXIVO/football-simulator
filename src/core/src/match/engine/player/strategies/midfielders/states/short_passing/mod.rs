@@ -4,7 +4,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::PlayerEvent;
 
 static MIDFIELDER_SHORT_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_short_passing_data.json")));
@@ -28,7 +28,7 @@ impl StateProcessingHandler for MidfielderShortPassingState {
             // Create an event to change the ball's velocity and update possession
             let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::Standing);
 
-            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.id, pass_velocity));
+            state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, pass_velocity));
 
             // Transition to the next appropriate state (e.g., Standing)
             Some(state_change)

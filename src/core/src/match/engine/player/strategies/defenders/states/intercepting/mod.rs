@@ -7,7 +7,7 @@ use nalgebra::Vector3;
 use std::sync::LazyLock;
 use rand::Rng;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_INTERCEPTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_intercepting_data.json")));
@@ -33,7 +33,7 @@ impl StateProcessingHandler for DefenderInterceptingState {
                         DefenderState::Running,
                     );
 
-                    state.events.add(PlayerUpdateEvent::ClaimBall(ctx.player.id));
+                    state.events.add_player_event(PlayerEvent::ClaimBall(ctx.player.id));
 
                     return Some(state);
                 }

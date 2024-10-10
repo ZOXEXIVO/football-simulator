@@ -4,7 +4,7 @@ pub mod field;
 pub mod player;
 pub mod result;
 pub mod state;
-mod dispatcher;
+pub mod events;
 
 pub use ball::*;
 pub use engine::*;

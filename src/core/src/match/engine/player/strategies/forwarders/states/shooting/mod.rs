@@ -1,12 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
+use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_shooting_data.json")));
@@ -20,7 +21,7 @@ impl StateProcessingHandler for ForwardShootingState {
 
         return Some(StateChangeResult::with_forward_state_and_event(
             ForwardState::Assisting,
-            PlayerUpdateEvent::Shoot(ctx.player.id, direction),
+            Event::PlayerEvent(PlayerEvent::Shoot(ctx.player.id, direction)),
         ));
 
         // // Check if the player still has the ball
@@ -47,7 +48,7 @@ impl StateProcessingHandler for ForwardShootingState {
         //     if self.should_take_quick_shot(ctx) {
         //         result
         //             .events
-        //             .add(PlayerUpdateEvent::Shoot(ctx.player.id, direction));
+        //             .add(PlayerEvent::Shoot(ctx.player.id, direction));
         //     } else if let Some(teammate) = self.find_best_teammate_to_pass(ctx) {
         //         return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
         //     }
@@ -55,7 +56,7 @@ impl StateProcessingHandler for ForwardShootingState {
         //     // If not under immediate pressure, take the shot
         //     result
         //         .events
-        //         .add(PlayerUpdateEvent::Shoot(ctx.player.id, direction));
+        //         .add(PlayerEvent::Shoot(ctx.player.id, direction));
         // }
         //
         // Some(result)

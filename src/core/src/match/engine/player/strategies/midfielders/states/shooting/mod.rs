@@ -6,7 +6,7 @@ use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::player::PlayerSide;
 
 static MIDFIELDER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -35,7 +35,7 @@ impl StateProcessingHandler for MidfielderShootingState {
 
         let ball_velocity = shot_direction * shot_power;
 
-        state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.id, ball_velocity));
+        state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, ball_velocity));
 
         // Transition to the next appropriate state (e.g., Standing)
         Some(state_change)

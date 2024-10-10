@@ -4,7 +4,8 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use crate::r#match::events::{Event, EventCollection};
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -40,9 +41,9 @@ impl StateProcessingHandler for DefenderPassingState {
 
         if let Some(player_id) = best_player_id {
             if let Some(teammate_player_position) = ctx.tick_context.object_positions.players_positions.get_player_position(player_id) {
-                let events = PlayerUpdateEventCollection::with_event(
-                    PlayerUpdateEvent::PassTo(ctx.player.id, teammate_player_position, 0.0)
-                );
+                let events = EventCollection::with_event(Event::PlayerEvent(
+                    PlayerEvent::PassTo(ctx.player.id, teammate_player_position, 0.0)
+                ));
 
                 return Some(StateChangeResult::with_events(events));
             }

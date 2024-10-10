@@ -1,13 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_CROSS_RECEIVING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
     DefaultNeuralNetworkLoader::load(include_str!("nn_cross_receiving_data.json"))
@@ -46,7 +46,7 @@ impl StateProcessingHandler for ForwardCrossReceivingState {
             // Attempt to receive the cross
             result
                 .events
-                .add(PlayerUpdateEvent::RequestBallReceive(ctx.player.id));
+                .add_player_event(PlayerEvent::RequestBallReceive(ctx.player.id));
         }
 
         Some(result)

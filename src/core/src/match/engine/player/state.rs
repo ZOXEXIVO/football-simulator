@@ -2,9 +2,9 @@ use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerUpdateEventCollection;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use std::fmt::{Display, Formatter};
+use crate::r#match::events::EventCollection;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PlayerState {
@@ -34,7 +34,7 @@ impl PlayerMatchState {
         player: &mut MatchPlayer,
         context: &MatchContext,
         tick_context: &GameTickContext,
-    ) -> PlayerUpdateEventCollection {
+    ) -> EventCollection {
         let state_change_result = player.tactics_position.position_group().process(
             player.in_state_time,
             player,

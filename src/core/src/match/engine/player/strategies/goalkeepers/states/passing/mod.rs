@@ -1,12 +1,12 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -39,7 +39,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
 
             result
                 .events
-                .add(PlayerUpdateEvent::UnClaimBall(ctx.player.id));
+                .add_player_event(PlayerEvent::UnClaimBall(ctx.player.id));
 
             if let Some(teammate_positions) = ctx
                 .tick_context
@@ -47,7 +47,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
                 .players_positions
                 .get_player_position(*teammate_id)
             {
-                result.events.add(PlayerUpdateEvent::PassTo(
+                result.events.add_player_event(PlayerEvent::PassTo(
                     *teammate_id,
                     teammate_positions,
                     pass_power,

@@ -2,7 +2,6 @@ use crate::common::NeuralNetwork;
 use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::{ConditionContext, GameTickContext, MatchContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 
 static GOALKEEPER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -35,7 +34,6 @@ impl GoalkeeperShootingState {
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
     ) -> StateChangeResult {
         StateChangeResult::new()
 

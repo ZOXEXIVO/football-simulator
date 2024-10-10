@@ -1,7 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
@@ -9,6 +8,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_DRIBBLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_dribbling_data.json")));
@@ -48,7 +48,7 @@ impl StateProcessingHandler for ForwardDribblingState {
             // Perform the pass
             result
                 .events
-                .add(PlayerUpdateEvent::RequestPass(ctx.player.id, teammate.id));
+                .add_player_event(PlayerEvent::RequestPass(ctx.player.id, teammate.id));
 
             // Transition to Running state after making the pass
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));

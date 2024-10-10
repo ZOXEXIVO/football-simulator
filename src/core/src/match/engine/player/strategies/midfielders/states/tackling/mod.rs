@@ -5,7 +5,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::PlayerEvent;
 
 static MIDFIELDER_TACKLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_tackling_data.json")));
@@ -41,7 +41,7 @@ impl StateProcessingHandler for MidfielderTacklingState {
                 let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::HoldingPossession);
 
                 // Gain possession of the ball
-                state_change.events.add(PlayerUpdateEvent::GainBall(ctx.player.id));
+                state_change.events.add_player_event(PlayerEvent::GainBall(ctx.player.id));
 
                 // Update opponent's state to reflect loss of possession
                 // You may need to send an event or directly modify the opponent's state
@@ -55,7 +55,7 @@ impl StateProcessingHandler for MidfielderTacklingState {
                 let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::Standing);
 
                 // Generate a foul event
-                state_change.events.add(PlayerUpdateEvent::CommitFoul);
+                state_change.events.add_player_event(PlayerEvent::CommitFoul);
 
                 // Transition to appropriate state (e.g., ReactingToFoul)
                 // You may need to define additional states for handling fouls

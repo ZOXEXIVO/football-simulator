@@ -1,12 +1,12 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{ConditionContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_PRESSURE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_pressure_data.json")));
@@ -38,7 +38,7 @@ impl GoalkeeperPressureState {
         player: &mut MatchPlayer,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        result: &mut Vec<PlayerEvent>,
     ) -> StateChangeResult {
         if player.position.distance_to(&player.start_position) < 10.0 {
             return StateChangeResult::with(
@@ -60,14 +60,14 @@ impl GoalkeeperPressureState {
     fn check_collision(
         player: &MatchPlayer,
         objects_positions: &MatchObjectsPositions,
-        result: &mut Vec<PlayerUpdateEvent>,
+        result: &mut Vec<PlayerEvent>,
     ) {
         if objects_positions
             .ball_position
             .distance_to(&player.position)
             < 10.0
         {
-            result.push(PlayerUpdateEvent::TacklingBall(player.id))
+            result.push(PlayerEvent::TacklingBall(player.id))
         }
     }
 }

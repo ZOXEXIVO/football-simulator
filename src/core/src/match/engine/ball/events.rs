@@ -1,9 +1,9 @@
-use crate::r#match::engine::dispatcher::Event;
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
+use crate::r#match::events::Event;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::MatchContext;
 
 #[derive(Copy, Clone)]
-pub enum BallUpdateEvent {
+pub enum BallEvent {
     Goal(GoalSide, Option<u32>),
     Claimed(u32),
     UnClaim(u32),
@@ -19,30 +19,27 @@ pub enum GoalSide {
 pub struct BallEventDispatcher;
 
 impl BallEventDispatcher {
-    pub fn dispatch<'a>(
-        _current_time: u64,
-        events: impl Iterator<Item = Event(_)>,
-        context: &MatchContext,
-    ) -> Vec<Event(_)> {
+    pub fn dispatch(event: BallEvent, context: &MatchContext) -> Vec<Event> {
+        let mut remaining_events = Vec::new();
 
-        for event in events {
-            match event {
-                BallUpdateEvent::Goal(side, goalscorer_player_id) => match side {
-                    GoalSide::Home => context.score.increment_home_goals(),
-                    GoalSide::Away => context.score.increment_away_goals(),
-                },
-                BallUpdateEvent::Claimed(player_id) => {
-                    player_events.add(PlayerUpdateEvent::ClaimBall(player_id));
-                }
-                BallUpdateEvent::Gained(player_id) => {
-                    player_events.add(PlayerUpdateEvent::GainBall(player_id));
-                }
-                BallUpdateEvent::UnClaim(player_id) => {
-                    player_events.add(PlayerUpdateEvent::UnClaimBall(player_id));
-                }
+        match event {
+            BallEvent::Goal(side, goalscorer_player_id) => match side {
+                GoalSide::Home => context.score.increment_home_goals(),
+                GoalSide::Away => context.score.increment_away_goals(),
+            },
+            BallEvent::Claimed(player_id) => {
+                remaining_events.push(Event::PlayerEvent(PlayerEvent::ClaimBall(player_id)));
+            }
+            BallEvent::Gained(player_id) => {
+                remaining_events.push(Event::PlayerEvent(PlayerEvent::GainBall(player_id)));
+            }
+            BallEvent::UnClaim(player_id) => {
+                remaining_events.push(Event::PlayerEvent(PlayerEvent::UnClaimBall(
+                    player_id,
+                )));
             }
         }
 
-        player_events
+        remaining_events
     }
 }

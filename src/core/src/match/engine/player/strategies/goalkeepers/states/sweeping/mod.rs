@@ -1,8 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
     ConditionContext, GameTickContext, MatchContext, MatchPlayer, StateChangeResult,
     StateProcessingContext, StateProcessingHandler,
@@ -37,8 +35,7 @@ impl GoalkeeperSweepingState {
         in_state_time: u64,
         player: &mut MatchPlayer,
         context: &mut MatchContext,
-        tick_context: &GameTickContext,
-        result: &mut Vec<PlayerUpdateEvent>,
+        tick_context: &GameTickContext
     ) -> StateChangeResult {
         let minimal_distance = 30.0;
 
@@ -62,7 +59,7 @@ impl GoalkeeperSweepingState {
 
             let (opponent_to_tackle, _) = nearest_opponents.first().unwrap();
 
-            result.push(PlayerUpdateEvent::TacklingBall(*opponent_to_tackle));
+            //result.push(PlayerEvent::TacklingBall(*opponent_to_tackle));
 
             // TODO Own strategy
             StateChangeResult::with_goalkeeper_state(GoalkeeperState::ReturningToGoal)
