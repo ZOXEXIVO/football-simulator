@@ -95,24 +95,6 @@ impl StateProcessingHandler for DefenderStandingState {
 }
 
 impl DefenderStandingState {
-    fn prepare_network_input(&self, ctx: &StateProcessingContext) -> Vec<f64> {
-        vec![
-            ctx.ball().distance() as f64,
-            ctx.ball().speed() as f64,
-            if ctx.ball().on_own_side() { 1.0 } else { 0.0 },
-            if ctx.ball().is_towards_player() { 1.0 } else { 0.0 },
-            ctx.player().distance_from_start_position() as f64,
-            ctx.player.skills.physical.stamina as f64,
-            ctx.player.skills.mental.positioning as f64,
-            ctx.player.skills.mental.decisions as f64,
-            ctx.context.time.time as f64,
-            ctx.in_state_time as f64,
-            ctx.player.skills.physical.acceleration as f64,
-            ctx.player.skills.technical.tackling as f64,
-            ctx.player.skills.technical.marking as f64
-        ]
-    }
-
     fn should_transition_to_walking(&self, ctx: &StateProcessingContext) -> bool {
         let player_ops = ctx.player();
         let ball_ops = ctx.ball();
