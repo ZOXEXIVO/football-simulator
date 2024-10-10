@@ -1,16 +1,12 @@
-use crate::r#match::defenders::states::{
-    DefenderBlockingState, DefenderClearingState, DefenderHeadingState, DefenderHoldingLineState,
-    DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState,
-    DefenderPassingState, DefenderPressingState, DefenderRestingState, DefenderReturningState,
-    DefenderSlidingTackleState, DefenderStandingState, DefenderTacklingState,
-    DefenderTrackingBackState, DefenderWalkingState,
-};
+use crate::r#match::defenders::states::{DefenderBlockingState, DefenderClearingState, DefenderCoveringState, DefenderHeadingState, DefenderHoldingLineState, DefenderInterceptingState, DefenderMarkingState, DefenderOffsideTrapState, DefenderPassingState, DefenderPressingState, DefenderPushingUpState, DefenderRestingState, DefenderReturningState, DefenderSlidingTackleState, DefenderStandingState, DefenderTacklingState, DefenderTrackingBackState, DefenderWalkingState};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum DefenderState {
     Standing,      // Standing
+    Covering,      // Covering the ball
+    PushingUp,     // Pushing the ball up
     Resting,       // Resting after an attack
     Passing,       // Passing the ball
     Running,       // Running in the direction of the ball
@@ -61,6 +57,8 @@ impl DefenderStrategies {
             DefenderState::Returning => state_processor.process(DefenderReturningState::default()),
             DefenderState::Walking => state_processor.process(DefenderWalkingState::default()),
             DefenderState::Tackling => state_processor.process(DefenderTacklingState::default()),
+            DefenderState::Covering => state_processor.process(DefenderCoveringState::default()),
+            DefenderState::PushingUp => state_processor.process(DefenderPushingUpState::default()),
         }
     }
 }
@@ -85,6 +83,8 @@ impl Display for DefenderState {
             DefenderState::Returning => write!(f, "Returning"),
             DefenderState::Walking => write!(f, "Walking"),
             DefenderState::Tackling => write!(f, "Tackling"),
+            DefenderState::Covering => write!(f, "Covering"),
+            DefenderState::PushingUp => write!(f, "Pushing Up"),
         }
     }
 }

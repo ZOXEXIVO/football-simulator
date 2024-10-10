@@ -1,0 +1,168 @@
+use crate::common::loader::DefaultNeuralNetworkLoader;
+use crate::common::NeuralNetwork;
+use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
+
+static DEFENDER_COVERING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_covering_data.json")));
+
+const MARKING_DISTANCE: f32 = 15.0;
+const INTERCEPTION_DISTANCE: f32 = 100.0;
+const FIELD_THIRD_THRESHOLD: f32 = 0.33;
+
+#[derive(Default)]
+pub struct DefenderCoveringState {}
+
+impl StateProcessingHandler for DefenderCoveringState {
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        let ball_ops = ctx.ball();
+        let player_ops = ctx.player();
+
+        // Check if the ball has moved to the defensive third
+        if ball_ops.on_own_side() {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ));
+        }
+
+        // Check if the ball has moved to the attacking third
+        if ball_ops.distance_to_opponent_goal()
+            < ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD
+        {
+            if self.should_push_up(ctx) {
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::PushingUp,
+                ));
+            }
+        }
+
+        // Check if there's an immediate threat to mark
+        if let Some(opponent) = self.find_nearby_opponent(ctx) {
+            if ctx
+                .tick_context
+                .object_positions
+                .player_distances
+                .get(opponent.id, ctx.player.id)
+                .unwrap()
+                < MARKING_DISTANCE
+            {
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Marking,
+                ));
+            }
+        }
+
+        // Check if the ball is moving towards the player and close enough to intercept
+        if ball_ops.is_towards_player() && ball_ops.distance() < INTERCEPTION_DISTANCE {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Intercepting,
+            ));
+        }
+
+        // If none of the above conditions are met, stay in the covering state
+        None
+    }
+
+    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        // Implement neural network processing if needed
+        None
+    }
+
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        // Calculate the optimal covering position
+        let optimal_position = self.calculate_optimal_covering_position(ctx);
+
+        // Calculate the vector from the current position to the optimal position
+        let current_position = ctx.player.position;
+        let movement_vector = optimal_position - current_position;
+
+        // Return the movement vector if it's significant, otherwise stay still
+        if movement_vector.magnitude() > 1.0 {
+            Some(movement_vector.normalize() * ctx.player.skills.physical.acceleration)
+        } else {
+            None
+        }
+    }
+
+    fn process_conditions(&self, _ctx: ConditionContext) {
+        // No additional conditions to process in this state
+    }
+}
+
+impl DefenderCoveringState {
+    fn should_push_up(&self, ctx: &StateProcessingContext) -> bool {
+        let ball_ops = ctx.ball();
+        let player_ops = ctx.player();
+
+        let ball_in_attacking_third = ball_ops.distance_to_opponent_goal()
+            < ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD;
+        let team_in_possession = self.is_team_in_control(ctx);
+        let defender_not_last_man = !self.is_last_defender(ctx);
+
+        ball_in_attacking_third
+            && team_in_possession
+            && defender_not_last_man
+            && player_ops.distance_from_start_position()
+                < ctx.context.field_size.width as f32 * 0.25
+    }
+
+    fn find_nearby_opponent<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
+        if let Some((opponent_id, _)) = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .find_closest_opponent(ctx.player)
+        {
+            return ctx.context.players.get(opponent_id);
+        }
+
+        None
+    }
+
+    fn is_team_in_control(&self, ctx: &StateProcessingContext) -> bool {
+        let teammates_with_ball = ctx.context.players.get_by_team(ctx.player.team_id);
+        !teammates_with_ball.is_empty()
+    }
+
+    fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
+        let players = ctx.player();
+        let defenders = players.defenders();
+
+        defenders
+            .iter()
+            .all(|d| d.position.x >= ctx.player.position.x)
+    }
+
+    fn calculate_optimal_covering_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
+        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let player_position = ctx.player.position;
+        let field_width = ctx.context.field_size.width as f32;
+        let field_height = ctx.context.field_size.height as f32;
+
+        // Calculate the center of the middle third
+        let middle_third_center = Vector3::new(field_width * 0.5, field_height * 0.5, 0.0);
+
+        // Calculate the vector from the ball to the center of our goal
+        let ball_to_goal = ctx.ball().direction_to_own_goal() - ball_position;
+
+        // Calculate a position that's between the ball and our goal, but in the middle third
+        let covering_position = ball_position + ball_to_goal * 0.4; // Adjust this factor as needed
+
+        // Blend the covering position with the middle third center and the player's current position
+        let optimal_position =
+            (covering_position * 0.6 + middle_third_center * 0.3 + player_position * 0.1)
+                .cap_magnitude(field_width * 0.4);
+
+        // Ensure the optimal position is within the field boundaries
+        Vector3::new(
+            optimal_position.x.clamp(0.0, field_width),
+            optimal_position.y.clamp(0.0, field_height),
+            0.0,
+        )
+    }
+}

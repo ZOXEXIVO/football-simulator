@@ -90,7 +90,7 @@ impl ForwardDribblingState {
         // Check if there are no opponents within the dribble distance
         opponents
             .iter()
-            .all(|opponent| ctx.player.position.distance_to(&opponent.position) > dribble_distance)
+            .all(|opponent| ctx.tick_context.object_positions.player_distances.get(ctx.player.id, opponent.id).unwrap() > dribble_distance)
     }
 
     fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {
@@ -118,13 +118,14 @@ impl ForwardDribblingState {
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
         let max_distance = 20.0; // Adjust based on your game's scale
-        let players = ctx.player();
-        let opponents = players.opponents();
 
         // Check if the teammate is within a reasonable distance
-        if ctx.player.position.distance_to(&teammate.position) > max_distance {
+        if ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id).unwrap() > max_distance {
             return false;
         }
+
+        let players = ctx.player();
+        let opponents = players.opponents();
 
         // Check if there are no opponents close to the teammate
         opponents
