@@ -233,9 +233,9 @@ pub fn is_towards_player(
 }
 
 #[cfg(target_os = "macos")]
-const WINDOW_WIDTH: i32 = 1624;
+const WINDOW_WIDTH: i32 = 1300;
 #[cfg(target_os = "macos")]
-const WINDOW_HEIGHT: i32 = 1268;
+const WINDOW_HEIGHT: i32 = 1000;
 
 #[cfg(target_os = "windows")]
 const WINDOW_WIDTH: i32 = 2436;
