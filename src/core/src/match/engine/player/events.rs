@@ -74,11 +74,18 @@ impl PlayerEventDispatcher {
                 field.ball.current_owner = Some(player_id);
             }
             PlayerEvent::PassTo(player_id, pass_target, pass_power) => {
+                field.players.iter_mut().for_each(|player| {
+                    player.has_ball = false;
+                });
+
                 let ball_pass_vector = pass_target - field.ball.position;
                 field.ball.velocity = ball_pass_vector.normalize();
 
                 let player = field.get_player_mut(player_id).unwrap();
                 player.has_ball = false;
+
+                field.ball.previous_owner = field.ball.current_owner;
+                field.ball.current_owner = None;
             }
             PlayerEvent::RushOut(_) => {}
             PlayerEvent::StayInGoal(_) => {}

@@ -85,7 +85,7 @@ impl<'p> StateProcessor<'p> {
 
     pub fn process_inner<H: StateProcessingHandler>(self, handler: H) -> StateProcessingResult {
         let player_id = self.player.id;
-        let need_extended_state_logging =  self.player.use_extended_state_logging;
+        let need_extended_state_logging = self.player.use_extended_state_logging;
 
         let processing_ctx = self.into_ctx();
         let mut result = StateProcessingResult::new();

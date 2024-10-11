@@ -112,9 +112,11 @@ async fn main() {
 
         next_frame().await;
 
-        //thread::sleep(Duration::from_millis(50));
+        thread::sleep(Duration::from_millis(50));
     }
 }
+
+const TRACKING_PLAYER_ID: u32 = 123;
 
 pub fn get_home_squad() -> TeamSquad {
     let players = [
@@ -133,7 +135,7 @@ pub fn get_home_squad() -> TeamSquad {
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(1, player, player.position(), player.id == 115))
+        .map(|player| MatchPlayer::from_player(1, player, player.position(), player.id == TRACKING_PLAYER_ID))
         .collect();
 
     let home_squad = TeamSquad {
@@ -164,7 +166,7 @@ pub fn get_away_squad() -> TeamSquad {
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(2, player, player.position(), false))
+        .map(|player| MatchPlayer::from_player(2, player, player.position(), player.id == TRACKING_PLAYER_ID))
         .collect();
 
     let away_squad = TeamSquad {

@@ -3,7 +3,7 @@ use rand::Rng;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
@@ -91,21 +91,24 @@ impl StateProcessingHandler for DefenderTacklingState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Move towards the opponent to attempt the sliding tackle
 
-        // Identify the opponent player with the ball
-        let players = ctx.player();
-        let opponent_with_ball = players.opponent_with_ball();
+        if ctx.in_state_time % 100 == 0 {
+            // Identify the opponent player with the ball
+            let players = ctx.player();
+            let opponent_with_ball = players.opponent_with_ball();
 
-        if let Some(opponent) = opponent_with_ball.first() {
-            // Calculate direction towards the opponent
-            let direction = (opponent.position - ctx.player.position).normalize();
-            // Set speed based on player's pace, increased slightly for the slide
-            let speed = ctx.player.skills.physical.pace * 1.1; // Increase speed by 10%
-            Some(direction * speed)
-        } else {
-            // No opponent with the ball found
-            // Remain stationary or move back to position
-            Some(Vector3::new(0.0, 0.0, 0.0))
+            if let Some(opponent) = opponent_with_ball.first() {
+                Some(SteeringBehavior::Arrive {
+                    target: opponent.position,
+                    slowing_distance: 10.0,
+                }.calculate(ctx.player).velocity);
+            } else {
+                // No opponent with the ball found
+                // Remain stationary or move back to position
+                return Some(Vector3::new(0.0, 0.0, 0.0))
+            }
         }
+
+        None
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {

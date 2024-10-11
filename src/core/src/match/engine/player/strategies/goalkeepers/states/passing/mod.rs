@@ -57,7 +57,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
             return Some(result);
         }
 
-        if ctx.in_state_time > 500 {
+        if ctx.in_state_time > 50 {
             let (nearest_teammates, opponents) = ctx.tick_context
                 .object_positions
                 .player_distances
