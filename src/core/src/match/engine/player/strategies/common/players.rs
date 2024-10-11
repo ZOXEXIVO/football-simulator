@@ -49,6 +49,10 @@ impl<'p> PlayerOperationsImpl<'p> {
             .players_within_distance_count(self.ctx.player, 10.0)
     }
 
+    pub fn is_team_control_ball(&self) -> bool {
+        self.ctx.context.players.get_by_team(self.ctx.player.team_id).iter().any(|p| p.has_ball)
+    }
+
     pub fn is_team_loosing(&self) -> bool {
         if self.ctx.player.team_id == self.ctx.context.score.home_team.team_id {
             self.ctx.context.score.home_team < self.ctx.context.score.away_team

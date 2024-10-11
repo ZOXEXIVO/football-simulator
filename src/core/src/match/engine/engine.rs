@@ -1,7 +1,7 @@
 use crate::r#match::ball::events::{GoalSide};
 use crate::r#match::field::MatchField;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager};
+use crate::r#match::{GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager, StateProcessingContext};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};

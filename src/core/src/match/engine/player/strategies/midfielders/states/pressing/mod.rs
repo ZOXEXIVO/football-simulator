@@ -37,9 +37,7 @@ impl StateProcessingHandler for MidfielderPressingState {
                 return Some(StateChangeResult::with_midfielder_state(MidfielderState::Standing));
             }
         } else {
-            if ctx.ball().distance() > 200.0 {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
-            }
+
         }
 
         None

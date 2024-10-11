@@ -26,7 +26,7 @@ impl StateProcessingHandler for DefenderPushingUpState {
             return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
         }
 
-        if !self.is_team_in_control(ctx) {
+        if !ctx.player().is_team_control_ball() {
             if let Some(opponent) = self.find_nearby_opponent(ctx) {
                 let distance_to_opponent = ctx
                     .tick_context
@@ -74,10 +74,6 @@ impl StateProcessingHandler for DefenderPushingUpState {
 }
 
 impl DefenderPushingUpState {
-    fn is_team_in_control(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.context.players.get_by_team(ctx.player.team_id).iter().any(|p| p.has_ball)
-    }
-
     fn find_nearby_opponent<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
         ctx.tick_context
             .object_positions

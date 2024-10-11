@@ -76,7 +76,7 @@ impl DefenderCoveringState {
 
         let ball_in_attacking_third = ball_ops.distance_to_opponent_goal()
             < ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD;
-        let team_in_possession = self.is_team_in_control(ctx);
+        let team_in_possession = ctx.player().is_team_control_ball();
         let defender_not_last_man = !self.is_last_defender(ctx);
 
         ball_in_attacking_third
@@ -97,11 +97,6 @@ impl DefenderCoveringState {
         }
 
         None
-    }
-
-    fn is_team_in_control(&self, ctx: &StateProcessingContext) -> bool {
-        let teammates_with_ball = ctx.context.players.get_by_team(ctx.player.team_id);
-        !teammates_with_ball.is_empty()
     }
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {

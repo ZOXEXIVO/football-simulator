@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior,
-};
+use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -14,21 +11,38 @@ static FORWARD_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 #[derive(Default)]
 pub struct ForwardRunningState {}
 
+const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0;
 const BALL_DISTANCE_THRESHOLD: f32 = 20.0;
 const MAX_PLAYER_SPEED: f32 = 50.0;
+const SHOOTING_DISTANCE_THRESHOLD: f32 = 300.0;
+const PASSING_DISTANCE_THRESHOLD: f32 = 500.0;
+const ASSISTING_DISTANCE_THRESHOLD: f32 = 200.0;
+const TARGET_REACHED_THRESHOLD: f32 = 10.0;
 
 impl StateProcessingHandler for ForwardRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if !ctx.player.has_ball {
-            return Some(StateChangeResult::with_forward_state(
-                ForwardState::Assisting,
-            ));
-        }
+        let distance_to_ball = ctx.ball().distance();
+        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
 
-        if ctx.ball().distance_to_opponent_goal() < 300.0 {
-            return Some(StateChangeResult::with_forward_state(
-                ForwardState::Shooting,
-            ));
+        if ctx.player.has_ball {
+            if distance_to_goal < SHOOTING_DISTANCE_THRESHOLD {
+                return Some(StateChangeResult::with_forward_state(ForwardState::Shooting));
+            }
+
+            if distance_to_goal > PASSING_DISTANCE_THRESHOLD {
+                return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
+            }
+        } else {
+            if let Some(opponent_with_ball) = ctx.player().opponent_with_ball().first() {
+                let opponent_distance = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, opponent_with_ball.id).unwrap();
+                if opponent_distance < PRESSING_DISTANCE_THRESHOLD {
+                    return Some(StateChangeResult::with_forward_state(ForwardState::Pressing));
+                }
+            }
+
+            if distance_to_ball > ASSISTING_DISTANCE_THRESHOLD {
+                return Some(StateChangeResult::with_forward_state(ForwardState::Assisting));
+            }
         }
 
         None
@@ -46,8 +60,8 @@ impl StateProcessingHandler for ForwardRunningState {
                 target: goal_direction,
                 slowing_distance: 10.0,
             }
-            .calculate(ctx.player)
-            .velocity;
+                .calculate(ctx.player)
+                .velocity;
 
             Some(player_goal_velocity)
         } else {
@@ -73,7 +87,7 @@ impl StateProcessingHandler for ForwardRunningState {
             // Combine attributes to determine speed
             // We're giving more weight to pace and acceleration
             let speed = (normalized_pace * 0.4
-                + normalized_acceleration * 1.3
+                + normalized_acceleration * 0.3
                 + normalized_stamina * 0.2
                 + normalized_agility * 0.1)
                 * MAX_PLAYER_SPEED;
@@ -86,11 +100,14 @@ impl StateProcessingHandler for ForwardRunningState {
                 target: ball_position,
                 velocity: player_velocity,
             }
-            .calculate(ctx.player);
+                .calculate(ctx.player);
 
             Some(pursuit_result.velocity)
         }
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}
+}
+
+impl ForwardRunningState {
 }

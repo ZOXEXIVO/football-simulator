@@ -292,8 +292,6 @@ impl PlayerDistanceClosure {
             })
             .collect();
 
-        println!("COUNT = {}", opponents.len());
-
         opponents.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
         if opponents.is_empty() {
             None
