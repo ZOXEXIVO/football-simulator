@@ -142,8 +142,8 @@ pub fn get_home_squad() -> TeamSquad {
         get_player(107,PlayerPositionType::MidfielderCenterLeft),
         get_player(108,PlayerPositionType::MidfielderCenterRight),
         get_player(109,PlayerPositionType::MidfielderRight),
-        get_player(111,PlayerPositionType::WingbackLeft),
-        get_player(112,PlayerPositionType::ForwardRight),
+        get_player(110,PlayerPositionType::ForwardLeft),
+        get_player(111,PlayerPositionType::ForwardRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players
@@ -174,7 +174,7 @@ pub fn get_away_squad() -> TeamSquad {
         get_player(120,PlayerPositionType::MidfielderCenterRight),
         get_player(121,PlayerPositionType::MidfielderRight),
         get_player(122,PlayerPositionType::ForwardLeft),
-        get_player(123, PlayerPositionType::ForwardRight),
+        get_player(123,PlayerPositionType::ForwardRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players
