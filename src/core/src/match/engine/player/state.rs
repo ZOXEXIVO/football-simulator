@@ -5,7 +5,9 @@ use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use std::fmt::{Display, Formatter};
+use log::{error, info};
 use nalgebra::Vector3;
+use crate::PlayerFieldPositionGroup;
 use crate::r#match::events::EventCollection;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -37,7 +39,9 @@ impl PlayerMatchState {
         context: &MatchContext,
         tick_context: &GameTickContext,
     ) -> EventCollection {
-        let state_change_result = player.tactics_position.position_group().process(
+        let player_position_group = player.tactics_position.position_group();
+
+        let state_change_result = player_position_group.process(
             player.in_state_time,
             player,
             context,
@@ -45,6 +49,13 @@ impl PlayerMatchState {
         );
 
         if let Some(state) = state_change_result.state {
+            #[cfg(debug_assertions)]
+            {
+                if !Self::validate_state(state, &player_position_group) {
+                    error!("invalid state change {:?} -> {:?} for {:?}", player.state, state, player_position_group);
+                }
+            }
+
             Self::change_state(player, state);
         } else {
             player.in_state_time += 1;
@@ -60,5 +71,17 @@ impl PlayerMatchState {
     fn change_state(player: &mut MatchPlayer, state: PlayerState) {
         player.in_state_time = 0;
         player.state = state;
+    }
+
+
+    fn validate_state(player_state: PlayerState, position_group: &PlayerFieldPositionGroup) -> bool {
+        match (player_state, position_group) {
+            (PlayerState::Injured, _) => true, // Injured state is valid for all position groups
+            (PlayerState::Goalkeeper(_), PlayerFieldPositionGroup::Goalkeeper) => true,
+            (PlayerState::Defender(_), PlayerFieldPositionGroup::Defender) => true,
+            (PlayerState::Midfielder(_), PlayerFieldPositionGroup::Midfielder) => true,
+            (PlayerState::Forward(_), PlayerFieldPositionGroup::Forward) => true,
+            _ => false, // Any other combination is invalid
+        }
     }
 }

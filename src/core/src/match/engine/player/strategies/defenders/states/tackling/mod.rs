@@ -3,7 +3,7 @@ use rand::Rng;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
@@ -21,6 +21,22 @@ pub struct DefenderTacklingState {}
 
 impl StateProcessingHandler for DefenderTacklingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.player.has_ball {
+            if ctx.player().is_team_control_ball() {
+                return Some(StateChangeResult::with_defender_state(DefenderState::Running));
+            }
+
+            let is_far_from_start_position = match ctx.player().position_to_distance() {
+                PlayerDistanceFromStartPosition::Big => Some(StateChangeResult::with_defender_state(DefenderState::Returning)), // Continue tracking back
+                PlayerDistanceFromStartPosition::Medium => Some(StateChangeResult::with_defender_state(DefenderState::Returning)),
+                PlayerDistanceFromStartPosition::Small => None,
+            };
+
+            if let Some(is_far_from_start_position) = is_far_from_start_position {
+                return Some(StateChangeResult::with_defender_state(DefenderState::Running));
+            }
+        }
+
         // 1. Check defender's stamina
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {
@@ -92,6 +108,14 @@ impl StateProcessingHandler for DefenderTacklingState {
         // Move towards the opponent to attempt the sliding tackle
 
         if ctx.in_state_time % 100 == 0 {
+            if ctx.player().is_team_control_ball() {
+                let opponent_goal = ctx.ball().direction_to_opponent_goal();
+                Some(SteeringBehavior::Arrive {
+                    target: opponent_goal,
+                    slowing_distance: 10.0,
+                }.calculate(ctx.player).velocity);
+            }
+
             // Identify the opponent player with the ball
             let players = ctx.player();
             let opponent_with_ball = players.opponent_with_ball();

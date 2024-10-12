@@ -106,11 +106,11 @@ impl MatchPlayer {
     }
 
     fn move_to(&mut self) {
-        if self.velocity.x != f32::NAN {
+        if !self.velocity.x.is_nan() {
             self.position.x += self.velocity.x;
         }
 
-        if self.velocity.y != f32::NAN {
+        if !self.velocity.y.is_nan() {
             self.position.y += self.velocity.y;
         }
     }

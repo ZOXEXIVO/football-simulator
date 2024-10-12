@@ -34,7 +34,7 @@ impl StateProcessingHandler for DefenderStandingState {
 
         if ball_ops.on_own_side() {
             // Ball is on the defender's side
-            if ball_ops.is_towards_player() {
+            if ball_ops.is_towards_player() && !ctx.player().is_team_control_ball() {
                 if ball_ops.distance() < INTERCEPTION_DISTANCE {
                     // Move to intercept only if ball is moving slowly or player is close
                     if ball_ops.speed() < 20.0 || player_ops.distance_from_start_position() < 10.0 {
