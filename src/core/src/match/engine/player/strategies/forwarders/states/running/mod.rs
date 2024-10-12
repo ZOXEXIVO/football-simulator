@@ -1,12 +1,15 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
-use nalgebra::Vector3;
-use std::sync::LazyLock;
-use rand::prelude::SliceRandom;
 use crate::r#match::events::Event;
+use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    Collider, ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
+use nalgebra::Vector3;
+use rand::prelude::SliceRandom;
+use std::sync::LazyLock;
 
 static FORWARD_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
@@ -28,30 +31,51 @@ impl StateProcessingHandler for ForwardRunningState {
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
 
         if ctx.player.has_ball {
-            let (_, opponents_count) = ctx.tick_context.object_positions.
-                player_distances.players_within_distance_count(ctx.player, 100.0);
+            let (_, opponents_count) = ctx
+                .tick_context
+                .object_positions
+                .player_distances
+                .players_within_distance_count(ctx.player, 100.0);
 
             if opponents_count > 1 {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
 
             if distance_to_goal < SHOOTING_DISTANCE_THRESHOLD {
-                return Some(StateChangeResult::with_forward_state(ForwardState::Shooting));
+                return Some(StateChangeResult::with_forward_state(
+                    ForwardState::Shooting,
+                ));
             }
 
             if distance_to_goal > PASSING_DISTANCE_THRESHOLD {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
         } else {
+            if !self.is_leading_forward(ctx) {
+                // If not the leading forward, transition to a supporting state
+                return Some(StateChangeResult::with_forward_state(
+                    ForwardState::Assisting,
+                ));
+            }
+
             if let Some(opponent_with_ball) = ctx.player().opponent_with_ball().first() {
-                let opponent_distance = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, opponent_with_ball.id).unwrap();
+                let opponent_distance = ctx
+                    .tick_context
+                    .object_positions
+                    .player_distances
+                    .get(ctx.player.id, opponent_with_ball.id)
+                    .unwrap();
                 if opponent_distance < PRESSING_DISTANCE_THRESHOLD {
-                    return Some(StateChangeResult::with_forward_state(ForwardState::Pressing));
+                    return Some(StateChangeResult::with_forward_state(
+                        ForwardState::Pressing,
+                    ));
                 }
             }
 
             if distance_to_ball > ASSISTING_DISTANCE_THRESHOLD {
-                return Some(StateChangeResult::with_forward_state(ForwardState::Assisting));
+                return Some(StateChangeResult::with_forward_state(
+                    ForwardState::Assisting,
+                ));
             }
         }
 
@@ -70,8 +94,8 @@ impl StateProcessingHandler for ForwardRunningState {
                 target: goal_direction,
                 slowing_distance: 10.0,
             }
-                .calculate(ctx.player)
-                .velocity;
+            .calculate(ctx.player)
+            .velocity;
 
             Some(player_goal_velocity)
         } else {
@@ -110,7 +134,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 target: ball_position,
                 velocity: player_velocity,
             }
-                .calculate(ctx.player);
+            .calculate(ctx.player);
 
             Some(pursuit_result.velocity)
         }
@@ -120,4 +144,59 @@ impl StateProcessingHandler for ForwardRunningState {
 }
 
 impl ForwardRunningState {
+    fn is_leading_forward(&self, ctx: &StateProcessingContext) -> bool {
+        let players = ctx.player();
+        let forwards = players.forwards();
+
+        let (closest_forward, closest_distance) = forwards.iter().fold(
+            (None, f32::MAX),
+            |(closest_player, min_distance), player| {
+                let distance =
+                    (player.position - ctx.tick_context.object_positions.ball_position).magnitude();
+                if distance < min_distance {
+                    (Some(player), distance)
+                } else {
+                    (closest_player, min_distance)
+                }
+            },
+        );
+
+        if let Some(leading_forward) = closest_forward {
+            return if leading_forward.id == ctx.player.id {
+                // The current player is the closest forward to the ball
+                true
+            } else {
+                // Check if the current player is within a certain range of the closest forward
+                let distance_to_leading_forward =
+                    (ctx.player.position - leading_forward.position).magnitude();
+                if distance_to_leading_forward <= ASSISTING_DISTANCE_THRESHOLD {
+                    // The current player is close enough to the leading forward to be considered assisting
+                    false
+                } else {
+                    // Check if the current player has a clear path to the ball
+                    let direction_to_ball = (ctx.tick_context.object_positions.ball_position
+                        - ctx.player.position)
+                        .normalize();
+                    let ray_cast_result = ctx.tick_context.space.cast_ray(
+                        ctx.player.position,
+                        direction_to_ball,
+                        closest_distance,
+                        true,
+                    );
+
+                    if let Some(hit) = ray_cast_result {
+                        if let Some(player) = hit.collider.match_player() {
+                            // The ray hit another player, so the current player doesn't have a clear path to the ball
+                            return false;
+                        }
+                    }
+
+                    // The current player has a clear path to the ball and is not assisting the leading forward
+                    true
+                }
+            };
+        }
+
+        false
+    }
 }

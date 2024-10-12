@@ -22,7 +22,7 @@ pub struct DefenderTacklingState {}
 impl StateProcessingHandler for DefenderTacklingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
-            if ctx.player().is_team_control_ball() {
+            if ctx.team().is_control_ball() {
                 return Some(StateChangeResult::with_defender_state(DefenderState::Running));
             }
 
@@ -108,7 +108,7 @@ impl StateProcessingHandler for DefenderTacklingState {
         // Move towards the opponent to attempt the sliding tackle
 
         if ctx.in_state_time % 100 == 0 {
-            if ctx.player().is_team_control_ball() {
+            if ctx.team().is_control_ball() {
                 let opponent_goal = ctx.ball().direction_to_opponent_goal();
                 Some(SteeringBehavior::Arrive {
                     target: opponent_goal,

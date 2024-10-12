@@ -36,6 +36,10 @@ impl<'b> BallOperationsImpl<'b> {
         self.ctx.tick_context.ball.is_owned
     }
 
+    pub fn owner_id(&self) -> Option<u32> {
+        self.ctx.tick_context.ball.current_owner
+    }
+
     pub fn is_towards_player(&self) -> bool {
         let (is_towards, _) = MatchBallLogic::is_heading_towards_player(
             &self.ctx.tick_context.object_positions.ball_position,

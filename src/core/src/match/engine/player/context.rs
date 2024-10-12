@@ -1,18 +1,42 @@
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
-use crate::r#match::{BallSide, MatchField, MatchPlayer};
+use crate::r#match::{BallSide, MatchField, MatchPlayer, Space, SphereCollider};
 use nalgebra::Vector3;
 use std::cmp::Ordering;
 
 pub struct GameTickContext {
     pub object_positions: MatchObjectsPositions,
     pub ball: BallMetadata,
+    pub space: Space<SphereCollider>,
 }
 
 impl GameTickContext {
     pub fn new(field: &MatchField) -> Self {
+        let mut space = Space::new();
+
+        // Add ball collider
+        let ball_radius = 0.11; // Assuming the ball radius is 0.11 meters (size 5 football)
+        let ball_collider = SphereCollider {
+            center: field.ball.position,
+            radius: ball_radius,
+            player: None,
+        };
+        space.add_collider(ball_collider);
+
+        // Add player colliders
+        for player in &field.players {
+            let player_radius = 0.5; // Assuming the player radius is 0.5 meters
+            let player_collider = SphereCollider {
+                center: player.position,
+                radius: player_radius,
+                player: Some(player.clone()),
+            };
+            space.add_collider(player_collider);
+        }
+
         GameTickContext {
             ball: BallMetadata::from_field(field),
             object_positions: MatchObjectsPositions::from(field),
+            space
         }
     }
 }
@@ -99,6 +123,7 @@ impl MatchObjectsPositions {
 pub struct BallMetadata {
     pub side: BallSide,
     pub is_owned: bool,
+    pub current_owner: Option<u32>,
     pub last_owner: Option<u32>,
 }
 
@@ -107,6 +132,7 @@ impl BallMetadata {
         BallMetadata {
             side: Self::calculate_side(field),
             is_owned: field.ball.current_owner.is_some(),
+            current_owner: field.ball.current_owner,
             last_owner: field.ball.previous_owner,
         }
     }

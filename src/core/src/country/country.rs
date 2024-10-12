@@ -3,6 +3,8 @@ use crate::country::CountryResult;
 use crate::league::LeagueCollection;
 use crate::utils::Logging;
 use crate::{Club, ClubResult};
+use rayon::iter::IntoParallelRefMutIterator;
+use rayon::iter::ParallelIterator;
 
 pub struct Country {
     pub id: u32,
@@ -46,7 +48,7 @@ impl Country {
 
         let clubs_results: Vec<ClubResult> = self
             .clubs
-            .iter_mut()
+            .par_iter_mut()
             .map(|club| {
                 let message = &format!("simulate club: {}", &club.name);
                 Logging::estimate_result(

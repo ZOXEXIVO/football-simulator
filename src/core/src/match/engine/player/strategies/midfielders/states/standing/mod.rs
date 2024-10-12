@@ -18,7 +18,7 @@
 
     impl StateProcessingHandler for MidfielderStandingState {
         fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-            if !ctx.player().is_team_control_ball() && ctx.ball().distance() < 10.0 {
+            if !ctx.team().is_control_ball() && ctx.ball().distance() < 10.0 {
                 // Transition to Tackling state to attempt to regain possession
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Tackling,
@@ -43,7 +43,7 @@
             }
 
             // 2. Check if the ball is close and the midfielder should attempt to gain possession
-            if !ctx.player().is_team_control_ball() && ctx.ball().distance() < PRESSING_DISTANCE_THRESHOLD {
+            if !ctx.team().is_control_ball() && ctx.ball().distance() < PRESSING_DISTANCE_THRESHOLD {
                 // Transition to Tackling state to try and win the ball
                 return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
             }

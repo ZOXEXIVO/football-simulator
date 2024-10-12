@@ -11,7 +11,7 @@ use core::club::player::Player;
 use core::club::player::PlayerPositionType;
 use core::club::team::tactics::{Tactics, TacticsPositioning};
 use core::r#match::squad::TeamSquad;
-use core::r#match::MatchBallLogic;
+use core::r#match::team::MatchBallLogic;
 use core::r#match::MatchPlayerCollection;
 use core::Vector3;
 use env_logger::Env;

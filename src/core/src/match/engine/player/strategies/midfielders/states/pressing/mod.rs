@@ -23,7 +23,11 @@ impl StateProcessingHandler for MidfielderPressingState {
             return Some(StateChangeResult::with_midfielder_state(MidfielderState::Standing));
         }
 
-        if ctx.player().is_team_control_ball() {
+        if ctx.player.use_extended_state_logging {
+            println!("Midfielder is pressing, {:?}", ctx.team().is_control_ball());
+        }
+
+        if ctx.team().is_control_ball() {
             return Some(StateChangeResult::with_midfielder_state(MidfielderState::SupportingAttack));
         }
 

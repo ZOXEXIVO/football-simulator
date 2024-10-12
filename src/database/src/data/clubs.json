@@ -1,925 +1,341 @@
 [
   {
-    "id": 0,
-    "name": "Spartak Moscow",    
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 17000000
-    },
+    "id": 150,
+    "name": "Arsenal",
+    "country_id": 765,
+    "location": { "city_id": 1 },
+    "finance": { "balance": 400000000 },
     "teams": [
       {
-        "id": 1,
-        "name": "Spartak Moscow",
-        "slug": "spartak-moscow",
+        "id": 170,
+        "name": "Arsenal",
+        "slug": "arsenal",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 3000,
-          "world": 1500
-        }
-      },
-      {
-        "id": 2,
-        "name": "Spartak Moscow 2",
-        "slug": "spartak-moscow-2",
-        "team_type": "B",
-        "league_id": 1,
-        "reputation": {
-          "home": 2000,
-          "national": 2000,
-          "world": 100
-        }
+        "league_id": 7,
+        "reputation": { "home": 9500, "national": 9000, "world": 8500 }
       }
     ]
   },
   {
-    "id": 3,
-    "name": "Zenith St.Petersbourg",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 37000000
-    },
+    "id": 151,
+    "name": "Aston Villa",
+    "country_id": 765,
+    "location": { "city_id": 2 },
+    "finance": { "balance": 250000000 },
     "teams": [
       {
-        "id": 4,
-        "name": "Zenit",
-        "slug": "zenit-st-peterburg",
+        "id": 171,
+        "name": "Aston Villa",
+        "slug": "aston-villa",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 3000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 8200, "national": 7700, "world": 7200 }
       }
     ]
   },
   {
-    "id": 6,
-    "name": "CSKA Moscow",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 7000000
-    },
+    "id": 152,
+    "name": "AFC Bournemouth",
+    "country_id": 765,
+    "location": { "city_id": 3 },
+    "finance": { "balance": 100000000 },
     "teams": [
       {
-        "id": 7,
-        "name": "CSKA Moscow",
-        "slug": "cska-moscow",
+        "id": 172,
+        "name": "AFC Bournemouth",
+        "slug": "afc-bournemouth",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 3000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7800, "national": 7300, "world": 6800 }
       }
     ]
   },
   {
-    "id": 8,
-    "name": "Dinamo Moscow",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 17000000
-    },
+    "id": 153,
+    "name": "Brentford",
+    "country_id": 765,
+    "location": { "city_id": 4 },
+    "finance": { "balance": 120000000 },
     "teams": [
       {
-        "id": 9,
-        "name": "Dinamo Moscow",
-        "slug": "dinamo-moscow",
+        "id": 173,
+        "name": "Brentford",
+        "slug": "brentford",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 3000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7700, "national": 7200, "world": 6700 }
       }
     ]
   },
   {
-    "id": 10,
-    "name": "Kranodar",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 17000000
-    },
+    "id": 154,
+    "name": "Brighton & Hove Albion",
+    "country_id": 765,
+    "location": { "city_id": 5 },
+    "finance": { "balance": 150000000 },
     "teams": [
       {
-        "id": 11,
-        "name": "Kranodar",
-        "slug": "krasnodar",
+        "id": 174,
+        "name": "Brighton & Hove Albion",
+        "slug": "brighton-hove-albion",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 3000,
-          "world": 1500
-        }
-      },
-      {
-        "id": 12,
-        "name": "Kranodar 2",
-        "slug": "krasnodar-2",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 3000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 8000, "national": 7500, "world": 7000 }
       }
     ]
   },
   {
-    "id": 13,
-    "name": "Rostov",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 1000000
-    },
+    "id": 155,
+    "name": "Burnley",
+    "country_id": 765,
+    "location": { "city_id": 6 },
+    "finance": { "balance": 80000000 },
     "teams": [
       {
-        "id": 14,
-        "name": "Rostov",
-        "slug": "rostov",
+        "id": 175,
+        "name": "Burnley",
+        "slug": "burnley",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 5000,
-          "national": 5000,
-          "world": 2500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7500, "national": 7000, "world": 6500 }
       }
     ]
   },
   {
-    "id": 14,
-    "name": "Sochi",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 156,
+    "name": "Chelsea",
+    "country_id": 765,
+    "location": { "city_id": 1 },
+    "finance": { "balance": 600000000 },
     "teams": [
       {
-        "id": 15,
-        "name": "Sochi",
-        "slug": "sochi",
+        "id": 176,
+        "name": "Chelsea",
+        "slug": "chelsea",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 9500, "national": 9000, "world": 8500 }
       }
     ]
   },
   {
-    "id": 15,
-    "name": "Lokomotiv Moscow",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 157,
+    "name": "Crystal Palace",
+    "country_id": 765,
+    "location": { "city_id": 1 },
+    "finance": { "balance": 150000000 },
     "teams": [
       {
-        "id": 16,
-        "name": "Lokomotiv Moscow",
-        "slug": "lokomotiv-moscow",
+        "id": 177,
+        "name": "Crystal Palace",
+        "slug": "crystal-palace",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7800, "national": 7300, "world": 6800 }
       }
     ]
   },
   {
-    "id": 16,
-    "name": "Rubin",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 158,
+    "name": "Everton",
+    "country_id": 765,
+    "location": { "city_id": 7 },
+    "finance": { "balance": 200000000 },
     "teams": [
       {
-        "id": 17,
-        "name": "Rubin",
-        "slug": "rubin",
+        "id": 178,
+        "name": "Everton",
+        "slug": "everton",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 8200, "national": 7700, "world": 7200 }
       }
     ]
   },
   {
-    "id": 17,
-    "name": "Akhmat",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 159,
+    "name": "Fulham",
+    "country_id": 765,
+    "location": { "city_id": 1 },
+    "finance": { "balance": 100000000 },
     "teams": [
       {
-        "id": 18,
-        "name": "Akhmat",
-        "slug": "akhmat",
+        "id": 179,
+        "name": "Fulham",
+        "slug": "fulham",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7700, "national": 7200, "world": 6700 }
       }
     ]
   },
   {
-    "id": 18,
-    "name": "Khimki",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 160,
+    "name": "Liverpool",
+    "country_id": 765,
+    "location": { "city_id": 7 },
+    "finance": { "balance": 500000000 },
     "teams": [
       {
-        "id": 19,
-        "name": "Khimki",
-        "slug": "khimki",
+        "id": 180,
+        "name": "Liverpool",
+        "slug": "liverpool",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 9500, "national": 9000, "world": 8500 }
       }
     ]
   },
   {
-    "id": 19,
-    "name": "Ural",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 161,
+    "name": "Luton Town",
+    "country_id": 765,
+    "location": { "city_id": 8 },
+    "finance": { "balance": 60000000 },
     "teams": [
       {
-        "id": 20,
-        "name": "Ural",
-        "slug": "ural",
+        "id": 181,
+        "name": "Luton Town",
+        "slug": "luton-town",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7200, "national": 6700, "world": 6200 }
       }
     ]
   },
   {
-    "id": 20,
-    "name": "Rotor",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 162,
+    "name": "Manchester City",
+    "country_id": 765,
+    "location": { "city_id": 9 },
+    "finance": { "balance": 800000000 },
     "teams": [
       {
-        "id": 21,
-        "name": "Rotor",
-        "slug": "rotor",
+        "id": 182,
+        "name": "Manchester City",
+        "slug": "manchester-city",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 9600, "national": 9100, "world": 8600 }
       }
     ]
   },
   {
-    "id": 21,
-    "name": "Arsenal Tula",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 163,
+    "name": "Manchester United",
+    "country_id": 765,
+    "location": { "city_id": 9 },
+    "finance": { "balance": 700000000 },
     "teams": [
       {
-        "id": 22,
-        "name": "Arsenal Tula",
-        "slug": "arsenal-tula",
+        "id": 183,
+        "name": "Manchester United",
+        "slug": "manchester-united",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 9500, "national": 9000, "world": 8500 }
       }
     ]
   },
   {
-    "id": 22,
-    "name": "Ufa",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 164,
+    "name": "Newcastle United",
+    "country_id": 765,
+    "location": { "city_id": 10 },
+    "finance": { "balance": 400000000 },
     "teams": [
       {
-        "id": 23,
-        "name": "Ufa",
-        "slug": "ufa",
+        "id": 184,
+        "name": "Newcastle United",
+        "slug": "newcastle-united",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 8400, "national": 7900, "world": 7400 }
       }
     ]
   },
   {
-    "id": 23,
-    "name": "Tambov",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 165,
+    "name": "Nottingham Forest",
+    "country_id": 765,
+    "location": { "city_id": 11 },
+    "finance": { "balance": 150000000 },
     "teams": [
       {
-        "id": 24,
-        "name": "Tambov",
-        "slug": "tambov",
+        "id": 185,
+        "name": "Nottingham Forest",
+        "slug": "nottingham-forest",
         "team_type": "Main",
-        "league_id": 0,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7700, "national": 7200, "world": 6700 }
       }
     ]
   },
   {
-    "id": 24,
-    "name": "Alania Vladikavkaz",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 166,
+    "name": "Sheffield United",
+    "country_id": 765,
+    "location": { "city_id": 12 },
+    "finance": { "balance": 80000000 },
     "teams": [
       {
-        "id": 25,
-        "name": "Alania Vladikavkaz",
-        "slug": "alaniya-vladikavkaz",
+        "id": 186,
+        "name": "Sheffield United",
+        "slug": "sheffield-united",
         "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 7500, "national": 7000, "world": 6500 }
       }
     ]
   },
   {
-    "id": 25,
-    "name": "Akron",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 167,
+    "name": "Tottenham Hotspur",
+    "country_id": 765,
+    "location": { "city_id": 1 },
+    "finance": { "balance": 500000000 },
     "teams": [
       {
-        "id": 26,
-        "name": "Akron",
-        "slug": "akron",
+        "id": 187,
+        "name": "Tottenham Hotspur",
+        "slug": "tottenham-hotspur",
         "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 9300, "national": 8800, "world": 8300 }
       }
     ]
   },
   {
-    "id": 26,
-    "name": "Baltika",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 168,
+    "name": "West Ham United",
+    "country_id": 765,
+    "location": { "city_id": 1 },
+    "finance": { "balance": 200000000 },
     "teams": [
       {
-        "id": 27,
-        "name": "Baltika",
-        "slug": "baltika",
+        "id": 188,
+        "name": "West Ham United",
+        "slug": "west-ham-united",
         "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 8200, "national": 7700, "world": 7200 }
       }
     ]
   },
   {
-    "id": 27,
-    "name": "Chayka Peschanokopskoye",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
+    "id": 169,
+    "name": "Wolverhampton Wanderers",
+    "country_id": 765,
+    "location": { "city_id": 13 },
+    "finance": { "balance": 150000000 },
     "teams": [
       {
-        "id": 28,
-        "name": "Chayka Peschanokopskoye",
-        "slug": "chayka-peschanokopskoye",
+        "id": 189,
+        "name": "Wolverhampton Wanderers",
+        "slug": "wolverhampton-wanderers",
         "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 28,
-    "name": "Chertanovo",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 29,
-        "name": "Chertanovo",
-        "slug": "chertanovo",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 29,
-    "name": "Dinamo Bryansk",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 30,
-        "name": "Dinamo Bryansk",
-        "slug": "dinamo-bryansk",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 30,
-    "name": "Fakel",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 31,
-        "name": "Fakel",
-        "slug": "fakel",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 31,
-    "name": "Irtysh",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 32,
-        "name": "Irtysh",
-        "slug": "irtysh",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 32,
-    "name": "Krylia Sovetov",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 33,
-        "name": "Krylia Sovetov",
-        "slug": "krylia-sovetov",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 33,
-    "name": "Neftekhimik",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 34,
-        "name": "Neftekhimik",
-        "slug": "neftekhimik",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 34,
-    "name": "Nizhny Novgorod",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 35,
-        "name": "Nizhny Novgorod",
-        "slug": "nizhny-novgorod",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 35,
-    "name": "Orenburg",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 36,
-        "name": "Orenburg",
-        "slug": "orenburg",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 37,
-    "name": "Shinnik",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 38,
-        "name": "Shinnik",
-        "slug": "shinnik",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 38,
-    "name": "SKA-Khabarovsk",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 39,
-        "name": "SKA-Khabarovsk",
-        "slug": "ska-khabarovsk",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 39,
-    "name": "Tekstilshchik",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 40,
-        "name": "Tekstilshchik",
-        "slug": "tekstilshchik",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 40,
-    "name": "Tom",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 41,
-        "name": "Tom",
-        "slug": "tom",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 41,
-    "name": "Torpedo Moscow",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 42,
-        "name": "Torpedo Moscow",
-        "slug": "torpedo-moscow",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 42,
-    "name": "Volgar",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 43,
-        "name": "Volgar",
-        "slug": "volgar",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 43,
-    "name": "Veles",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 44,
-        "name": "Veles",
-        "slug": "veles",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
-      }
-    ]
-  },
-  {
-    "id": 44,
-    "name": "Yenisey",
-    "country_id": 791,
-    "location": {
-      "city_id": 0
-    },
-    "finance": {
-      "balance": 4000000
-    },
-    "teams": [
-      {
-        "id": 45,
-        "name": "Yenisey",
-        "slug": "yenisey",
-        "team_type": "Main",
-        "league_id": 1,
-        "reputation": {
-          "home": 6000,
-          "national": 6000,
-          "world": 1500
-        }
+        "league_id": 7,
+        "reputation": { "home": 8000, "national": 7500, "world": 7000 }
       }
     ]
   }

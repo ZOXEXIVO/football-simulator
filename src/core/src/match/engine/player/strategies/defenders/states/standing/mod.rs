@@ -34,7 +34,7 @@ impl StateProcessingHandler for DefenderStandingState {
 
         if ball_ops.on_own_side() {
             // Ball is on the defender's side
-            if ball_ops.is_towards_player() && !ctx.player().is_team_control_ball() {
+            if ball_ops.is_towards_player() && !ctx.team().is_control_ball() {
                 if ball_ops.distance() < INTERCEPTION_DISTANCE {
                     // Move to intercept only if ball is moving slowly or player is close
                     if ball_ops.speed() < 20.0 || player_ops.distance_from_start_position() < 10.0 {
@@ -145,7 +145,7 @@ impl DefenderStandingState {
         });
         let close_to_optimal_position =
             player_ops.distance_from_start_position() < WALK_DISTANCE_THRESHOLD;
-        let team_in_control = ctx.player().is_team_control_ball();
+        let team_in_control = ctx.team().is_control_ball();
 
         (is_tired || standing_too_long)
             && (ball_far_away || close_to_optimal_position)
@@ -159,7 +159,7 @@ impl DefenderStandingState {
 
         let ball_in_attacking_third = ball_ops.distance_to_opponent_goal()
             < ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD;
-        let team_in_possession = ctx.player().is_team_control_ball();
+        let team_in_possession = ctx.team().is_control_ball();
         let defender_not_last_man = !self.is_last_defender(ctx);
 
         ball_in_attacking_third
@@ -179,7 +179,7 @@ impl DefenderStandingState {
 
         (ctx.player.position.x - avg_defender_x).abs() < 5.0
             && ball_ops.distance() > INTERCEPTION_DISTANCE
-            && !ctx.player().is_team_control_ball()
+            && !ctx.team().is_control_ball()
     }
 
     fn should_cover_space(&self, ctx: &StateProcessingContext) -> bool {
