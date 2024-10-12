@@ -9,7 +9,6 @@
     static MIDFIELDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
         LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
-    const POSSESSION_DISTANCE_THRESHOLD: f32 = 100.0; // Adjust based on simulation scale
     const PASSING_DISTANCE_THRESHOLD: f32 = 30.0; // Adjust as needed
     const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0; // Adjust as needed
     const STAMINA_THRESHOLD: u32 = 20; // Minimum stamina percentage before resting
@@ -20,7 +19,6 @@
     impl StateProcessingHandler for MidfielderStandingState {
         fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
             if !ctx.player().is_team_control_ball() && ctx.ball().distance() < 10.0 {
-
                 // Transition to Tackling state to attempt to regain possession
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Tackling,
@@ -45,9 +43,9 @@
             }
 
             // 2. Check if the ball is close and the midfielder should attempt to gain possession
-            if !ctx.player().is_team_control_ball() && ctx.ball().distance() < POSSESSION_DISTANCE_THRESHOLD {
+            if !ctx.player().is_team_control_ball() && ctx.ball().distance() < PRESSING_DISTANCE_THRESHOLD {
                 // Transition to Tackling state to try and win the ball
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Tackling));
+                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
             }
 
             // 3. Check if an opponent is nearby and pressing is needed

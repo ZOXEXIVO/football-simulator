@@ -23,6 +23,10 @@ impl StateProcessingHandler for MidfielderPressingState {
             return Some(StateChangeResult::with_midfielder_state(MidfielderState::Standing));
         }
 
+        if ctx.player().is_team_control_ball() {
+            return Some(StateChangeResult::with_midfielder_state(MidfielderState::SupportingAttack));
+        }
+
         // 2. Identify the opponent player with the ball
         let players = ctx.player();
         let opponent_with_ball = players.opponent_with_ball();
