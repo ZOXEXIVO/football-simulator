@@ -1,9 +1,11 @@
+use std::f32::NAN;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use std::fmt::{Display, Formatter};
+use nalgebra::Vector3;
 use crate::r#match::events::EventCollection;
 
 #[derive(Debug, Clone, Copy, PartialEq)]

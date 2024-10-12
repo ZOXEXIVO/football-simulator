@@ -70,29 +70,7 @@
         }
 
         fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-            let mut rng = rand::thread_rng();
-
-            // Determine if the player should move based on their concentration and positioning
-            let should_move = self.calculate_movement_probability(&mut rng, &ctx);
-
-            if should_move {
-                // Get player's agility and stamina to adjust movement
-                let agility_factor = ctx.player.skills.physical.agility / 20.0; // normalize between 0 and 1
-                let stamina_factor = ctx.player.skills.physical.stamina / 20.0; // normalize between 0 and 1
-
-                // Generate random movement direction
-                let random_x: f32 = rng.gen_range(-0.5..0.5) * agility_factor * stamina_factor;
-                let random_y: f32 = rng.gen_range(-0.5..0.5) * agility_factor * stamina_factor;
-
-                // Random movement vector based on skills
-                let random_movement = Vector3::new(random_x, random_y, 0.0);
-
-                // Return random movement
-                Some(random_movement)
-            } else {
-                // Player remains stationary
-                Some(Vector3::new(0.0, 0.0, 0.0))
-            }
+            Some(Vector3::new(0.0, 0.0, 0.0))
         }
 
         fn process_conditions(&self, _ctx: ConditionContext) {

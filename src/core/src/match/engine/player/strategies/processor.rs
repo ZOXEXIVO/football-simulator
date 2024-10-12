@@ -190,14 +190,6 @@ impl StateChangeResult {
         }
     }
 
-    pub fn set_state(&mut self, state: PlayerState) {
-        self.state = Some(state);
-    }
-
-    pub fn set_velocity(&mut self, velocity: Vector3<f32>) {
-        self.velocity = Some(velocity);
-    }
-
     pub fn with(state: PlayerState) -> Self {
         StateChangeResult {
             state: Some(state),
@@ -259,14 +251,6 @@ impl StateChangeResult {
             state: Some(Forward(state)),
             velocity: None,
             events: EventCollection::with_event(event),
-        }
-    }
-
-    pub fn with_velocity(velocity: Vector3<f32>) -> Self {
-        StateChangeResult {
-            state: None,
-            velocity: Some(velocity),
-            events: EventCollection::new(),
         }
     }
 

@@ -8,6 +8,9 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use rand::prelude::SliceRandom;
+use rand::thread_rng;
+use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -28,22 +31,23 @@ impl StateProcessingHandler for ForwardPassingState {
         }
 
         // Check if the player is under pressure
-        if player_ops.is_under_pressure(ctx) {
-            // Transition to Dribbling state if under pressure
-            return Some(StateChangeResult::with_forward_state(
-                ForwardState::Dribbling,
-            ));
-        }
+        // if player_ops.is_under_pressure(ctx) {
+        //     // Transition to Dribbling state if under pressure
+        //     return Some(StateChangeResult::with_forward_state(
+        //         ForwardState::Dribbling,
+        //     ));
+        // }
 
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            // Perform the pass
-            result
-                .events
-                .add_player_event(PlayerEvent::RequestPass(ctx.player.id, teammate.id));
+            if let Some(teammate_player_position) = ctx.tick_context.object_positions.players_positions.get_player_position(teammate.id) {
+                let pass_power = self.calculate_pass_power(teammate.id, ctx);
 
-            // Transition to Running state after making the pass
-            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
+                return Some(StateChangeResult::with_forward_state_and_event(ForwardState::Running, Event::PlayerEvent(
+                    PlayerEvent::PassTo(ctx.player.id, teammate_player_position, pass_power)
+                )));
+            }
+
         }
 
         // Check if there's space to dribble forward
@@ -78,10 +82,22 @@ impl StateProcessingHandler for ForwardPassingState {
 }
 
 impl ForwardPassingState {
+    pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
+        let distance = ctx.tick_context.object_positions.
+            player_distances.get(ctx.player.id, teammate_id)
+            .unwrap();
+
+        let pass_skill = ctx.player.skills.technical.passing;
+
+        (distance / pass_skill as f32 * 10.0) as f64
+    }
+
     fn find_best_pass_option<'a>(
         &self,
         ctx: &StateProcessingContext<'a>,
     ) -> Option<&'a MatchPlayer> {
+        return ctx.context.players.get(102);
+
         let teammates = ctx
             .tick_context
             .object_positions
@@ -89,7 +105,7 @@ impl ForwardPassingState {
             .find_closest_teammates(ctx.player);
 
         if let Some(teammates_result) = teammates {
-            if let Some((teammate_id, _)) = teammates_result.first() {
+            if let Some((teammate_id, _)) = teammates_result.choose(&mut rand::thread_rng()) {
                 return Some(ctx.context.players.get(*teammate_id)?);
             }
         }

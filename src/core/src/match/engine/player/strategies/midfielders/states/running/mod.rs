@@ -20,7 +20,7 @@ impl StateProcessingHandler for MidfielderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        None
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {

@@ -1,4 +1,5 @@
-﻿use crate::r#match::defenders::states::DefenderState;
+﻿use std::f32::NAN;
+use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
@@ -11,6 +12,7 @@ use crate::{
 };
 use nalgebra::Vector3;
 use std::fmt::*;
+use log::info;
 use crate::r#match::events::EventCollection;
 
 #[derive(Debug, Clone)]
@@ -104,8 +106,13 @@ impl MatchPlayer {
     }
 
     fn move_to(&mut self) {
-        self.position.x += self.velocity.x;
-        self.position.y += self.velocity.y;
+        if self.velocity.x != f32::NAN {
+            self.position.x += self.velocity.x;
+        }
+
+        if self.velocity.y != f32::NAN {
+            self.position.y += self.velocity.y;
+        }
     }
 
     pub fn heading(&self) -> f32 {

@@ -1,7 +1,7 @@
 use log::info;
 use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::MatchContext;
+use crate::r#match::{MatchContext, MatchField};
 
 #[derive(Copy, Clone, Debug)]
 pub enum BallEvent {
@@ -20,15 +20,19 @@ pub enum GoalSide {
 pub struct BallEventDispatcher;
 
 impl BallEventDispatcher {
-    pub fn dispatch(event: BallEvent, context: &MatchContext) -> Vec<Event> {
+    pub fn dispatch(event: BallEvent, field: &mut MatchField, context: &MatchContext) -> Vec<Event> {
         let mut remaining_events = Vec::new();
 
         info!("BALL EVENT: {:?}", event);
 
         match event {
-            BallEvent::Goal(side, goalscorer_player_id) => match side {
-                GoalSide::Home => context.score.increment_home_goals(),
-                GoalSide::Away => context.score.increment_away_goals(),
+            BallEvent::Goal(side, goalscorer_player_id) => {
+                field.reset_players_positions();
+
+                match side {
+                    GoalSide::Home => context.score.increment_home_goals(),
+                    GoalSide::Away => context.score.increment_away_goals(),
+                }
             },
             BallEvent::Claimed(player_id) => {
                 remaining_events.push(Event::PlayerEvent(PlayerEvent::ClaimBall(player_id)));

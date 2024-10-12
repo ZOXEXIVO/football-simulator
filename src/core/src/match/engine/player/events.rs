@@ -46,8 +46,10 @@ impl PlayerEventDispatcher {
         match event {
             PlayerEvent::Goal(player_id) => {
                 let player = field.get_player_mut(player_id).unwrap();
+                player.statistics.add_goal(context.time.time);
 
-                player.statistics.add_goal(context.time.time)
+                field.ball.previous_owner = None;
+                field.ball.current_owner = None;
             }
             PlayerEvent::Assist(player_id) => {
                 let player = field.get_player_mut(player_id).unwrap();

@@ -69,7 +69,7 @@ impl EventDispatcher {
             match event {
                 Event::BallEvent(ball_event) => {
                     let mut ball_remaining_events =
-                        BallEventDispatcher::dispatch(ball_event, context);
+                        BallEventDispatcher::dispatch(ball_event, field, context);
 
                     if process_remaining_events {
                         remaining_events.append(&mut ball_remaining_events);

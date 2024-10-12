@@ -129,7 +129,7 @@ async fn main() {
     }
 }
 
-const TRACKING_PLAYER_ID: u32 = 108;
+const TRACKING_PLAYER_ID: u32 = 102;
 
 pub fn get_home_squad() -> TeamSquad {
     let players = [
@@ -347,7 +347,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
         // Player state and distance
         let distance = distance(&field.ball.position, &player.position);
         let state_distance_text = &format!("{} ({})", player_state(player), distance);
-        let state_distance_font_size = 15.0 * scale;
+        let state_distance_font_size = 13.0 * scale;
         let state_distance_text_dimensions = measure_text(state_distance_text, None, state_distance_font_size as u16, 1.0);
         draw_text(
             state_distance_text,

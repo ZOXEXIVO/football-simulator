@@ -4,6 +4,9 @@ use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use rand::prelude::SliceRandom;
+use crate::r#match::events::Event;
+use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
@@ -14,7 +17,7 @@ pub struct ForwardRunningState {}
 const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0;
 const BALL_DISTANCE_THRESHOLD: f32 = 20.0;
 const MAX_PLAYER_SPEED: f32 = 50.0;
-const SHOOTING_DISTANCE_THRESHOLD: f32 = 300.0;
+const SHOOTING_DISTANCE_THRESHOLD: f32 = 200.0;
 const PASSING_DISTANCE_THRESHOLD: f32 = 500.0;
 const ASSISTING_DISTANCE_THRESHOLD: f32 = 200.0;
 const TARGET_REACHED_THRESHOLD: f32 = 10.0;
@@ -25,6 +28,13 @@ impl StateProcessingHandler for ForwardRunningState {
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
 
         if ctx.player.has_ball {
+            let (_, opponents_count) = ctx.tick_context.object_positions.
+                player_distances.players_within_distance_count(ctx.player, 100.0);
+
+            if opponents_count > 1 {
+                return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
+            }
+
             if distance_to_goal < SHOOTING_DISTANCE_THRESHOLD {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Shooting));
             }

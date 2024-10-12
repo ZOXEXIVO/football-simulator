@@ -211,14 +211,25 @@ impl PlayerDistanceClosure {
     ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
         self.distances
             .iter()
-            .filter(|item| item.player_from_id == current_player.id && item.distance < max_distance)
+            .filter(|item| {
+                (item.player_from_id == current_player.id || item.player_to_id == current_player.id)
+                    && item.distance < max_distance
+            })
             .fold(
                 (Vec::new(), Vec::new()),
                 |(mut teammates, mut opponents), item| {
-                    if item.player_to_team == current_player.team_id {
-                        teammates.push((item.player_to_id, item.distance));
-                    } else {
-                        opponents.push((item.player_to_id, item.distance));
+                    if item.player_from_id == current_player.id {
+                        if item.player_to_team == current_player.team_id {
+                            teammates.push((item.player_to_id, item.distance));
+                        } else {
+                            opponents.push((item.player_to_id, item.distance));
+                        }
+                    } else { // item.player_to_id == current_player.id
+                        if item.player_from_team == current_player.team_id {
+                            teammates.push((item.player_from_id, item.distance));
+                        } else {
+                            opponents.push((item.player_from_id, item.distance));
+                        }
                     }
                     (teammates, opponents)
                 },
@@ -237,27 +248,28 @@ impl PlayerDistanceClosure {
         current_player: &MatchPlayer,
         max_distance: f32,
     ) -> (usize, usize) {
-        let (teammates_count, opponents_count) = self
-            .distances
+        self.distances
             .iter()
             .filter(|&p| p.distance < max_distance)
             .fold(
                 (0, 0),
                 |(mut teammates_count, mut opponents_count), distance| {
-                    if distance.player_from_team == current_player.team_id
-                        && distance.player_from_id != current_player.id
-                    {
-                        teammates_count += 1;
-                    } else if distance.player_to_team == current_player.team_id
-                        && distance.player_to_id != current_player.id
-                    {
-                        opponents_count += 1;
+                    if distance.player_from_id == current_player.id {
+                        if distance.player_to_team == current_player.team_id {
+                            teammates_count += 1;
+                        } else {
+                            opponents_count += 1;
+                        }
+                    } else if distance.player_to_id == current_player.id {
+                        if distance.player_from_team == current_player.team_id {
+                            teammates_count += 1;
+                        } else {
+                            opponents_count += 1;
+                        }
                     }
                     (teammates_count, opponents_count)
                 },
-            );
-
-        (teammates_count, opponents_count)
+            )
     }
 
     pub fn find_closest_opponent(&self, player: &MatchPlayer) -> Option<(u32, f32)> {

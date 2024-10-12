@@ -6,6 +6,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_DIVING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -33,7 +34,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
             ));
         }
 
-        let elapsed_time = ctx.in_state_time as f32 / 100.0; // Convert to seconds
+        let elapsed_time = ctx.in_state_time as f32 / 10.0; // Convert to seconds
 
         if elapsed_time > DIVE_DURATION + RECOVERY_TIME {
             // Dive and recovery completed, signal state change
@@ -54,9 +55,9 @@ impl StateProcessingHandler for GoalkeeperDivingState {
         } else {
             // In recovery phase
             if self.is_ball_caught(ctx) {
-                result
-                    .events
-                    .add_player_event(PlayerEvent::CaughtBall(ctx.player.id));
+                return Some(StateChangeResult::with_goalkeeper_state_and_event(
+                    GoalkeeperState::Standing,
+                    Event::PlayerEvent(PlayerEvent::CaughtBall(ctx.player.id))));
             } else if self.is_ball_nearby(ctx) {
                 result
                     .events
