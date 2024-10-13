@@ -18,6 +18,12 @@ impl StateProcessingHandler for ForwardAssistingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
+        // Check if the player is on the opponent's side of the field
+        if !self.is_on_opponent_side(ctx) {
+            // If not on the opponent's side, focus on creating space and moving forward
+            return Some(StateChangeResult::with_forward_state(ForwardState::CreatingSpace));
+        }
+
         // Check if there's an immediate threat from an opponent
         if self.is_under_pressure(ctx) {
             // If under high pressure, decide between quick pass or dribbling
@@ -34,15 +40,19 @@ impl StateProcessingHandler for ForwardAssistingState {
         // If not under immediate pressure, look for assist opportunities
         if let Some(teammate_id) = self.find_best_teammate_to_assist(ctx) {
             if self.is_good_assisting_position(ctx, teammate_id) {
-                let teammate_position = ctx.tick_context.object_positions.
-                    players_positions.get_player_position(teammate_id).unwrap();
+                let teammate_position = ctx.tick_context.object_positions
+                    .players_positions.get_player_position(teammate_id).unwrap();
 
                 // Make the assist
                 let distance_to_teammate = (ctx.player.position - teammate_position).magnitude();
                 let kick_power =
                     distance_to_teammate / ctx.player.skills.technical.free_kicks * KICK_POWER_MULTIPLIER;
 
-                result.events.add_player_event(PlayerEvent::PassTo(teammate_id, teammate_position, kick_power as f64,));
+                result.events.add_player_event(PlayerEvent::PassTo(
+                    teammate_id,
+                    teammate_position,
+                    kick_power as f64,
+                ));
                 return Some(result);
             }
         }
@@ -52,6 +62,9 @@ impl StateProcessingHandler for ForwardAssistingState {
             return Some(StateChangeResult::with_forward_state(ForwardState::Shooting));
         } else if self.should_create_space(ctx) {
             return Some(StateChangeResult::with_forward_state(ForwardState::CreatingSpace));
+        } else if self.should_ask_for_pass(ctx) {
+            result.events.add_player_event(PlayerEvent::RequestPass(ctx.player.id));
+            return Some(result);
         }
 
         // If no clear action, continue in the current state
@@ -131,5 +144,18 @@ impl ForwardAssistingState {
         ctx.player.skills.mental.off_the_ball > 75.0 &&
             ctx.tick_context.object_positions.player_distances.find_closest_teammates(ctx.player)
                 .map_or(false, |teammates| teammates.len() < 2)
+    }
+
+    fn is_on_opponent_side(&self, ctx: &StateProcessingContext) -> bool {
+        let field_half_length = ctx.context.field_size.width as f32 / 2.0;
+        ctx.player.position.x > field_half_length
+    }
+
+    fn should_ask_for_pass(&self, ctx: &StateProcessingContext) -> bool {
+        // Check if the player is in a good position to receive a pass
+        let player_distance_from_goal = ctx.ball().distance_to_opponent_goal();
+        let has_good_space = ctx.tick_context.object_positions.is_big_opponents_concentration(ctx.player);
+
+        player_distance_from_goal < 30.0 && has_good_space && ctx.player.skills.mental.off_the_ball > 70.0
     }
 }

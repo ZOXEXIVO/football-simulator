@@ -63,7 +63,7 @@ impl<'p> PlayerOperationsImpl<'p> {
         (distance / pass_skill as f32 * 10.0) as f64
     }
 
-    pub fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
+    pub fn is_under_pressure(&self) -> bool {
         let (_, opponents_count) = self.distances();
         opponents_count > 1
     }

@@ -49,7 +49,7 @@ impl StateProcessingHandler for ForwardPressingState {
         }
 
         // Check if the player is under pressure
-        if player_ops.is_under_pressure(ctx) {
+        if player_ops.is_under_pressure() {
             // Transition to Tackling state if under pressure and close to the ball
             if ball_ops.distance() < 2.0 {
                 return Some(StateChangeResult::with_forward_state(

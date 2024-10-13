@@ -148,55 +148,53 @@ impl ForwardRunningState {
         let players = ctx.player();
         let forwards = players.forwards_teammates();
 
-        let (closest_forward, closest_distance) = forwards.iter().fold(
-            (None, f32::MAX),
-            |(closest_player, min_distance), player| {
-                let distance =
-                    (player.position - ctx.tick_context.object_positions.ball_position).magnitude();
-                if distance < min_distance {
-                    (Some(player), distance)
+        let (leading_forward, _) = forwards.iter().fold(
+            (None, f32::MIN),
+            |(leading_player, max_score), player| {
+                let distance = (player.position - ctx.tick_context.object_positions.ball_position).magnitude();
+                let speed = player.skills.max_speed();
+                let time_to_ball = distance / speed;
+
+                let score = player.skills.technical.average() + player.skills.mental.average() - time_to_ball;
+
+                if score > max_score {
+                    (Some(player), score)
                 } else {
-                    (closest_player, min_distance)
+                    (leading_player, max_score)
                 }
             },
         );
 
-        if let Some(leading_forward) = closest_forward {
-            return if leading_forward.id == ctx.player.id {
-                // The current player is the closest forward to the ball
+        if let Some(leading_forward) = leading_forward {
+            if leading_forward.id == ctx.player.id {
+                // The current player is the leading forward
                 true
             } else {
-                // Check if the current player is within a certain range of the closest forward
-                let distance_to_leading_forward =
-                    (ctx.player.position - leading_forward.position).magnitude();
+                // Check if the current player is within a certain range of the leading forward
+                let distance_to_leading_forward = (ctx.player.position - leading_forward.position).magnitude();
                 if distance_to_leading_forward <= ASSISTING_DISTANCE_THRESHOLD {
                     // The current player is close enough to the leading forward to be considered assisting
                     false
                 } else {
-                    // Check if the current player has a clear path to the ball
-                    let direction_to_ball = (ctx.tick_context.object_positions.ball_position
-                        - ctx.player.position)
-                        .normalize();
-                    let ray_cast_result = ctx.tick_context.space.cast_ray(
-                        ctx.player.position,
-                        direction_to_ball,
-                        closest_distance,
-                        true,
-                    );
+                    // Check if the current player has a better score than the leading forward
+                    let player_distance = (ctx.player.position - ctx.tick_context.object_positions.ball_position).magnitude();
+                    let player_speed = ctx.player.skills.max_speed();
+                    let player_time_to_ball = player_distance / player_speed;
 
-                    if let Some(hit) = ray_cast_result {
-                        if let Some(player) = hit.collider.match_player() {
-                            // The ray hit another player, so the current player doesn't have a clear path to the ball
-                            return false;
-                        }
-                    }
+                    let player_score = ctx.player.skills.technical.average() + ctx.player.skills.mental.average() - player_time_to_ball;
 
-                    // The current player has a clear path to the ball and is not assisting the leading forward
-                    true
+                    let leading_forward_distance = (leading_forward.position - ctx.tick_context.object_positions.ball_position).magnitude();
+                    let leading_forward_speed = leading_forward.skills.max_speed();
+                    let leading_forward_time_to_ball = leading_forward_distance / leading_forward_speed;
+
+                    let leading_forward_score = leading_forward.skills.technical.average() + leading_forward.skills.mental.average() - leading_forward_time_to_ball;
+
+                    player_score > leading_forward_score
                 }
-            };
+            }
+        } else {
+            // No other forwards, so the current player is the leading forward
+            true
         }
-
-        false
     }
 }

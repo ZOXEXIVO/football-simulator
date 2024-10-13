@@ -28,7 +28,7 @@ impl StateProcessingHandler for ForwardDribblingState {
         }
 
         // Check if the player is under pressure
-        if player_ops.is_under_pressure(ctx) {
+        if player_ops.is_under_pressure() {
             // Transition to Passing state if under pressure
             return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
         }
@@ -48,7 +48,7 @@ impl StateProcessingHandler for ForwardDribblingState {
             // Perform the pass
             result
                 .events
-                .add_player_event(PlayerEvent::RequestPass(ctx.player.id, teammate.id));
+                .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
 
             // Transition to Running state after making the pass
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));

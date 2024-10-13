@@ -120,11 +120,11 @@ impl StateProcessingHandler for DefenderStandingState {
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        None
+       None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        None
+        Some(Vector3::zeros())
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
