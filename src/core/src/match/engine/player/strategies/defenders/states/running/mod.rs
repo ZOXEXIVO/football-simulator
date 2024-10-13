@@ -17,13 +17,17 @@ impl StateProcessingHandler for DefenderRunningState {
         if ctx.ball().on_own_side() {
             let distance_to_ball = ctx.ball().distance();
 
-            if distance_to_ball < 10.0 {
+            if !ctx.player.has_ball && distance_to_ball < 10.0 {
                 return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
             }
 
             if ctx.player.has_ball && distance_to_ball >= 10.0 && distance_to_ball < 20.0 {
                 return Some(StateChangeResult::with_defender_state(DefenderState::Clearing));
             }
+        }
+
+        if ctx.player.has_ball && ctx.in_state_time > 300 {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Passing));
         }
 
         // if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
@@ -40,8 +44,8 @@ impl StateProcessingHandler for DefenderRunningState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         if ctx.in_state_time == 0 {
             let target = match ctx.player.side {
-                Some(PlayerSide::Left) => ctx.context.goal_positions.left,
-                Some(PlayerSide::Right) => ctx.context.goal_positions.right,
+                Some(PlayerSide::Left) => ctx.context.goal_positions.right,
+                Some(PlayerSide::Right) => ctx.context.goal_positions.left,
                 _ => Vector3::new(0.0, 0.0, 0.0)
             };
 
@@ -108,6 +112,7 @@ mod tests {
             state: PlayerState::Injured,
             in_state_time: 0,
             statistics: MatchPlayerStatistics::default(),
+            use_extended_state_logging: false,
         }
     }
 

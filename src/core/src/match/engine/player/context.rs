@@ -1,18 +1,42 @@
 use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
-use crate::r#match::{BallSide, MatchField, MatchPlayer};
+use crate::r#match::{BallSide, MatchField, MatchPlayer, Space, SphereCollider};
 use nalgebra::Vector3;
 use std::cmp::Ordering;
 
 pub struct GameTickContext {
     pub object_positions: MatchObjectsPositions,
     pub ball: BallMetadata,
+    pub space: Space<SphereCollider>,
 }
 
 impl GameTickContext {
     pub fn new(field: &MatchField) -> Self {
+        let mut space = Space::new();
+
+        // Add ball collider
+        let ball_radius = 0.11; // Assuming the ball radius is 0.11 meters (size 5 football)
+        let ball_collider = SphereCollider {
+            center: field.ball.position,
+            radius: ball_radius,
+            player: None,
+        };
+        space.add_collider(ball_collider);
+
+        // Add player colliders
+        for player in &field.players {
+            let player_radius = 0.5; // Assuming the player radius is 0.5 meters
+            let player_collider = SphereCollider {
+                center: player.position,
+                radius: player_radius,
+                player: Some(player.clone()),
+            };
+            space.add_collider(player_collider);
+        }
+
         GameTickContext {
             ball: BallMetadata::from_field(field),
             object_positions: MatchObjectsPositions::from(field),
+            space
         }
     }
 }
@@ -99,6 +123,7 @@ impl MatchObjectsPositions {
 pub struct BallMetadata {
     pub side: BallSide,
     pub is_owned: bool,
+    pub current_owner: Option<u32>,
     pub last_owner: Option<u32>,
 }
 
@@ -107,6 +132,7 @@ impl BallMetadata {
         BallMetadata {
             side: Self::calculate_side(field),
             is_owned: field.ball.current_owner.is_some(),
+            current_owner: field.ball.current_owner,
             last_owner: field.ball.previous_owner,
         }
     }
@@ -140,7 +166,7 @@ impl PlayerPositionsClosure {
 }
 
 pub struct PlayerDistanceClosure {
-    distances: Vec<PlayerDistanceItem>,
+    pub distances: Vec<PlayerDistanceItem>,
 }
 
 pub struct PlayerDistanceItem {
@@ -152,7 +178,7 @@ pub struct PlayerDistanceItem {
     player_to_team: u32,
     pub player_to_position: Vector3<f32>,
 
-    distance: f32,
+    pub distance: f32,
 }
 
 impl PartialEq for PlayerDistanceItem {
@@ -211,14 +237,25 @@ impl PlayerDistanceClosure {
     ) -> (Vec<(u32, f32)>, Vec<(u32, f32)>) {
         self.distances
             .iter()
-            .filter(|item| item.player_from_id == current_player.id && item.distance < max_distance)
+            .filter(|item| {
+                (item.player_from_id == current_player.id || item.player_to_id == current_player.id)
+                    && item.distance < max_distance
+            })
             .fold(
                 (Vec::new(), Vec::new()),
                 |(mut teammates, mut opponents), item| {
-                    if item.player_to_team == current_player.team_id {
-                        teammates.push((item.player_to_id, item.distance));
-                    } else {
-                        opponents.push((item.player_to_id, item.distance));
+                    if item.player_from_id == current_player.id {
+                        if item.player_to_team == current_player.team_id {
+                            teammates.push((item.player_to_id, item.distance));
+                        } else {
+                            opponents.push((item.player_to_id, item.distance));
+                        }
+                    } else { // item.player_to_id == current_player.id
+                        if item.player_from_team == current_player.team_id {
+                            teammates.push((item.player_from_id, item.distance));
+                        } else {
+                            opponents.push((item.player_from_id, item.distance));
+                        }
                     }
                     (teammates, opponents)
                 },
@@ -237,27 +274,28 @@ impl PlayerDistanceClosure {
         current_player: &MatchPlayer,
         max_distance: f32,
     ) -> (usize, usize) {
-        let (teammates_count, opponents_count) = self
-            .distances
+        self.distances
             .iter()
             .filter(|&p| p.distance < max_distance)
             .fold(
                 (0, 0),
                 |(mut teammates_count, mut opponents_count), distance| {
-                    if distance.player_from_team == current_player.team_id
-                        && distance.player_from_id != current_player.id
-                    {
-                        teammates_count += 1;
-                    } else if distance.player_to_team == current_player.team_id
-                        && distance.player_to_id != current_player.id
-                    {
-                        opponents_count += 1;
+                    if distance.player_from_id == current_player.id {
+                        if distance.player_to_team == current_player.team_id {
+                            teammates_count += 1;
+                        } else {
+                            opponents_count += 1;
+                        }
+                    } else if distance.player_to_id == current_player.id {
+                        if distance.player_from_team == current_player.team_id {
+                            teammates_count += 1;
+                        } else {
+                            opponents_count += 1;
+                        }
                     }
                     (teammates_count, opponents_count)
                 },
-            );
-
-        (teammates_count, opponents_count)
+            )
     }
 
     pub fn find_closest_opponent(&self, player: &MatchPlayer) -> Option<(u32, f32)> {
@@ -291,8 +329,6 @@ impl PlayerDistanceClosure {
                 }
             })
             .collect();
-
-        println!("COUNT = {}", opponents.len());
 
         opponents.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
         if opponents.is_empty() {

@@ -1,6 +1,7 @@
 use async_compression::tokio::write::GzipEncoder;
 use tokio::fs::File;
 use core::r#match::MatchResult;
+use log::info;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 const CHUNK_SIZE: usize = 8 * 1024;
@@ -41,11 +42,13 @@ impl MatchStore {
             .await
             .unwrap();
 
-        let mut compressed_file = GzipEncoder::new(file);
+        let mut compressed_file = GzipEncoder::with_quality(file, async_compression::Level::Best);
 
         if let Some(res) = result.details {
             //serialize and write compressed data
             let file_data = serde_json::to_vec(&res.position_data).unwrap();
+
+            info!("uncompressed size = {}", file_data.len());
 
             compressed_file.write_all(&file_data).await.unwrap();
             compressed_file.shutdown().await.unwrap();

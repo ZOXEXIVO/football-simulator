@@ -1,12 +1,13 @@
-use crate::r#match::ball::events::{BallEvents, GoalSide};
+use crate::r#match::ball::events::{GoalSide};
 use crate::r#match::field::MatchField;
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager};
+use crate::r#match::{GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager, StateProcessingContext};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use std::collections::HashMap;
+use crate::r#match::engine::events::dispatcher::EventCollection;
+use crate::r#match::events::EventDispatcher;
 use crate::r#match::position::MatchPositionData;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -66,8 +67,13 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn game_tick(field: &mut MatchField, context: &mut MatchContext, match_data: &mut MatchPositionData) {
         let game_tick_context = GameTickContext::new(field);
 
-        let player_affected_events = Self::play_ball(field, context, &game_tick_context);
-        Self::play_players(field, context, &game_tick_context, player_affected_events);
+        let mut events = EventCollection::new();
+
+        Self::play_ball(field, context, &game_tick_context, &mut events);
+        Self::play_players(field, context, &game_tick_context, &mut events);
+
+        // dispatch events
+        EventDispatcher::dispatch(events.to_vec(), field, context, true);
 
         Self::write_match_positions(field, context.time.time, match_data);
     }
@@ -95,31 +101,22 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         field: &mut MatchField,
         context: &MatchContext,
         tick_context: &GameTickContext,
-    ) -> PlayerUpdateEventCollection {
-        let players = &field.players;
-
-        let ball_events = field.ball.update(context, &players, tick_context);
-
-        BallEvents::handle_events(context.time.time, ball_events.into_iter(), context)
+        events: &mut EventCollection
+    ) {
+        field.ball.update(context, &field.players, tick_context, events);
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        ball_player_events: PlayerUpdateEventCollection,
+        events: &mut EventCollection
     ) {
-        let player_events: Vec<PlayerUpdateEventCollection> = field
+        field
             .players
             .iter_mut()
-            .map(|player| player.update(context, tick_context))
-            .collect();
-
-        for events in player_events {
-            events.process(field, context)
-        }
-
-        ball_player_events.process(field, context)
+            .map(|player| player.update(context, tick_context, events))
+            .collect()
     }
 }
 
@@ -163,7 +160,6 @@ impl MatchContext {
         self.time.increment(time);
     }
 
-
     pub fn fill_details(&mut self){
         for player in self.players.raw_players().iter().filter(|p| !p.statistics.is_empty()) {
             for stat in &player.statistics.items            {
@@ -176,6 +172,42 @@ impl MatchContext {
                 self.score.add_goal_detail(detail);
             }
         }
+    }
+
+    pub fn penalty_area(&self, is_home_team: bool) -> PenaltyArea {
+        let field_width = self.field_size.width as f32;
+        let field_height = self.field_size.height as f32;
+        let penalty_area_width = 16.5; // Standard width of penalty area
+        let penalty_area_depth = 40.3; // Standard depth of penalty area
+
+        if is_home_team {
+            PenaltyArea::new(
+                Vector3::new(0.0, (field_height - penalty_area_width) / 2.0, 0.0),
+                Vector3::new(penalty_area_depth, (field_height + penalty_area_width) / 2.0, 0.0)
+            )
+        } else {
+            PenaltyArea::new(
+                Vector3::new(field_width - penalty_area_depth, (field_height - penalty_area_width) / 2.0, 0.0),
+                Vector3::new(field_width, (field_height + penalty_area_width) / 2.0, 0.0)
+            )
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct PenaltyArea {
+    pub min: Vector3<f32>,
+    pub max: Vector3<f32>,
+}
+
+impl PenaltyArea {
+    pub fn new(min: Vector3<f32>, max: Vector3<f32>) -> Self {
+        PenaltyArea { min, max }
+    }
+
+    pub fn contains(&self, point: &Vector3<f32>) -> bool {
+        point.x >= self.min.x && point.x <= self.max.x &&
+            point.y >= self.min.y && point.y <= self.max.y
     }
 }
 

@@ -1,15 +1,13 @@
-use crate::r#match::ball::events::BallUpdateEvent;
-use crate::r#match::player::state::PlayerState;
-use crate::r#match::position::{PlayerFieldPosition, VectorExtensions};
+use crate::r#match::ball::events::BallEvent;
+use crate::r#match::events::EventCollection;
+use crate::r#match::position::VectorExtensions;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use nalgebra::Vector3;
-use rand_distr::num_traits::Pow;
 
 pub struct Ball {
     pub start_position: Vector3<f32>,
     pub position: Vector3<f32>,
     pub velocity: Vector3<f32>,
-    pub ball_position: BallPosition,
     pub center_field_position: f32,
     pub height: f32,
 
@@ -23,7 +21,6 @@ impl Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(x, y, 0.0),
             velocity: Vector3::zeros(),
-            ball_position: BallPosition::Home,
             center_field_position: x, // initial ball position = center field
             height: 0.0,
             previous_owner: None,
@@ -36,22 +33,18 @@ impl Ball {
         context: &MatchContext,
         players: &[MatchPlayer],
         tick_context: &GameTickContext,
-    ) -> Vec<BallUpdateEvent> {
-        let mut result = Vec::with_capacity(10);
-
-        self.update_velocity(&mut result);
-        self.check_goal(context, &mut result);
-        self.check_boundary_collision(&mut result, context);
-        self.check_ball_ownership(context, players, &mut result);
+        events: &mut EventCollection
+    ) {
+        self.update_velocity();
+        self.check_goal(context, events);
+        self.check_boundary_collision(context);
+        self.check_ball_ownership(context, players, events);
 
         self.move_to(tick_context);
-
-        result
     }
 
     fn check_boundary_collision(
         &mut self,
-        _result: &mut Vec<BallUpdateEvent>,
         context: &MatchContext,
     ) {
         let field_width = context.field_size.width as f32 + 1.0;
@@ -71,9 +64,13 @@ impl Ball {
         &mut self,
         context: &MatchContext,
         players: &[MatchPlayer],
-        result: &mut Vec<BallUpdateEvent>,
+        events: &mut EventCollection
     ) {
         const BALL_DISTANCE_THRESHOLD: f32 = 1.0;
+
+        if let Some(owner_player_id) = self.current_owner {
+            let t = owner_player_id;
+        }
 
         if let Some(owner_player_id) = self.previous_owner {
             let owner = context.players.get(owner_player_id).unwrap();
@@ -91,8 +88,6 @@ impl Ball {
                     dx * dx + dy * dy < BALL_DISTANCE_THRESHOLD * BALL_DISTANCE_THRESHOLD
                 })
                 .collect();
-
-            //println!("NEARBY = {}", nearby_players.len());
 
             let is_nearby_already_has_ball = nearby_players.iter().any(|player| player.has_ball);
             if is_nearby_already_has_ball {
@@ -124,13 +119,13 @@ impl Ball {
                         .iter()
                         .filter(|p| !p.has_ball)
                         .for_each(|mut player| {
-                            result.push(BallUpdateEvent::UnClaim(player.id));
+                            events.add_ball_event(BallEvent::UnClaim(player.id));
                         });
 
                     return;
                 }
 
-                result.push(BallUpdateEvent::Claimed(player.id));
+                events.add_ball_event(BallEvent::Claimed(player.id));
             }
         }
     }
@@ -153,14 +148,14 @@ impl Ball {
             + physical_skills.agility * agility_weight
     }
 
-    fn check_goal(&mut self, context: &MatchContext, result: &mut Vec<BallUpdateEvent>) {
+    fn check_goal(&mut self, context: &MatchContext, result: &mut EventCollection) {
         if let Some(goal_side) = context.goal_positions.is_goal(self.position) {
-            result.push(BallUpdateEvent::Goal(goal_side, self.previous_owner));
+            result.add_ball_event(BallEvent::Goal(goal_side, self.previous_owner));
             self.reset();
         }
     }
 
-    fn update_velocity(&mut self, _result: &mut Vec<BallUpdateEvent>) {
+    fn update_velocity(&mut self) {
         let gravity = Vector3::new(0.0, 0.0, -9.81);
 
         const FRICTION_COEFFICIENT: f32 = 1.5;
@@ -193,8 +188,7 @@ impl Ball {
                 .players_positions
                 .get_player_position(owner_player_id)
             {
-                self.position.x = owner_position.x;
-                self.position.y = owner_position.y;
+                self.position = owner_position;
             }
         } else {
             self.position.x += self.velocity.x;
@@ -202,13 +196,6 @@ impl Ball {
         }
     }
 
-    fn position(&self) -> BallPosition {
-        if self.position.x <= self.center_field_position {
-            BallPosition::Home
-        } else {
-            BallPosition::Away
-        }
-    }
 
     pub fn reset(&mut self) {
         self.position.x = self.start_position.x;
@@ -216,10 +203,4 @@ impl Ball {
 
         self.velocity = Vector3::zeros();
     }
-}
-
-#[derive(Eq, PartialEq, Copy, Clone)]
-pub enum BallPosition {
-    Home,
-    Away,
 }

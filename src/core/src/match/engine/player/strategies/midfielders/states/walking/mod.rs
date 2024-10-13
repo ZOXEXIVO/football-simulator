@@ -3,8 +3,10 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::IntegerUtils;
+use crate::PlayerFieldPositionGroup::Midfielder;
 use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::midfielders::states::MidfielderState;
 
 static DEFENDER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
@@ -16,12 +18,12 @@ impl StateProcessingHandler for MidfielderWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // 1. If the defender is on their own side and the ball is close, transition to Intercepting
         if ctx.ball().is_towards_player_with_angle(0.8) && ctx.ball().distance() < 150.0 {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
+            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
         }
 
         // 2. If the defender is far from their starting position, transition to Returning
         if ctx.player().position_to_distance() != PlayerDistanceFromStartPosition::Small {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
+            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Returning));
         }
 
         // 3. Remain in Walking state

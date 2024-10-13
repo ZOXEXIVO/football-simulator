@@ -1,16 +1,14 @@
+use log::info;
 use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
 use crate::r#match::forwarders::states::{ForwardState, ForwardStrategies};
 use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStrategies};
 use crate::r#match::midfielders::states::{MidfielderState, MidfielderStrategies};
-use crate::r#match::player::events::{PlayerUpdateEvent, PlayerUpdateEventCollection};
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::{Defender, Forward, Goalkeeper, Midfielder};
-use crate::r#match::{
-    BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer,
-    PlayerOperationsImpl,
-};
+use crate::r#match::{BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer, PlayerOperationsImpl, TeamOperationsImpl};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
+use crate::r#match::events::{Event, EventCollection};
 
 pub trait StateProcessingHandler {
     // Try fast processing
@@ -83,6 +81,9 @@ impl<'p> StateProcessor<'p> {
     }
 
     pub fn process_inner<H: StateProcessingHandler>(self, handler: H) -> StateProcessingResult {
+        let player_id = self.player.id;
+        let need_extended_state_logging = self.player.use_extended_state_logging;
+
         let processing_ctx = self.into_ctx();
         let mut result = StateProcessingResult::new();
 
@@ -94,6 +95,9 @@ impl<'p> StateProcessor<'p> {
         let complete_result = |state_results: StateChangeResult,
                                mut result: StateProcessingResult| {
             if let Some(state) = state_results.state {
+                if need_extended_state_logging {
+                    info!("Player, Id={}, State {:?}", player_id, state);
+                }
                 result.state = Some(state);
                 result.events = state_results.events;
             }
@@ -138,6 +142,11 @@ impl<'sp> StateProcessingContext<'sp> {
     pub fn player(&self) -> PlayerOperationsImpl<'_> {
         PlayerOperationsImpl::new(self)
     }
+
+    #[inline]
+    pub fn team(&self) -> TeamOperationsImpl<'_> {
+        TeamOperationsImpl::new(self)
+    }
 }
 
 impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
@@ -154,7 +163,7 @@ impl<'sp> From<StateProcessor<'sp>> for StateProcessingContext<'sp> {
 pub struct StateProcessingResult {
     pub state: Option<PlayerState>,
     pub velocity: Option<Vector3<f32>>,
-    pub events: PlayerUpdateEventCollection,
+    pub events: EventCollection,
 }
 
 impl StateProcessingResult {
@@ -162,7 +171,7 @@ impl StateProcessingResult {
         StateProcessingResult {
             state: None,
             velocity: None,
-            events: PlayerUpdateEventCollection::new(),
+            events: EventCollection::new(),
         }
     }
 }
@@ -171,7 +180,7 @@ pub struct StateChangeResult {
     pub state: Option<PlayerState>,
     pub velocity: Option<Vector3<f32>>,
 
-    pub events: PlayerUpdateEventCollection,
+    pub events: EventCollection,
 }
 
 impl StateChangeResult {
@@ -179,23 +188,15 @@ impl StateChangeResult {
         StateChangeResult {
             state: None,
             velocity: None,
-            events: PlayerUpdateEventCollection::new(),
+            events: EventCollection::new(),
         }
-    }
-
-    pub fn set_state(&mut self, state: PlayerState) {
-        self.state = Some(state);
-    }
-
-    pub fn set_velocity(&mut self, velocity: Vector3<f32>) {
-        self.velocity = Some(velocity);
     }
 
     pub fn with(state: PlayerState) -> Self {
         StateChangeResult {
             state: Some(state),
             velocity: None,
-            events: PlayerUpdateEventCollection::new(),
+            events: EventCollection::new(),
         }
     }
 
@@ -203,7 +204,15 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Goalkeeper(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new(),
+            events: EventCollection::new(),
+        }
+    }
+
+    pub fn with_goalkeeper_state_and_event(state: GoalkeeperState, event: Event) -> Self {
+        StateChangeResult {
+            state: Some(Goalkeeper(state)),
+            velocity: None,
+            events: EventCollection::with_event(event),
         }
     }
 
@@ -211,15 +220,15 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Defender(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new(),
+            events: EventCollection::new(),
         }
     }
 
-    pub fn with_defender_state_and_event(state: DefenderState, event: PlayerUpdateEvent) -> Self {
+    pub fn with_defender_state_and_event(state: DefenderState, event: Event) -> Self {
         StateChangeResult {
             state: Some(Defender(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::with_event(event),
+            events: EventCollection::with_event(event),
         }
     }
 
@@ -227,7 +236,15 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Midfielder(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new(),
+            events: EventCollection::new(),
+        }
+    }
+
+    pub fn with_midfielder_state_and_event(state: MidfielderState, event: Event) -> Self {
+        StateChangeResult {
+            state: Some(Midfielder(state)),
+            velocity: None,
+            events: EventCollection::with_event(event),
         }
     }
 
@@ -235,27 +252,19 @@ impl StateChangeResult {
         StateChangeResult {
             state: Some(Forward(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::new(),
+            events: EventCollection::new(),
         }
     }
 
-    pub fn with_forward_state_and_event(state: ForwardState, event: PlayerUpdateEvent) -> Self {
+    pub fn with_forward_state_and_event(state: ForwardState, event: Event) -> Self {
         StateChangeResult {
             state: Some(Forward(state)),
             velocity: None,
-            events: PlayerUpdateEventCollection::with_event(event),
+            events: EventCollection::with_event(event),
         }
     }
 
-    pub fn with_velocity(velocity: Vector3<f32>) -> Self {
-        StateChangeResult {
-            state: None,
-            velocity: Some(velocity),
-            events: PlayerUpdateEventCollection::new(),
-        }
-    }
-
-    pub fn with_events(events: PlayerUpdateEventCollection) -> Self {
+    pub fn with_events(events: EventCollection) -> Self {
         StateChangeResult {
             state: None,
             velocity: None,

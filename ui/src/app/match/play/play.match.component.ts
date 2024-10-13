@@ -362,6 +362,8 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.matchPlayService.reset();
+
         this.isDisposed = true;
         this.application?.ticker.stop();
 

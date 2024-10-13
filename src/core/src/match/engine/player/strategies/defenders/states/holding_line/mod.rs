@@ -9,7 +9,7 @@ use crate::r#match::defenders::states::DefenderState;
 static DEFENDER_HOLDING_LINE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_holding_line_data.json")));
 
-const MAX_DEFENSIVE_LINE_DEVIATION: f32 = 20.0;
+const MAX_DEFENSIVE_LINE_DEVIATION: f32 = 50.0;
 const BALL_PROXIMITY_THRESHOLD: f32 = 10.0;
 const MARKING_DISTANCE_THRESHOLD: f32 = 5.0;
 
@@ -58,13 +58,7 @@ impl StateProcessingHandler for DefenderHoldingLineState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        None
-        // // Adjust position to maintain the defensive line
-        // let defensive_line_position = self.calculate_defensive_line_position(ctx);
-        // let desired_position = Vector3::new(ctx.player.position.x, defensive_line_position, ctx.player.position.z);
-        // let direction = (desired_position - ctx.player.position).normalize();
-        // let speed = ctx.player.skills.physical.pace; // Use player's pace attribute
-        // Some(direction * speed)
+        Some(Vector3::zeros())
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {

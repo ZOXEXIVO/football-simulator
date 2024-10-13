@@ -58,7 +58,7 @@ impl<'p> PlayerOperationsImpl<'p> {
     }
 
     pub fn calculate_pass_power(&self, teammate: &MatchPlayer) -> f64 {
-        let distance = self.ctx.player.position.distance_to(&teammate.position);
+        let distance = self.ctx.tick_context.object_positions.player_distances.get(self.ctx.player.id, teammate.id).unwrap();
         let pass_skill = self.ctx.player.skills.technical.passing;
         (distance / pass_skill as f32 * 10.0) as f64
     }
@@ -78,6 +78,10 @@ impl<'p> PlayerOperationsImpl<'p> {
 
     pub fn defenders(&self) -> Vec<&MatchPlayer> {
         self.ctx.context.players.get_by_position(PlayerFieldPositionGroup::Defender)
+    }
+
+    pub fn forwards(&self) -> Vec<&MatchPlayer> {
+        self.ctx.context.players.get_by_position(PlayerFieldPositionGroup::Forward)
     }
 }
 

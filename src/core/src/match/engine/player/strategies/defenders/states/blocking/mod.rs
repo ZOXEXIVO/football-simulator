@@ -7,8 +7,8 @@ use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
 use std::f32::consts::PI;
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_BLOCKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_blocking_data.json")));
@@ -72,7 +72,7 @@ impl StateProcessingHandler for DefenderBlockingState {
             // For simplicity, we'll invert the ball's velocity and reduce its speed
             let new_ball_velocity = -ball_velocity * 0.5; // Reduce speed by half
 
-            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.id, new_ball_velocity));
+            state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
 
             // Optionally reduce defender's stamina
             // ctx.player.player_attributes.reduce_stamina(block_stamina_cost);

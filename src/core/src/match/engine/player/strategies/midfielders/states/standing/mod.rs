@@ -9,9 +9,8 @@
     static MIDFIELDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
         LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
-    const POSSESSION_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust based on simulation scale
     const PASSING_DISTANCE_THRESHOLD: f32 = 30.0; // Adjust as needed
-    const PRESSING_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust as needed
+    const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0; // Adjust as needed
     const STAMINA_THRESHOLD: u32 = 20; // Minimum stamina percentage before resting
 
     #[derive(Default)]
@@ -19,8 +18,7 @@
 
     impl StateProcessingHandler for MidfielderStandingState {
         fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-            if ctx.ball().distance() < 10.0 {
-
+            if !ctx.team().is_control_ball() && ctx.ball().distance() < 10.0 {
                 // Transition to Tackling state to attempt to regain possession
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Tackling,
@@ -45,9 +43,9 @@
             }
 
             // 2. Check if the ball is close and the midfielder should attempt to gain possession
-            if ctx.ball().distance() < POSSESSION_DISTANCE_THRESHOLD {
+            if !ctx.team().is_control_ball() && ctx.ball().distance() < PRESSING_DISTANCE_THRESHOLD {
                 // Transition to Tackling state to try and win the ball
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Tackling));
+                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
             }
 
             // 3. Check if an opponent is nearby and pressing is needed
@@ -61,7 +59,6 @@
                 return Some(StateChangeResult::with_midfielder_state(MidfielderState::SupportingAttack));
             }
 
-            // 5. Remain in Standing state
             None
         }
 
@@ -71,29 +68,7 @@
         }
 
         fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-            let mut rng = rand::thread_rng();
-
-            // Determine if the player should move based on their concentration and positioning
-            let should_move = self.calculate_movement_probability(&mut rng, &ctx);
-
-            if should_move {
-                // Get player's agility and stamina to adjust movement
-                let agility_factor = ctx.player.skills.physical.agility / 20.0; // normalize between 0 and 1
-                let stamina_factor = ctx.player.skills.physical.stamina / 20.0; // normalize between 0 and 1
-
-                // Generate random movement direction
-                let random_x: f32 = rng.gen_range(-0.5..0.5) * agility_factor * stamina_factor;
-                let random_y: f32 = rng.gen_range(-0.5..0.5) * agility_factor * stamina_factor;
-
-                // Random movement vector based on skills
-                let random_movement = Vector3::new(random_x, random_y, 0.0);
-
-                // Return random movement
-                Some(random_movement)
-            } else {
-                // Player remains stationary
-                Some(Vector3::new(0.0, 0.0, 0.0))
-            }
+            Some(Vector3::new(0.0, 0.0, 0.0))
         }
 
         fn process_conditions(&self, _ctx: ConditionContext) {

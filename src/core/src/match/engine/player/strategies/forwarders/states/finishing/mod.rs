@@ -1,13 +1,12 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerUpdateEvent;
-use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_FINISHING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_finishing_data.json")));
@@ -43,7 +42,7 @@ impl StateProcessingHandler for ForwardFinishingState {
         let (shooting_direction, shooting_power) = self.calculate_shooting_parameters(ctx);
 
         // Perform the shooting action
-        result.events.add(PlayerUpdateEvent::RequestShot(
+        result.events.add_player_event(PlayerEvent::RequestShot(
             ctx.player.id,
             shooting_direction,
         ));

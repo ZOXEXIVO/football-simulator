@@ -38,6 +38,13 @@ impl MatchField {
         }
     }
 
+    pub fn reset_players_positions(&mut self) {
+        self.players.iter_mut().for_each(|p| {
+            p.position = p.start_position;
+            p.velocity = Vector3::zeros();
+        });
+    }
+
     pub fn swap_squads(&mut self) {
         std::mem::swap(&mut self.left_side_players, &mut self.right_side_players);
 

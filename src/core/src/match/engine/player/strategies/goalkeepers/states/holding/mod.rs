@@ -3,15 +3,26 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 
 static GOALKEEPER_HOLDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_holding_data.json")));
+
+const HOLDING_DURATION: u64 = 100;
 
 #[derive(Default)]
 pub struct GoalkeeperHoldingState {}
 
 impl StateProcessingHandler for GoalkeeperHoldingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if !ctx.player.has_ball {
+            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
+        }
+
+        if ctx.in_state_time >= HOLDING_DURATION {
+            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Distributing));
+        }
+
         None
     }
 

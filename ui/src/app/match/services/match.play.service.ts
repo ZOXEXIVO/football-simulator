@@ -45,6 +45,10 @@ export class MatchPlayService {
     stop() {
         this.matchEvents.next(MatchEvent.Ended);
     }
+
+    reset(){
+        this.currentTime = 0;
+    }
 }
 
 export enum MatchEvent {

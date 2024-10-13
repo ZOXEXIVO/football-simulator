@@ -1,39 +1,75 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler, VectorExtensions,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
-const BALL_PROXIMITY_THRESHOLD: f32 = 200.0;
 const DANGER_ZONE_RADIUS: f32 = 30.0;
 const REACTION_TIME_THRESHOLD: u64 = 1000; // in milliseconds
+const OPTIMAL_DISTANCE_FROM_GOAL: f32 = 200.0; //
 
 #[derive(Default)]
 pub struct GoalkeeperStandingState {}
 
 impl StateProcessingHandler for GoalkeeperStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.ball().is_towards_player_with_angle(0.8) {
-            if ctx.ball().distance() < BALL_PROXIMITY_THRESHOLD {
-                if ctx.ball().is_towards_player() {
-                    return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::PreparingForSave));
+        let mut result = StateChangeResult::new();
+
+        if ctx.ball().on_own_side() {
+            // own side ball
+            match ctx.player().position_to_distance() {
+                PlayerDistanceFromStartPosition::Small => {
+                    if ctx.ball().is_towards_player_with_angle(0.8) {
+                        if ctx.ball().is_towards_player() {
+                            return Some(StateChangeResult::with_goalkeeper_state(
+                                GoalkeeperState::PreparingForSave,
+                            ));
+                        }
+                    }
+
+                    if self.is_opponent_in_danger_zone(ctx) {
+                        return Some(StateChangeResult::with_goalkeeper_state(
+                            GoalkeeperState::UnderPressure,
+                        ));
+                    }
+                }
+                PlayerDistanceFromStartPosition::Medium => {
+                    return Some(StateChangeResult::with_goalkeeper_state(
+                        GoalkeeperState::ComingOut,
+                    ));
+                }
+                PlayerDistanceFromStartPosition::Big => {
+                    return Some(StateChangeResult::with_goalkeeper_state(
+                        GoalkeeperState::Walking,
+                    ));
                 }
             }
+        } else {
+           if ctx.in_state_time > 200 {
+               return Some(StateChangeResult::with_goalkeeper_state(
+                   GoalkeeperState::Walking,
+               ));
+           }
         }
 
-        // 4. Check if an opponent is approaching the danger zone
-        if self.is_opponent_in_danger_zone(ctx) {
-            // 5. Transition to UnderPressure state
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::UnderPressure));
+        // Adjust position if needed
+        let optimal_position = self.calculate_optimal_position(ctx);
+        if ctx.player.position.distance_to(&optimal_position) > 0.5 {
+            result.events.add_player_event(PlayerEvent::MovePlayer(
+                ctx.player.id,
+                optimal_position,
+            ));
+            return Some(result);
         }
 
-        // 6. Remain in Standing state
         None
     }
 
@@ -44,8 +80,10 @@ impl StateProcessingHandler for GoalkeeperStandingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Goalkeeper remains stationary in Standing state
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        let optimal_position = self.calculate_optimal_position(ctx);
+        let direction = (optimal_position - ctx.player.position).normalize();
+        let speed = ctx.player.skills.physical.acceleration * 0.1; // Slow movement for minor adjustments
+        Some(direction * speed)
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {
@@ -54,28 +92,45 @@ impl StateProcessingHandler for GoalkeeperStandingState {
 }
 
 impl GoalkeeperStandingState {
-    /// Determines if any opponent is within the danger zone around the penalty area.
     fn is_opponent_in_danger_zone(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.player()
-            .opponents()
-            .iter()
-            .any(|opponent| {
-                let distance = (ctx.player.position - opponent.position).magnitude();
-                distance < DANGER_ZONE_RADIUS
-            })
+        if let Some(opponent_with_ball) = ctx.player().opponent_with_ball().first() {
+            if let Some(opponent_distance) = ctx
+                .tick_context
+                .object_positions
+                .player_distances
+                .get(ctx.player.id, opponent_with_ball.id)
+            {
+                return opponent_distance < DANGER_ZONE_RADIUS;
+            }
+        }
+
+        false
     }
 
-    /// Gets the center position of the goalkeeper's own goal.
-    fn get_goal_center_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let field_width = ctx.context.field_size.width as f32;
-        let field_height = ctx.context.field_size.height as f32;
+    fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
+        let goal_center = ctx.ball().direction_to_own_goal();
+        let ball_position = ctx.tick_context.object_positions.ball_position;
 
-        if ctx.player().on_own_side() {
-            // Home team's goal is on the left side
-            Vector3::new(0.0, field_height / 2.0, 0.0)
-        } else {
-            // Away team's goal is on the right side
-            Vector3::new(field_width, field_height / 2.0, 0.0)
-        }
+        // Calculate a position on the line between the ball and the center of the goal
+        let to_ball = ball_position - goal_center;
+        let optimal_position = goal_center + to_ball.normalize() * OPTIMAL_DISTANCE_FROM_GOAL;
+
+        // Ensure the goalkeeper stays within the penalty area
+        self.clamp_to_penalty_area(ctx, optimal_position)
+    }
+
+    fn clamp_to_penalty_area(
+        &self,
+        ctx: &StateProcessingContext,
+        position: Vector3<f32>,
+    ) -> Vector3<f32> {
+        let penalty_area = ctx
+            .context
+            .penalty_area(ctx.player.side == Some(PlayerSide::Left));
+        Vector3::new(
+            position.x.clamp(penalty_area.min.x, penalty_area.max.x),
+            position.y.clamp(penalty_area.min.y, penalty_area.max.y),
+            0.0,
+        )
     }
 }

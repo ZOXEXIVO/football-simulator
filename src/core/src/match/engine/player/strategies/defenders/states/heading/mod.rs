@@ -4,7 +4,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_HEADING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_heading_data.json")));
@@ -41,7 +41,7 @@ impl StateProcessingHandler for DefenderHeadingState {
             let mut state_change = StateChangeResult::with_defender_state(DefenderState::HoldingLine);
             let new_ball_velocity = self.calculate_heading_velocity(ctx);
 
-            state_change.events.add(PlayerUpdateEvent::MoveBall(ctx.player.id, new_ball_velocity));
+            state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
 
             // 4. Update player's stamina or condition if needed
             // (e.g., heading might cost some stamina)

@@ -32,6 +32,8 @@ export class MatchGetComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.matchPlayService.reset();
+
         this.matchService.get(this.leagueSlug, this.matchId).subscribe(data => {
             let match_data = data;
 

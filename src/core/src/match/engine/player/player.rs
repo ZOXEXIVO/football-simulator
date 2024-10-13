@@ -1,9 +1,8 @@
-﻿use crate::r#match::ball::events::BallUpdateEvent;
+﻿use std::f32::NAN;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerUpdateEventCollection;
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 use crate::r#match::{GameTickContext, MatchContext};
@@ -13,6 +12,8 @@ use crate::{
 };
 use nalgebra::Vector3;
 use std::fmt::*;
+use log::info;
+use crate::r#match::events::EventCollection;
 
 #[derive(Debug, Clone)]
 pub struct MatchPlayer {
@@ -30,6 +31,7 @@ pub struct MatchPlayer {
     pub state: PlayerState,
     pub in_state_time: u64,
     pub statistics: MatchPlayerStatistics,
+    pub use_extended_state_logging: bool
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -39,7 +41,7 @@ pub enum PlayerSide {
 }
 
 impl MatchPlayer {
-    pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType) -> Self {
+    pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType, use_extended_state_logging: bool) -> Self {
         MatchPlayer {
             id: player.id,
             position: Vector3::new(0.0, 0.0, 0.0),
@@ -66,6 +68,7 @@ impl MatchPlayer {
             },
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new(),
+            use_extended_state_logging
         }
     }
 
@@ -73,16 +76,14 @@ impl MatchPlayer {
         &mut self,
         context: &MatchContext,
         tick_context: &GameTickContext,
-    ) -> PlayerUpdateEventCollection {
-        let mut result = PlayerUpdateEventCollection::new();
+        events: &mut EventCollection
+    ) {
+        let player_events = PlayerMatchState::process(self, context, tick_context);
 
-        // change move
-        result.join(PlayerMatchState::process(self, context, tick_context));
+        events.add_from_collection(player_events);
 
         self.check_boundary_collision(context);
         self.move_to();
-
-        result
     }
 
     fn check_boundary_collision(&mut self, context: &MatchContext) {
@@ -105,8 +106,13 @@ impl MatchPlayer {
     }
 
     fn move_to(&mut self) {
-        self.position.x += self.velocity.x;
-        self.position.y += self.velocity.y;
+        if !self.velocity.x.is_nan() {
+            self.position.x += self.velocity.x;
+        }
+
+        if !self.velocity.y.is_nan() {
+            self.position.y += self.velocity.y;
+        }
     }
 
     pub fn heading(&self) -> f32 {

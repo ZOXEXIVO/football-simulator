@@ -7,7 +7,7 @@ use nalgebra::Vector3;
 use std::sync::LazyLock;
 use rand::Rng;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerUpdateEvent;
+use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_INTERCEPTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_intercepting_data.json")));
@@ -33,7 +33,7 @@ impl StateProcessingHandler for DefenderInterceptingState {
                         DefenderState::Running,
                     );
 
-                    state.events.add(PlayerUpdateEvent::ClaimBall(ctx.player.id));
+                    state.events.add_player_event(PlayerEvent::ClaimBall(ctx.player.id));
 
                     return Some(state);
                 }
@@ -68,7 +68,18 @@ impl StateProcessingHandler for DefenderInterceptingState {
             let interception_point = self.calculate_interception_point(ctx);
 
             // Direction towards the interception point
-            let direction = (interception_point - ctx.player.position).normalize();
+            let to_interception = interception_point - ctx.player.position;
+            let direction = if to_interception.magnitude() > f32::EPSILON {
+                to_interception.normalize()
+            } else {
+                // If the player is very close to the interception point, use their current direction
+                // or a default direction if the velocity is near zero
+                if ctx.player.velocity.magnitude() > f32::EPSILON {
+                    ctx.player.velocity.normalize()
+                } else {
+                    Vector3::new(1.0, 0.0, 0.0) // Default direction, e.g., positive x-axis
+                }
+            };
 
             // Retrieve player's current speed magnitude
             let current_speed = ctx.player.velocity.magnitude();
@@ -86,10 +97,10 @@ impl StateProcessingHandler for DefenderInterceptingState {
             // Calculate new velocity vector
             let new_velocity = direction * new_speed;
 
-            return Some(new_velocity);
+            Some(new_velocity)
+        } else {
+            None
         }
-
-       None
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {

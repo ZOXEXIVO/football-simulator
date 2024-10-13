@@ -1,6 +1,7 @@
 ﻿use crate::r#match::position::VectorExtensions;
 use crate::r#match::MatchPlayer;
 use nalgebra::Vector3;
+use rand::Rng;
 
 pub enum SteeringBehavior {
     Seek {
@@ -34,7 +35,12 @@ impl SteeringBehavior {
     pub fn calculate(&self, player: &MatchPlayer) -> SteeringOutput {
         match self {
             SteeringBehavior::Seek { target } => {
-                let desired_velocity = (*target - player.position).normalize();
+                let to_target = *target - player.position;
+                let desired_velocity = if to_target.norm() > 0.0 {
+                    to_target.normalize() * player.skills.max_speed()
+                } else {
+                    Vector3::zeros()
+                };
 
                 let steering = desired_velocity - player.velocity;
 
@@ -50,20 +56,26 @@ impl SteeringBehavior {
                 target,
                 slowing_distance,
             } => {
-                let distance = (*target - player.position).length();
-                let desired_velocity = (*target - player.position).normalize()
-                    * (distance / *slowing_distance * player.skills.max_speed());
+                let to_target = *target - player.position;
+                let distance = to_target.norm();
+
+                let desired_velocity = if distance > 0.0 {
+                    let speed = (distance / *slowing_distance).clamp(0.0, 1.0) * player.skills.max_speed();
+                    to_target.normalize() * speed
+                } else {
+                    Vector3::zeros()
+                };
 
                 let steering = desired_velocity - player.velocity;
                 let max_acceleration = player.skills.max_speed();
                 let steering_length = steering.norm();
 
-                let steering_ratio = max_acceleration / steering_length;
-                let mut limited_steering = steering * steering_ratio;
-
-                if limited_steering.x.is_nan() || limited_steering.y.is_nan() {
-                    limited_steering = Vector3::zeros();
-                }
+                let limited_steering = if steering_length > 0.0 {
+                    let steering_ratio = max_acceleration / steering_length;
+                    steering * steering_ratio.min(1.0)
+                } else {
+                    Vector3::zeros()
+                };
 
                 SteeringOutput {
                     velocity: limited_steering,
@@ -71,11 +83,10 @@ impl SteeringBehavior {
                 }
             }
             SteeringBehavior::Pursuit { target, velocity } => {
-                let to_target = target - player.position;
-                let distance = to_target.length();
+                let to_target = *target - player.position;
+                let distance = to_target.norm();
 
-                // Define a slowing radius
-                let slowing_radius = 5.0; // Adjust this value as needed
+                let slowing_radius = 5.0;
 
                 let target_speed = if distance > slowing_radius {
                     player.skills.max_speed()
@@ -83,12 +94,20 @@ impl SteeringBehavior {
                     player.skills.max_speed() * (distance / slowing_radius)
                 };
 
-                let desired_velocity = to_target.normalize() * target_speed;
+                let desired_velocity = if distance > 0.0 {
+                    to_target.normalize() * target_speed
+                } else {
+                    Vector3::zeros()
+                };
+
                 let steering = desired_velocity - player.velocity;
 
-                // Apply a maximum force to the steering
-                let max_force: f32 = 10.0; // Adjust this value as needed
-                let steering = steering.normalize() * max_force.min(steering.length());
+                let max_force: f32 = 10.0;
+                let steering = if steering.norm() > 0.0 {
+                    steering.normalize() * max_force.min(steering.norm())
+                } else {
+                    Vector3::zeros()
+                };
 
                 SteeringOutput {
                     velocity: steering,
@@ -96,16 +115,17 @@ impl SteeringBehavior {
                 }
             }
             SteeringBehavior::Evade { target, velocity } => {
-                let distance = (target - player.position).length();
-                let prediction = distance / player.skills.max_speed();
+                let to_target = *target - player.position;
+                let distance = to_target.norm();
+                let prediction = distance / player.skills.max_speed().max(f32::EPSILON);
                 let target_position = target + velocity * prediction;
-                let desired_velocity =
-                    (player.position - target_position).normalize() * player.skills.max_speed();
-                let mut steering = desired_velocity - player.velocity;
-
-                if steering.x.is_nan() || steering.y.is_nan() {
-                    steering = Vector3::zeros();
-                }
+                let to_player = player.position - target_position;
+                let desired_velocity = if to_player.norm() > 0.0 {
+                    to_player.normalize() * player.skills.max_speed()
+                } else {
+                    Vector3::zeros()
+                };
+                let steering = desired_velocity - player.velocity;
 
                 SteeringOutput {
                     velocity: steering,
@@ -119,24 +139,51 @@ impl SteeringBehavior {
                 distance,
                 angle: _,
             } => {
-                let rand_vec = Vector3::random_in_unit_circle().normalize() * *jitter;
+                let mut rng = rand::thread_rng();
 
-                let target_position = *target + rand_vec;
+                let angle = rng.gen::<f32>() * std::f32::consts::PI * 2.0;
 
-                let target_offset = target_position - player.position;
+                let displacement = Vector3::new(
+                    angle.cos() * *radius,
+                    angle.sin() * *radius,
+                    0.0
+                );
 
-                let adjusted_offset = target_offset.normalize() * *distance;
-                let steering = adjusted_offset.add_scalar(player.heading() * *radius);
+                let jitter_offset = Vector3::new(
+                    rng.gen::<f32>() * *jitter - *jitter * 0.5,
+                    rng.gen::<f32>() * *jitter - *jitter * 0.5,
+                    0.0
+                );
+
+                let wander_target = *target + displacement + jitter_offset;
+
+                let wandering_force = wander_target - player.position;
+
+                let steering_force = wandering_force - player.velocity;
+
+                let max_force = 1.0;
+                let steering_force = Self::limit_magnitude(steering_force, max_force);
+
+                let new_velocity = Self::limit_magnitude(player.velocity + steering_force, *distance);
+
+                let rotation = if new_velocity.x != 0.0 || new_velocity.y != 0.0 {
+                    new_velocity.y.atan2(new_velocity.x)
+                } else {
+                    0.0
+                };
 
                 SteeringOutput {
-                    velocity: steering.normalize(),
-                    rotation: 0.0,
+                    velocity: new_velocity,
+                    rotation,
                 }
             }
             SteeringBehavior::Flee { target } => {
-                let target_direction = (player.position - *target).normalize();
-
-                let desired_velocity = target_direction * player.skills.max_speed();
+                let to_player = player.position - *target;
+                let desired_velocity = if to_player.norm() > 0.0 {
+                    to_player.normalize() * player.skills.max_speed()
+                } else {
+                    Vector3::zeros()
+                };
 
                 let steering = desired_velocity - player.velocity;
 
@@ -150,9 +197,8 @@ impl SteeringBehavior {
 
     fn limit_magnitude(v: Vector3<f32>, max_magnitude: f32) -> Vector3<f32> {
         let current_magnitude = v.norm();
-        if current_magnitude > max_magnitude {
-            let ratio = max_magnitude / current_magnitude;
-            v * ratio
+        if current_magnitude > max_magnitude && current_magnitude > 0.0 {
+            v * (max_magnitude / current_magnitude)
         } else {
             v
         }
