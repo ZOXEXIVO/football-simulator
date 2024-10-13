@@ -16,6 +16,10 @@ pub struct MidfielderPressingState {}
 
 impl StateProcessingHandler for MidfielderPressingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.player.has_ball {
+            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Running));
+        }
+
         // 1. Check if the midfielder has enough stamina to continue pressing
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {

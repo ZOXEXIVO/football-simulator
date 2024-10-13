@@ -1,18 +1,19 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    Collider, ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
 };
 use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
 use std::sync::LazyLock;
 
 static FORWARD_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
+
+const CREATING_SPACE_THRESHOLD: f32 = 100.0; // Adjust based on your game's scale
+const OPPONENT_DISTANCE_THRESHOLD: f32 = 5.0; // Adjust based on your game's scale
+const VELOCITY_CHANGE_THRESHOLD: f32 = 2.0; // Adjust based on your game's scale
 
 #[derive(Default)]
 pub struct ForwardRunningState {}
@@ -87,6 +88,13 @@ impl StateProcessingHandler for ForwardRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        if self.has_space_between_opponents(ctx){
+            return Some(SteeringBehavior::Arrive {
+                target: self.calculate_target_position(ctx),
+                slowing_distance: 30.0,
+            }.calculate(ctx.player).velocity);
+        }
+
         if ctx.player.has_ball {
             let goal_direction = ctx.ball().direction_to_opponent_goal();
 
@@ -197,4 +205,35 @@ impl ForwardRunningState {
             true
         }
     }
+
+    fn calculate_target_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
+        let player_position = ctx.player.position;
+        let field_half_length = ctx.context.field_size.width as f32 / 2.0;
+        let field_width = ctx.context.field_size.width as f32;
+
+        let target_x = field_half_length + (field_half_length - player_position.x) * 0.8;
+        let target_y = player_position.y + (field_width / 4.0) * (rand::random::<f32>() - 0.5);
+
+        Vector3::new(target_x, target_y, 0.0)
+    }
+
+    fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {
+        let nearest_opponents = ctx.tick_context.object_positions.player_distances
+            .find_closest_opponents(ctx.player);
+
+        if let Some(opponents) = nearest_opponents {
+            if opponents.len() >= 2 {
+                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
+                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+
+                let distance_between_opponents = (opponent1_position - opponent2_position).magnitude();
+                distance_between_opponents > CREATING_SPACE_THRESHOLD
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
 }
