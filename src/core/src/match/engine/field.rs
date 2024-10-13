@@ -42,6 +42,8 @@ impl MatchField {
         self.players.iter_mut().for_each(|p| {
             p.position = p.start_position;
             p.velocity = Vector3::zeros();
+
+            p.set_default_state();
         });
     }
 

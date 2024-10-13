@@ -146,7 +146,7 @@ impl StateProcessingHandler for ForwardRunningState {
 impl ForwardRunningState {
     fn is_leading_forward(&self, ctx: &StateProcessingContext) -> bool {
         let players = ctx.player();
-        let forwards = players.forwards();
+        let forwards = players.forwards_teammates();
 
         let (closest_forward, closest_distance) = forwards.iter().fold(
             (None, f32::MAX),

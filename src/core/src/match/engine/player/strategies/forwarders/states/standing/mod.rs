@@ -6,6 +6,11 @@ use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProc
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::PlayerSide;
 
+// Constants used in ForwardStandingState
+const MAX_SHOOTING_DISTANCE: f32 = 30.0; // Maximum distance to attempt a shot
+const MIN_SHOOTING_DISTANCE: f32 = 16.5; // Minimum distance to attempt a shot (e.g., edge of penalty area)
+const PRESS_DISTANCE: f32 = 20.0;        // Distance within which to press opponents
+
 static FORWARD_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
 
@@ -133,8 +138,3 @@ impl ForwardStandingState {
         ctx.ball().distance_to_opponent_goal()
     }
 }
-
-// Constants used in ForwardStandingState
-const MAX_SHOOTING_DISTANCE: f32 = 30.0; // Maximum distance to attempt a shot
-const MIN_SHOOTING_DISTANCE: f32 = 16.5; // Minimum distance to attempt a shot (e.g., edge of penalty area)
-const PRESS_DISTANCE: f32 = 20.0;        // Distance within which to press opponents

@@ -83,6 +83,10 @@ impl<'p> PlayerOperationsImpl<'p> {
     pub fn forwards(&self) -> Vec<&MatchPlayer> {
         self.ctx.context.players.get_by_position(PlayerFieldPositionGroup::Forward)
     }
+
+    pub fn forwards_teammates(&self) -> Vec<&MatchPlayer> {
+        self.ctx.context.players.get_by_position_and_team(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
+    }
 }
 
 pub struct MatchPlayerLogic;
