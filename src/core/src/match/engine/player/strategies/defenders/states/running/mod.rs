@@ -26,6 +26,10 @@ impl StateProcessingHandler for DefenderRunningState {
             }
         }
 
+        if ctx.player.has_ball && ctx.in_state_time > 300 {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Passing));
+        }
+
         // if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
         //     return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
         // }

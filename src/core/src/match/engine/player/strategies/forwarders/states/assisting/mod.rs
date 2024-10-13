@@ -4,6 +4,9 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::forwarders::states::ForwardState;
+use crate::r#match::player::events::PlayerEvent;
+
+const KICK_POWER_MULTIPLIER: f32 = 1.5; // Multiplier for kick power calculation
 
 static FORWARD_ASSISTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_assisting_data.json")));
@@ -13,13 +16,7 @@ pub struct ForwardAssistingState {}
 
 impl StateProcessingHandler for ForwardAssistingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let result = StateChangeResult::new();
-
-        // Check if the player still has the ball
-        if !ctx.player.has_ball {
-            // If the player doesn't have the ball, transition to Running state
-            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        }
+        let mut result = StateChangeResult::new();
 
         // Check if there's an immediate threat from an opponent
         if self.is_under_pressure(ctx) {
@@ -37,8 +34,15 @@ impl StateProcessingHandler for ForwardAssistingState {
         // If not under immediate pressure, look for assist opportunities
         if let Some(teammate_id) = self.find_best_teammate_to_assist(ctx) {
             if self.is_good_assisting_position(ctx, teammate_id) {
+                let teammate_position = ctx.tick_context.object_positions.
+                    players_positions.get_player_position(teammate_id).unwrap();
+
                 // Make the assist
-                //result.events.add_player_event(PlayerEvent::Pass(ctx.player.player_id, teammate_id));
+                let distance_to_teammate = (ctx.player.position - teammate_position).magnitude();
+                let kick_power =
+                    distance_to_teammate / ctx.player.skills.technical.free_kicks * KICK_POWER_MULTIPLIER;
+
+                result.events.add_player_event(PlayerEvent::PassTo(teammate_id, teammate_position, kick_power as f64,));
                 return Some(result);
             }
         }

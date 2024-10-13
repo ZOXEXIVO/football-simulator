@@ -96,8 +96,6 @@ impl ForwardPassingState {
         &self,
         ctx: &StateProcessingContext<'a>,
     ) -> Option<&'a MatchPlayer> {
-        return ctx.context.players.get(102);
-
         let teammates = ctx
             .tick_context
             .object_positions

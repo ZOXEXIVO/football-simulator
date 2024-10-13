@@ -240,6 +240,14 @@ impl StateChangeResult {
         }
     }
 
+    pub fn with_midfielder_state_and_event(state: MidfielderState, event: Event) -> Self {
+        StateChangeResult {
+            state: Some(Midfielder(state)),
+            velocity: None,
+            events: EventCollection::with_event(event),
+        }
+    }
+
     pub fn with_forward_state(state: ForwardState) -> Self {
         StateChangeResult {
             state: Some(Forward(state)),

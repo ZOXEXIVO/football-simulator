@@ -120,8 +120,8 @@ impl StateProcessingHandler for ForwardRunningState {
 
             // Combine attributes to determine speed
             // We're giving more weight to pace and acceleration
-            let speed = (normalized_pace * 0.4
-                + normalized_acceleration * 0.3
+            let speed = (normalized_pace * 0.6
+                + normalized_acceleration * 0.9
                 + normalized_stamina * 0.2
                 + normalized_agility * 0.1)
                 * MAX_PLAYER_SPEED;
