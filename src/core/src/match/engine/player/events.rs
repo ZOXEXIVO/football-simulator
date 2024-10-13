@@ -25,7 +25,7 @@ pub enum PlayerEvent {
     GainBall(u32),
     CaughtBall(u32),
     CommitFoul,
-    RequestPass(u32, u32),
+    RequestPass(u32),
     RequestHeading(u32, Vector3<f32>),
     RequestShot(u32, Vector3<f32>),
     RequestBallReceive(u32),
@@ -128,7 +128,7 @@ impl PlayerEventDispatcher {
                 let player = field.get_player_mut(player_id).unwrap();
                 player.has_ball = false;
             }
-            PlayerEvent::RequestPass(_, _) => {}
+            PlayerEvent::RequestPass(_) => {}
             PlayerEvent::RequestHeading(_, _) => {}
             PlayerEvent::RequestShot(_, _) => {}
             PlayerEvent::RequestBallReceive(_) => {}

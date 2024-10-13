@@ -13,6 +13,10 @@ pub struct DefenderReturningState {}
 
 impl StateProcessingHandler for DefenderReturningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.player.has_ball {
+            return Some(StateChangeResult::with_defender_state(DefenderState::Passing));
+        }
+
         // Stay in returning state until very close to start position
         if ctx.player().distance_from_start_position() < 2.0 {
             return Some(StateChangeResult::with_defender_state(DefenderState::Standing));

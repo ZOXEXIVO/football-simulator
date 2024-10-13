@@ -47,16 +47,12 @@ impl Ball {
         &mut self,
         context: &MatchContext,
     ) {
-        let field_width = context.field_size.width as f32 + 1.0;
-        let field_height = context.field_size.height as f32 + 1.0;
+        let field_width = context.field_size.width as f32;
+        let field_height = context.field_size.height as f32;
 
         // Check if ball hits the boundary and reverse its velocity if it does
-        if self.position.x <= 0.0 || self.position.x >= field_width {
-            self.velocity.x = -self.velocity.x;
-        }
-
-        if self.position.y <= 0.0 || self.position.y >= field_height {
-            self.velocity.y = -self.velocity.y;
+        if self.position.x <= 0.0 || self.position.x >= field_width || self.position.y <= 0.0 || self.position.y >= field_height {
+            self.velocity = Vector3::zeros();
         }
     }
 

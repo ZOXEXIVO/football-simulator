@@ -70,7 +70,7 @@ impl StateProcessingHandler for ForwardRunningInBehindState {
             if let Some((teammate_id, _)) = teammates.first() {
                 result
                     .events
-                    .add_player_event(PlayerEvent::RequestPass(ctx.player.id, *teammate_id));
+                    .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
             }
         }
 

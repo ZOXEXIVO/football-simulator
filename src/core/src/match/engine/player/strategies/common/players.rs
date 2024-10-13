@@ -63,7 +63,7 @@ impl<'p> PlayerOperationsImpl<'p> {
         (distance / pass_skill as f32 * 10.0) as f64
     }
 
-    pub fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
+    pub fn is_under_pressure(&self) -> bool {
         let (_, opponents_count) = self.distances();
         opponents_count > 1
     }
@@ -82,6 +82,10 @@ impl<'p> PlayerOperationsImpl<'p> {
 
     pub fn forwards(&self) -> Vec<&MatchPlayer> {
         self.ctx.context.players.get_by_position(PlayerFieldPositionGroup::Forward)
+    }
+
+    pub fn forwards_teammates(&self) -> Vec<&MatchPlayer> {
+        self.ctx.context.players.get_by_position_and_team(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
     }
 }
 

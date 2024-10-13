@@ -122,7 +122,7 @@ async fn main() {
         left_mouse_pressed = is_mouse_button_down(MouseButton::Left);
 
         if left_mouse_pressed {
-            thread::sleep(Duration::from_millis(100));
+            thread::sleep(Duration::from_millis(300));
         }
 
         next_frame().await;

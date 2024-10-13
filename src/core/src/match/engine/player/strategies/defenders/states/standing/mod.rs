@@ -116,6 +116,12 @@ impl StateProcessingHandler for DefenderStandingState {
             }
         }
 
+        if ctx.in_state_time > 100 {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Walking,
+            ));
+        }
+
         None
     }
 
@@ -124,7 +130,7 @@ impl StateProcessingHandler for DefenderStandingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        None
+        Some(Vector3::zeros())
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {

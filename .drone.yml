@@ -13,6 +13,9 @@ steps:
     when:
       branch:
         - master
+      event:
+        exclude:
+          - pull_request
 
   - name: clear
     image: docker:dind
@@ -42,6 +45,9 @@ steps:
     when:
       branch:
         - master
+      event:
+        exclude:
+          - pull_request
 
 volumes:
   - name: docker_sock

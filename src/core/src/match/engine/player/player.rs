@@ -6,10 +6,7 @@ use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 use crate::r#match::{GameTickContext, MatchContext};
-use crate::{
-    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
-    PlayerSkills,
-};
+use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPosition, PlayerPositionType, PlayerSkills};
 use nalgebra::Vector3;
 use std::fmt::*;
 use log::info;
@@ -54,18 +51,7 @@ impl MatchPlayer {
             velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
             side: None,
-            state: match position.position_group() {
-                PlayerFieldPositionGroup::Goalkeeper => {
-                    PlayerState::Goalkeeper(GoalkeeperState::Standing)
-                }
-                PlayerFieldPositionGroup::Defender => {
-                    PlayerState::Defender(DefenderState::Standing)
-                }
-                PlayerFieldPositionGroup::Midfielder => {
-                    PlayerState::Midfielder(MidfielderState::Standing)
-                }
-                PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::Standing),
-            },
+            state: Self::get_state_by_position(position),
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new(),
             use_extended_state_logging
@@ -97,6 +83,25 @@ impl MatchPlayer {
 
         if self.position.y <= 0.0 || self.position.y >= field_height {
             self.velocity.y = 0.0;
+        }
+    }
+
+    pub fn set_default_state(&mut self){
+        self.state = Self::get_state_by_position(self.tactics_position);
+    }
+
+    fn get_state_by_position(position: PlayerPositionType) -> PlayerState {
+        match position.position_group() {
+            PlayerFieldPositionGroup::Goalkeeper => {
+                PlayerState::Goalkeeper(GoalkeeperState::Standing)
+            }
+            PlayerFieldPositionGroup::Defender => {
+                PlayerState::Defender(DefenderState::Standing)
+            }
+            PlayerFieldPositionGroup::Midfielder => {
+                PlayerState::Midfielder(MidfielderState::Standing)
+            }
+            PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::Standing),
         }
     }
 

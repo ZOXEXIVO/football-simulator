@@ -2,10 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 use crate::r#match::player::events::PlayerEvent;
@@ -28,7 +25,7 @@ impl StateProcessingHandler for ForwardDribblingState {
         }
 
         // Check if the player is under pressure
-        if player_ops.is_under_pressure(ctx) {
+        if player_ops.is_under_pressure() {
             // Transition to Passing state if under pressure
             return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
         }
@@ -48,7 +45,7 @@ impl StateProcessingHandler for ForwardDribblingState {
             // Perform the pass
             result
                 .events
-                .add_player_event(PlayerEvent::RequestPass(ctx.player.id, teammate.id));
+                .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
 
             // Transition to Running state after making the pass
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
@@ -75,7 +72,14 @@ impl StateProcessingHandler for ForwardDribblingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.ball().direction_to_opponent_goal(),
+                slowing_distance: 200.0,
+            }
+                .calculate(ctx.player)
+                .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}

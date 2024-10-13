@@ -337,6 +337,13 @@ impl MatchPlayerCollection {
             .collect()
     }
 
+    pub fn get_by_position_and_team(&self, position_group: PlayerFieldPositionGroup, team_id: u32) -> Vec<&MatchPlayer> {
+        self.players
+            .values()
+            .filter(|player| player.team_id == team_id && player.tactics_position.position_group() == position_group)
+            .collect()
+    }
+
     pub fn get_by_team(&self, team_id: u32) -> Vec<&MatchPlayer> {
         let teammates = self
             .players
