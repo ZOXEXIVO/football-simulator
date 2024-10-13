@@ -57,10 +57,17 @@ impl StateProcessingHandler for MidfielderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(SteeringBehavior::Arrive {
-            target: ctx.ball().direction_to_opponent_goal(),
-            slowing_distance: 30.0
-        }.calculate(ctx.player).velocity)
+        if ctx.team().is_control_ball() {
+            Some(SteeringBehavior::Arrive {
+                target: ctx.ball().direction_to_opponent_goal(),
+                slowing_distance: 200.0
+            }.calculate(ctx.player).velocity)
+        }else {
+            Some(SteeringBehavior::Arrive {
+                target: ctx.ball().direction_to_own_goal(),
+                slowing_distance: 200.0
+            }.calculate(ctx.player).velocity)
+        }
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {

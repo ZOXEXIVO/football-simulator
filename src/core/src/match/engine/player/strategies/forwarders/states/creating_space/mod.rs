@@ -9,7 +9,7 @@ use crate::r#match::forwarders::states::ForwardState;
 static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_creating_space_data.json")));
 
-const CREATING_SPACE_THRESHOLD: f32 = 100.0; // Adjust based on your game's scale
+const CREATING_SPACE_THRESHOLD: f32 = 50.0; // Adjust based on your game's scale
 const OPPONENT_DISTANCE_THRESHOLD: f32 = 5.0; // Adjust based on your game's scale
 const VELOCITY_CHANGE_THRESHOLD: f32 = 2.0; // Adjust based on your game's scale
 

@@ -14,7 +14,11 @@ pub struct DefenderRunningState {
 
 impl StateProcessingHandler for DefenderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.ball().on_own_side() {
+        if ctx.player.has_ball {
+            if ctx.in_state_time > 300 {
+                return Some(StateChangeResult::with_defender_state(DefenderState::Passing));
+            }
+        } else {
             let distance_to_ball = ctx.ball().distance();
 
             if !ctx.player.has_ball && distance_to_ball < 10.0 {
@@ -26,14 +30,6 @@ impl StateProcessingHandler for DefenderRunningState {
             }
         }
 
-        if ctx.player.has_ball && ctx.in_state_time > 300 {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Passing));
-        }
-
-        // if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
-        //     return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
-        // }
-
         None
     }
 
@@ -42,7 +38,7 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.in_state_time == 0 {
+        if ctx.in_state_time % 100 == 0 {
             let target = match ctx.player.side {
                 Some(PlayerSide::Left) => ctx.context.goal_positions.right,
                 Some(PlayerSide::Right) => ctx.context.goal_positions.left,

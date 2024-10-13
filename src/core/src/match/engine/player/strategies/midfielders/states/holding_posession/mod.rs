@@ -3,6 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -25,13 +26,19 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
                 Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Running,
                 ))
-            }
+            };
         }
 
-        if ctx.in_state_time > 100 {
+        if ctx.player.skills.mental.decisions >= 10.0 {
             return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Running,
+                MidfielderState::Distributing,
             ));
+        } else {
+            if ctx.in_state_time > 1000 {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Running,
+                ));
+            }
         }
 
         None
@@ -42,7 +49,14 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.ball().direction_to_opponent_goal(),
+                slowing_distance: 30.0,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}

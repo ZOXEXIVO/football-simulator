@@ -17,6 +17,12 @@ pub struct DefenderInterceptingState {}
 
 impl StateProcessingHandler for DefenderInterceptingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.team().is_control_ball() {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Returning,
+            ));
+        }
+
         // 1. Check if the ball is too far away, transition to Returning state
         let ball_ops = ctx.ball();
 

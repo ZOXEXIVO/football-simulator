@@ -1,9 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -101,7 +99,14 @@ impl StateProcessingHandler for ForwardPressingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.tick_context.object_positions.ball_position,
+                slowing_distance: 10.0,
+            }
+                .calculate(ctx.player)
+                .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}

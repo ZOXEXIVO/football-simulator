@@ -84,7 +84,7 @@ impl StateProcessingHandler for MidfielderPressingState {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.player.position,
-                    slowing_distance: 10.0,
+                    slowing_distance: 1.0,
                 }
                 .calculate(ctx.player)
                 .velocity,

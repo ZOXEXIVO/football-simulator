@@ -85,12 +85,6 @@ impl StateProcessingHandler for DefenderStandingState {
                         ));
                     }
                 }
-
-                if ctx.in_state_time > 100 {
-                    return Some(StateChangeResult::with_defender_state(
-                        DefenderState::Walking,
-                    ));
-                }
             }
         }
         // Ball is on the attacking side
@@ -120,6 +114,12 @@ impl StateProcessingHandler for DefenderStandingState {
                     DefenderState::Walking,
                 ));
             }
+        }
+
+        if ctx.in_state_time > 100 {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Walking,
+            ));
         }
 
         None
