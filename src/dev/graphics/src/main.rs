@@ -17,12 +17,12 @@ use core::Vector3;
 use env_logger::Env;
 use std::time::Instant;
 
+use core::r#match::MatchPositionData;
 use core::r#match::PlayerSide;
+use core::r#match::Score;
 use core::r#match::GOAL_WIDTH;
 use core::NaiveDate;
 use core::PlayerGenerator;
-use core::r#match::MatchPositionData;
-use core::r#match::Score;
 
 const INNER_FIELD_WIDTH: f32 = 840.0;
 const INNER_FIELD_HEIGHT: f32 = 545.0;
@@ -31,7 +31,7 @@ const INNER_FIELD_HEIGHT: f32 = 545.0;
 async fn main() {
     env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
 
-    let width = screen_width();
+    let width = screen_width() - 30.0;
     let height = screen_height();
 
     let window_aspect_ratio = width / height;
@@ -45,8 +45,8 @@ async fn main() {
         (width, INNER_FIELD_HEIGHT * scale, scale)
     };
 
-    let offset_x = (width - field_width) / 2.0;
-    let offset_y = (height - field_height) / 2.0;
+    let offset_x = (width - field_width) / 2.0 + 20.0;
+    let offset_y = (height - field_height) / 2.0 + 10.0;
 
     let home_squad = get_home_squad();
     let away_squad = get_away_squad();
@@ -77,13 +77,30 @@ async fn main() {
 
         clear_background(Color::new(255.0, 238.0, 7.0, 65.0));
 
+        let field_color = Color::from_rgba(132, 240, 207, 255);
+        let border_color = Color::from_rgba(51, 184, 144, 255);
+        let border_width = 5.0;
+
         draw_rectangle_ex(
             offset_x,
             offset_y,
             field_width,
             field_height,
             DrawRectangleParams {
-                color: Color::from_rgba(189, 255, 204, 255),
+                color: field_color,
+                offset: Vec2 { x: 0.0, y: 0.0 },
+                rotation: 0.0,
+            },
+        );
+
+        draw_rectangle_lines_ex(
+            offset_x - border_width / 2.0,
+            offset_y - border_width / 2.0,
+            field_width + border_width,
+            field_height + border_width,
+            border_width,
+            DrawRectangleParams {
+                color: border_color,
                 offset: Vec2 { x: 0.0, y: 0.0 },
                 rotation: 0.0,
             },
@@ -99,6 +116,19 @@ async fn main() {
         draw_players(offset_x, offset_y, &field, scale);
 
         draw_ball(offset_x, offset_y, &field.ball, scale);
+
+        draw_player_list(
+            offset_x + 20.0,
+            offset_y + field_height + 10.0,
+            field.players.iter().filter(|p| p.team_id == 2).collect(),
+            scale,
+        );
+        draw_player_list(
+            offset_x + 20.0,
+            offset_y - 50.0,
+            field.players.iter().filter(|p| p.team_id == 1).collect(),
+            scale,
+        );
 
         // FPS
         const average_fps_bucket_size: usize = 50;
@@ -134,21 +164,28 @@ const TRACKING_PLAYER_ID: u32 = 1000;
 pub fn get_home_squad() -> TeamSquad {
     let players = [
         get_player(101, PlayerPositionType::Goalkeeper),
-        get_player(102,PlayerPositionType::DefenderLeft),
-        get_player(103,PlayerPositionType::DefenderCenterLeft),
-        get_player(104,PlayerPositionType::DefenderCenterRight),
-        get_player(105,PlayerPositionType::DefenderRight),
-        get_player(106,PlayerPositionType::MidfielderLeft),
-        get_player(107,PlayerPositionType::MidfielderCenterLeft),
-        get_player(108,PlayerPositionType::MidfielderCenterRight),
-        get_player(109,PlayerPositionType::MidfielderRight),
-        get_player(110,PlayerPositionType::ForwardLeft),
-        get_player(111,PlayerPositionType::ForwardRight),
+        get_player(102, PlayerPositionType::DefenderLeft),
+        get_player(103, PlayerPositionType::DefenderCenterLeft),
+        get_player(104, PlayerPositionType::DefenderCenterRight),
+        get_player(105, PlayerPositionType::DefenderRight),
+        get_player(106, PlayerPositionType::MidfielderLeft),
+        get_player(107, PlayerPositionType::MidfielderCenterLeft),
+        get_player(108, PlayerPositionType::MidfielderCenterRight),
+        get_player(109, PlayerPositionType::MidfielderRight),
+        get_player(110, PlayerPositionType::ForwardLeft),
+        get_player(111, PlayerPositionType::ForwardRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(1, player, player.position(), player.id == TRACKING_PLAYER_ID))
+        .map(|player| {
+            MatchPlayer::from_player(
+                1,
+                player,
+                player.position(),
+                player.id == TRACKING_PLAYER_ID,
+            )
+        })
         .collect();
 
     let home_squad = TeamSquad {
@@ -164,22 +201,29 @@ pub fn get_home_squad() -> TeamSquad {
 
 pub fn get_away_squad() -> TeamSquad {
     let players = [
-        get_player(113,PlayerPositionType::Goalkeeper),
-        get_player(114,PlayerPositionType::DefenderLeft),
-        get_player(115,PlayerPositionType::DefenderCenterLeft),
-        get_player(116,PlayerPositionType::DefenderCenterRight),
-        get_player(117,PlayerPositionType::DefenderRight),
-        get_player(118,PlayerPositionType::MidfielderLeft),
-        get_player(119,PlayerPositionType::MidfielderCenterLeft),
-        get_player(120,PlayerPositionType::MidfielderCenterRight),
-        get_player(121,PlayerPositionType::MidfielderRight),
-        get_player(122,PlayerPositionType::ForwardLeft),
-        get_player(123,PlayerPositionType::ForwardRight),
+        get_player(113, PlayerPositionType::Goalkeeper),
+        get_player(114, PlayerPositionType::DefenderLeft),
+        get_player(115, PlayerPositionType::DefenderCenterLeft),
+        get_player(116, PlayerPositionType::DefenderCenterRight),
+        get_player(117, PlayerPositionType::DefenderRight),
+        get_player(118, PlayerPositionType::MidfielderLeft),
+        get_player(119, PlayerPositionType::MidfielderCenterLeft),
+        get_player(120, PlayerPositionType::MidfielderCenterRight),
+        get_player(121, PlayerPositionType::MidfielderRight),
+        get_player(122, PlayerPositionType::ForwardLeft),
+        get_player(123, PlayerPositionType::ForwardRight),
     ];
 
     let match_players: Vec<MatchPlayer> = players
         .iter()
-        .map(|player| MatchPlayer::from_player(2, player, player.position(), player.id == TRACKING_PLAYER_ID))
+        .map(|player| {
+            MatchPlayer::from_player(
+                2,
+                player,
+                player.position(),
+                player.id == TRACKING_PLAYER_ID,
+            )
+        })
         .collect();
 
     let away_squad = TeamSquad {
@@ -233,9 +277,9 @@ pub fn is_towards_player(
 }
 
 #[cfg(target_os = "macos")]
-const WINDOW_WIDTH: i32 = 1300;
+const WINDOW_WIDTH: i32 = 1040;
 #[cfg(target_os = "macos")]
-const WINDOW_HEIGHT: i32 = 1000;
+const WINDOW_HEIGHT: i32 = 800;
 
 #[cfg(target_os = "windows")]
 const WINDOW_WIDTH: i32 = 2436;
@@ -317,7 +361,13 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
         draw_circle(translated_x, translated_y, circle_radius, color);
 
         if player.has_ball {
-            draw_circle_lines(translated_x, translated_y, circle_radius + scale, 3.0, WHITE);
+            draw_circle_lines(
+                translated_x,
+                translated_y,
+                circle_radius + scale - 1.0,
+                2.0,
+                BLUE,
+            );
         }
 
         // Player position
@@ -348,7 +398,12 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
         let distance = distance(&field.ball.position, &player.position);
         let state_distance_text = &format!("{} ({})", player_state(player), distance);
         let state_distance_font_size = 13.0 * scale;
-        let state_distance_text_dimensions = measure_text(state_distance_text, None, state_distance_font_size as u16, 1.0);
+        let state_distance_text_dimensions = measure_text(
+            state_distance_text,
+            None,
+            state_distance_font_size as u16,
+            1.0,
+        );
         draw_text(
             state_distance_text,
             translated_x - state_distance_text_dimensions.width / 2.5,
@@ -364,4 +419,65 @@ fn draw_ball(offset_x: f32, offset_y: f32, ball: &Ball, scale: f32) {
     let translated_y = offset_y + ball.position.y * scale;
 
     draw_circle(translated_x, translated_y, 7.0 * scale, ORANGE);
+}
+
+fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, scale: f32) {
+    let player_width = 25.0 * scale;
+    let player_height = 25.0 * scale;
+    let player_spacing = 40.0 * scale;
+
+    players.iter().enumerate().for_each(|(index, player)| {
+        let player_x = offset_x + index as f32 * (player_width + player_spacing);
+        let player_y = offset_y;
+
+        // Draw player circle
+        let player_color = if player.team_id == 1 {
+            Color::from_rgba(0, 184, 186, 255)
+        } else {
+            Color::from_rgba(208, 139, 255, 255)
+        };
+
+        let circle_radius = player_width / 2.0;
+
+        draw_circle(
+            player_x + circle_radius,
+            player_y + circle_radius,
+            circle_radius,
+            player_color,
+        );
+
+        if player.has_ball {
+            draw_circle_lines(
+                player_x + circle_radius,
+                player_y + circle_radius,
+                circle_radius + scale - 1.0,
+                3.0,
+                BLUE,
+            );
+        }
+
+        // Draw player number
+        let player_number = player.id.to_string();
+        let number_font_size = 14.0 * scale;
+        let number_dimensions = measure_text(&player_number, None, number_font_size as u16, 1.0);
+        draw_text(
+            &player_number,
+            player_x + circle_radius - number_dimensions.width / 2.0,
+            player_y + circle_radius + number_dimensions.height / 4.0,
+            number_font_size,
+            BLACK,
+        );
+
+        // Draw player state
+        let state_text = player_state(player);
+        let state_font_size = 12.0 * scale;
+        let state_dimensions = measure_text(&state_text, None, state_font_size as u16, 1.0);
+        draw_text(
+            &state_text,
+            player_x + circle_radius - state_dimensions.width / 2.0,
+            player_y + player_height + state_dimensions.height / 2.0 + 5.0,
+            state_font_size,
+            BLACK,
+        );
+    });
 }

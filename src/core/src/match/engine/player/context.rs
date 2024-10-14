@@ -36,7 +36,7 @@ impl GameTickContext {
         GameTickContext {
             ball: BallMetadata::from_field(field),
             object_positions: MatchObjectsPositions::from(field),
-            space
+            space,
         }
     }
 }
@@ -245,13 +245,18 @@ impl PlayerDistanceClosure {
                 (Vec::new(), Vec::new()),
                 |(mut teammates, mut opponents), item| {
                     if item.player_from_id == current_player.id {
-                        if item.player_to_team == current_player.team_id {
+                        if item.player_to_team == current_player.team_id
+                            && item.player_to_id != current_player.id
+                        {
                             teammates.push((item.player_to_id, item.distance));
                         } else {
                             opponents.push((item.player_to_id, item.distance));
                         }
-                    } else { // item.player_to_id == current_player.id
-                        if item.player_from_team == current_player.team_id {
+                    } else {
+                        // item.player_to_id == current_player.id
+                        if item.player_from_team == current_player.team_id
+                            && item.player_from_team != current_player.id
+                        {
                             teammates.push((item.player_from_id, item.distance));
                         } else {
                             opponents.push((item.player_from_id, item.distance));
@@ -343,7 +348,9 @@ impl PlayerDistanceClosure {
             .distances
             .iter()
             .filter(|item| {
-                item.player_from_id == player.id && item.player_from_team == item.player_to_team
+                item.player_from_id == player.id
+                    && item.player_to_team != player.id
+                    && item.player_from_team == item.player_to_team
             })
             .map(|item| (item.player_to_id, item.distance))
             .collect();
