@@ -25,6 +25,8 @@ impl StateProcessingHandler for MidfielderPressingState {
             ));
         }
 
+
+
         // 1. Check if the midfielder has enough stamina to continue pressing
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {
@@ -32,10 +34,6 @@ impl StateProcessingHandler for MidfielderPressingState {
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Standing,
             ));
-        }
-
-        if ctx.player.use_extended_state_logging {
-            println!("Midfielder is pressing, {:?}", ctx.team().is_control_ball());
         }
 
         if ctx.team().is_control_ball() {
@@ -71,7 +69,7 @@ impl StateProcessingHandler for MidfielderPressingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        return if ctx.ball().distance() < 150.0 {
+        if ctx.ball().distance() < 150.0 {
             Some(
                 SteeringBehavior::Pursuit {
                     target: ctx.tick_context.object_positions.ball_position,
@@ -89,7 +87,7 @@ impl StateProcessingHandler for MidfielderPressingState {
                 .calculate(ctx.player)
                 .velocity,
             )
-        };
+        }
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {

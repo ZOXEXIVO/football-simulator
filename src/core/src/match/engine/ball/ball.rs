@@ -56,20 +56,41 @@ impl Ball {
         }
     }
 
+    fn is_players_running_to_ball(&self, players: &[MatchPlayer]) -> bool {
+        let ball_position = self.position;
+        let player_positions: Vec<(Vector3<f32>, Vector3<f32>)> = players
+            .iter()
+            .map(|player| (player.position, player.velocity))
+            .collect();
+
+        for (player_position, player_velocity) in player_positions {
+            let direction_to_ball = (ball_position - player_position).normalize();
+            let player_direction = player_velocity.normalize();
+            let dot_product = direction_to_ball.dot(&player_direction);
+
+            if dot_product > 0.0 {
+                // The player is running towards the ball if the dot product is positive
+                return true;
+            }
+        }
+
+        false
+    }
+
     fn check_ball_ownership(
         &mut self,
         context: &MatchContext,
         players: &[MatchPlayer],
         events: &mut EventCollection
     ) {
-        const BALL_DISTANCE_THRESHOLD: f32 = 1.0;
+        if self.is_players_running_to_ball(players) {
 
-        if let Some(owner_player_id) = self.current_owner {
-            let t = owner_player_id;
         }
 
-        if let Some(owner_player_id) = self.previous_owner {
-            let owner = context.players.get(owner_player_id).unwrap();
+        const BALL_DISTANCE_THRESHOLD: f32 = 1.0;
+
+        if let Some(previous_owner_id) = self.previous_owner {
+            let owner = context.players.get(previous_owner_id).unwrap();
             if owner.position.distance_to(&self.position) > BALL_DISTANCE_THRESHOLD {
                 self.previous_owner = None;
             }

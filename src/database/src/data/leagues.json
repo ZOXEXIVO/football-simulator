@@ -1,8 +1,8 @@
 [
   {
     "id": 7,
-    "slug": "premier-league",
-    "name": "Premier League",
+    "slug": "english-premier-league",
+    "name": "English Premier League",
     "country_id": 765,
     "reputation": 9000,
     "settings": {

@@ -364,9 +364,9 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
             draw_circle_lines(
                 translated_x,
                 translated_y,
-                circle_radius + scale - 1.0,
-                2.0,
-                BLUE,
+                circle_radius + scale - 2.0,
+                5.0,
+                ORANGE,
             );
         }
 
@@ -450,9 +450,9 @@ fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, sc
             draw_circle_lines(
                 player_x + circle_radius,
                 player_y + circle_radius,
-                circle_radius + scale - 1.0,
-                3.0,
-                BLUE,
+                circle_radius + scale - 2.0,
+                5.0,
+                ORANGE,
             );
         }
 
