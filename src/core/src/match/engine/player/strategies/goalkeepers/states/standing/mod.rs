@@ -3,11 +3,10 @@ use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::{
     ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler, VectorExtensions,
+    StateProcessingContext, StateProcessingHandler
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -21,53 +20,32 @@ pub struct GoalkeeperStandingState {}
 
 impl StateProcessingHandler for GoalkeeperStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let mut result = StateChangeResult::new();
-
-        if ctx.ball().on_own_side() {
-            // own side ball
-            match ctx.player().position_to_distance() {
-                PlayerDistanceFromStartPosition::Small => {
-                    if ctx.ball().is_towards_player_with_angle(0.8) {
-                        if ctx.ball().is_towards_player() {
-                            return Some(StateChangeResult::with_goalkeeper_state(
-                                GoalkeeperState::PreparingForSave,
-                            ));
-                        }
-                    }
-
-                    if self.is_opponent_in_danger_zone(ctx) {
+        match ctx.player().position_to_distance() {
+            PlayerDistanceFromStartPosition::Small => {
+                if ctx.ball().is_towards_player_with_angle(0.8) {
+                    if ctx.ball().is_towards_player() {
                         return Some(StateChangeResult::with_goalkeeper_state(
-                            GoalkeeperState::UnderPressure,
+                            GoalkeeperState::PreparingForSave,
                         ));
                     }
                 }
-                PlayerDistanceFromStartPosition::Medium => {
+
+                if self.is_opponent_in_danger_zone(ctx) {
                     return Some(StateChangeResult::with_goalkeeper_state(
-                        GoalkeeperState::ComingOut,
-                    ));
-                }
-                PlayerDistanceFromStartPosition::Big => {
-                    return Some(StateChangeResult::with_goalkeeper_state(
-                        GoalkeeperState::Walking,
+                        GoalkeeperState::UnderPressure,
                     ));
                 }
             }
-        } else {
-           if ctx.in_state_time > 200 {
-               return Some(StateChangeResult::with_goalkeeper_state(
-                   GoalkeeperState::Walking,
-               ));
-           }
-        }
-
-        // Adjust position if needed
-        let optimal_position = self.calculate_optimal_position(ctx);
-        if ctx.player.position.distance_to(&optimal_position) > 0.5 {
-            result.events.add_player_event(PlayerEvent::MovePlayer(
-                ctx.player.id,
-                optimal_position,
-            ));
-            return Some(result);
+            PlayerDistanceFromStartPosition::Medium => {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::ComingOut,
+                ));
+            }
+            PlayerDistanceFromStartPosition::Big => {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::Walking,
+                ));
+            }
         }
 
         None

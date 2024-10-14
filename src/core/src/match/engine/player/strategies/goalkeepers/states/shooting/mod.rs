@@ -23,24 +23,15 @@ impl StateProcessingHandler for GoalkeeperShootingState {
             return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
         }
 
-        // 2. Check if the distance to the opponent's goal is within the shooting distance threshold
-        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
-        if distance_to_goal > SHOOTING_DISTANCE_THRESHOLD {
-            // Too far to shoot, transition to appropriate state (e.g., Passing)
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Passing));
-        }
-
         // 3. Calculate the shooting direction and power
         let shooting_direction = ctx.ball().direction_to_opponent_goal();
-        let shot_power = distance_to_goal / ctx.player.skills.technical.finishing * SHOT_POWER_MULTIPLIER;
 
         // 4. Shoot the ball towards the opponent's goal
         let mut events = EventCollection::new();
 
         events.add_player_event(PlayerEvent::Shoot(ctx.player.id, shooting_direction));
-        events.add_player_event(PlayerEvent::UnClaimBall(ctx.player.id));
 
-        return Some(StateChangeResult::with_events(events));
+        Some(StateChangeResult::with_events(events))
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {

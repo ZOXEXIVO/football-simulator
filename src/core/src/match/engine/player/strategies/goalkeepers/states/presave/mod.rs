@@ -16,6 +16,11 @@ pub struct GoalkeeperPreSaveState {}
 
 impl StateProcessingHandler for GoalkeeperPreSaveState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.player.has_ball {
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Passing,
+            ));
+        }
         // Transition to Walking if the ball is far away
         if ctx.ball().distance() > 150.0 {
             return Some(StateChangeResult::with_goalkeeper_state(

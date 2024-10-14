@@ -35,23 +35,6 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
 
         }
 
-        // // If not under immediate pressure, look for assist opportunities
-        // if let Some(teammate_id) = self.find_best_teammate_to_distribute(ctx) {
-        //     // 3. Calculate the pass power based on the distance to the teammate
-        //     let (pass_power, position) = self.calculate_pass_power(teammate_id, ctx);
-        //
-        //     // 4. Distribute the ball to the teammate
-        //     let events = EventCollection::with_event(
-        //         Event::PlayerEvent(PlayerEvent::PassTo(
-        //             teammate_id,
-        //             position,
-        //             pass_power,
-        //         )),
-        //     );
-        //
-        //     return Some(StateChangeResult::with_events(events));
-        // }
-
         None
     }
 

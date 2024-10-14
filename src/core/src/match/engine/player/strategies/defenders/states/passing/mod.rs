@@ -6,7 +6,6 @@ use crate::common::NeuralNetwork;
 use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::{Event, EventCollection};
-use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 
 static DEFENDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =

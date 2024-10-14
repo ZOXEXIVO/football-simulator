@@ -349,8 +349,8 @@ impl PlayerDistanceClosure {
             .iter()
             .filter(|item| {
                 item.player_from_id == player.id
-                    && item.player_to_team != player.id
                     && item.player_from_team == item.player_to_team
+                    && item.player_from_id != item.player_to_id
             })
             .map(|item| (item.player_to_id, item.distance))
             .collect();
