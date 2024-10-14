@@ -3,7 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::{
     ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler
+    StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -20,6 +20,12 @@ pub struct GoalkeeperStandingState {}
 
 impl StateProcessingHandler for GoalkeeperStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.player.has_ball {
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Passing,
+            ));
+        }
+
         match ctx.player().position_to_distance() {
             PlayerDistanceFromStartPosition::Small => {
                 if ctx.ball().is_towards_player_with_angle(0.8) {

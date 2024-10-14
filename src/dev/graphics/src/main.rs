@@ -419,6 +419,10 @@ fn draw_ball(offset_x: f32, offset_y: f32, ball: &Ball, scale: f32) {
     let translated_y = offset_y + ball.position.y * scale;
 
     draw_circle(translated_x, translated_y, 7.0 * scale, ORANGE);
+
+    if ball.running_for_ball {
+        draw_circle(translated_x, translated_y, 3.0, BLACK);
+    }
 }
 
 fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, scale: f32) {

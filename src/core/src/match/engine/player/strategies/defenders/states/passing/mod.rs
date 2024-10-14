@@ -1,12 +1,15 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::{Event, EventCollection};
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use rand::prelude::SliceRandom;
+use std::sync::LazyLock;
 
 static DEFENDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -17,26 +20,41 @@ pub struct DefenderPassingState {}
 impl StateProcessingHandler for DefenderPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if !ctx.player.has_ball {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ));
         }
 
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx.tick_context.object_positions.players_positions.get_player_position(teammate.id) {
+            if let Some(teammate_player_position) = ctx
+                .tick_context
+                .object_positions
+                .players_positions
+                .get_player_position(teammate.id)
+            {
                 let pass_power = self.calculate_pass_power(teammate.id, ctx);
 
-                return Some(StateChangeResult::with_defender_state_and_event(DefenderState::Returning, Event::PlayerEvent(
-                    PlayerEvent::PassTo(ctx.player.id, teammate_player_position, pass_power)
-                )));
+                return Some(StateChangeResult::with_defender_state_and_event(
+                    DefenderState::Returning,
+                    Event::PlayerEvent(PlayerEvent::PassTo(
+                        teammate.id,
+                        teammate_player_position,
+                        pass_power,
+                    )),
+                ));
             }
         }
 
-        let (nearest_teammates, opponents) = ctx.tick_context
+        let (nearest_teammates, opponents) = ctx
+            .tick_context
             .object_positions
             .player_distances
             .players_within_distance(ctx.player, 30.0);
 
-        if ctx.player.has_ball && opponents.len() > 1  {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Clearing));
+        if ctx.player.has_ball && opponents.len() > 1 {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Clearing,
+            ));
         }
 
         let mut best_player_id = None;
@@ -50,11 +68,18 @@ impl StateProcessingHandler for DefenderPassingState {
             }
         }
 
-        if let Some(player_id) = best_player_id {
-            if let Some(teammate_player_position) = ctx.tick_context.object_positions.players_positions.get_player_position(player_id) {
-                let events = EventCollection::with_event(Event::PlayerEvent(
-                    PlayerEvent::PassTo(ctx.player.id, teammate_player_position, 1.0)
-                ));
+        if let Some(teammate_id) = best_player_id {
+            if let Some(teammate_player_position) = ctx
+                .tick_context
+                .object_positions
+                .players_positions
+                .get_player_position(teammate_id)
+            {
+                let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
+                    teammate_id,
+                    teammate_player_position,
+                    1.0,
+                )));
 
                 return Some(StateChangeResult::with_events(events));
             }
@@ -71,9 +96,7 @@ impl StateProcessingHandler for DefenderPassingState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl DefenderPassingState {
@@ -97,8 +120,11 @@ impl DefenderPassingState {
     }
 
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx.tick_context.object_positions.
-            player_distances.get(ctx.player.id, teammate_id)
+        let distance = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .get(ctx.player.id, teammate_id)
             .unwrap();
 
         let pass_skill = ctx.player.skills.technical.passing;

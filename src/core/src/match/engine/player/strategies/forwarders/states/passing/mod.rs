@@ -50,7 +50,7 @@ impl StateProcessingHandler for ForwardPassingState {
                 return Some(StateChangeResult::with_forward_state_and_event(
                     ForwardState::Running,
                     Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
+                        teammate.id,
                         teammate_player_position,
                         pass_power,
                     )),

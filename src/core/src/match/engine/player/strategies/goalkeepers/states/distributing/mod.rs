@@ -1,13 +1,16 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::events::{Event, EventCollection};
+use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use rand::prelude::SliceRandom;
+use std::sync::LazyLock;
 
 static GOALKEEPER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_distributing_data.json")));
@@ -21,18 +24,29 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // 1. Check if the goalkeeper has the ball
         if !ctx.player.has_ball {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Standing,
+            ));
         }
 
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx.tick_context.object_positions.players_positions.get_player_position(teammate.id) {
+            if let Some(teammate_player_position) = ctx
+                .tick_context
+                .object_positions
+                .players_positions
+                .get_player_position(teammate.id)
+            {
                 let pass_power = self.calculate_pass_power(teammate.id, ctx);
 
-                Some(StateChangeResult::with_defender_state_and_event(DefenderState::Returning, Event::PlayerEvent(
-                    PlayerEvent::PassTo(ctx.player.id, teammate_player_position, pass_power)
-                )));
+                Some(StateChangeResult::with_defender_state_and_event(
+                    DefenderState::Returning,
+                    Event::PlayerEvent(PlayerEvent::PassTo(
+                        teammate.id,
+                        teammate_player_position,
+                        pass_power,
+                    )),
+                ));
             }
-
         }
 
         None
@@ -46,9 +60,7 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl GoalkeeperDistributingState {
@@ -58,9 +70,14 @@ impl GoalkeeperDistributingState {
             .player_distances
             .find_closest_teammates(ctx.player)
             .and_then(|teammates| {
-                teammates.iter()
+                teammates
+                    .iter()
                     .filter(|(id, _)| self.is_in_good_scoring_position(ctx, *id))
-                    .min_by(|(_, dist_a), (_, dist_b)| dist_a.partial_cmp(dist_b).unwrap_or(std::cmp::Ordering::Equal))
+                    .min_by(|(_, dist_a), (_, dist_b)| {
+                        dist_a
+                            .partial_cmp(dist_b)
+                            .unwrap_or(std::cmp::Ordering::Equal)
+                    })
                     .map(|(id, _)| *id)
             })
     }
@@ -94,8 +111,11 @@ impl GoalkeeperDistributingState {
     }
 
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx.tick_context.object_positions.
-            player_distances.get(ctx.player.id, teammate_id)
+        let distance = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .get(ctx.player.id, teammate_id)
             .unwrap();
 
         let pass_skill = ctx.player.skills.technical.passing;

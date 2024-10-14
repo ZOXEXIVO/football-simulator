@@ -1,32 +1,40 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::{
+    ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler, SteeringBehavior,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static DEFENDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
 
 #[derive(Default)]
-pub struct DefenderRunningState {
-}
+pub struct DefenderRunningState {}
 
 impl StateProcessingHandler for DefenderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
             if ctx.in_state_time > 300 {
-                return Some(StateChangeResult::with_defender_state(DefenderState::Passing));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Passing,
+                ));
             }
         } else {
             let distance_to_ball = ctx.ball().distance();
 
             if !ctx.player.has_ball && distance_to_ball < 10.0 {
-                return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Intercepting,
+                ));
             }
 
             if ctx.player.has_ball && distance_to_ball >= 10.0 && distance_to_ball < 20.0 {
-                return Some(StateChangeResult::with_defender_state(DefenderState::Clearing));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Clearing,
+                ));
             }
         }
 
@@ -38,20 +46,14 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.in_state_time % 100 == 0 {
-            let target = match ctx.player.side {
-                Some(PlayerSide::Left) => ctx.context.goal_positions.right,
-                Some(PlayerSide::Right) => ctx.context.goal_positions.left,
-                _ => Vector3::new(0.0, 0.0, 0.0)
-            };
-
-            Some(SteeringBehavior::Arrive {
-                target,
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.tick_context.object_positions.ball_position,
                 slowing_distance: 10.0,
-            }.calculate(ctx.player).velocity);
-        }
-
-        None
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
@@ -80,11 +82,11 @@ impl StateProcessingHandler for DefenderRunningState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nalgebra::Vector3;
-    use crate::{PersonAttributes, Physical, PlayerAttributes, PlayerPositionType, PlayerSkills};
-    use crate::r#match::MatchPlayer;
     use crate::r#match::player::state::PlayerState;
     use crate::r#match::statistics::MatchPlayerStatistics;
+    use crate::r#match::MatchPlayer;
+    use crate::{PersonAttributes, Physical, PlayerAttributes, PlayerPositionType, PlayerSkills};
+    use nalgebra::Vector3;
 
     fn create_test_player() -> MatchPlayer {
         MatchPlayer {

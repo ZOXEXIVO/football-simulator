@@ -41,6 +41,14 @@ impl StateProcessingHandler for ForwardDribblingState {
             ));
         }
 
+        // Check if there's an opportunity to shoot
+        if self.can_shoot(ctx) {
+            // Transition to Shooting state if there's an opportunity to shoot
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Shooting,
+            ));
+        }
+
         // Check if there's an opportunity to pass to a teammate
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
             let teammate = &ctx.context.players.get(teammate_id)?;
@@ -52,14 +60,6 @@ impl StateProcessingHandler for ForwardDribblingState {
 
             // Transition to Running state after making the pass
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        }
-
-        // Check if there's an opportunity to shoot
-        if self.can_shoot(ctx) {
-            // Transition to Shooting state if there's an opportunity to shoot
-            return Some(StateChangeResult::with_forward_state(
-                ForwardState::Shooting,
-            ));
         }
 
         // Dribble towards the opponent's goal

@@ -25,8 +25,6 @@ impl StateProcessingHandler for MidfielderPressingState {
             ));
         }
 
-
-
         // 1. Check if the midfielder has enough stamina to continue pressing
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {

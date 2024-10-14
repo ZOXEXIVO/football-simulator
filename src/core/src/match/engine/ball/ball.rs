@@ -11,6 +11,9 @@ pub struct Ball {
     pub center_field_position: f32,
     pub height: f32,
 
+    pub in_passing_state_time: usize,
+    pub running_for_ball: bool,
+
     pub previous_owner: Option<u32>,
     pub current_owner: Option<u32>,
 }
@@ -23,6 +26,8 @@ impl Ball {
             velocity: Vector3::zeros(),
             center_field_position: x, // initial ball position = center field
             height: 0.0,
+            in_passing_state_time: 0,
+            running_for_ball: false,
             previous_owner: None,
             current_owner: None,
         }
@@ -33,25 +38,45 @@ impl Ball {
         context: &MatchContext,
         players: &[MatchPlayer],
         tick_context: &GameTickContext,
-        events: &mut EventCollection
+        events: &mut EventCollection,
     ) {
         self.update_velocity();
         self.check_goal(context, events);
         self.check_boundary_collision(context);
-        self.check_ball_ownership(context, players, events);
+
+        if self.in_passing_state_time > 0 {
+            self.in_passing_state_time -= 1;
+        } else {
+            self.check_ball_ownership(context, players, events);
+        }
+
+        self.running_for_ball = self.is_players_running_to_ball(players);
 
         self.move_to(tick_context);
     }
 
-    fn check_boundary_collision(
-        &mut self,
-        context: &MatchContext,
-    ) {
+    fn check_boundary_collision(&mut self, context: &MatchContext) {
         let field_width = context.field_size.width as f32;
         let field_height = context.field_size.height as f32;
 
         // Check if ball hits the boundary and reverse its velocity if it does
-        if self.position.x <= 0.0 || self.position.x >= field_width || self.position.y <= 0.0 || self.position.y >= field_height {
+        if self.position.x <= 0.0 {
+            self.position.x = 0.0;
+            self.velocity = Vector3::zeros();
+        }
+
+        if self.position.x >= field_width {
+            self.position.x = field_width;
+            self.velocity = Vector3::zeros();
+        }
+
+        if self.position.y <= 0.0 {
+            self.position.y = 0.0;
+            self.velocity = Vector3::zeros();
+        }
+
+        if self.position.y >= field_height {
+            self.position.y = field_height;
             self.velocity = Vector3::zeros();
         }
     }
@@ -81,13 +106,9 @@ impl Ball {
         &mut self,
         context: &MatchContext,
         players: &[MatchPlayer],
-        events: &mut EventCollection
+        events: &mut EventCollection,
     ) {
-        if self.is_players_running_to_ball(players) {
-
-        }
-
-        const BALL_DISTANCE_THRESHOLD: f32 = 1.0;
+        const BALL_DISTANCE_THRESHOLD: f32 = 3.0;
 
         if let Some(previous_owner_id) = self.previous_owner {
             let owner = context.players.get(previous_owner_id).unwrap();
@@ -212,7 +233,6 @@ impl Ball {
             self.position.y += self.velocity.y;
         }
     }
-
 
     pub fn reset(&mut self) {
         self.position.x = self.start_position.x;
