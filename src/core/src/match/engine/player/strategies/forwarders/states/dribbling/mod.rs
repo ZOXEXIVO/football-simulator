@@ -1,11 +1,14 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{
+    ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_DRIBBLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_dribbling_data.json")));
@@ -77,8 +80,8 @@ impl StateProcessingHandler for ForwardDribblingState {
                 target: ctx.ball().direction_to_opponent_goal(),
                 slowing_distance: 200.0,
             }
-                .calculate(ctx.player)
-                .velocity,
+            .calculate(ctx.player)
+            .velocity,
         )
     }
 
@@ -92,15 +95,18 @@ impl ForwardDribblingState {
         let opponents = players.opponents();
 
         // Check if there are no opponents within the dribble distance
-        opponents
-            .iter()
-            .all(|opponent| {
-                if let Some(distance) = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, opponent.id) {
-                    return distance > dribble_distance;
-                }
+        opponents.iter().all(|opponent| {
+            if let Some(distance) = ctx
+                .tick_context
+                .object_positions
+                .player_distances
+                .get(ctx.player.id, opponent.id)
+            {
+                return distance > dribble_distance;
+            }
 
-                false
-            })
+            false
+        })
     }
 
     fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {
@@ -130,8 +136,15 @@ impl ForwardDribblingState {
         let max_distance = 20.0; // Adjust based on your game's scale
 
         // Check if the teammate is within a reasonable distance
-        if ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id).unwrap() > max_distance {
-            return false;
+        if let Some(distance) = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .get(ctx.player.id, teammate.id)
+        {
+            if distance > max_distance {
+                return false;
+            }
         }
 
         let players = ctx.player();

@@ -1,9 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, SteeringOutput, VectorExtensions};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior, VectorExtensions,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_PRESAVE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_presave_data.json")));
@@ -13,35 +16,35 @@ pub struct GoalkeeperPreSaveState {}
 
 impl StateProcessingHandler for GoalkeeperPreSaveState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let result = StateChangeResult::new();
-
         // Transition to Walking if the ball is far away
         if ctx.ball().distance() > 150.0 {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Walking));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Walking,
+            ));
         }
 
         // Transition to Diving if the ball is close and moving fast towards goal
         if self.should_dive(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Diving));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Diving,
+            ));
         }
 
         // Transition to Catching if the ball is catchable
         if self.is_ball_catchable(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Catching));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Catching,
+            ));
         }
 
         // Transition to Coming Out if necessary
         if self.should_come_out(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ComingOut));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::ComingOut,
+            ));
         }
 
-        // Adjust position if needed
-        let optimal_position = self.calculate_optimal_position(ctx);
-        if ctx.player.position.distance_to(&optimal_position) > 1.0 {
-            //result.events.add_player_event(PlayerEvent::Move(ctx.player.id, optimal_position));
-        }
-
-        Some(result)
+        None
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
@@ -62,21 +65,18 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
         };
 
         let desired_velocity = to_target.normalize() * target_speed;
-        let steering = desired_velocity - ctx.player.velocity;
 
-        // Apply a maximum force to the steering
-        let max_force: f32 = 10.0; // Adjust this value as needed
-        let steering = steering.normalize() * max_force.min(steering.length());
-
-        Some(SteeringOutput {
-            velocity: steering,
-            rotation: 0.0,
-        }.velocity)
+        Some(
+            SteeringBehavior::Pursuit {
+                target: ctx.tick_context.object_positions.ball_position,
+                velocity: desired_velocity,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl GoalkeeperPreSaveState {
@@ -86,7 +86,8 @@ impl GoalkeeperPreSaveState {
         let ball_speed = ball_velocity.norm();
 
         // Check if the ball is moving fast towards the goal
-        let towards_goal = ball_velocity.dot(&(ctx.ball().direction_to_own_goal() - ctx.player.position)) > 0.0;
+        let towards_goal =
+            ball_velocity.dot(&(ctx.ball().direction_to_own_goal() - ctx.player.position)) > 0.0;
 
         ball_distance < 10.0 && ball_speed > 15.0 && towards_goal
     }
@@ -104,10 +105,10 @@ impl GoalkeeperPreSaveState {
         let goalkeeper_skills = &ctx.player.skills;
         let ball_in_penalty_area = self.is_ball_in_penalty_area(ctx);
 
-        ball_distance < 30.0 &&
-            ball_in_penalty_area &&
-            goalkeeper_skills.mental.decisions > 10.0 &&
-            goalkeeper_skills.physical.acceleration > 10.0
+        ball_distance < 30.0
+            && ball_in_penalty_area
+            && goalkeeper_skills.mental.decisions > 10.0
+            && goalkeeper_skills.physical.acceleration > 10.0
     }
 
     fn is_ball_in_penalty_area(&self, ctx: &StateProcessingContext) -> bool {
