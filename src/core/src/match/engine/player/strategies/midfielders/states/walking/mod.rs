@@ -16,14 +16,13 @@ pub struct MidfielderWalkingState {}
 
 impl StateProcessingHandler for MidfielderWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // 1. If the defender is on their own side and the ball is close, transition to Intercepting
-        if ctx.ball().is_towards_player_with_angle(0.8) && ctx.ball().distance() < 150.0 {
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+        if ctx.team().is_control_ball() {
+            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Running));
         }
 
-        // 2. If the defender is far from their starting position, transition to Returning
-        if ctx.player().position_to_distance() != PlayerDistanceFromStartPosition::Small {
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Returning));
+        // 1. If the defender is on their own side and the ball is close, transition to Intercepting
+        if ctx.ball().distance() < 200.0 {
+            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
         }
 
         // 3. Remain in Walking state
@@ -36,24 +35,13 @@ impl StateProcessingHandler for MidfielderWalkingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // 1. If this is the first tick in the state, initialize wander behavior
-        if ctx.in_state_time == 0 {
-            let wander_behavior = SteeringBehavior::Wander {
-                target: ctx.player.start_position,
-                radius: IntegerUtils::random(5, 100) as f32,
-                jitter: IntegerUtils::random(1, 5) as f32,
-                distance: IntegerUtils::random(10, 150) as f32,
-                angle: IntegerUtils::random(0, 360) as f32,
-            };
-
-            // Store the wander behavior in the player's state if needed
-            // For simplicity, we'll calculate and return the velocity directly
-            let velocity = wander_behavior.calculate(ctx.player).velocity;
-
-            return Some(velocity);
-        }
-
-        None
+        Some(SteeringBehavior::Wander {
+            target: ctx.player.start_position,
+            radius: IntegerUtils::random(5, 150) as f32,
+            jitter: IntegerUtils::random(0, 2) as f32,
+            distance: IntegerUtils::random(10, 150) as f32,
+            angle: IntegerUtils::random(0, 180) as f32
+        }.calculate(ctx.player).velocity)
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {

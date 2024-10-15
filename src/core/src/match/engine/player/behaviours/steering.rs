@@ -77,8 +77,19 @@ impl SteeringBehavior {
                     Vector3::zeros()
                 };
 
+                // Update player's move velocity based on the steering output
+                let move_velocity = player.velocity + limited_steering;
+                let max_speed = player.skills.max_speed();
+                let move_velocity_length = move_velocity.norm();
+
+                let final_move_velocity = if move_velocity_length > max_speed {
+                    move_velocity.normalize() * max_speed
+                } else {
+                    move_velocity
+                };
+
                 SteeringOutput {
-                    velocity: limited_steering,
+                    velocity: final_move_velocity,
                     rotation: 0.0,
                 }
             }
@@ -164,7 +175,8 @@ impl SteeringBehavior {
                 let max_force = 1.0;
                 let steering_force = Self::limit_magnitude(steering_force, max_force);
 
-                let new_velocity = Self::limit_magnitude(player.velocity + steering_force, *distance);
+                let speed_multiplier = 0.003; // Adjust this value to control the speed
+                let new_velocity = Self::limit_magnitude(player.velocity + steering_force, *distance * speed_multiplier);
 
                 let rotation = if new_velocity.x != 0.0 || new_velocity.y != 0.0 {
                     new_velocity.y.atan2(new_velocity.x)

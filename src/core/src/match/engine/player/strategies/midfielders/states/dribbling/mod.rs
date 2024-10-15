@@ -1,20 +1,22 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::IntegerUtils;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
-static MIDFIELDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
+static MIDFIELDER_DRIBBLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_dribbling_data.json")));
 
 #[derive(Default)]
-pub struct MidfielderRunningState {}
+pub struct MidfielderDribblingState {}
 
-impl StateProcessingHandler for MidfielderRunningState {
+impl StateProcessingHandler for MidfielderDribblingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
             // If the player has the ball, consider shooting, passing, or dribbling
@@ -56,44 +58,13 @@ impl StateProcessingHandler for MidfielderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Check if there's space to run between opponents
-        if let Some(target_position) = self.find_space_between_opponents(ctx) {
-            Some(SteeringBehavior::Arrive {
-                target: target_position,
-                slowing_distance: 10.0,
-            }.calculate(ctx.player).velocity)
-        } else if ctx.team().is_control_ball() {
-            Some(SteeringBehavior::Arrive {
-                target: ctx.ball().direction_to_opponent_goal(),
-                slowing_distance: 200.0
-            }.calculate(ctx.player).velocity)
-        } else {
-            Some(SteeringBehavior::Wander {
-                target: ctx.player.start_position,
-                radius: IntegerUtils::random(5, 150) as f32,
-                jitter: IntegerUtils::random(0, 2) as f32,
-                distance: IntegerUtils::random(10, 150) as f32,
-                angle: IntegerUtils::random(0, 360) as f32
-            }.calculate(ctx.player).velocity)
-        }
+        None
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
-impl MidfielderRunningState {
-    fn is_in_shooting_position(&self, ctx: &StateProcessingContext) -> bool {
-        let shooting_range = 25.0; // Distance from goal to consider shooting
-        let player_position = ctx.player.position;
-        let goal_position = ctx.ball().direction_to_opponent_goal();
-
-        let distance_to_goal = (player_position - goal_position).magnitude();
-
-        distance_to_goal <= shooting_range
-    }
-
+impl MidfielderDribblingState {
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
         // Find an open teammate to pass to
         let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
@@ -121,33 +92,14 @@ impl MidfielderRunningState {
         open_teammates
     }
 
-    fn should_press(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if the player should press the opponent with the ball
-        let ball_distance = ctx.ball().distance();
-        let pressing_distance = 150.0; // Adjust the threshold as needed
+    fn is_in_shooting_position(&self, ctx: &StateProcessingContext) -> bool {
+        let shooting_range = 25.0; // Distance from goal to consider shooting
+        let player_position = ctx.player.position;
+        let goal_position = ctx.ball().direction_to_opponent_goal();
 
-        !ctx.team().is_control_ball() && ball_distance < pressing_distance
-    }
+        let distance_to_goal = (player_position - goal_position).magnitude();
 
-    fn find_space_between_opponents(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let nearest_opponents = ctx.tick_context.object_positions.player_distances
-            .find_closest_opponents(ctx.player);
-
-        if let Some(opponents) = nearest_opponents {
-            if opponents.len() >= 2 {
-                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
-                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
-
-                let midpoint = (opponent1_position + opponent2_position) * 0.5;
-                let distance_between_opponents = opponent1_position.distance_to(&opponent2_position);
-
-                if distance_between_opponents > 10.0 {
-                    return Some(midpoint);
-                }
-            }
-        }
-
-        None
+        distance_to_goal <= shooting_range
     }
 
     fn should_dribble(&self, ctx: &StateProcessingContext) -> bool {
@@ -186,6 +138,14 @@ impl MidfielderRunningState {
         );
 
         space_ahead.is_none()
+    }
+
+    fn should_press(&self, ctx: &StateProcessingContext) -> bool {
+        // Check if the player should press the opponent with the ball
+        let ball_distance = ctx.ball().distance();
+        let pressing_distance = 150.0; // Adjust the threshold as needed
+
+        !ctx.team().is_control_ball() && ball_distance < pressing_distance
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
