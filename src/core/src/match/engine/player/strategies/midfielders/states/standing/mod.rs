@@ -18,6 +18,20 @@
 
     impl StateProcessingHandler for MidfielderStandingState {
         fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+
+            if ctx.player.player_attributes.condition_percentage() < STAMINA_THRESHOLD {
+                // Transition to Resting state
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Resting,
+                ));
+            }
+
+            if ctx.in_state_time > 100 {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Running,
+                ));
+            }
+
             if !ctx.team().is_control_ball() && ctx.ball().distance() < 10.0 {
                 // Transition to Tackling state to attempt to regain possession
                 return Some(StateChangeResult::with_midfielder_state(
@@ -33,13 +47,6 @@
                 } else {
                     Some(StateChangeResult::with_midfielder_state(MidfielderState::Distributing))
                 }
-            }
-
-            if ctx.player.player_attributes.condition_percentage() < STAMINA_THRESHOLD {
-                // Transition to Resting state
-                return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::Resting,
-                ));
             }
 
             // 2. Check if the ball is close and the midfielder should attempt to gain possession

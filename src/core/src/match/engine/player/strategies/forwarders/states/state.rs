@@ -1,10 +1,4 @@
-use crate::r#match::forwarders::states::{
-    ForwardAssistingState, ForwardCreatingSpaceState, ForwardCrossReceivingState,
-    ForwardDribblingState, ForwardFinishingState, ForwardHeadingState, ForwardHeadingUpPlayState,
-    ForwardOffsideTrapBreakingState, ForwardPassingState, ForwardPressingState,
-    ForwardRunningInBehindState, ForwardRunningState, ForwardShootingState, ForwardStandingState,
-    ForwardTacklingState,
-};
+use crate::r#match::forwarders::states::{ForwardAssistingState, ForwardCreatingSpaceState, ForwardCrossReceivingState, ForwardDribblingState, ForwardFinishingState, ForwardHeadingState, ForwardHeadingUpPlayState, ForwardOffsideTrapBreakingState, ForwardPassingState, ForwardPressingState, ForwardRunningInBehindState, ForwardRunningState, ForwardShootingState, ForwardStandingState, ForwardTacklingState, ForwardTakeBallState};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
@@ -25,6 +19,7 @@ pub enum ForwardState {
     OffsideTrapBreaking, // Trying to beat the offside trap by timing runs
     Tackling,            // Tackling the ball
     Assisting,           // Providing an assist by passing or crossing to a teammate
+    TakeBall,            // Take the ball
 }
 
 pub struct ForwardStrategies {}
@@ -57,6 +52,7 @@ impl ForwardStrategies {
             ForwardState::Tackling => state_processor.process(ForwardTacklingState::default()),
             ForwardState::Assisting => state_processor.process(ForwardAssistingState::default()),
             ForwardState::Running => state_processor.process(ForwardRunningState::default()),
+            ForwardState::TakeBall => state_processor.process(ForwardTakeBallState::default()),
         }
     }
 }
@@ -79,6 +75,7 @@ impl Display for ForwardState {
             ForwardState::Passing => write!(f, "Passing"),
             ForwardState::Tackling => write!(f, "Tackling"),
             ForwardState::Running => write!(f, "Running"),
+            ForwardState::TakeBall => write!(f, "Take Ball"),
         }
     }
 }

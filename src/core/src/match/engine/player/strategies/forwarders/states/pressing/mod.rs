@@ -14,6 +14,19 @@ pub struct ForwardPressingState {}
 impl StateProcessingHandler for ForwardPressingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
+
+        if ctx.player.has_ball {
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Dribbling,
+            ));
+        }
+
+        if ctx.team().is_control_ball() {
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Assisting,
+            ));
+        }
+
         let ball_ops = ctx.ball();
         let player_ops = ctx.player();
 
@@ -38,24 +51,16 @@ impl StateProcessingHandler for ForwardPressingState {
             }
         }
 
-        // Check if the player has the ball
-        if ctx.player.has_ball {
-            // Transition to Dribbling state if the player has the ball
-            return Some(StateChangeResult::with_forward_state(
-                ForwardState::Dribbling,
-            ));
-        }
-
         // Check if the player is under pressure
         if player_ops.is_under_pressure() {
             // Transition to Tackling state if under pressure and close to the ball
-            if ball_ops.distance() < 2.0 {
-                return Some(StateChangeResult::with_forward_state(
+            return if ball_ops.distance() < 2.0 {
+                Some(StateChangeResult::with_forward_state(
                     ForwardState::Tackling,
-                ));
+                ))
             } else {
                 // Transition to Running state if under pressure but not close to the ball
-                return Some(StateChangeResult::with_forward_state(ForwardState::Running));
+                Some(StateChangeResult::with_forward_state(ForwardState::Running))
             }
         }
 

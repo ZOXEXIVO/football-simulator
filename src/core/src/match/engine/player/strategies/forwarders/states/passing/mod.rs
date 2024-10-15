@@ -30,12 +30,12 @@ impl StateProcessingHandler for ForwardPassingState {
         }
 
         // Check if the player is under pressure
-        if player_ops.is_under_pressure() {
-            // Transition to Dribbling state if under pressure
-            return Some(StateChangeResult::with_forward_state(
-                ForwardState::Dribbling,
-            ));
-        }
+        // if player_ops.is_under_pressure() {
+        //     // Transition to Dribbling state if under pressure
+        //     return Some(StateChangeResult::with_forward_state(
+        //         ForwardState::Dribbling,
+        //     ));
+        // }
 
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {

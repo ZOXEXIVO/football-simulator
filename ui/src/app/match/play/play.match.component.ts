@@ -195,7 +195,6 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
                     }
 
                     this.matchPlayService.tick();
-                    //this.application!.render();
                 });
             }
         );
@@ -306,8 +305,12 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         ball.width = 20;
         ball.height = 20;
 
-        ball.position.x = data.ball_positions[0].position[0];
-        ball.position.y = data.ball_positions[0].position[1];
+        const translatedBallCoods = this.matchDataService.translateToField(
+            data.ball_positions[0].position[0], data.ball_positions[0].position[1]
+        );
+
+        ball.position.x = translatedBallCoods.x;
+        ball.position.y = translatedBallCoods.y;
 
         return ball;
     }

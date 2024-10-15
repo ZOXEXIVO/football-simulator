@@ -282,9 +282,9 @@ const WINDOW_WIDTH: i32 = 1040;
 const WINDOW_HEIGHT: i32 = 800;
 
 #[cfg(target_os = "windows")]
-const WINDOW_WIDTH: i32 = 2436;
+const WINDOW_WIDTH: i32 = 1948;
 #[cfg(target_os = "windows")]
-const WINDOW_HEIGHT: i32 = 1902;
+const WINDOW_HEIGHT: i32 = 1521;
 
 fn window_conf() -> Conf {
     Conf {
@@ -372,7 +372,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
 
         // Player position
         let position = &player.tactics_position.get_short_name();
-        let position_font_size = 18.0 * scale;
+        let position_font_size = 17.0 * scale;
         let position_text_dimensions = measure_text(position, None, position_font_size as u16, 1.0);
         draw_text(
             position,
@@ -384,7 +384,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
 
         // Player ID
         let id_text = &player.id.to_string();
-        let id_font_size = 8.0 * scale;
+        let id_font_size = 9.0 * scale;
         let id_text_dimensions = measure_text(id_text, None, id_font_size as u16, 1.0);
         draw_text(
             id_text,
@@ -420,9 +420,25 @@ fn draw_ball(offset_x: f32, offset_y: f32, ball: &Ball, scale: f32) {
 
     draw_circle(translated_x, translated_y, 7.0 * scale, ORANGE);
 
-    if ball.running_for_ball {
+    if ball.flags.running_for_ball {
         draw_circle(translated_x, translated_y, 3.0, BLACK);
     }
+
+    draw_text(
+        &format!("BALL POSITION, {:?}, IS_OUTSIDE: {:?}, IS_STANDS_OUTSIDE: {:?}, NOTIFIED_PLAYER: {:?}", ball.position, ball.is_ball_outside(), ball.is_stands_outside(), ball.take_ball_notified_player),
+        20.0,
+        15.0,
+        15.0,
+        BLACK,
+    );
+
+    draw_text(
+        &format!("BALL VELOCITY: {:?}", ball.velocity),
+        20.0,
+        30.0,
+        15.0,
+        BLACK,
+    );
 }
 
 fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, scale: f32) {
@@ -435,10 +451,14 @@ fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, sc
         let player_y = offset_y;
 
         // Draw player circle
-        let player_color = if player.team_id == 1 {
-            Color::from_rgba(0, 184, 186, 255)
+        let player_color: Color = if player.tactics_position == PlayerPositionType::Goalkeeper {
+            YELLOW
         } else {
-            Color::from_rgba(208, 139, 255, 255)
+            if player.team_id == 1 {
+                Color::from_rgba(0, 184, 186, 255)
+            } else {
+                Color::from_rgba(208, 139, 255, 255)
+            }
         };
 
         let circle_radius = player_width / 2.0;

@@ -29,6 +29,7 @@ pub enum PlayerEvent {
     RequestHeading(u32, Vector3<f32>),
     RequestShot(u32, Vector3<f32>),
     RequestBallReceive(u32),
+    TakeBall(u32),
 }
 
 pub struct PlayerEventDispatcher;
@@ -89,7 +90,7 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = None;
 
-                field.ball.in_passing_state_time = 10;
+                field.ball.flags.in_passing_state_time = 10;
             }
             PlayerEvent::RushOut(_) => {}
             PlayerEvent::StayInGoal(_) => {}
@@ -108,7 +109,7 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
 
-                field.ball.in_passing_state_time = 10;
+                field.ball.flags.in_passing_state_time = 10;
             }
             PlayerEvent::ClearBall(ball_velocity) => {
                 //field.ball.velocity = *ball_velocity;
@@ -132,7 +133,7 @@ impl PlayerEventDispatcher {
                 let player = field.get_player_mut(player_id).unwrap();
                 player.has_ball = false;
 
-                field.ball.in_passing_state_time = 10;
+                field.ball.flags.in_passing_state_time = 10;
             }
             PlayerEvent::RequestPass(_) => {}
             PlayerEvent::RequestHeading(_, _) => {}
@@ -158,6 +159,10 @@ impl PlayerEventDispatcher {
             PlayerEvent::MovePlayer(player_id, position) => {
                 let player = field.get_player_mut(player_id).unwrap();
                 player.position = position
+            }
+            PlayerEvent::TakeBall(player_id) => {
+                let player = field.get_player_mut(player_id).unwrap();
+                player.run_for_ball();
             }
         }
 

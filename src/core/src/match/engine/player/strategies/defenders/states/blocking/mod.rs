@@ -1,14 +1,14 @@
-use std::sync::LazyLock;
-use rand::Rng;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
-use crate::r#match::defenders::states::DefenderState;
+use nalgebra::Vector3;
+use rand::Rng;
 use std::f32::consts::PI;
-use crate::r#match::player::events::PlayerEvent;
+use std::sync::LazyLock;
 
 static DEFENDER_BLOCKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_blocking_data.json")));
@@ -27,7 +27,9 @@ impl StateProcessingHandler for DefenderBlockingState {
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {
             // Transition to Resting state if stamina is too low
-            return Some(StateChangeResult::with_defender_state(DefenderState::Resting));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Resting,
+            ));
         }
 
         // 2. Check if there is a shot or pass being made
@@ -35,7 +37,9 @@ impl StateProcessingHandler for DefenderBlockingState {
         let ball_velocity = ctx.tick_context.object_positions.ball_velocity;
         if ball_velocity.magnitude() < 0.1 {
             // Ball is not moving significantly; no shot or pass to block
-            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ));
         }
 
         // 3. Calculate the defender's position relative to the ball's path
@@ -48,7 +52,9 @@ impl StateProcessingHandler for DefenderBlockingState {
 
         if distance_to_ball > BLOCK_DISTANCE_THRESHOLD {
             // Defender is too far to block
-            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ));
         }
 
         // 4. Calculate the angle between the defender's position and the ball's movement direction
@@ -58,7 +64,9 @@ impl StateProcessingHandler for DefenderBlockingState {
 
         if angle > BLOCK_ANGLE_THRESHOLD {
             // Defender is not in the path of the ball
-            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ));
         }
 
         // 5. Attempt to block the ball
@@ -72,7 +80,9 @@ impl StateProcessingHandler for DefenderBlockingState {
             // For simplicity, we'll invert the ball's velocity and reduce its speed
             let new_ball_velocity = -ball_velocity * 0.5; // Reduce speed by half
 
-            state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
+            state_change
+                .events
+                .add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
 
             // Optionally reduce defender's stamina
             // ctx.player.player_attributes.reduce_stamina(block_stamina_cost);
@@ -80,7 +90,9 @@ impl StateProcessingHandler for DefenderBlockingState {
             Some(state_change)
         } else {
             // Block failed; transition to appropriate state
-            Some(StateChangeResult::with_defender_state(DefenderState::Standing))
+            Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ))
         }
     }
 

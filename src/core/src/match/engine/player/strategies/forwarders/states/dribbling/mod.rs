@@ -49,19 +49,6 @@ impl StateProcessingHandler for ForwardDribblingState {
             ));
         }
 
-        // Check if there's an opportunity to pass to a teammate
-        if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            let teammate = &ctx.context.players.get(teammate_id)?;
-
-            // Perform the pass
-            result
-                .events
-                .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
-
-            // Transition to Running state after making the pass
-            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        }
-
         // Dribble towards the opponent's goal
         let direction = ctx.ball().direction_to_opponent_goal();
 
@@ -107,29 +94,6 @@ impl ForwardDribblingState {
 
             false
         })
-    }
-
-    fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
-
-        teammates
-            .iter()
-            .enumerate()
-            .filter(|(_, teammate)| {
-                // Check if the teammate is in a good position to receive a pass
-                let is_open = self.is_open_for_pass(ctx, teammate);
-                let is_in_passing_lane = self.in_passing_lane(ctx, teammate);
-                is_open && is_in_passing_lane
-            })
-            .max_by(|(_, a), (_, b)| {
-                // Find the teammate with the highest scoring chance
-                let score_a = self.scoring_chance(ctx, a);
-                let score_b = self.scoring_chance(ctx, b);
-                score_a
-                    .partial_cmp(&score_b)
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            })
-            .map(|(index, player)| player.id)
     }
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {

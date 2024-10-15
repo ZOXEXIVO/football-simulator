@@ -2,7 +2,7 @@ use std::sync::LazyLock;
 use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
@@ -57,12 +57,18 @@ impl StateProcessingHandler for MidfielderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.team().is_control_ball() {
+        // Check if there's space to run between opponents
+        if let Some(target_position) = self.find_space_between_opponents(ctx) {
+            Some(SteeringBehavior::Arrive {
+                target: target_position,
+                slowing_distance: 10.0,
+            }.calculate(ctx.player).velocity)
+        } else if ctx.team().is_control_ball() {
             Some(SteeringBehavior::Arrive {
                 target: ctx.ball().direction_to_opponent_goal(),
                 slowing_distance: 200.0
             }.calculate(ctx.player).velocity)
-        }else {
+        } else {
             Some(SteeringBehavior::Arrive {
                 target: ctx.ball().direction_to_own_goal(),
                 slowing_distance: 200.0
@@ -135,5 +141,26 @@ impl MidfielderRunningState {
         let tackling_distance = 2.0; // Adjust the threshold as needed
 
         !ctx.player.has_ball && ball_distance < tackling_distance
+    }
+
+    fn find_space_between_opponents(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        let nearest_opponents = ctx.tick_context.object_positions.player_distances
+            .find_closest_opponents(ctx.player);
+
+        if let Some(opponents) = nearest_opponents {
+            if opponents.len() >= 2 {
+                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
+                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+
+                let midpoint = (opponent1_position + opponent2_position) * 0.5;
+                let distance_between_opponents = opponent1_position.distance_to(&opponent2_position);
+
+                if distance_between_opponents > 10.0 {
+                    return Some(midpoint);
+                }
+            }
+        }
+
+        None
     }
 }

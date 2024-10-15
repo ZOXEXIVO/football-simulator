@@ -56,14 +56,18 @@ export class MatchDataService {
         const inner_field_width = 840;
         const inner_field_height = 545;
 
-        // Calculate the scaling factors
-        const scale_x = real_field_width / inner_field_width;
-        const scale_y = real_field_height / inner_field_height;
+        // Define the offsets for the field boundaries
+        const offsetX = 20; // Horizontal offset
+        const offsetY = 70; // Vertical offset
 
-        // Apply the scaling to translate coordinates
+        // Calculate the scaling factors
+        const scale_x = (real_field_width - 2 * offsetX) / inner_field_width;
+        const scale_y = (real_field_height - 2 * offsetY) / inner_field_height;
+
+        // Apply the scaling and offsets to translate coordinates
         return {
-            x: 42 + x * scale_x,
-            y: y * scale_y - 10
+            x: offsetX + 42 + x * scale_x,
+            y: offsetY + y * scale_y - 10
         };
     }
 

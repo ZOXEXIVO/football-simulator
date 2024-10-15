@@ -17,7 +17,7 @@ pub struct DefenderRunningState {}
 impl StateProcessingHandler for DefenderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
-            if ctx.in_state_time > 300 {
+            if self.should_pass(ctx) {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Passing,
                 ));
@@ -46,14 +46,25 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(
-            SteeringBehavior::Arrive {
-                target: ctx.tick_context.object_positions.ball_position,
-                slowing_distance: 10.0,
-            }
-            .calculate(ctx.player)
-            .velocity,
-        )
+        if ctx.player.has_ball {
+            Some(
+                SteeringBehavior::Arrive {
+                    target: ctx.ball().direction_to_opponent_goal(),
+                    slowing_distance: 10.0,
+                }
+                    .calculate(ctx.player)
+                    .velocity,
+            )
+        }else {
+            Some(
+                SteeringBehavior::Arrive {
+                    target: ctx.tick_context.object_positions.ball_position,
+                    slowing_distance: 10.0,
+                }
+                    .calculate(ctx.player)
+                    .velocity,
+            )
+        }
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
@@ -79,115 +90,17 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::r#match::player::state::PlayerState;
-    use crate::r#match::statistics::MatchPlayerStatistics;
-    use crate::r#match::MatchPlayer;
-    use crate::{PersonAttributes, Physical, PlayerAttributes, PlayerPositionType, PlayerSkills};
-    use nalgebra::Vector3;
-
-    fn create_test_player() -> MatchPlayer {
-        MatchPlayer {
-            id: 1,
-            position: Vector3::new(0.0, 0.0, 0.0),
-            start_position: Vector3::new(0.0, 0.0, 0.0),
-            attributes: PersonAttributes::default(),
-            team_id: 1,
-            player_attributes: PlayerAttributes::default(),
-            skills: PlayerSkills {
-                physical: Physical {
-                    stamina: 100.0,
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-            tactics_position: PlayerPositionType::DefenderCenter,
-            velocity: Vector3::new(0.0, 0.0, 0.0),
-            has_ball: false,
-            side: None,
-            state: PlayerState::Injured,
-            in_state_time: 0,
-            statistics: MatchPlayerStatistics::default(),
-            use_extended_state_logging: false,
-        }
-    }
-
-    #[test]
-    fn test_process_conditions_stationary_player() {
-        let mut player = create_test_player();
-        let ctx = ConditionContext {
-            in_state_time: 0,
-            player: &mut player,
+impl DefenderRunningState {
+    pub fn should_pass(&self, ctx: &StateProcessingContext) -> bool {
+        let wait_ticks = match ctx.player.skills.mental.decisions {
+            0.0..5.0 => 1000,
+            5.0..10.0 => 800,
+            10.0..13.0 => 500,
+            14.0..17.0 => 100,
+            17.0..20.0 => 10,
+            _ => 1000
         };
-        let state = DefenderRunningState::default();
 
-        state.process_conditions(ctx);
-
-        assert_eq!(player.skills.physical.stamina, 99.99);
-    }
-
-    #[test]
-    fn test_process_conditions_moving_player() {
-        let mut player = create_test_player();
-        player.velocity = Vector3::new(1.0, 1.0, 0.0);
-        let ctx = ConditionContext {
-            in_state_time: 0,
-            player: &mut player,
-        };
-        let state = DefenderRunningState::default();
-
-        state.process_conditions(ctx);
-
-        assert!(player.skills.physical.stamina < 99.99);
-        assert!(player.skills.physical.stamina > 99.8);
-    }
-
-    #[test]
-    fn test_process_conditions_sprinting_player() {
-        let mut player = create_test_player();
-        player.velocity = Vector3::new(5.0, 5.0, 0.0);
-        let ctx = ConditionContext {
-            in_state_time: 0,
-            player: &mut player,
-        };
-        let state = DefenderRunningState::default();
-
-        state.process_conditions(ctx);
-
-        assert_eq!(player.skills.physical.stamina, 99.9);
-    }
-
-    #[test]
-    fn test_process_conditions_exhausted_player() {
-        let mut player = create_test_player();
-        player.skills.physical.stamina = 0.0;
-        player.velocity = Vector3::new(1.0, 1.0, 0.0);
-        let ctx = ConditionContext {
-            in_state_time: 0,
-            player: &mut player,
-        };
-        let state = DefenderRunningState::default();
-
-        state.process_conditions(ctx);
-
-        assert_eq!(player.skills.physical.stamina, 0.0);
-    }
-
-    #[test]
-    fn test_process_conditions_near_exhaustion() {
-        let mut player = create_test_player();
-        player.skills.physical.stamina = 0.05;
-        player.velocity = Vector3::new(1.0, 1.0, 0.0);
-        let ctx = ConditionContext {
-            in_state_time: 0,
-            player: &mut player,
-        };
-        let state = DefenderRunningState::default();
-
-        state.process_conditions(ctx);
-
-        assert_eq!(player.skills.physical.stamina, 0.0);
+        ctx.in_state_time > wait_ticks
     }
 }

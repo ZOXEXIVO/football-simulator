@@ -16,6 +16,7 @@ pub mod returning;
 pub mod resting;
 pub mod walking;
 pub mod running;
+pub mod takeball;
 
 pub use attack_supporting::*;
 pub use crossing::*;
@@ -35,5 +36,5 @@ pub use returning::*;
 pub use resting::*;
 pub use walking::*;
 pub use running::*;
-
+pub use takeball::*;
 

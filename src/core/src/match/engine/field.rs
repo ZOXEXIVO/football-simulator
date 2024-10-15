@@ -30,7 +30,7 @@ impl MatchField {
 
         MatchField {
             size: MatchFieldSize::new(width, height),
-            ball: Ball::with_coord(width as f32 / 2.0, height as f32 / 2.0),
+            ball: Ball::with_coord(width as f32, height as f32),
             players: players_on_field,
             substitutes,
             left_side_players: Some(left_squad),

@@ -1,16 +1,19 @@
-﻿use std::f32::NAN;
-use crate::r#match::defenders::states::DefenderState;
+﻿use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::events::EventCollection;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 use crate::r#match::{GameTickContext, MatchContext};
-use crate::{PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPosition, PlayerPositionType, PlayerSkills};
-use nalgebra::Vector3;
-use std::fmt::*;
+use crate::{
+    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPosition,
+    PlayerPositionType, PlayerSkills,
+};
 use log::info;
-use crate::r#match::events::EventCollection;
+use nalgebra::Vector3;
+use std::f32::NAN;
+use std::fmt::*;
 
 #[derive(Debug, Clone)]
 pub struct MatchPlayer {
@@ -28,7 +31,7 @@ pub struct MatchPlayer {
     pub state: PlayerState,
     pub in_state_time: u64,
     pub statistics: MatchPlayerStatistics,
-    pub use_extended_state_logging: bool
+    pub use_extended_state_logging: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -38,7 +41,12 @@ pub enum PlayerSide {
 }
 
 impl MatchPlayer {
-    pub fn from_player(team_id: u32, player: &Player, position: PlayerPositionType, use_extended_state_logging: bool) -> Self {
+    pub fn from_player(
+        team_id: u32,
+        player: &Player,
+        position: PlayerPositionType,
+        use_extended_state_logging: bool,
+    ) -> Self {
         MatchPlayer {
             id: player.id,
             position: Vector3::new(0.0, 0.0, 0.0),
@@ -51,10 +59,10 @@ impl MatchPlayer {
             velocity: Vector3::new(0.0, 0.0, 0.0),
             has_ball: false,
             side: None,
-            state: Self::get_state_by_position(position),
+            state: Self::default_state(position),
             in_state_time: 0,
             statistics: MatchPlayerStatistics::new(),
-            use_extended_state_logging
+            use_extended_state_logging,
         }
     }
 
@@ -62,7 +70,7 @@ impl MatchPlayer {
         &mut self,
         context: &MatchContext,
         tick_context: &GameTickContext,
-        events: &mut EventCollection
+        events: &mut EventCollection,
     ) {
         let player_events = PlayerMatchState::process(self, context, tick_context);
 
@@ -86,22 +94,33 @@ impl MatchPlayer {
         }
     }
 
-    pub fn set_default_state(&mut self){
-        self.state = Self::get_state_by_position(self.tactics_position);
+    pub fn set_default_state(&mut self) {
+        self.state = Self::default_state(self.tactics_position);
     }
 
-    fn get_state_by_position(position: PlayerPositionType) -> PlayerState {
+    fn default_state(position: PlayerPositionType) -> PlayerState {
         match position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => {
                 PlayerState::Goalkeeper(GoalkeeperState::Standing)
             }
-            PlayerFieldPositionGroup::Defender => {
-                PlayerState::Defender(DefenderState::Standing)
-            }
+            PlayerFieldPositionGroup::Defender => PlayerState::Defender(DefenderState::Standing),
             PlayerFieldPositionGroup::Midfielder => {
                 PlayerState::Midfielder(MidfielderState::Standing)
             }
             PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::Standing),
+        }
+    }
+
+    pub fn run_for_ball(&mut self) {
+        self.state = match self.tactics_position.position_group() {
+            PlayerFieldPositionGroup::Goalkeeper => {
+                PlayerState::Goalkeeper(GoalkeeperState::TakeBall)
+            }
+            PlayerFieldPositionGroup::Defender => PlayerState::Defender(DefenderState::TakeBall),
+            PlayerFieldPositionGroup::Midfielder => {
+                PlayerState::Midfielder(MidfielderState::TakeBall)
+            }
+            PlayerFieldPositionGroup::Forward => PlayerState::Forward(ForwardState::TakeBall),
         }
     }
 

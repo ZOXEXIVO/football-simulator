@@ -9,27 +9,46 @@ pub struct Ball {
     pub position: Vector3<f32>,
     pub velocity: Vector3<f32>,
     pub center_field_position: f32,
-    pub height: f32,
 
-    pub in_passing_state_time: usize,
-    pub running_for_ball: bool,
+    pub field_width: f32,
+    pub field_height: f32,
+
+    pub flags: BallFlags,
 
     pub previous_owner: Option<u32>,
     pub current_owner: Option<u32>,
+    pub take_ball_notified_player: Option<u32>,
+}
+
+#[derive(Default)]
+pub struct BallFlags {
+    pub in_passing_state_time: usize,
+    pub running_for_ball: bool,
+}
+
+impl BallFlags {
+    pub fn reset(&mut self) {
+        self.in_passing_state_time = 0;
+        self.running_for_ball = false;
+    }
 }
 
 impl Ball {
-    pub fn with_coord(x: f32, y: f32) -> Self {
+    pub fn with_coord(field_width: f32, field_height: f32) -> Self {
+        let x = field_width / 2.0;
+        let y = field_height / 2.0;
+
         Ball {
             position: Vector3::new(x, y, 0.0),
             start_position: Vector3::new(x, y, 0.0),
+            field_width,
+            field_height,
             velocity: Vector3::zeros(),
             center_field_position: x, // initial ball position = center field
-            height: 0.0,
-            in_passing_state_time: 0,
-            running_for_ball: false,
+            flags: BallFlags::default(),
             previous_owner: None,
             current_owner: None,
+            take_ball_notified_player: None,
         }
     }
 
@@ -44,15 +63,59 @@ impl Ball {
         self.check_goal(context, events);
         self.check_boundary_collision(context);
 
-        if self.in_passing_state_time > 0 {
-            self.in_passing_state_time -= 1;
+        // take standing ball
+        if self.is_stands_outside() && self.take_ball_notified_player.is_none() {
+            if let Some(notified_player) = self.notify_nearest_player(players, events) {
+                self.take_ball_notified_player = Some(notified_player);
+            }
+        }
+
+        // prevent pass tackling
+        if self.flags.in_passing_state_time > 0 {
+            self.flags.in_passing_state_time -= 1;
         } else {
             self.check_ball_ownership(context, players, events);
         }
 
-        self.running_for_ball = self.is_players_running_to_ball(players);
+        self.flags.running_for_ball = self.is_players_running_to_ball(players);
 
         self.move_to(tick_context);
+    }
+
+    pub fn is_stands_outside(&self) -> bool {
+        self.is_ball_outside() && self.velocity.x == 0.0 && self.velocity.y == 0.0 && self.current_owner.is_none()
+    }
+
+    pub fn is_ball_outside(&self) -> bool {
+        self.position.x == 0.0
+            || self.position.x >= self.field_width
+            || self.position.y == 0.0
+            || self.position.y >= self.field_height
+    }
+
+    fn notify_nearest_player(
+        &self,
+        players: &[MatchPlayer],
+        events: &mut EventCollection,
+    ) -> Option<u32> {
+        let ball_position = self.position;
+
+        // Find the nearest player to the ball
+        let nearest_player = players.iter().min_by(|a, b| {
+            let dist_a = a.position.distance_to(&ball_position);
+            let dist_b = b.position.distance_to(&ball_position);
+            dist_a
+                .partial_cmp(&dist_b)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+
+        if let Some(player) = nearest_player {
+            events.add_ball_event(BallEvent::TakeMe(player.id));
+
+            return Some(player.id);
+        }
+
+        None
     }
 
     fn check_boundary_collision(&mut self, context: &MatchContext) {
@@ -94,7 +157,6 @@ impl Ball {
             let dot_product = direction_to_ball.dot(&player_direction);
 
             if dot_product > 0.0 {
-                // The player is running towards the ball if the dot product is positive
                 return true;
             }
         }
@@ -220,6 +282,10 @@ impl Ball {
     }
 
     fn move_to(&mut self, tick_context: &GameTickContext) {
+        if !self.is_stands_outside(){
+            self.take_ball_notified_player = None;
+        }
+
         if let Some(owner_player_id) = self.current_owner {
             if let Some(owner_position) = tick_context
                 .object_positions
@@ -239,5 +305,7 @@ impl Ball {
         self.position.y = self.start_position.y;
 
         self.velocity = Vector3::zeros();
+
+        self.flags.reset();
     }
 }

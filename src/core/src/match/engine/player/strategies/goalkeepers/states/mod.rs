@@ -20,6 +20,7 @@ pub mod penalty;
 pub mod standing;
 pub mod resting;
 pub mod walking;
+pub mod takeball;
 
 pub use passing::*;
 pub use pressure::*;
@@ -42,3 +43,4 @@ pub use sweeping::*;
 pub use standing::*;
 pub use resting::*;
 pub use walking::*;
+pub use takeball::*;

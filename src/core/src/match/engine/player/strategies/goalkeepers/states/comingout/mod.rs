@@ -1,9 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -52,11 +50,14 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Move towards the ball to intercept it
         let ball_position = ctx.tick_context.object_positions.ball_position;
         let direction = (ball_position - ctx.player.position).normalize();
         let speed = ctx.player.skills.physical.pace * COMINGOUT_SPEED_MULTIPLIER;
-        Some(direction * speed)
+
+        Some(SteeringBehavior::Pursuit {
+            target: ball_position,
+            velocity: direction * speed,
+        }.calculate(ctx.player).velocity)
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}

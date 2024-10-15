@@ -19,7 +19,7 @@ pub struct MidfielderPressingState {}
 
 impl StateProcessingHandler for MidfielderPressingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if !ctx.ball().is_owned() || ctx.player.has_ball {
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Running,
             ));

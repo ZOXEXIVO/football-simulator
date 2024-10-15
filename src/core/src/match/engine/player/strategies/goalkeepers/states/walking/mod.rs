@@ -15,12 +15,15 @@ pub struct GoalkeeperWalkingState {}
 
 impl StateProcessingHandler for GoalkeeperWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // Check if the ball is close and not owned by a teammate
-        if self.is_ball_close(ctx) && !ctx.ball().is_owned() {
-            return if self.should_come_out(ctx) {
-                Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ComingOut))
-            } else {
-                Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::PreparingForSave))
+        if !ctx.team().is_control_ball() {
+            if ctx.ball().on_own_side() {
+                if ctx.ball().distance() < 100.0 {
+                    return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::PreparingForSave))
+                }
+
+                if self.should_come_out(ctx) && ctx.ball().distance() < 200.0 {
+                    return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ComingOut))
+                }
             }
         }
 
@@ -32,11 +35,6 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
         // Check if there's an immediate threat
         if self.is_under_threat(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::UnderPressure));
-        }
-
-        // If the ball is far and the goalkeeper is in position, transition to Standing
-        if ctx.ball().distance() > 50.0 && !self.is_out_of_position(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
         }
 
         None
@@ -59,10 +57,6 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
 }
 
 impl GoalkeeperWalkingState {
-    fn is_ball_close(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.ball().distance() < 20.0
-    }
-
     fn is_out_of_position(&self, ctx: &StateProcessingContext) -> bool {
         let optimal_position = self.calculate_optimal_position(ctx);
         ctx.player.position.distance_to(&optimal_position) > 50.0 // Reduced threshold for more frequent adjustments

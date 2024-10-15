@@ -18,6 +18,7 @@ pub mod state;
 pub mod tackling;
 pub mod tracking_back;
 pub mod walking;
+pub mod takeball;
 
 pub use blocking::*;
 pub use clearing::*;
@@ -39,3 +40,4 @@ pub use state::*;
 pub use tackling::*;
 pub use tracking_back::*;
 pub use walking::*;
+pub use takeball::*;
