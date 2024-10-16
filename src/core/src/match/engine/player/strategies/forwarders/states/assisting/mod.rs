@@ -21,7 +21,7 @@ impl StateProcessingHandler for ForwardAssistingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
-        if !ctx.team().is_control_ball() {
+        if !ctx.team().is_control_ball() && ctx.ball().distance() < 150.0{
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Pressing,
             ));

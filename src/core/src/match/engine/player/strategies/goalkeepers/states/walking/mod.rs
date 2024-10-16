@@ -15,6 +15,10 @@ pub struct GoalkeeperWalkingState {}
 
 impl StateProcessingHandler for GoalkeeperWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if ctx.player.has_ball {
+            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Passing))
+        }
+
         if !ctx.team().is_control_ball() {
             if ctx.ball().on_own_side() {
                 if ctx.ball().distance() < 100.0 {

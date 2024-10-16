@@ -109,7 +109,7 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
 
-                field.ball.flags.in_passing_state_time = 10;
+                field.ball.flags.in_passing_state_time = 30;
             }
             PlayerEvent::ClearBall(ball_velocity) => {
                 //field.ball.velocity = *ball_velocity;
