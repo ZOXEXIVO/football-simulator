@@ -2,11 +2,15 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::{
-    ConditionContext, PlayerDistanceFromStartPosition, PlayerSide, StateChangeResult,
+    ConditionContext, StateChangeResult,
     StateProcessingContext, StateProcessingHandler, SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::forwarders::states::ForwardState;
+
+const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
+const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
 
 static DEFENDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
@@ -17,6 +21,10 @@ pub struct DefenderRunningState {}
 impl StateProcessingHandler for DefenderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
+            if self.is_in_shooting_range(ctx) {
+                return Some(StateChangeResult::with_defender_state(DefenderState::Shooting));
+            }
+
             if self.should_pass(ctx) {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Passing,
@@ -102,5 +110,10 @@ impl DefenderRunningState {
         };
 
         ctx.in_state_time > wait_ticks
+    }
+
+    fn is_in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
+        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
+        distance_to_goal <= MAX_SHOOTING_DISTANCE && distance_to_goal >= MIN_SHOOTING_DISTANCE
     }
 }

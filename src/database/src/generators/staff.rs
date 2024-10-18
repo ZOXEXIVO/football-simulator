@@ -37,7 +37,7 @@ impl StaffGenerator {
         let day = IntegerUtils::random(1, 29) as u32;
 
         Staff::new(
-            self.sequence.fetch_add(1, Ordering::SeqCst),
+            self.sequence.fetch_add(1, Ordering::Relaxed),
             FullName::with_full(
                 self.generate_first_name(),
                 self.generate_last_name(),

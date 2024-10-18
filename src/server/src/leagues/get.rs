@@ -163,7 +163,7 @@ pub async fn league_get_action(
                                     } else {
                                         res.away.get()
                                     },
-                                    away_goals: if item.home_team_id == res.away.team_id {
+                                    away_goals: if item.away_team_id == res.away.team_id {
                                         res.away.get()
                                     } else {
                                         res.home.get()

@@ -36,7 +36,6 @@ impl StateProcessingHandler for ForwardRunningState {
 
         if ctx.player.has_ball {
             if self.is_in_shooting_range(ctx) {
-                // Transition to Shooting state
                 return Some(StateChangeResult::with_forward_state(ForwardState::Shooting));
             }
 

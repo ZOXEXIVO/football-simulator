@@ -115,7 +115,7 @@ impl Clone for TeamScore {
     fn clone(&self) -> Self {
         TeamScore {
             team_id: self.team_id,
-            score: AtomicU8::new(self.score.load(Ordering::SeqCst))
+            score: AtomicU8::new(self.score.load(Ordering::Relaxed))
         }
     }
 }
@@ -136,25 +136,25 @@ impl TeamScore {
     }
 
     pub fn get(&self) -> u8 {
-        self.score.load(Ordering::SeqCst)
+        self.score.load(Ordering::Relaxed)
     }
 }
 impl From<&TeamScore> for TeamScore {
     fn from(team_score: &TeamScore) -> Self {
-        TeamScore::new_with_score(team_score.team_id, team_score.score.load(Ordering::SeqCst))
+        TeamScore::new_with_score(team_score.team_id, team_score.score.load(Ordering::Relaxed))
     }
 }
 
 impl PartialEq<Self> for TeamScore {
     fn eq(&self, other: &Self) -> bool {
-        self.score.load(Ordering::SeqCst) == other.score.load(Ordering::SeqCst)
+        self.score.load(Ordering::Relaxed) == other.score.load(Ordering::Relaxed)
     }
 }
 
 impl PartialOrd for TeamScore {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let left_score = self.score.load(Ordering::SeqCst);
-        let other_score =  other.score.load(Ordering::SeqCst);
+        let left_score = self.score.load(Ordering::Relaxed);
+        let other_score =  other.score.load(Ordering::Relaxed);
 
         Some(left_score.cmp(&other_score))
     }
@@ -186,11 +186,11 @@ impl Score {
     }
 
     pub fn increment_home_goals(&self){
-        self.home_team.score.fetch_add(1, Ordering::SeqCst);
+        self.home_team.score.fetch_add(1, Ordering::Relaxed);
     }
 
     pub fn increment_away_goals(&self){
-        self.away_team.score.fetch_add(1, Ordering::SeqCst);
+        self.away_team.score.fetch_add(1, Ordering::Relaxed);
     }
 }
 

@@ -5,11 +5,16 @@ use crate::common::NeuralNetwork;
 use crate::IntegerUtils;
 use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::r#match::events::Event;
+use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 
 static MIDFIELDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
+
+const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
+const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
+
 
 #[derive(Default)]
 pub struct MidfielderRunningState {}
@@ -18,7 +23,7 @@ impl StateProcessingHandler for MidfielderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
             // If the player has the ball, consider shooting, passing, or dribbling
-            if self.is_in_shooting_position(ctx) {
+            if self.is_in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(MidfielderState::DistanceShooting));
             }
 
@@ -84,14 +89,9 @@ impl StateProcessingHandler for MidfielderRunningState {
 }
 
 impl MidfielderRunningState {
-    fn is_in_shooting_position(&self, ctx: &StateProcessingContext) -> bool {
-        let shooting_range = 25.0; // Distance from goal to consider shooting
-        let player_position = ctx.player.position;
-        let goal_position = ctx.ball().direction_to_opponent_goal();
-
-        let distance_to_goal = (player_position - goal_position).magnitude();
-
-        distance_to_goal <= shooting_range
+    fn is_in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
+        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
+        distance_to_goal <= MAX_SHOOTING_DISTANCE && distance_to_goal >= MIN_SHOOTING_DISTANCE
     }
 
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {

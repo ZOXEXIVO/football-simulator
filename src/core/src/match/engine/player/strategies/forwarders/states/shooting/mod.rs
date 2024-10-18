@@ -17,47 +17,10 @@ pub struct ForwardShootingState {}
 
 impl StateProcessingHandler for ForwardShootingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        return Some(StateChangeResult::with_forward_state_and_event(
+        Some(StateChangeResult::with_forward_state_and_event(
             ForwardState::Standing,
             Event::PlayerEvent(PlayerEvent::Shoot(ctx.player.id, ctx.ball().direction_to_opponent_goal())),
-        ));
-
-        // // Check if the player still has the ball
-        // if !ctx.player.has_ball {
-        //     // If the player doesn't have the ball, transition to Running state
-        //     return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        // }
-        //
-        // // Check if the player is still in a good shooting position
-        // if !self.is_in_shooting_range(ctx) {
-        //     // If not in a good shooting position, consider passing or dribbling
-        //     if let Some(_) = self.find_best_teammate_to_pass(ctx) {
-        //         return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
-        //     } else {
-        //         return Some(StateChangeResult::with_forward_state(
-        //             ForwardState::Dribbling,
-        //         ));
-        //     }
-        // }
-        //
-        // // Check if there's an immediate threat from an opponent
-        // if self.is_under_pressure(ctx) {
-        //     // If under pressure, decide between quick shot or passing
-        //     if self.should_take_quick_shot(ctx) {
-        //         result
-        //             .events
-        //             .add(PlayerEvent::Shoot(ctx.player.id, direction));
-        //     } else if let Some(teammate) = self.find_best_teammate_to_pass(ctx) {
-        //         return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
-        //     }
-        // } else {
-        //     // If not under immediate pressure, take the shot
-        //     result
-        //         .events
-        //         .add(PlayerEvent::Shoot(ctx.player.id, direction));
-        // }
-        //
-        // Some(result)
+        ))
     }
 
     fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
