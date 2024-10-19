@@ -99,24 +99,14 @@ impl StateProcessingHandler for ForwardAssistingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if let Some(forwards) = ctx.team().forwards_teammates().first() {
-            Some(
-                SteeringBehavior::Flee {
-                    target: forwards.position,
-                }
-                .calculate(ctx.player)
-                .velocity,
-            )
-        } else {
-            Some(
-                SteeringBehavior::Arrive {
-                    target: ctx.ball().direction_to_opponent_goal(),
-                    slowing_distance: 200.0,
-                }
-                .calculate(ctx.player)
-                .velocity,
-            )
-        }
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.ball().direction_to_opponent_goal(),
+                slowing_distance: 200.0,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}
