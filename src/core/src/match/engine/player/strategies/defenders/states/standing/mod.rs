@@ -5,12 +5,10 @@ use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::state::PlayerState;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions,
+    ConditionContext, MatchPlayer, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler, VectorExtensions,
 };
-use crate::IntegerUtils;
 
 static DEFENDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -176,7 +174,7 @@ impl DefenderStandingState {
     }
 
     fn should_hold_defensive_line(&self, ctx: &StateProcessingContext) -> bool {
-        let player_ops = ctx.player();
+        let player_ops = ctx.team();
         let ball_ops = ctx.ball();
 
         let defenders = player_ops.defenders();
@@ -219,7 +217,7 @@ impl DefenderStandingState {
     }
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.player();
+        let players = ctx.team();
         let defenders = players.defenders();
 
         defenders

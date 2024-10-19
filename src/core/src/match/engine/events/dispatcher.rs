@@ -1,5 +1,4 @@
-use std::vec::IntoIter;
-use crate::r#match::ball::events::{BallEventDispatcher, BallEvent};
+use crate::r#match::ball::events::{BallEvent, BallEventDispatcher};
 use crate::r#match::player::events::{PlayerEvent, PlayerEventDispatcher};
 use crate::r#match::{MatchContext, MatchField};
 
@@ -21,7 +20,7 @@ impl EventCollection {
 
     pub fn with_event(event: Event) -> Self {
         EventCollection {
-            events: vec![event]
+            events: vec![event],
         }
     }
 

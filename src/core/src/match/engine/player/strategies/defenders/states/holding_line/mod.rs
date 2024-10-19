@@ -1,10 +1,13 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
 
 static DEFENDER_HOLDING_LINE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_holding_line_data.json")));
@@ -26,11 +29,14 @@ impl StateProcessingHandler for DefenderHoldingLineState {
 
         // 3. If the defender is too far from the defensive line, switch to Running state
         if distance_from_line > MAX_DEFENSIVE_LINE_DEVIATION {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Running));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Running,
+            ));
         }
 
         // 4. Calculate the distance to the ball
-        let ball_distance = (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
+        let ball_distance =
+            (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
 
         // 5. If the ball is close, decide whether to Mark or Intercept
         if ball_distance < BALL_PROXIMITY_THRESHOLD {
@@ -44,7 +50,9 @@ impl StateProcessingHandler for DefenderHoldingLineState {
 
         // 6. Check if we should set up an offside trap
         if self.should_set_offside_trap(ctx) {
-            return Some(StateChangeResult::with_defender_state(DefenderState::OffsideTrap));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::OffsideTrap,
+            ));
         }
 
         // 7. Remain in HoldingLine state
@@ -61,16 +69,14 @@ impl StateProcessingHandler for DefenderHoldingLineState {
         Some(Vector3::zeros())
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl DefenderHoldingLineState {
     /// Calculates the defensive line position based on team tactics and defender positions.
     fn calculate_defensive_line_position(&self, ctx: &StateProcessingContext) -> f32 {
-        let player_ops = ctx.player();
-        let defenders: Vec<&MatchPlayer> = player_ops.defenders();
+        let players = ctx.team();
+        let defenders: Vec<&MatchPlayer> = players.defenders();
 
         // If no defenders found, use player's current position
         if defenders.is_empty() {
@@ -84,13 +90,10 @@ impl DefenderHoldingLineState {
 
     /// Checks if an opponent player is nearby within the MARKING_DISTANCE_THRESHOLD.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.player()
-            .opponents()
-            .iter()
-            .any(|opponent| {
-                let distance = (ctx.player.position - opponent.position).magnitude();
-                distance < MARKING_DISTANCE_THRESHOLD
-            })
+        ctx.team().opponents().iter().any(|opponent| {
+            let distance = (ctx.player.position - opponent.position).magnitude();
+            distance < MARKING_DISTANCE_THRESHOLD
+        })
     }
 
     /// Determines if the team should set up an offside trap.
@@ -98,7 +101,8 @@ impl DefenderHoldingLineState {
         // Check if opponents are positioned ahead of the defensive line
         let defensive_line_position = self.calculate_defensive_line_position(ctx);
 
-        let opponents_ahead = ctx.player()
+        let opponents_ahead = ctx
+            .team()
             .opponents()
             .iter()
             .filter(|opponent| {

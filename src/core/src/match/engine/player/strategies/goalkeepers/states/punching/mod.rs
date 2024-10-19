@@ -1,10 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_PUNCHING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_punching_data.json")));
@@ -21,25 +23,32 @@ impl StateProcessingHandler for GoalkeeperPunchingState {
         let ball_distance = ctx.ball().distance();
         if ball_distance > PUNCHING_DISTANCE_THRESHOLD {
             // Ball is too far to punch, transition to appropriate state (e.g., Jumping)
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Jumping));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Jumping,
+            ));
         }
 
         // 2. Attempt to punch the ball
         let punch_success = rand::random::<f32>() < PUNCH_SUCCESS_PROBABILITY;
         if punch_success {
             // Punch is successful
-            let mut state_change = StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing);
+            let mut state_change =
+                StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing);
 
             // Determine the direction to punch the ball (e.g., towards the sidelines)
             let punch_direction = ctx.ball().direction_to_own_goal().normalize() * -1.0;
 
             // Generate a punch event
-            state_change.events.add_player_event(PlayerEvent::ClearBall(punch_direction));
+            state_change
+                .events
+                .add_player_event(PlayerEvent::ClearBall(punch_direction));
 
             Some(state_change)
         } else {
             // Punch failed, transition to appropriate state (e.g., Diving)
-            Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Diving))
+            Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Diving,
+            ))
         }
     }
 

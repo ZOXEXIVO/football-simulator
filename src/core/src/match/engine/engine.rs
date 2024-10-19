@@ -1,14 +1,17 @@
-use crate::r#match::ball::events::{GoalSide};
+use crate::r#match::ball::events::GoalSide;
+use crate::r#match::engine::events::dispatcher::EventCollection;
+use crate::r#match::events::EventDispatcher;
 use crate::r#match::field::MatchField;
+use crate::r#match::position::MatchPositionData;
 use crate::r#match::squad::TeamSquad;
-use crate::r#match::{GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager, StateProcessingContext};
+use crate::r#match::{
+    GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager
+    ,
+};
 use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use std::collections::HashMap;
-use crate::r#match::engine::events::dispatcher::EventCollection;
-use crate::r#match::events::EventDispatcher;
-use crate::r#match::position::MatchPositionData;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
 
@@ -18,7 +21,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     }
 
     pub fn play(left_squad: TeamSquad, right_squad: TeamSquad) -> MatchResultRaw {
-        let score = Score::new(left_squad.team_id,  right_squad.team_id);
+        let score = Score::new(left_squad.team_id, right_squad.team_id);
 
         let players = MatchPlayerCollection::from_squads(&left_squad, &right_squad);
 
@@ -33,14 +36,13 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         while let Some(state) = state_manager.next() {
             context.state.set(state);
 
-            let play_state_result = Self::play_inner(&mut field, &mut context, &mut match_position_data);
+            let play_state_result =
+                Self::play_inner(&mut field, &mut context, &mut match_position_data);
 
             StateManager::handle_state_finish(&mut context, &mut field, play_state_result);
         }
 
-        let mut result =  MatchResultRaw::with_match_time(
-            MATCH_HALF_TIME_MS
-        );
+        let mut result = MatchResultRaw::with_match_time(MATCH_HALF_TIME_MS);
 
         context.fill_details();
 
@@ -54,7 +56,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         result
     }
 
-    fn play_inner(field: &mut MatchField, context: &mut MatchContext, match_data: &mut MatchPositionData) -> PlayMatchStateResult {
+    fn play_inner(
+        field: &mut MatchField,
+        context: &mut MatchContext,
+        match_data: &mut MatchPositionData,
+    ) -> PlayMatchStateResult {
         let result = PlayMatchStateResult::new();
 
         while context.increment_time() {
@@ -64,7 +70,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         result
     }
 
-    pub fn game_tick(field: &mut MatchField, context: &mut MatchContext, match_data: &mut MatchPositionData) {
+    pub fn game_tick(
+        field: &mut MatchField,
+        context: &mut MatchContext,
+        match_data: &mut MatchPositionData,
+    ) {
         let game_tick_context = GameTickContext::new(field);
 
         let mut events = EventCollection::new();
@@ -78,7 +88,11 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         Self::write_match_positions(field, context.time.time, match_data);
     }
 
-    pub fn write_match_positions(field: &mut MatchField, timestamp: u64, match_data: &mut MatchPositionData) {
+    pub fn write_match_positions(
+        field: &mut MatchField,
+        timestamp: u64,
+        match_data: &mut MatchPositionData,
+    ) {
         // player positions
         field.players.iter().for_each(|player| {
             match_data.add_player_positions(player.id, timestamp, player.position);
@@ -86,11 +100,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         // player positions
         field.substitutes.iter().for_each(|sub_player| {
-            match_data.add_player_positions(
-                sub_player.id,
-                timestamp,
-                sub_player.position,
-            );
+            match_data.add_player_positions(sub_player.id, timestamp, sub_player.position);
         });
 
         // write positions
@@ -101,16 +111,18 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         field: &mut MatchField,
         context: &MatchContext,
         tick_context: &GameTickContext,
-        events: &mut EventCollection
+        events: &mut EventCollection,
     ) {
-        field.ball.update(context, &field.players, tick_context, events);
+        field
+            .ball
+            .update(context, &field.players, tick_context, events);
     }
 
     fn play_players(
         field: &mut MatchField,
         context: &mut MatchContext,
         tick_context: &GameTickContext,
-        events: &mut EventCollection
+        events: &mut EventCollection,
     ) {
         field
             .players
@@ -137,11 +149,7 @@ pub struct MatchContext {
 }
 
 impl MatchContext {
-    pub fn new(
-        field_size: &MatchFieldSize,
-        players: MatchPlayerCollection,
-        score: Score
-    ) -> Self {
+    pub fn new(field_size: &MatchFieldSize, players: MatchPlayerCollection, score: Score) -> Self {
         MatchContext {
             state: GameState::new(),
             time: MatchTime::new(),
@@ -160,13 +168,18 @@ impl MatchContext {
         self.time.increment(time);
     }
 
-    pub fn fill_details(&mut self){
-        for player in self.players.raw_players().iter().filter(|p| !p.statistics.is_empty()) {
-            for stat in &player.statistics.items            {
-                let detail = GoalDetail{
+    pub fn fill_details(&mut self) {
+        for player in self
+            .players
+            .raw_players()
+            .iter()
+            .filter(|p| !p.statistics.is_empty())
+        {
+            for stat in &player.statistics.items {
+                let detail = GoalDetail {
                     player_id: player.id,
                     match_second: stat.match_second,
-                    stat_type: stat.stat_type
+                    stat_type: stat.stat_type,
                 };
 
                 self.score.add_goal_detail(detail);
@@ -183,12 +196,20 @@ impl MatchContext {
         if is_home_team {
             PenaltyArea::new(
                 Vector3::new(0.0, (field_height - penalty_area_width) / 2.0, 0.0),
-                Vector3::new(penalty_area_depth, (field_height + penalty_area_width) / 2.0, 0.0)
+                Vector3::new(
+                    penalty_area_depth,
+                    (field_height + penalty_area_width) / 2.0,
+                    0.0,
+                ),
             )
         } else {
             PenaltyArea::new(
-                Vector3::new(field_width - penalty_area_depth, (field_height - penalty_area_width) / 2.0, 0.0),
-                Vector3::new(field_width, (field_height + penalty_area_width) / 2.0, 0.0)
+                Vector3::new(
+                    field_width - penalty_area_depth,
+                    (field_height - penalty_area_width) / 2.0,
+                    0.0,
+                ),
+                Vector3::new(field_width, (field_height + penalty_area_width) / 2.0, 0.0),
             )
         }
     }
@@ -206,8 +227,10 @@ impl PenaltyArea {
     }
 
     pub fn contains(&self, point: &Vector3<f32>) -> bool {
-        point.x >= self.min.x && point.x <= self.max.x &&
-            point.y >= self.min.y && point.y <= self.max.y
+        point.x >= self.min.x
+            && point.x <= self.max.x
+            && point.y >= self.min.y
+            && point.y <= self.max.y
     }
 }
 
@@ -337,10 +360,31 @@ impl MatchPlayerCollection {
             .collect()
     }
 
-    pub fn get_by_position_and_team(&self, position_group: PlayerFieldPositionGroup, team_id: u32) -> Vec<&MatchPlayer> {
+    pub fn get_by_position_and_team(
+        &self,
+        position_group: PlayerFieldPositionGroup,
+        team_id: u32,
+    ) -> Vec<&MatchPlayer> {
         self.players
             .values()
-            .filter(|player| player.team_id == team_id && player.tactics_position.position_group() == position_group)
+            .filter(|player| {
+                player.team_id == team_id
+                    && player.tactics_position.position_group() == position_group
+            })
+            .collect()
+    }
+
+    pub fn get_by_position_and_not_team(
+        &self,
+        position_group: PlayerFieldPositionGroup,
+        team_id: u32,
+    ) -> Vec<&MatchPlayer> {
+        self.players
+            .values()
+            .filter(|player| {
+                player.team_id != team_id
+                    && player.tactics_position.position_group() == position_group
+            })
             .collect()
     }
 

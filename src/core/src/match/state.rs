@@ -7,7 +7,7 @@ pub struct GameState {
 impl GameState {
     pub fn new() -> Self {
         GameState {
-            match_state: MatchState::Initial
+            match_state: MatchState::Initial,
         }
     }
 

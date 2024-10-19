@@ -1,14 +1,14 @@
-use std::f32::NAN;
 use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::events::EventCollection;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
-use std::fmt::{Display, Formatter};
+use crate::PlayerFieldPositionGroup;
 use log::{error, info};
 use nalgebra::Vector3;
-use crate::PlayerFieldPositionGroup;
-use crate::r#match::events::EventCollection;
+use std::f32::NAN;
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PlayerState {
@@ -41,18 +41,17 @@ impl PlayerMatchState {
     ) -> EventCollection {
         let player_position_group = player.tactics_position.position_group();
 
-        let state_change_result = player_position_group.process(
-            player.in_state_time,
-            player,
-            context,
-            tick_context,
-        );
+        let state_change_result =
+            player_position_group.process(player.in_state_time, player, context, tick_context);
 
         if let Some(state) = state_change_result.state {
             #[cfg(debug_assertions)]
             {
                 if !Self::validate_state(state, &player_position_group) {
-                    error!("invalid state change {:?} -> {:?} for {:?}", player.state, state, player_position_group);
+                    error!(
+                        "invalid state change {:?} -> {:?} for {:?}",
+                        player.state, state, player_position_group
+                    );
                 }
             }
 
@@ -73,8 +72,10 @@ impl PlayerMatchState {
         player.state = state;
     }
 
-
-    fn validate_state(player_state: PlayerState, position_group: &PlayerFieldPositionGroup) -> bool {
+    fn validate_state(
+        player_state: PlayerState,
+        position_group: &PlayerFieldPositionGroup,
+    ) -> bool {
         match (player_state, position_group) {
             (PlayerState::Injured, _) => true, // Injured state is valid for all position groups
             (PlayerState::Goalkeeper(_), PlayerFieldPositionGroup::Goalkeeper) => true,

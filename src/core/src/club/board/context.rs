@@ -1,10 +1,8 @@
 #[derive(Clone)]
-pub struct BoardContext {
-}
+pub struct BoardContext {}
 
 impl BoardContext {
     pub fn new() -> Self {
-        BoardContext {
-        }
+        BoardContext {}
     }
 }

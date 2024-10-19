@@ -1,15 +1,18 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::PlayerSide;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 // Constants used in ForwardStandingState
 const MAX_SHOOTING_DISTANCE: f32 = 30.0; // Maximum distance to attempt a shot
 const MIN_SHOOTING_DISTANCE: f32 = 16.5; // Minimum distance to attempt a shot (e.g., edge of penalty area)
-const PRESS_DISTANCE: f32 = 20.0;        // Distance within which to press opponents
+const PRESS_DISTANCE: f32 = 20.0; // Distance within which to press opponents
 
 static FORWARD_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_standing_data.json")));
@@ -24,7 +27,9 @@ impl StateProcessingHandler for ForwardStandingState {
             // Decide next action based on game context
             if self.is_in_shooting_range(ctx) {
                 // Transition to Shooting state
-                return Some(StateChangeResult::with_forward_state(ForwardState::Shooting));
+                return Some(StateChangeResult::with_forward_state(
+                    ForwardState::Shooting,
+                ));
             }
 
             if let Some(target_teammate) = self.find_best_teammate_to_pass(ctx) {
@@ -34,7 +39,9 @@ impl StateProcessingHandler for ForwardStandingState {
 
             // If unable to shoot or pass, decide to dribble or hold position
             if self.should_dribble(ctx) {
-                Some(StateChangeResult::with_forward_state(ForwardState::Dribbling))
+                Some(StateChangeResult::with_forward_state(
+                    ForwardState::Dribbling,
+                ))
             } else {
                 None
                 // Hold possession
@@ -44,7 +51,9 @@ impl StateProcessingHandler for ForwardStandingState {
             // If the forward doesn't have the ball, decide to move or press
             if self.should_press(ctx) {
                 // Transition to Pressing state
-                Some(StateChangeResult::with_forward_state(ForwardState::Pressing))
+                Some(StateChangeResult::with_forward_state(
+                    ForwardState::Pressing,
+                ))
             } else {
                 Some(StateChangeResult::with_forward_state(ForwardState::Running))
                 // Transition to Positioning state
@@ -76,9 +85,13 @@ impl ForwardStandingState {
     }
 
     /// Finds the best teammate to pass to based on proximity and position.
-    fn find_best_teammate_to_pass<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
+    fn find_best_teammate_to_pass<'a>(
+        &self,
+        ctx: &StateProcessingContext<'a>,
+    ) -> Option<&'a MatchPlayer> {
         // Utilize the find_closest_teammate method from PlayerDistanceClosure
-        let closest_teammates = ctx.tick_context
+        let closest_teammates = ctx
+            .tick_context
             .object_positions
             .player_distances
             .find_closest_teammates(&ctx.player);
@@ -97,7 +110,10 @@ impl ForwardStandingState {
         // Example logic: dribble if no immediate threat and space is available
         let safe_distance = 10.0;
 
-        let closest_opponent = ctx.tick_context.object_positions.player_distances
+        let closest_opponent = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponent(ctx.player);
 
         if let Some((_, distance)) = closest_opponent {
@@ -109,7 +125,7 @@ impl ForwardStandingState {
 
     /// Decides whether the forward should press the opponent.
     fn should_press(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.ball().distance() < PRESS_DISTANCE  && ctx.player.has_ball
+        ctx.ball().distance() < PRESS_DISTANCE && ctx.player.has_ball
     }
 
     /// Calculates the optimal attacking position for the forward.

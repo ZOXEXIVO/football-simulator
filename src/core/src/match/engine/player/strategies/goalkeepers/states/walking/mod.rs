@@ -1,11 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
-use rand::Rng;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::strategies::processor::StateChangeResult;
-use crate::r#match::{ConditionContext, StateProcessingContext, StateProcessingHandler, VectorExtensions};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::strategies::processor::StateChangeResult;
+use crate::r#match::{
+    ConditionContext, StateProcessingContext, StateProcessingHandler, VectorExtensions,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
@@ -16,29 +17,39 @@ pub struct GoalkeeperWalkingState {}
 impl StateProcessingHandler for GoalkeeperWalkingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Passing))
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Passing,
+            ));
         }
 
         if !ctx.team().is_control_ball() {
             if ctx.ball().on_own_side() {
                 if ctx.ball().distance() < 100.0 {
-                    return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::PreparingForSave))
+                    return Some(StateChangeResult::with_goalkeeper_state(
+                        GoalkeeperState::PreparingForSave,
+                    ));
                 }
 
                 if self.should_come_out(ctx) && ctx.ball().distance() < 200.0 {
-                    return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ComingOut))
+                    return Some(StateChangeResult::with_goalkeeper_state(
+                        GoalkeeperState::ComingOut,
+                    ));
                 }
             }
         }
 
         // Check if the goalkeeper is out of position
         if self.is_out_of_position(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::ReturningToGoal));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::ReturningToGoal,
+            ));
         }
 
         // Check if there's an immediate threat
         if self.is_under_threat(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::UnderPressure));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::UnderPressure,
+            ));
         }
 
         None
@@ -55,9 +66,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
         Some(direction * walking_speed)
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl GoalkeeperWalkingState {
@@ -67,7 +76,7 @@ impl GoalkeeperWalkingState {
     }
 
     fn is_under_threat(&self, ctx: &StateProcessingContext) -> bool {
-        let player_ops = ctx.player();
+        let player_ops = ctx.team();
         let opponents_with_ball = player_ops.opponent_with_ball();
 
         if !opponents_with_ball.is_empty() {
@@ -84,7 +93,9 @@ impl GoalkeeperWalkingState {
         let goalkeeper_skills = &ctx.player.skills;
 
         // Decision based on ball distance and goalkeeper's skills
-        ball_distance < 50.0 && goalkeeper_skills.mental.decisions > 10.0 && goalkeeper_skills.physical.acceleration > 10.0
+        ball_distance < 50.0
+            && goalkeeper_skills.mental.decisions > 10.0
+            && goalkeeper_skills.physical.acceleration > 10.0
     }
 
     fn calculate_target_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
@@ -94,9 +105,11 @@ impl GoalkeeperWalkingState {
         let wander_period = 3000; // 3 seconds
         let wander_phase = (ctx.in_state_time % wander_period) as f32 / wander_period as f32;
 
-        if wander_phase < 0.8 { // 80% of the time, move towards optimal position
+        if wander_phase < 0.8 {
+            // 80% of the time, move towards optimal position
             optimal_position
-        } else { // 20% of the time, apply a small random offset for wandering
+        } else {
+            // 20% of the time, apply a small random offset for wandering
             self.apply_wander_offset(optimal_position, ctx)
         }
     }
@@ -137,7 +150,11 @@ impl GoalkeeperWalkingState {
         optimal_distance.clamp(1.0, 5.0)
     }
 
-    fn limit_to_penalty_area(&self, position: Vector3<f32>, ctx: &StateProcessingContext) -> Vector3<f32> {
+    fn limit_to_penalty_area(
+        &self,
+        position: Vector3<f32>,
+        ctx: &StateProcessingContext,
+    ) -> Vector3<f32> {
         // Assume penalty area dimensions (adjust as needed)
         let penalty_area_width = 40.0;
         let penalty_area_depth = 16.5;
@@ -149,25 +166,28 @@ impl GoalkeeperWalkingState {
         // Limit x-coordinate
         limited_position.x = limited_position.x.clamp(
             goal_position.x - penalty_area_width / 2.0,
-            goal_position.x + penalty_area_width / 2.0
+            goal_position.x + penalty_area_width / 2.0,
         );
 
         // Limit z-coordinate (assuming z is depth)
-        limited_position.z = limited_position.z.clamp(
-            goal_position.z,
-            goal_position.z + penalty_area_depth
-        );
+        limited_position.z = limited_position
+            .z
+            .clamp(goal_position.z, goal_position.z + penalty_area_depth);
 
         limited_position
     }
 
-    fn apply_wander_offset(&self, position: Vector3<f32>, ctx: &StateProcessingContext) -> Vector3<f32> {
+    fn apply_wander_offset(
+        &self,
+        position: Vector3<f32>,
+        ctx: &StateProcessingContext,
+    ) -> Vector3<f32> {
         let (offset_x, offset_z) = self.generate_pseudo_random_offset(ctx.in_state_time);
 
         Vector3::new(
             position.x + offset_x,
             position.y, // Keep y-coordinate unchanged
-            position.z + offset_z
+            position.z + offset_z,
         )
     }
 

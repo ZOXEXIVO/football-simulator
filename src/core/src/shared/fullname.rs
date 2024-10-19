@@ -51,7 +51,8 @@ mod tests {
 
     #[test]
     fn test_with_full_fullname() {
-        let fullname = FullName::with_full("John".to_string(), "Doe".to_string(), "Smith".to_string());
+        let fullname =
+            FullName::with_full("John".to_string(), "Doe".to_string(), "Smith".to_string());
 
         assert_eq!(fullname.first_name, "John");
         assert_eq!(fullname.last_name, "Doe");
@@ -67,7 +68,8 @@ mod tests {
 
     #[test]
     fn test_display_with_middle_name() {
-        let fullname = FullName::with_full("John".to_string(), "Doe".to_string(), "Smith".to_string());
+        let fullname =
+            FullName::with_full("John".to_string(), "Doe".to_string(), "Smith".to_string());
 
         assert_eq!(format!("{}", fullname), "Doe John Smith");
     }

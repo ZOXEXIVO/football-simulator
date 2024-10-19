@@ -32,7 +32,12 @@ impl LeagueCollection {
                     let league_slug = String::from(&league.slug);
 
                     Logging::estimate_result(
-                        || league.simulate(clubs, ctx.with_league(league.id, league_slug, &league_team_ids)),
+                        || {
+                            league.simulate(
+                                clubs,
+                                ctx.with_league(league.id, league_slug, &league_team_ids),
+                            )
+                        },
                         message,
                     )
                 }

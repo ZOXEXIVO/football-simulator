@@ -1,20 +1,21 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::IntegerUtils;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::r#match::events::Event;
-use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior, VectorExtensions,
+};
+use crate::IntegerUtils;
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static MIDFIELDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
 
 const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
 const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
-
 
 #[derive(Default)]
 pub struct MidfielderRunningState {}
@@ -24,7 +25,9 @@ impl StateProcessingHandler for MidfielderRunningState {
         if ctx.player.has_ball {
             // If the player has the ball, consider shooting, passing, or dribbling
             if self.is_in_shooting_range(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::DistanceShooting));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::DistanceShooting,
+                ));
             }
 
             if let Some(teammate_id) = self.find_open_teammate(ctx) {
@@ -36,20 +39,28 @@ impl StateProcessingHandler for MidfielderRunningState {
 
             // If no shooting or passing options, consider dribbling
             if self.should_dribble(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Dribbling));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Dribbling,
+                ));
             }
         } else {
             // If the player doesn't have the ball, check if they should press, support attack, or return
             if self.should_press(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Pressing,
+                ));
             }
 
             if self.should_support_attack(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::SupportingAttack));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::SupportingAttack,
+                ));
             }
 
             if self.should_return_to_position(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Returning));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Returning,
+                ));
             }
         }
 
@@ -63,29 +74,39 @@ impl StateProcessingHandler for MidfielderRunningState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Check if there's space to run between opponents
         if let Some(target_position) = self.find_space_between_opponents(ctx) {
-            Some(SteeringBehavior::Arrive {
-                target: target_position,
-                slowing_distance: 10.0,
-            }.calculate(ctx.player).velocity)
+            Some(
+                SteeringBehavior::Arrive {
+                    target: target_position,
+                    slowing_distance: 10.0,
+                }
+                .calculate(ctx.player)
+                .velocity,
+            )
         } else if ctx.team().is_control_ball() {
-            Some(SteeringBehavior::Arrive {
-                target: ctx.ball().direction_to_opponent_goal(),
-                slowing_distance: 200.0
-            }.calculate(ctx.player).velocity)
+            Some(
+                SteeringBehavior::Arrive {
+                    target: ctx.ball().direction_to_opponent_goal(),
+                    slowing_distance: 200.0,
+                }
+                .calculate(ctx.player)
+                .velocity,
+            )
         } else {
-            Some(SteeringBehavior::Wander {
-                target: ctx.player.start_position,
-                radius: IntegerUtils::random(5, 150) as f32,
-                jitter: IntegerUtils::random(0, 2) as f32,
-                distance: IntegerUtils::random(10, 150) as f32,
-                angle: IntegerUtils::random(0, 360) as f32
-            }.calculate(ctx.player).velocity)
+            Some(
+                SteeringBehavior::Wander {
+                    target: ctx.player.start_position,
+                    radius: IntegerUtils::random(5, 150) as f32,
+                    jitter: IntegerUtils::random(0, 2) as f32,
+                    distance: IntegerUtils::random(10, 150) as f32,
+                    angle: IntegerUtils::random(0, 360) as f32,
+                }
+                .calculate(ctx.player)
+                .velocity,
+            )
         }
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl MidfielderRunningState {
@@ -97,7 +118,7 @@ impl MidfielderRunningState {
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
         // Find an open teammate to pass to
         let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
-        let open_teammates= teammates
+        let open_teammates = teammates
             .iter()
             .filter(|teammate| {
                 // Check if the teammate is open (not closely marked by an opponent)
@@ -116,7 +137,8 @@ impl MidfielderRunningState {
                 let a_distance = (a.position - ctx.ball().direction_to_opponent_goal()).magnitude();
                 let b_distance = (b.position - ctx.ball().direction_to_opponent_goal()).magnitude();
                 a_distance.partial_cmp(&b_distance).unwrap()
-            }).map(|p| p.id);
+            })
+            .map(|p| p.id);
 
         open_teammates
     }
@@ -130,7 +152,10 @@ impl MidfielderRunningState {
     }
 
     fn find_space_between_opponents(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let nearest_opponents = ctx.tick_context.object_positions.player_distances
+        let nearest_opponents = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponents(ctx.player);
 
         if let Some(opponents) = nearest_opponents {
@@ -139,7 +164,8 @@ impl MidfielderRunningState {
                 let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
 
                 let midpoint = (opponent1_position + opponent2_position) * 0.5;
-                let distance_between_opponents = opponent1_position.distance_to(&opponent2_position);
+                let distance_between_opponents =
+                    opponent1_position.distance_to(&opponent2_position);
 
                 if distance_between_opponents > 10.0 {
                     return Some(midpoint);
@@ -191,9 +217,17 @@ impl MidfielderRunningState {
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
         // Check if there are opponents close to the player
         let pressure_distance = 5.0;
-        let close_opponents = ctx.tick_context.object_positions.player_distances
+        let close_opponents = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponents(ctx.player)
-            .map(|opponents| opponents.iter().filter(|(_, dist)| *dist < pressure_distance).count())
+            .map(|opponents| {
+                opponents
+                    .iter()
+                    .filter(|(_, dist)| *dist < pressure_distance)
+                    .count()
+            })
             .unwrap_or(0);
 
         close_opponents > 0

@@ -1,9 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static DEFENDER_OFFSIDE_TRAP_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_offside_trap_data.json")));
@@ -22,7 +25,9 @@ impl StateProcessingHandler for DefenderOffsideTrapState {
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {
             // Transition to Resting state if stamina is too low
-            return Some(StateChangeResult::with_defender_state(DefenderState::Resting));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Resting,
+            ));
         }
 
         // 2. Determine if the offside trap should be executed
@@ -33,15 +38,21 @@ impl StateProcessingHandler for DefenderOffsideTrapState {
             if trap_success {
                 // Offside trap is successful
                 // Transition to HoldingLine or appropriate state
-                Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine))
+                Some(StateChangeResult::with_defender_state(
+                    DefenderState::HoldingLine,
+                ))
             } else {
                 // Offside trap failed; opponent may be through on goal
                 // Transition to TrackingBack state to recover
-                Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack))
+                Some(StateChangeResult::with_defender_state(
+                    DefenderState::TrackingBack,
+                ))
             }
         } else {
             // Offside trap conditions not met; transition back to HoldingLine
-            Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine))
+            Some(StateChangeResult::with_defender_state(
+                DefenderState::HoldingLine,
+            ))
         }
     }
 
@@ -94,7 +105,7 @@ impl DefenderOffsideTrapState {
     /// Calculates the defensive line position based on the current positions of defenders.
     fn calculate_defensive_line_position(&self, ctx: &StateProcessingContext) -> f32 {
         // Get all defenders on the team
-        let defenders =  ctx.player();
+        let defenders = ctx.team();
         let defenders: Vec<&MatchPlayer> = defenders
             .defenders()
             .iter()
@@ -110,16 +121,30 @@ impl DefenderOffsideTrapState {
         // Calculate the highest x-position (furthest forward) among defenders
         if ctx.player.side.unwrap() == PlayerSide::Left {
             // Home team moving from left to right
-            defenders.iter().map(|p| p.position.x).max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap()
+            defenders
+                .iter()
+                .map(|p| p.position.x)
+                .max_by(|a, b| a.partial_cmp(b).unwrap())
+                .unwrap()
         } else {
             // Away team moving from right to left
-            defenders.iter().map(|p| p.position.x).min_by(|a, b| a.partial_cmp(b).unwrap()).unwrap()
+            defenders
+                .iter()
+                .map(|p| p.position.x)
+                .min_by(|a, b| a.partial_cmp(b).unwrap())
+                .unwrap()
         }
     }
 
     /// Checks if any opponent is ahead of the defensive line.
-    fn is_opponent_ahead(&self, defensive_line_position: f32, ctx: &StateProcessingContext) -> bool {
-        ctx.context.players.raw_players()
+    fn is_opponent_ahead(
+        &self,
+        defensive_line_position: f32,
+        ctx: &StateProcessingContext,
+    ) -> bool {
+        ctx.context
+            .players
+            .raw_players()
             .iter()
             .filter(|p| p.team_id != ctx.player.team_id)
             .any(|opponent| {

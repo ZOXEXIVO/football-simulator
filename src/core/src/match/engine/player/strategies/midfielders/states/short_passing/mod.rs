@@ -1,10 +1,13 @@
-use std::sync::LazyLock;
-use nalgebra::{Vector3};
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static MIDFIELDER_SHORT_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_short_passing_data.json")));
@@ -17,7 +20,9 @@ impl StateProcessingHandler for MidfielderShortPassingState {
         // Check if the midfielder still has the ball
         if !ctx.player.has_ball {
             // Lost possession, transition to Pressing
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Pressing,
+            ));
         }
 
         // Determine the best teammate to pass to
@@ -26,15 +31,20 @@ impl StateProcessingHandler for MidfielderShortPassingState {
             let pass_velocity = self.calculate_pass_velocity(ctx, &target_teammate);
 
             // Create an event to change the ball's velocity and update possession
-            let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::Standing);
+            let mut state_change =
+                StateChangeResult::with_midfielder_state(MidfielderState::Standing);
 
-            state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, pass_velocity));
+            state_change
+                .events
+                .add_player_event(PlayerEvent::MoveBall(ctx.player.id, pass_velocity));
 
             // Transition to the next appropriate state (e.g., Standing)
             Some(state_change)
         } else {
             // No available teammate found, consider other options
-            Some(StateChangeResult::with_midfielder_state(MidfielderState::HoldingPossession))
+            Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::HoldingPossession,
+            ))
         }
     }
 
@@ -60,7 +70,12 @@ impl MidfielderShortPassingState {
         let max_pass_distance = MAX_PASS_DISTANCE;
         let player_position = ctx.player.position;
 
-        if let Some(distances)  = ctx.tick_context.object_positions.player_distances.find_closest_teammates(ctx.player) {
+        if let Some(distances) = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .find_closest_teammates(ctx.player)
+        {
             for (teammate_id, distance) in distances {
                 let player = ctx.context.players.get(teammate_id)?;
 
@@ -68,7 +83,7 @@ impl MidfielderShortPassingState {
                     continue;
                 }
 
-                if !self.is_pass_feasible_ray_tracing(ctx, player){
+                if !self.is_pass_feasible_ray_tracing(ctx, player) {
                     continue;
                 }
 
@@ -82,7 +97,11 @@ impl MidfielderShortPassingState {
     }
 
     /// Calculates the pass velocity vector towards the target teammate.
-    fn calculate_pass_velocity(&self, ctx: &StateProcessingContext, target_teammate: &MatchPlayer) -> Vector3<f32> {
+    fn calculate_pass_velocity(
+        &self,
+        ctx: &StateProcessingContext,
+        target_teammate: &MatchPlayer,
+    ) -> Vector3<f32> {
         let player_position = ctx.player.position;
         let target_position = target_teammate.position;
 
@@ -97,7 +116,11 @@ impl MidfielderShortPassingState {
     }
 
     /// Checks if the pass to the target teammate is feasible using ray tracing.
-    fn is_pass_feasible_ray_tracing(&self, ctx: &StateProcessingContext, target_teammate: &MatchPlayer) -> bool {
+    fn is_pass_feasible_ray_tracing(
+        &self,
+        ctx: &StateProcessingContext,
+        target_teammate: &MatchPlayer,
+    ) -> bool {
         let player_position = ctx.player.position;
         let target_position = target_teammate.position;
 
@@ -172,7 +195,7 @@ impl MidfielderShortPassingState {
 
 // Constants used in passing calculations
 const MAX_PASS_DISTANCE: f32 = 20.0; // Maximum distance for a short pass
-const MIN_PASS_SPEED: f32 = 5.0;     // Minimum speed of the pass
-const MAX_PASS_SPEED: f32 = 15.0;    // Maximum speed of the pass
-const STAMINA_COST_PASS: f32 = 2.0;  // Stamina cost of making a pass
+const MIN_PASS_SPEED: f32 = 5.0; // Minimum speed of the pass
+const MAX_PASS_SPEED: f32 = 15.0; // Maximum speed of the pass
+const STAMINA_COST_PASS: f32 = 2.0; // Stamina cost of making a pass
 const OPPONENT_COLLISION_RADIUS: f32 = 0.5; // Radius representing opponent's collision area

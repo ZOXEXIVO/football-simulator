@@ -1,6 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
@@ -8,7 +9,6 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_HEADING_UP_PLAY_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
     DefaultNeuralNetworkLoader::load(include_str!("nn_heading_up_play_data.json"))
@@ -112,7 +112,7 @@ impl ForwardHeadingUpPlayState {
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
         let max_distance = 20.0; // Adjust based on your game's scale
 
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         // Check if the teammate is within a reasonable distance

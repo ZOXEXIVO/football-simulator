@@ -41,7 +41,7 @@ impl StateProcessingHandler for MidfielderPressingState {
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.player();
+        let players = ctx.team();
         let opponent_with_ball = players.opponent_with_ball();
 
         if let Some(opponent) = opponent_with_ball.first() {

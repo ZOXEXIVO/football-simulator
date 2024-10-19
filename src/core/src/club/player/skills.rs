@@ -142,7 +142,6 @@ mod tests {
     use super::*;
     use nalgebra::Vector3;
 
-
     #[test]
     fn test_max_speed() {
         let player_skills = PlayerSkills {

@@ -128,7 +128,9 @@ impl StaffCollection {
     }
 
     fn manager(&self) -> Option<&Staff> {
-        let manager = self.staffs.iter()
+        let manager = self
+            .staffs
+            .iter()
             .filter(|staff| staff.contract.is_some())
             .find(|staff| staff.contract.as_ref().unwrap().position == StaffPosition::Manager);
 
@@ -257,7 +259,7 @@ mod tests {
                 training: TrainingResponsibility::default(),
             },
             staffs: vec![staff],
-            stub: StaffStub::default()
+            stub: StaffStub::default(),
         }
     }
 

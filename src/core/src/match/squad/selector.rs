@@ -67,7 +67,12 @@ impl SquadSelector {
             }
 
             if let Some(player) = best_player {
-                squad.push(MatchPlayer::from_player(team_id, player, *player_position, false));
+                squad.push(MatchPlayer::from_player(
+                    team_id,
+                    player,
+                    *player_position,
+                    false,
+                ));
                 players.retain(|p| p.id != player.id);
             }
         }
@@ -92,7 +97,7 @@ impl SquadSelector {
                 team_id,
                 goalkeeper,
                 PlayerPositionType::Goalkeeper,
-                false
+                false,
             ));
             players.retain(|p| p.id != goalkeeper.id);
         }
@@ -112,7 +117,12 @@ impl SquadSelector {
             }
 
             if let Some(player) = best_player {
-                squad.push(MatchPlayer::from_player(team_id, player, *player_position, false));
+                squad.push(MatchPlayer::from_player(
+                    team_id,
+                    player,
+                    *player_position,
+                    false,
+                ));
                 players.retain(|p| p.id != player.id);
             }
         }
@@ -145,14 +155,12 @@ impl SquadSelector {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::r#match::PositionType;
-    use crate::shared::FullName;
     use crate::{
-        IntegerUtils, PlayerClubContract, PlayerCollection, PlayerGenerator, StaffCollection,
-        StaffStub, TacticsPositioning, TeamReputation, TeamType, TrainingSchedule,
+        IntegerUtils, PlayerCollection, PlayerGenerator, StaffCollection
+        , TacticsPositioning, TeamReputation, TeamType, TrainingSchedule,
         TACTICS_POSITIONS,
     };
-    use chrono::{NaiveDate, NaiveTime, Utc};
+    use chrono::{NaiveTime, Utc};
 
     #[test]
     fn select_is_correct() {

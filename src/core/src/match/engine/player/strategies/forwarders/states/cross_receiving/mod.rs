@@ -1,13 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::player::events::PlayerEvent;
 
 static FORWARD_CROSS_RECEIVING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
     DefaultNeuralNetworkLoader::load(include_str!("nn_cross_receiving_data.json"))
@@ -79,7 +79,7 @@ impl ForwardCrossReceivingState {
         // Check if the player is not too close to opponents
         let min_distance_from_opponents = 3.0; // Adjust based on your game's scale
 
-        let players = ctx.player();
+        let players = ctx.team();
         let is_away_from_opponents = players.opponents().iter().all(|opponent| {
             ctx.player.position.distance_to(&opponent.position) >= min_distance_from_opponents
         });

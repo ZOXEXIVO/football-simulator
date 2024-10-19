@@ -4,8 +4,7 @@ use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -21,7 +20,9 @@ impl StateProcessingHandler for MidfielderDribblingState {
         if ctx.player.has_ball {
             // If the player has the ball, consider shooting, passing, or dribbling
             if self.is_in_shooting_position(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::DistanceShooting));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::DistanceShooting,
+                ));
             }
 
             if let Some(teammate_id) = self.find_open_teammate(ctx) {
@@ -33,20 +34,28 @@ impl StateProcessingHandler for MidfielderDribblingState {
 
             // If no shooting or passing options, consider dribbling
             if self.should_dribble(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Dribbling));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Dribbling,
+                ));
             }
         } else {
             // If the player doesn't have the ball, check if they should press, support attack, or return
             if self.should_press(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Pressing,
+                ));
             }
 
             if self.should_support_attack(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::SupportingAttack));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::SupportingAttack,
+                ));
             }
 
             if self.should_return_to_position(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Returning));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Returning,
+                ));
             }
         }
 
@@ -68,7 +77,7 @@ impl MidfielderDribblingState {
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
         // Find an open teammate to pass to
         let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
-        let open_teammates= teammates
+        let open_teammates = teammates
             .iter()
             .filter(|teammate| {
                 // Check if the teammate is open (not closely marked by an opponent)
@@ -87,7 +96,8 @@ impl MidfielderDribblingState {
                 let a_distance = (a.position - ctx.ball().direction_to_opponent_goal()).magnitude();
                 let b_distance = (b.position - ctx.ball().direction_to_opponent_goal()).magnitude();
                 a_distance.partial_cmp(&b_distance).unwrap()
-            }).map(|p| p.id);
+            })
+            .map(|p| p.id);
 
         open_teammates
     }
@@ -151,9 +161,17 @@ impl MidfielderDribblingState {
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
         // Check if there are opponents close to the player
         let pressure_distance = 5.0;
-        let close_opponents = ctx.tick_context.object_positions.player_distances
+        let close_opponents = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponents(ctx.player)
-            .map(|opponents| opponents.iter().filter(|(_, dist)| *dist < pressure_distance).count())
+            .map(|opponents| {
+                opponents
+                    .iter()
+                    .filter(|(_, dist)| *dist < pressure_distance)
+                    .count()
+            })
             .unwrap_or(0);
 
         close_opponents > 0

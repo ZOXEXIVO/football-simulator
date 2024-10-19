@@ -39,7 +39,11 @@ impl StateManager {
         }
     }
 
-    pub fn handle_state_finish(context: &mut MatchContext, field: &mut MatchField, play_result: PlayMatchStateResult) {
+    pub fn handle_state_finish(
+        context: &mut MatchContext,
+        field: &mut MatchField,
+        play_result: PlayMatchStateResult,
+    ) {
         if context.state.match_state.need_swap_squads() {
             field.swap_squads();
         }
@@ -71,7 +75,7 @@ impl StateManager {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::r#match::{MatchContext, MatchField, MatchState, PlayMatchStateResult};
+    use crate::r#match::MatchState;
 
     #[test]
     fn test_state_manager_new() {

@@ -47,8 +47,8 @@ impl StateProcessingHandler for GoalkeeperKickingState {
         if let Some(teammate) = best_teammate {
             // 3. Calculate the kick power based on the distance to the teammate
             let distance_to_teammate = (ctx.player.position - teammate.position).magnitude();
-            let kick_power =
-                distance_to_teammate / ctx.player.skills.technical.free_kicks * KICK_POWER_MULTIPLIER;
+            let kick_power = distance_to_teammate / ctx.player.skills.technical.free_kicks
+                * KICK_POWER_MULTIPLIER;
 
             // 4. Kick the ball to the teammate
             let mut events = EventCollection::new();

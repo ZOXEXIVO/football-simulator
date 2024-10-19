@@ -77,7 +77,7 @@ impl StateProcessingHandler for GoalkeeperStandingState {
 
 impl GoalkeeperStandingState {
     fn is_opponent_in_danger_zone(&self, ctx: &StateProcessingContext) -> bool {
-        if let Some(opponent_with_ball) = ctx.player().opponent_with_ball().first() {
+        if let Some(opponent_with_ball) = ctx.team().opponent_with_ball().first() {
             if let Some(opponent_distance) = ctx
                 .tick_context
                 .object_positions

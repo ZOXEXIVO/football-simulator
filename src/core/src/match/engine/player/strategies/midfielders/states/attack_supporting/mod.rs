@@ -1,9 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::midfielders::states::MidfielderState;
+use crate::r#match::{
+    ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static MIDFIELDER_ATTACK_SUPPORTING_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
     DefaultNeuralNetworkLoader::load(include_str!("nn_attack_supporting_data.json"))
@@ -15,24 +18,32 @@ pub struct MidfielderAttackSupportingState {}
 impl StateProcessingHandler for MidfielderAttackSupportingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.ball().distance() > 200.0 {
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Returning));
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Returning,
+            ));
         }
 
         // 1. Check if the midfielder has received the ball
         if ctx.player.has_ball {
             // Decide next action (e.g., Distributing, HoldingPossession)
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Distributing));
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Distributing,
+            ));
         }
 
         // 2. Check if the attack has broken down (e.g., ball lost)
         if self.attack_broken_down(ctx) {
             // Transition back to defensive state
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Pressing,
+            ));
         }
 
         // 3. If midfielder is in a good shooting position, consider shooting
         if self.is_in_shooting_position(ctx) {
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::DistanceShooting));
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::DistanceShooting,
+            ));
         }
 
         // 4. Continue supporting the attack
@@ -69,7 +80,7 @@ impl MidfielderAttackSupportingState {
     /// Determines if the attack has broken down.
     fn attack_broken_down(&self, ctx: &StateProcessingContext) -> bool {
         // For simplicity, assume attack has broken down if the opponent has the ball
-        ctx.player().opponent_with_ball().len() > 0
+        ctx.team().opponent_with_ball().len() > 0
     }
 
     /// Checks if the midfielder is in a good position to attempt a shot.
@@ -86,7 +97,10 @@ impl MidfielderAttackSupportingState {
     /// Calculates the position the midfielder should move to in order to support the attack.
     fn calculate_support_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         // For simplicity, position yourself slightly behind the forwards
-        let forwards_positions: Vec<Vector3<f32>> = ctx.context.players.raw_players()
+        let forwards_positions: Vec<Vector3<f32>> = ctx
+            .context
+            .players
+            .raw_players()
             .iter()
             .filter(|p| p.team_id == ctx.player.team_id && p.tactics_position.is_forward())
             .map(|p| p.position)
@@ -97,7 +111,9 @@ impl MidfielderAttackSupportingState {
             self.get_penalty_area_position(ctx)
         } else {
             // Calculate average position of forwards
-            let average_forward_position = forwards_positions.iter().fold(Vector3::zeros(), |acc, pos| acc + *pos)
+            let average_forward_position = forwards_positions
+                .iter()
+                .fold(Vector3::zeros(), |acc, pos| acc + *pos)
                 / forwards_positions.len() as f32;
 
             // Position slightly behind the forwards

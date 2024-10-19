@@ -1,7 +1,10 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{
+    ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -27,7 +30,7 @@ impl StateProcessingHandler for MidfielderReturningState {
         if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Small {
             // Transition to Standing state
             return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Walking
+                MidfielderState::Walking,
             ));
         }
 

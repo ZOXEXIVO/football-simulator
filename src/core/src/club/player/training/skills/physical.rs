@@ -28,8 +28,8 @@ pub static PHYSICAL_SKILL_INCREASE_SPEED_MAP: LazyLock<HashMap<PhysicalSkill, f3
             (PhysicalSkill::Stamina, 0.05),
             (PhysicalSkill::Strength, 0.06),
         ]
-            .into_iter()
-            .collect()
+        .into_iter()
+        .collect()
     });
 
 pub fn determine_physical_skills_to_increase(

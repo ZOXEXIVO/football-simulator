@@ -1,11 +1,13 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
-use crate::r#match::events::{Event, EventCollection};
+use crate::r#match::events::EventCollection;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_THROWING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_throwing_data.json")));
@@ -20,7 +22,9 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // 1. Check if the goalkeeper has the ball
         if !ctx.player.has_ball {
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Standing,
+            ));
         }
 
         // 2. Find the best teammate to throw the ball to
@@ -34,17 +38,24 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
             .max_by(|a, b| {
                 let dist_a = (a.position - ctx.player.position).magnitude();
                 let dist_b = (b.position - ctx.player.position).magnitude();
-                dist_a.partial_cmp(&dist_b).unwrap_or(std::cmp::Ordering::Equal)
+                dist_a
+                    .partial_cmp(&dist_b)
+                    .unwrap_or(std::cmp::Ordering::Equal)
             });
 
         if let Some(teammate) = best_teammate {
             // 3. Calculate the throw power based on the distance to the teammate
             let distance_to_teammate = (ctx.player.position - teammate.position).magnitude();
-            let throw_power = distance_to_teammate / ctx.player.skills.technical.long_throws * THROW_POWER_MULTIPLIER;
+            let throw_power = distance_to_teammate / ctx.player.skills.technical.long_throws
+                * THROW_POWER_MULTIPLIER;
 
             let mut events = EventCollection::new();
 
-            events.add_player_event(PlayerEvent::PassTo(teammate.id, teammate.position, throw_power as f64));
+            events.add_player_event(PlayerEvent::PassTo(
+                teammate.id,
+                teammate.position,
+                throw_power as f64,
+            ));
             events.add_player_event(PlayerEvent::UnClaimBall(ctx.player.id));
 
             return Some(StateChangeResult::with_events(events));

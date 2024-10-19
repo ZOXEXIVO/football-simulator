@@ -1,13 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::events::Event;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::events::Event;
-use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_DIVING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_diving_data.json")));
@@ -24,7 +24,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
 
         if ctx.player.has_ball {
             return Some(StateChangeResult::with_goalkeeper_state(
-                GoalkeeperState::Passing
+                GoalkeeperState::Passing,
             ));
         }
 
@@ -57,7 +57,8 @@ impl StateProcessingHandler for GoalkeeperDivingState {
             if self.is_ball_caught(ctx) {
                 return Some(StateChangeResult::with_goalkeeper_state_and_event(
                     GoalkeeperState::Standing,
-                    Event::PlayerEvent(PlayerEvent::CaughtBall(ctx.player.id))));
+                    Event::PlayerEvent(PlayerEvent::CaughtBall(ctx.player.id)),
+                ));
             } else if self.is_ball_nearby(ctx) {
                 result
                     .events

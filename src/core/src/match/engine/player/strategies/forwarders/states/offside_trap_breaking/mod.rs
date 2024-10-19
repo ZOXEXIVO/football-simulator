@@ -63,7 +63,7 @@ impl StateProcessingHandler for ForwardOffsideTrapBreakingState {
 
 impl ForwardOffsideTrapBreakingState {
     fn is_offside_trap_active(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
         let offside_line = opponents
             .iter()
@@ -78,7 +78,7 @@ impl ForwardOffsideTrapBreakingState {
     fn find_best_position(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         let ball_position = ctx.tick_context.object_positions.ball_position;
 
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         let offside_line = opponents

@@ -1,12 +1,12 @@
 use crate::context::{GlobalContext, SimulationContext};
 use crate::continent::{Continent, ContinentResult};
 use crate::league::League;
+use crate::r#match::MatchResult;
 use crate::shared::{SimulatorDataIndexes, TeamData};
 use crate::transfers::TransferPool;
 use crate::utils::Logging;
 use crate::{Club, Country, Player, Team};
 use chrono::{Duration, NaiveDateTime};
-use crate::r#match::MatchResult;
 
 pub struct FootballSimulator;
 
@@ -263,13 +263,13 @@ impl SimulatorData {
 }
 
 pub struct SimulationResult {
-    pub match_results: Vec<MatchResult>
+    pub match_results: Vec<MatchResult>,
 }
 
 impl SimulationResult {
     pub fn new() -> Self {
         SimulationResult {
-            match_results: Vec::new()
+            match_results: Vec::new(),
         }
     }
 }

@@ -91,10 +91,38 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn direction_to_opponent_goal(&self) -> Vector3<f32> {
-        match self.ctx.player.side {
-            Some(PlayerSide::Left) => self.ctx.context.goal_positions.right,
-            Some(PlayerSide::Right) => self.ctx.context.goal_positions.left,
-            _ => Vector3::new(0.0, 0.0, 0.0),
+        let player = self.ctx.player;
+        let ball_position = self.ctx.tick_context.object_positions.ball_position;
+
+        let players = self.ctx.team();
+        let goalkeepers = players.goalkeeper_opponents();
+        let goalkeeper = goalkeepers.first().unwrap();
+
+        let player_position = player.position;
+        let goalkeeper_position = goalkeeper.position;
+
+        // Calculate the angle between the player, ball, and goalkeeper
+        let player_to_ball = ball_position - player_position;
+        let ball_to_goalkeeper = goalkeeper_position - ball_position;
+        let angle = player_to_ball.angle(&ball_to_goalkeeper);
+
+        // Determine the target position based on the angle and player's shooting ability
+        let shooting_ability = player.skills.technical.finishing;
+        if angle < 0.5 * std::f32::consts::PI {
+            // If the angle is small, aim towards the opposite corner of the goal
+            let goal_width = self.ctx.context.field_size.width as f32;
+            let goal_position = self.ctx.player().opponent_goal_position();
+            let target_x = if player_position.x < ball_position.x {
+                goal_position.x + goal_width / 2.0
+            } else {
+                goal_position.x - goal_width / 2.0
+            };
+            Vector3::new(target_x, goal_position.y, 0.0)
+        } else {
+            // If the angle is large, aim towards the goal center with some randomness
+            let goal_position = self.ctx.player().opponent_goal_position();
+            let random_offset = (rand::random::<f32>() - 0.5) * shooting_ability;
+            Vector3::new(goal_position.x + random_offset, goal_position.y, 0.0)
         }
     }
 

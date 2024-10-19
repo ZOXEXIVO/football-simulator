@@ -7,12 +7,10 @@ use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 use crate::r#match::{GameTickContext, MatchContext};
 use crate::{
-    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPosition,
+    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup,
     PlayerPositionType, PlayerSkills,
 };
-use log::info;
 use nalgebra::Vector3;
-use std::f32::NAN;
 use std::fmt::*;
 
 #[derive(Debug, Clone)]

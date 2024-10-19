@@ -1,11 +1,14 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::IntegerUtils;
-use crate::r#match::{ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions,
+};
+use crate::IntegerUtils;
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static DEFENDER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
@@ -22,53 +25,75 @@ impl StateProcessingHandler for DefenderWalkingState {
         let mut result = StateChangeResult::new();
 
         // Transition to Intercepting only if ball moving slowly or player very close
-        if ctx.ball().is_towards_player_with_angle(0.9) &&
-            (ctx.ball().speed() < 10.0 || ctx.ball().distance() < INTERCEPTION_DISTANCE / 2.0) {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
+        if ctx.ball().is_towards_player_with_angle(0.9)
+            && (ctx.ball().speed() < 10.0 || ctx.ball().distance() < INTERCEPTION_DISTANCE / 2.0)
+        {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Intercepting,
+            ));
         }
 
         // Return to position if far away and no immediate threats
-        if ctx.player().position_to_distance() != PlayerDistanceFromStartPosition::Small &&
-            !self.has_nearby_threats(ctx) {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
+        if ctx.player().position_to_distance() != PlayerDistanceFromStartPosition::Small
+            && !self.has_nearby_threats(ctx)
+        {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Returning,
+            ));
         }
 
         // Mark opponent if they have the ball or are very close
         if let Some(opponent_to_mark) = self.find_opponent_to_mark(ctx) {
-            if opponent_to_mark.has_ball ||
-                ctx.player.position.distance_to(&opponent_to_mark.position) < MARKING_DISTANCE / 2.0 {
-                return Some(StateChangeResult::with_defender_state(DefenderState::Marking));
+            if opponent_to_mark.has_ball
+                || ctx.player.position.distance_to(&opponent_to_mark.position)
+                    < MARKING_DISTANCE / 2.0
+            {
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Marking,
+                ));
             }
         }
 
         // Press opponent only if they have the ball and are close
         if let Some(opponent_to_press) = self.find_opponent_to_press(ctx) {
             if ctx.player.position.distance_to(&opponent_to_press.position) < PRESSING_DISTANCE {
-                return Some(StateChangeResult::with_defender_state(DefenderState::Pressing));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Pressing,
+                ));
             }
         }
 
         // Check if the ball is moving towards the player and is close
-        if ctx.ball().is_towards_player_with_angle(0.8) && ctx.ball().distance() < INTERCEPTION_DISTANCE {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Intercepting));
+        if ctx.ball().is_towards_player_with_angle(0.8)
+            && ctx.ball().distance() < INTERCEPTION_DISTANCE
+        {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Intercepting,
+            ));
         }
 
         // Check if the defender needs to return to their position
         if ctx.player().position_to_distance() != PlayerDistanceFromStartPosition::Small {
-            return Some(StateChangeResult::with_defender_state(DefenderState::Returning));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Returning,
+            ));
         }
 
         // Check if there's an opponent to mark
         if let Some(opponent_to_mark) = self.find_opponent_to_mark(ctx) {
             if ctx.player.position.distance_to(&opponent_to_mark.position) < MARKING_DISTANCE {
-                return Some(StateChangeResult::with_defender_state(DefenderState::Marking));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Marking,
+                ));
             }
         }
 
         // Adjust position if needed
         let optimal_position = self.calculate_optimal_position(ctx);
         if ctx.player.position.distance_to(&optimal_position) > 2.0 {
-            result.events.add_player_event(PlayerEvent::MovePlayer(ctx.player.id, optimal_position));
+            result
+                .events
+                .add_player_event(PlayerEvent::MovePlayer(ctx.player.id, optimal_position));
             return Some(result);
         }
 
@@ -83,13 +108,17 @@ impl StateProcessingHandler for DefenderWalkingState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // 1. If this is the first tick in the state, initialize wander behavior
         if ctx.in_state_time % 100 == 0 {
-            return Some(SteeringBehavior::Wander {
-                target: ctx.player.start_position,
-                radius: IntegerUtils::random(5, 15) as f32,
-                jitter: IntegerUtils::random(1, 5) as f32,
-                distance: IntegerUtils::random(10, 20) as f32,
-                angle: IntegerUtils::random(0, 360) as f32,
-            }.calculate(ctx.player).velocity);
+            return Some(
+                SteeringBehavior::Wander {
+                    target: ctx.player.start_position,
+                    radius: IntegerUtils::random(5, 15) as f32,
+                    jitter: IntegerUtils::random(1, 5) as f32,
+                    distance: IntegerUtils::random(10, 20) as f32,
+                    angle: IntegerUtils::random(0, 360) as f32,
+                }
+                .calculate(ctx.player)
+                .velocity,
+            );
         }
 
         // Fallback to moving towards optimal position
@@ -105,24 +134,34 @@ impl StateProcessingHandler for DefenderWalkingState {
 }
 
 impl DefenderWalkingState {
-    fn find_opponent_to_mark<'a>(&self, ctx: &'a StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
+    fn find_opponent_to_mark<'a>(
+        &self,
+        ctx: &'a StateProcessingContext<'a>,
+    ) -> Option<&'a MatchPlayer> {
         ctx.tick_context
             .object_positions
             .player_distances
             .find_closest_opponent(ctx.player)
             .and_then(|(opponent_id, _)| {
-                ctx.context.players.get(opponent_id)
+                ctx.context
+                    .players
+                    .get(opponent_id)
                     .filter(|opponent| !opponent.has_ball)
             })
     }
 
-    fn find_opponent_to_press<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
+    fn find_opponent_to_press<'a>(
+        &self,
+        ctx: &StateProcessingContext<'a>,
+    ) -> Option<&'a MatchPlayer> {
         ctx.tick_context
             .object_positions
             .player_distances
             .find_closest_opponent(ctx.player)
             .and_then(|(opponent_id, _)| {
-                ctx.context.players.get(opponent_id)
+                ctx.context
+                    .players
+                    .get(opponent_id)
                     .filter(|opponent| opponent.has_ball)
             })
     }

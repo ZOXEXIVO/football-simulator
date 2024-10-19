@@ -33,26 +33,24 @@ impl PlayerStatistics {
             shots_on_target: 0.0,
             tackling: 0.0,
             passes: 0,
-            average_rating: 0.0
+            average_rating: 0.0,
         }
     }
 }
 
 #[derive(Debug)]
 pub struct PlayerStatisticsHistory {
-    pub items: Vec<PlayerStatisticsHistoryItem>
+    pub items: Vec<PlayerStatisticsHistoryItem>,
 }
 
 #[derive(Debug)]
 pub struct PlayerStatisticsHistoryItem {
     pub season: Season,
-    pub statistics: PlayerStatistics
+    pub statistics: PlayerStatistics,
 }
 
 impl PlayerStatisticsHistory {
     pub fn new() -> Self {
-        PlayerStatisticsHistory {
-            items: Vec::new()
-        }
+        PlayerStatisticsHistory { items: Vec::new() }
     }
 }

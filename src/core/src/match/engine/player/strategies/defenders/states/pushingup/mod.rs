@@ -1,7 +1,10 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -23,7 +26,9 @@ impl StateProcessingHandler for DefenderPushingUpState {
         let ball_ops = ctx.ball();
 
         if ball_ops.on_own_side() {
-            return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::TrackingBack,
+            ));
         }
 
         if !ctx.team().is_control_ball() {
@@ -36,22 +41,30 @@ impl StateProcessingHandler for DefenderPushingUpState {
                     .unwrap();
 
                 if distance_to_opponent <= TACKLING_DISTANCE_THRESHOLD {
-                    return Some(StateChangeResult::with_defender_state(DefenderState::Tackling));
+                    return Some(StateChangeResult::with_defender_state(
+                        DefenderState::Tackling,
+                    ));
                 }
 
                 if distance_to_opponent <= PRESSING_DISTANCE_THRESHOLD
                     && ctx.player.skills.physical.stamina > STAMINA_THRESHOLD
                 {
-                    return Some(StateChangeResult::with_defender_state(DefenderState::Pressing));
+                    return Some(StateChangeResult::with_defender_state(
+                        DefenderState::Pressing,
+                    ));
                 }
             }
 
             // Instead of immediately switching to Covering, introduce a transition state
-            return Some(StateChangeResult::with_defender_state(DefenderState::Covering));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Covering,
+            ));
         }
 
         if self.should_retreat(ctx) {
-            return Some(StateChangeResult::with_defender_state(DefenderState::TrackingBack));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::TrackingBack,
+            ));
         }
 
         None
@@ -64,10 +77,14 @@ impl StateProcessingHandler for DefenderPushingUpState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         let optimal_position = self.calculate_optimal_pushing_up_position(ctx);
 
-        Some(SteeringBehavior::Pursuit {
-            target: optimal_position,
-            velocity: ctx.player.velocity,
-        }.calculate(ctx.player).velocity)
+        Some(
+            SteeringBehavior::Pursuit {
+                target: optimal_position,
+                velocity: ctx.player.velocity,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {}
@@ -90,8 +107,11 @@ impl DefenderPushingUpState {
     }
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.player();
-        players.defenders().iter().all(|d| d.position.x <= ctx.player.position.x)
+        let players = ctx.team();
+        players
+            .defenders()
+            .iter()
+            .all(|d| d.position.x <= ctx.player.position.x)
     }
 
     fn calculate_optimal_pushing_up_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
@@ -125,11 +145,14 @@ impl DefenderPushingUpState {
 
         let support_position = (ball_position + avg_attacking_position) * 0.5;
 
-        let optimal_position = (support_position * 0.5 + attacking_third_center * 0.3 + player_position * 0.2)
-            .cap_magnitude(field_width * MAX_PUSH_UP_DISTANCE);
+        let optimal_position =
+            (support_position * 0.5 + attacking_third_center * 0.3 + player_position * 0.2)
+                .cap_magnitude(field_width * MAX_PUSH_UP_DISTANCE);
 
         Vector3::new(
-            optimal_position.x.clamp(field_width * 0.5, field_width * MAX_PUSH_UP_DISTANCE),
+            optimal_position
+                .x
+                .clamp(field_width * 0.5, field_width * MAX_PUSH_UP_DISTANCE),
             optimal_position.y.clamp(0.0, field_height),
             0.0,
         )

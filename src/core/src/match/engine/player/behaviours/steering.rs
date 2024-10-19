@@ -1,5 +1,4 @@
-﻿use crate::r#match::position::VectorExtensions;
-use crate::r#match::MatchPlayer;
+﻿use crate::r#match::MatchPlayer;
 use nalgebra::Vector3;
 use rand::Rng;
 
@@ -60,7 +59,8 @@ impl SteeringBehavior {
                 let distance = to_target.norm();
 
                 let desired_velocity = if distance > 0.0 {
-                    let speed = (distance / *slowing_distance).clamp(0.0, 1.0) * player.skills.max_speed();
+                    let speed =
+                        (distance / *slowing_distance).clamp(0.0, 1.0) * player.skills.max_speed();
                     to_target.normalize() * speed
                 } else {
                     Vector3::zeros()
@@ -154,16 +154,12 @@ impl SteeringBehavior {
 
                 let angle = rng.gen::<f32>() * std::f32::consts::PI * 2.0;
 
-                let displacement = Vector3::new(
-                    angle.cos() * *radius,
-                    angle.sin() * *radius,
-                    0.0
-                );
+                let displacement = Vector3::new(angle.cos() * *radius, angle.sin() * *radius, 0.0);
 
                 let jitter_offset = Vector3::new(
                     rng.gen::<f32>() * *jitter - *jitter * 0.5,
                     rng.gen::<f32>() * *jitter - *jitter * 0.5,
-                    0.0
+                    0.0,
                 );
 
                 let wander_target = *target + displacement + jitter_offset;
@@ -176,7 +172,10 @@ impl SteeringBehavior {
                 let steering_force = Self::limit_magnitude(steering_force, max_force);
 
                 let speed_multiplier = 0.003; // Adjust this value to control the speed
-                let new_velocity = Self::limit_magnitude(player.velocity + steering_force, *distance * speed_multiplier);
+                let new_velocity = Self::limit_magnitude(
+                    player.velocity + steering_force,
+                    *distance * speed_multiplier,
+                );
 
                 let rotation = if new_velocity.x != 0.0 || new_velocity.y != 0.0 {
                     new_velocity.y.atan2(new_velocity.x)

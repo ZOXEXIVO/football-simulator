@@ -1,7 +1,10 @@
 use crate::club::academy::result::ClubAcademyResult;
 use crate::club::{BoardResult, ClubFinanceResult};
 use crate::simulator::SimulatorData;
-use crate::{PlayerContractProposal, PlayerMessage, PlayerMessageType, PlayerResult, SimulationResult, TeamResult};
+use crate::{
+    PlayerContractProposal, PlayerMessage, PlayerMessageType, PlayerResult, SimulationResult,
+    TeamResult,
+};
 
 pub struct ClubResult {
     pub finance: ClubFinanceResult,

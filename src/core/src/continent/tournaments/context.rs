@@ -1,9 +1,7 @@
-pub struct TournamentContext {
-}
+pub struct TournamentContext {}
 
 impl TournamentContext {
     pub fn new() -> Self {
-        TournamentContext {          
-        }
+        TournamentContext {}
     }
 }

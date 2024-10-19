@@ -1,9 +1,9 @@
 pub mod context;
 mod continent;
-mod tournaments;
 mod result;
+mod tournaments;
 
 pub use context::*;
 pub use continent::*;
-pub use tournaments::*;
 pub use result::*;
+pub use tournaments::*;

@@ -1,7 +1,7 @@
 use crate::context::GlobalContext;
 use crate::league::LeagueTableResult;
-use std::cmp::Ordering;
 use crate::r#match::MatchResult;
+use std::cmp::Ordering;
 
 #[derive(Debug)]
 pub struct LeagueTable {
@@ -83,16 +83,40 @@ impl LeagueTable {
         for result in match_result {
             match Ord::cmp(&result.score.home_team.get(), &result.score.away_team.get()) {
                 Ordering::Equal => {
-                    self.draft(result.score.home_team.team_id, result.score.home_team.get(), result.score.away_team.get());
-                    self.draft(result.score.away_team.team_id, result.score.away_team.get(), result.score.home_team.get());
+                    self.draft(
+                        result.score.home_team.team_id,
+                        result.score.home_team.get(),
+                        result.score.away_team.get(),
+                    );
+                    self.draft(
+                        result.score.away_team.team_id,
+                        result.score.away_team.get(),
+                        result.score.home_team.get(),
+                    );
                 }
                 Ordering::Greater => {
-                    self.winner(result.score.home_team.team_id, result.score.home_team.get(), result.score.away_team.get());
-                    self.looser(result.score.away_team.team_id, result.score.away_team.get(), result.score.home_team.get());
+                    self.winner(
+                        result.score.home_team.team_id,
+                        result.score.home_team.get(),
+                        result.score.away_team.get(),
+                    );
+                    self.looser(
+                        result.score.away_team.team_id,
+                        result.score.away_team.get(),
+                        result.score.home_team.get(),
+                    );
                 }
                 Ordering::Less => {
-                    self.looser(result.score.home_team.team_id, result.score.home_team.get(), result.score.away_team.get());
-                    self.winner(result.score.away_team.team_id, result.score.away_team.get(), result.score.home_team.get());
+                    self.looser(
+                        result.score.home_team.team_id,
+                        result.score.home_team.get(),
+                        result.score.away_team.get(),
+                    );
+                    self.winner(
+                        result.score.away_team.team_id,
+                        result.score.away_team.get(),
+                        result.score.home_team.get(),
+                    );
                 }
             }
         }
@@ -127,8 +151,8 @@ impl Default for LeagueTable {
 
 #[cfg(test)]
 mod tests {
-    use crate::r#match::{Score, TeamScore};
     use super::*;
+    use crate::r#match::{Score, TeamScore};
 
     #[test]
     fn table_draft() {
@@ -145,12 +169,12 @@ mod tests {
             league_slug: "slug".to_string(),
             home_team_id: 1,
             away_team_id: 2,
-            score: Score{
+            score: Score {
                 home_team: TeamScore::new_with_score(1, 3),
                 away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
-            details: None
+            details: None,
         }];
 
         table.update_from_results(&match_results);
@@ -196,7 +220,7 @@ mod tests {
             league_slug: "slug".to_string(),
             home_team_id,
             away_team_id,
-            score: Score{
+            score: Score {
                 home_team: TeamScore::new_with_score(1, 3),
                 away_team: TeamScore::new_with_score(2, 0),
                 details: vec![],
@@ -255,12 +279,12 @@ mod tests {
             league_slug: "slug".to_string(),
             home_team_id,
             away_team_id,
-            score: Score{
+            score: Score {
                 home_team: TeamScore::new_with_score(1, 0),
                 away_team: TeamScore::new_with_score(2, 3),
                 details: vec![],
             },
-            details: None
+            details: None,
         }];
 
         table.update_from_results(&match_results);

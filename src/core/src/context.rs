@@ -132,7 +132,7 @@ impl SimulationContext {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::{NaiveDate, NaiveTime};
+    use chrono::NaiveDate;
 
     #[test]
     fn test_simulation_context() {
@@ -203,7 +203,10 @@ mod tests {
     #[test]
     fn test_global_context() {
         // Create a new simulation context
-        let date = NaiveDate::from_ymd_opt(2024, 3, 16).unwrap().and_hms_opt(12, 30, 0).unwrap();
+        let date = NaiveDate::from_ymd_opt(2024, 3, 16)
+            .unwrap()
+            .and_hms_opt(12, 30, 0)
+            .unwrap();
         let sim_ctx = SimulationContext::new(date);
 
         // Create a global context with the simulation context

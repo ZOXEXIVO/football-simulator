@@ -1,7 +1,10 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
+};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -61,7 +64,7 @@ impl StateProcessingHandler for ForwardPressingState {
             } else {
                 // Transition to Running state if under pressure but not close to the ball
                 Some(StateChangeResult::with_forward_state(ForwardState::Running))
-            }
+            };
         }
 
         // Find the closest opponent
@@ -109,8 +112,8 @@ impl StateProcessingHandler for ForwardPressingState {
                 target: ctx.tick_context.object_positions.ball_position,
                 slowing_distance: 10.0,
             }
-                .calculate(ctx.player)
-                .velocity,
+            .calculate(ctx.player)
+            .velocity,
         )
     }
 

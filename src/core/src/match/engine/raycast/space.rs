@@ -1,5 +1,5 @@
-use nalgebra::Vector3;
 use crate::r#match::MatchPlayer;
+use nalgebra::Vector3;
 
 pub struct Space<T: Collider> {
     colliders: Vec<T>,

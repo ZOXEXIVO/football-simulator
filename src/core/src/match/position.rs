@@ -2,8 +2,8 @@
 use nalgebra::Vector3;
 use rand::Rng;
 use rand_distr::num_traits::real::Real;
-use std::collections::HashMap;
 use serde::Serialize;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct PositionDataItem {

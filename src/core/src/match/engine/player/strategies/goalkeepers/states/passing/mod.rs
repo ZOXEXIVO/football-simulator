@@ -1,13 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::events::Event;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::events::Event;
-use crate::r#match::player::events::PlayerEvent;
 
 static GOALKEEPER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -58,20 +58,31 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         }
 
         if ctx.in_state_time > 50 {
-            let (nearest_teammates, opponents) = ctx.tick_context
+            let (nearest_teammates, opponents) = ctx
+                .tick_context
                 .object_positions
                 .player_distances
                 .players_within_distance(ctx.player, 300.0);
 
             let (teammate_id, distance) = nearest_teammates.first().unwrap();
 
-            let teammaste_position = ctx.tick_context.object_positions.players_positions.get_player_position(*teammate_id).unwrap();
+            let teammaste_position = ctx
+                .tick_context
+                .object_positions
+                .players_positions
+                .get_player_position(*teammate_id)
+                .unwrap();
 
             let pass_power = (distance / ctx.player.skills.technical.passing as f32 * 10.0) as f64;
 
             return Some(StateChangeResult::with_goalkeeper_state_and_event(
                 GoalkeeperState::Standing,
-                Event::PlayerEvent(PlayerEvent::PassTo(*teammate_id, teammaste_position, pass_power))));
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    *teammate_id,
+                    teammaste_position,
+                    pass_power,
+                )),
+            ));
         }
 
         None

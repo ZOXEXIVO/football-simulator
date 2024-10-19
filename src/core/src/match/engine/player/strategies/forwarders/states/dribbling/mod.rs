@@ -1,7 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
@@ -65,7 +64,7 @@ impl StateProcessingHandler for ForwardDribblingState {
         Some(
             SteeringBehavior::Arrive {
                 target: ctx.ball().direction_to_opponent_goal(),
-                slowing_distance: 200.0,
+                slowing_distance: 150.0,
             }
             .calculate(ctx.player)
             .velocity,
@@ -78,7 +77,7 @@ impl StateProcessingHandler for ForwardDribblingState {
 impl ForwardDribblingState {
     fn has_space_to_dribble(&self, ctx: &StateProcessingContext) -> bool {
         let dribble_distance = 10.0; // Adjust based on your game's scale
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         // Check if there are no opponents within the dribble distance
@@ -111,7 +110,7 @@ impl ForwardDribblingState {
             }
         }
 
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         // Check if there are no opponents close to the teammate
@@ -152,7 +151,7 @@ impl ForwardDribblingState {
     }
 
     fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         let opponent_goal_position = match ctx.player.side {

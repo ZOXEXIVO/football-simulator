@@ -2,12 +2,11 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::{
-    ConditionContext, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler, SteeringBehavior,
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::forwarders::states::ForwardState;
 
 const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
 const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
@@ -22,7 +21,9 @@ impl StateProcessingHandler for DefenderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball {
             if self.is_in_shooting_range(ctx) {
-                return Some(StateChangeResult::with_defender_state(DefenderState::Shooting));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Shooting,
+                ));
             }
 
             if self.should_pass(ctx) {
@@ -60,17 +61,17 @@ impl StateProcessingHandler for DefenderRunningState {
                     target: ctx.ball().direction_to_opponent_goal(),
                     slowing_distance: 10.0,
                 }
-                    .calculate(ctx.player)
-                    .velocity,
+                .calculate(ctx.player)
+                .velocity,
             )
-        }else {
+        } else {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.tick_context.object_positions.ball_position,
                     slowing_distance: 10.0,
                 }
-                    .calculate(ctx.player)
-                    .velocity,
+                .calculate(ctx.player)
+                .velocity,
             )
         }
     }
@@ -106,7 +107,7 @@ impl DefenderRunningState {
             10.0..13.0 => 500,
             14.0..17.0 => 100,
             17.0..20.0 => 10,
-            _ => 1000
+            _ => 1000,
         };
 
         ctx.in_state_time > wait_ticks

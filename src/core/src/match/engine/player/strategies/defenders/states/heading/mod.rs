@@ -1,10 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static DEFENDER_HEADING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_heading_data.json")));
@@ -26,22 +28,29 @@ impl StateProcessingHandler for DefenderHeadingState {
         // Check if ball is within heading distance
         if distance_to_ball > HEADING_DISTANCE_THRESHOLD {
             // Transition back to appropriate state (e.g., HoldingLine)
-            return Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::HoldingLine,
+            ));
         }
 
         // Check if the ball is at a height suitable for heading
         if ball_position.z < HEADING_HEIGHT_THRESHOLD {
             // Ball is too low to head
-            return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ));
         }
 
         // 2. Attempt to head the ball
         if self.attempt_heading(ctx) {
             // 3. Generate event to change ball's velocity (e.g., clear the ball)
-            let mut state_change = StateChangeResult::with_defender_state(DefenderState::HoldingLine);
+            let mut state_change =
+                StateChangeResult::with_defender_state(DefenderState::HoldingLine);
             let new_ball_velocity = self.calculate_heading_velocity(ctx);
 
-            state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
+            state_change
+                .events
+                .add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
 
             // 4. Update player's stamina or condition if needed
             // (e.g., heading might cost some stamina)
@@ -50,7 +59,9 @@ impl StateProcessingHandler for DefenderHeadingState {
             Some(state_change)
         } else {
             // Heading failed; transition to appropriate state (e.g., Standing)
-            Some(StateChangeResult::with_defender_state(DefenderState::Standing))
+            Some(StateChangeResult::with_defender_state(
+                DefenderState::Standing,
+            ))
         }
     }
 

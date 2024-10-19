@@ -1,12 +1,10 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::player::state::PlayerState;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    ConditionContext, GameTickContext, MatchContext, MatchObjectsPositions, MatchPlayer,
-    StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior,
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;

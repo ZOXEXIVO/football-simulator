@@ -1,4 +1,4 @@
-﻿mod net;
-pub mod loader;
+﻿pub mod loader;
+mod net;
 
 pub use net::*;

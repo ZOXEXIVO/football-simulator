@@ -12,7 +12,13 @@ pub struct Match {
 }
 
 impl Match {
-    pub fn make(id: String, league_id: u32, league_slug: &str, home_squad: TeamSquad, away_squad: TeamSquad) -> Self {
+    pub fn make(
+        id: String,
+        league_id: u32,
+        league_slug: &str,
+        home_squad: TeamSquad,
+        away_squad: TeamSquad,
+    ) -> Self {
         Match {
             id,
             league_id,
@@ -31,7 +37,7 @@ impl Match {
 
         let match_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
 
-        let score = match_result.score.as_ref().unwrap();;
+        let score = match_result.score.as_ref().unwrap();
 
         debug!(
             "match played: {} {}:{} {}",

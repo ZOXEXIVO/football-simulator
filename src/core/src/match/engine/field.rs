@@ -1,6 +1,6 @@
 ﻿use crate::r#match::ball::Ball;
 use crate::r#match::{
-    FieldSquad, MatchFieldSize, MatchPlayer, MatchResultRaw, PlayerSide, PositionType, TeamSquad,
+    FieldSquad, MatchFieldSize, MatchPlayer, PlayerSide, PositionType, TeamSquad,
     POSITION_POSITIONING,
 };
 use nalgebra::Vector3;

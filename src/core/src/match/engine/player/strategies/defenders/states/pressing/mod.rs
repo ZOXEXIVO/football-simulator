@@ -1,9 +1,11 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static DEFENDER_PRESSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_pressing_data.json")));
@@ -21,12 +23,15 @@ impl StateProcessingHandler for DefenderPressingState {
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {
             // Transition to Resting state if stamina is low
-            return Some(StateChangeResult::with_defender_state(DefenderState::Resting));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Resting,
+            ));
         }
 
         // 2. Identify the opponent player with the ball
         let players = ctx.context.players.raw_players();
-        let opponent_with_ball = players.iter()
+        let opponent_with_ball = players
+            .iter()
             .find(|p| p.team_id != ctx.player.team_id && p.has_ball);
 
         if let Some(opponent) = opponent_with_ball {
@@ -35,13 +40,17 @@ impl StateProcessingHandler for DefenderPressingState {
 
             // 4. If close enough to tackle, transition to Tackling state
             if distance_to_opponent < TACKLING_DISTANCE_THRESHOLD {
-                return Some(StateChangeResult::with_defender_state(DefenderState::SlidingTackle));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::SlidingTackle,
+                ));
             }
 
             // 5. If the opponent is too far away, stop pressing
             if distance_to_opponent > PRESSING_DISTANCE_THRESHOLD {
                 // Transition back to HoldingLine or appropriate state
-                return Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::HoldingLine,
+                ));
             }
 
             // 6. Continue pressing (no state change)
@@ -49,7 +58,9 @@ impl StateProcessingHandler for DefenderPressingState {
         } else {
             // No opponent with the ball found (perhaps ball is free)
             // Transition back to appropriate state
-            Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine))
+            Some(StateChangeResult::with_defender_state(
+                DefenderState::HoldingLine,
+            ))
         }
     }
 

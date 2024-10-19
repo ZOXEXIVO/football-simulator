@@ -1,13 +1,13 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use std::sync::LazyLock;
 use rand::Rng;
-use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::player::events::PlayerEvent;
+use std::sync::LazyLock;
 
 static DEFENDER_INTERCEPTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_intercepting_data.json")));
@@ -35,11 +35,11 @@ impl StateProcessingHandler for DefenderInterceptingState {
                 ));
             } else {
                 if self.calculate_tackling_success(ctx) {
-                     let mut state = StateChangeResult::with_defender_state(
-                        DefenderState::Running,
-                    );
+                    let mut state = StateChangeResult::with_defender_state(DefenderState::Running);
 
-                    state.events.add_player_event(PlayerEvent::ClaimBall(ctx.player.id));
+                    state
+                        .events
+                        .add_player_event(PlayerEvent::ClaimBall(ctx.player.id));
 
                     return Some(state);
                 }
@@ -146,7 +146,10 @@ impl DefenderInterceptingState {
         let defender_time = defender_distance / defender_speed;
 
         // Find the minimum time for any opponent to reach the interception point
-        let opponent_time = ctx.context.players.raw_players()
+        let opponent_time = ctx
+            .context
+            .players
+            .raw_players()
             .iter()
             .filter(|p| p.team_id != ctx.player.team_id)
             .map(|opponent| {
@@ -175,7 +178,8 @@ impl DefenderInterceptingState {
         let relative_velocity = ball_velocity;
 
         // Time to intercept
-        let time_to_intercept = relative_position.magnitude() / (defender_speed + relative_velocity.magnitude()).max(0.1);
+        let time_to_intercept = relative_position.magnitude()
+            / (defender_speed + relative_velocity.magnitude()).max(0.1);
 
         // Predict ball position after time_to_intercept
         ball_position + ball_velocity * time_to_intercept

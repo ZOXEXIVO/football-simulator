@@ -1,10 +1,12 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static GOALKEEPER_PENALTY_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_penalty_data.json")));
@@ -22,22 +24,29 @@ impl StateProcessingHandler for GoalkeeperPenaltyState {
 
         if !is_ball_moving_towards_goal {
             // Ball is not moving towards the goal, transition to appropriate state (e.g., Standing)
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Standing,
+            ));
         }
 
         // 2. Attempt to save the penalty
         let save_success = rand::random::<f32>() < PENALTY_SAVE_PROBABILITY;
         if save_success {
             // Penalty save is successful
-            let mut state_change = StateChangeResult::with_goalkeeper_state(GoalkeeperState::HoldingBall);
+            let mut state_change =
+                StateChangeResult::with_goalkeeper_state(GoalkeeperState::HoldingBall);
 
             // Generate a penalty save event
-            state_change.events.add_player_event(PlayerEvent::CaughtBall(ctx.player.id));
+            state_change
+                .events
+                .add_player_event(PlayerEvent::CaughtBall(ctx.player.id));
 
             return Some(state_change);
         } else {
             // Penalty save failed, transition to appropriate state (e.g., Standing)
-            return Some(StateChangeResult::with_goalkeeper_state(GoalkeeperState::Standing));
+            return Some(StateChangeResult::with_goalkeeper_state(
+                GoalkeeperState::Standing,
+            ));
         }
     }
 

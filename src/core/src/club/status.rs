@@ -2,5 +2,5 @@
 pub enum ClubStatus {
     Amateur,
     SemiProfessional,
-    Professional
+    Professional,
 }

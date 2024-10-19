@@ -1,11 +1,14 @@
-use std::sync::LazyLock;
-use rand::Rng;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
+use nalgebra::Vector3;
+use rand::Rng;
+use std::sync::LazyLock;
 
 static MIDFIELDER_TACKLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_tackling_data.json")));
@@ -20,7 +23,7 @@ pub struct MidfielderTacklingState {}
 
 impl StateProcessingHandler for MidfielderTacklingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let players = ctx.player();
+        let players = ctx.team();
         let opponent_with_ball = players.opponent_with_ball();
 
         if let Some(opponent) = opponent_with_ball.first() {
@@ -30,7 +33,9 @@ impl StateProcessingHandler for MidfielderTacklingState {
             if distance_to_opponent > TACKLE_DISTANCE_THRESHOLD {
                 // Opponent is too far to attempt a tackle
                 // Transition back to appropriate state (e.g., Pressing)
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Pressing,
+                ));
             }
 
             // 4. Attempt the tackle
@@ -38,10 +43,13 @@ impl StateProcessingHandler for MidfielderTacklingState {
 
             let option = if tackle_success {
                 // Tackle is successful
-                let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::HoldingPossession);
+                let mut state_change =
+                    StateChangeResult::with_midfielder_state(MidfielderState::HoldingPossession);
 
                 // Gain possession of the ball
-                state_change.events.add_player_event(PlayerEvent::GainBall(ctx.player.id));
+                state_change
+                    .events
+                    .add_player_event(PlayerEvent::GainBall(ctx.player.id));
 
                 // Update opponent's state to reflect loss of possession
                 // You may need to send an event or directly modify the opponent's state
@@ -52,10 +60,13 @@ impl StateProcessingHandler for MidfielderTacklingState {
                 Some(state_change)
             } else if committed_foul {
                 // Tackle resulted in a foul
-                let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::Standing);
+                let mut state_change =
+                    StateChangeResult::with_midfielder_state(MidfielderState::Standing);
 
                 // Generate a foul event
-                state_change.events.add_player_event(PlayerEvent::CommitFoul);
+                state_change
+                    .events
+                    .add_player_event(PlayerEvent::CommitFoul);
 
                 // Transition to appropriate state (e.g., ReactingToFoul)
                 // You may need to define additional states for handling fouls
@@ -64,13 +75,17 @@ impl StateProcessingHandler for MidfielderTacklingState {
             } else {
                 // Tackle failed without committing a foul
                 // Transition back to appropriate state
-                return Some(StateChangeResult::with_midfielder_state(MidfielderState::Standing));
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Standing,
+                ));
             };
             option
         } else {
             // No opponent with the ball found
             // Transition back to appropriate state
-            Some(StateChangeResult::with_midfielder_state(MidfielderState::Standing))
+            Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Standing,
+            ))
         }
     }
 
@@ -80,10 +95,14 @@ impl StateProcessingHandler for MidfielderTacklingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(SteeringBehavior::Pursuit {
-            target: ctx.tick_context.object_positions.ball_position,
-            velocity: ctx.player.velocity,
-        }.calculate(ctx.player).velocity)
+        Some(
+            SteeringBehavior::Pursuit {
+                target: ctx.tick_context.object_positions.ball_position,
+                velocity: ctx.player.velocity,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {
@@ -93,11 +112,7 @@ impl StateProcessingHandler for MidfielderTacklingState {
 
 impl MidfielderTacklingState {
     /// Attempts a tackle and returns whether it was successful and if a foul was committed.
-    fn attempt_tackle(
-        &self,
-        ctx: &StateProcessingContext,
-        opponent: &MatchPlayer,
-    ) -> (bool, bool) {
+    fn attempt_tackle(&self, ctx: &StateProcessingContext, opponent: &MatchPlayer) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 
         // Get midfielder's tackling-related skills

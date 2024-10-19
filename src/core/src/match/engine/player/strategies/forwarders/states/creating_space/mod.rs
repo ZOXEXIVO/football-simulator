@@ -1,9 +1,11 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::forwarders::states::ForwardState;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_creating_space_data.json")));
@@ -20,13 +22,17 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
         // Check if the player has created enough space
         if self.has_created_space(ctx) {
             // If space is created, transition to the assisting state
-            return Some(StateChangeResult::with_forward_state(ForwardState::Assisting));
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Assisting,
+            ));
         }
 
         // Check if the player is too close to an opponent
         if self.is_too_close_to_opponent(ctx) {
             // If too close to an opponent, try to dribble away
-            return Some(StateChangeResult::with_forward_state(ForwardState::Dribbling));
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Dribbling,
+            ));
         }
 
         // Check if the player should run to the opponent's side between opponents
@@ -58,7 +64,10 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
 
 impl ForwardCreatingSpaceState {
     fn has_created_space(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponent = ctx.tick_context.object_positions.player_distances
+        let nearest_opponent = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponent(ctx.player);
 
         if let Some((_, distance)) = nearest_opponent {
@@ -69,7 +78,10 @@ impl ForwardCreatingSpaceState {
     }
 
     fn is_too_close_to_opponent(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponent = ctx.tick_context.object_positions.player_distances
+        let nearest_opponent = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponent(ctx.player);
 
         if let Some((_, distance)) = nearest_opponent {
@@ -81,7 +93,10 @@ impl ForwardCreatingSpaceState {
 
     fn should_change_velocity(&self, ctx: &StateProcessingContext) -> bool {
         let player_velocity = ctx.player.velocity;
-        let nearest_opponent = ctx.tick_context.object_positions.player_distances
+        let nearest_opponent = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponent(ctx.player);
 
         if let Some((_, distance)) = nearest_opponent {
@@ -93,12 +108,19 @@ impl ForwardCreatingSpaceState {
 
     fn calculate_new_velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let player_position = ctx.player.position;
-        let nearest_opponent = ctx.tick_context.object_positions.player_distances
+        let nearest_opponent = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponent(ctx.player);
 
         if let Some((opponent_id, _)) = nearest_opponent {
-            let opponent_position = ctx.tick_context.object_positions.players_positions
-                .get_player_position(opponent_id).unwrap();
+            let opponent_position = ctx
+                .tick_context
+                .object_positions
+                .players_positions
+                .get_player_position(opponent_id)
+                .unwrap();
 
             let direction_away_from_opponent = (player_position - opponent_position).normalize();
             direction_away_from_opponent * ctx.player.skills.max_speed()
@@ -115,7 +137,10 @@ impl ForwardCreatingSpaceState {
     }
 
     fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponents = ctx.tick_context.object_positions.player_distances
+        let nearest_opponents = ctx
+            .tick_context
+            .object_positions
+            .player_distances
             .find_closest_opponents(ctx.player);
 
         if let Some(opponents) = nearest_opponents {
@@ -123,7 +148,8 @@ impl ForwardCreatingSpaceState {
                 let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
                 let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
 
-                let distance_between_opponents = (opponent1_position - opponent2_position).magnitude();
+                let distance_between_opponents =
+                    (opponent1_position - opponent2_position).magnitude();
                 distance_between_opponents > CREATING_SPACE_THRESHOLD
             } else {
                 false

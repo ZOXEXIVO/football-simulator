@@ -40,7 +40,7 @@ impl PlayerAttributes {
     }
 
     pub fn condition_percentage(&self) -> u32 {
-        (self.condition as f32 * 100.0 / CONDITION_MAX_VALUE as f32 ).floor() as u32
+        (self.condition as f32 * 100.0 / CONDITION_MAX_VALUE as f32).floor() as u32
     }
 }
 

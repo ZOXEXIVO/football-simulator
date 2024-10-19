@@ -1,5 +1,5 @@
-use chrono::NaiveDateTime;
 use crate::r#match::TeamScore;
+use chrono::NaiveDateTime;
 
 const DEFAULT_MATCH_LIST_SIZE: usize = 10;
 

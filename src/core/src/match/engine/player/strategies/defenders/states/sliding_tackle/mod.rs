@@ -1,12 +1,15 @@
-use std::sync::LazyLock;
-use rand::Rng;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use rand::Rng;
+use std::sync::LazyLock;
 
 static DEFENDER_SLIDING_TACKLE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_sliding_tackle_data.json")));
@@ -25,11 +28,13 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina < STAMINA_THRESHOLD {
             // Transition to Resting state if stamina is too low
-            return Some(StateChangeResult::with_defender_state(DefenderState::Resting));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Resting,
+            ));
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.player();
+        let players = ctx.team();
         let opponent_with_ball = players.opponent_with_ball();
 
         if let Some(opponent) = opponent_with_ball.first() {
@@ -39,7 +44,9 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
             if distance_to_opponent > TACKLE_DISTANCE_THRESHOLD {
                 // Opponent is too far to attempt a sliding tackle
                 // Transition back to appropriate state (e.g., Pressing)
-                return Some(StateChangeResult::with_defender_state(DefenderState::Pressing));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Pressing,
+                ));
             }
 
             // 4. Attempt the sliding tackle
@@ -47,10 +54,13 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
 
             if tackle_success {
                 // Tackle is successful
-                let mut state_change = StateChangeResult::with_defender_state(DefenderState::Standing);
+                let mut state_change =
+                    StateChangeResult::with_defender_state(DefenderState::Standing);
 
                 // Gain possession of the ball
-                state_change.events.add(Event::PlayerEvent(PlayerEvent::GainBall(ctx.player.id)));
+                state_change
+                    .events
+                    .add(Event::PlayerEvent(PlayerEvent::GainBall(ctx.player.id)));
 
                 // Update opponent's state to reflect loss of possession
                 // This assumes you have a mechanism to update other players' states
@@ -62,10 +72,13 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
                 return Some(state_change);
             } else if committed_foul {
                 // Tackle resulted in a foul
-                let mut state_change = StateChangeResult::with_defender_state(DefenderState::Standing);
+                let mut state_change =
+                    StateChangeResult::with_defender_state(DefenderState::Standing);
 
                 // Generate a foul event
-                state_change.events.add(Event::PlayerEvent(PlayerEvent::CommitFoul));
+                state_change
+                    .events
+                    .add(Event::PlayerEvent(PlayerEvent::CommitFoul));
 
                 // Transition to appropriate state (e.g., ReactingToFoul)
                 // You may need to define additional states for handling fouls
@@ -74,12 +87,16 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
             } else {
                 // Tackle failed without committing a foul
                 // Transition back to appropriate state
-                return Some(StateChangeResult::with_defender_state(DefenderState::Standing));
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Standing,
+                ));
             }
         } else {
             // No opponent with the ball found
             // Transition back to appropriate state
-            Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine))
+            Some(StateChangeResult::with_defender_state(
+                DefenderState::HoldingLine,
+            ))
         }
     }
 
@@ -92,7 +109,7 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
         // Move towards the opponent to attempt the sliding tackle
 
         // Identify the opponent player with the ball
-        let players = ctx.player();
+        let players = ctx.team();
         let opponent_with_ball = players.opponent_with_ball();
 
         if let Some(opponent) = opponent_with_ball.first() {

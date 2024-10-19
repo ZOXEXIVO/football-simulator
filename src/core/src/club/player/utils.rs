@@ -47,11 +47,6 @@ impl PlayerUtils {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        PersonAttributes, PersonBehaviour, PlayerAttributes, PlayerPositions, PlayerPreferredFoot,
-        PlayerSkills, PlayerStatus,
-    };
-    use chrono::Utc;
 
     #[test]
     fn test_age_factor_under_18() {

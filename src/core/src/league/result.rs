@@ -1,8 +1,8 @@
 use crate::league::{LeagueTableResult, ScheduleItem};
+use crate::r#match::{MatchResult, TeamScore};
 use crate::simulator::SimulatorData;
 use crate::{MatchHistoryItem, SimulationResult};
 use chrono::NaiveDateTime;
-use crate::r#match::{MatchResult, TeamScore};
 
 pub struct LeagueResult {
     pub league_id: u32,
@@ -46,22 +46,30 @@ impl LeagueResult {
 
         let league = data.league_mut(result.league_id).unwrap();
 
-        league
-            .schedule
-            .update_match_result(&result.id, &result.score.home_team, &result.score.away_team);
+        league.schedule.update_match_result(
+            &result.id,
+            &result.score.home_team,
+            &result.score.away_team,
+        );
 
         let home_team = data.team_mut(result.score.home_team.team_id).unwrap();
         home_team.match_history.add(MatchHistoryItem::new(
             now,
             result.score.home_team.team_id,
-            (TeamScore::from(&result.score.home_team), TeamScore::from(&result.score.away_team)),
+            (
+                TeamScore::from(&result.score.home_team),
+                TeamScore::from(&result.score.away_team),
+            ),
         ));
 
         let away_team = data.team_mut(result.score.away_team.team_id).unwrap();
         away_team.match_history.add(MatchHistoryItem::new(
             now,
             result.score.away_team.team_id,
-            (TeamScore::from(&result.score.away_team), TeamScore::from(&result.score.home_team)),
+            (
+                TeamScore::from(&result.score.away_team),
+                TeamScore::from(&result.score.home_team),
+            ),
         ));
 
         // process_match_events(result, data);

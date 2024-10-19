@@ -1,14 +1,17 @@
-use log::info;
 use crate::r#match::defenders::states::{DefenderState, DefenderStrategies};
+use crate::r#match::events::{Event, EventCollection};
 use crate::r#match::forwarders::states::{ForwardState, ForwardStrategies};
 use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStrategies};
 use crate::r#match::midfielders::states::{MidfielderState, MidfielderStrategies};
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::{Defender, Forward, Goalkeeper, Midfielder};
-use crate::r#match::{BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer, PlayerOperationsImpl, TeamOperationsImpl};
+use crate::r#match::{
+    BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer,
+    PlayerOperationsImpl, TeamOperationsImpl,
+};
 use crate::PlayerFieldPositionGroup;
+use log::info;
 use nalgebra::Vector3;
-use crate::r#match::events::{Event, EventCollection};
 
 pub trait StateProcessingHandler {
     // Try fast processing

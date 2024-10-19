@@ -22,28 +22,27 @@ pub enum TechnicalSkill {
     Technique,
 }
 
-
-pub static TECHNICAL_SKILL_INCREASE_SPEED_MAP: LazyLock<HashMap<TechnicalSkill, f32>> = LazyLock::new(|| {
-    vec![
-        (TechnicalSkill::Corners, 0.1),
-        (TechnicalSkill::Crossing, 0.2),
-        (TechnicalSkill::Dribbling, 0.3),
-        (TechnicalSkill::Finishing, 0.4),
-        (TechnicalSkill::FirstTouch, 0.3),
-        (TechnicalSkill::FreeKicks, 0.4),
-        (TechnicalSkill::Heading, 0.3),
-        (TechnicalSkill::LongShots, 0.4),
-        (TechnicalSkill::LongThrows, 0.2),
-        (TechnicalSkill::Marking, 0.1),
-        (TechnicalSkill::Passing, 0.3),
-        (TechnicalSkill::PenaltyTaking, 0.4),
-        (TechnicalSkill::Tackling, 0.2),
-        (TechnicalSkill::Technique, 0.3)
-    ]
+pub static TECHNICAL_SKILL_INCREASE_SPEED_MAP: LazyLock<HashMap<TechnicalSkill, f32>> =
+    LazyLock::new(|| {
+        vec![
+            (TechnicalSkill::Corners, 0.1),
+            (TechnicalSkill::Crossing, 0.2),
+            (TechnicalSkill::Dribbling, 0.3),
+            (TechnicalSkill::Finishing, 0.4),
+            (TechnicalSkill::FirstTouch, 0.3),
+            (TechnicalSkill::FreeKicks, 0.4),
+            (TechnicalSkill::Heading, 0.3),
+            (TechnicalSkill::LongShots, 0.4),
+            (TechnicalSkill::LongThrows, 0.2),
+            (TechnicalSkill::Marking, 0.1),
+            (TechnicalSkill::Passing, 0.3),
+            (TechnicalSkill::PenaltyTaking, 0.4),
+            (TechnicalSkill::Tackling, 0.2),
+            (TechnicalSkill::Technique, 0.3),
+        ]
         .into_iter()
         .collect()
-});
-
+    });
 
 pub fn determine_technical_skills_to_increase(
     now: NaiveDate,

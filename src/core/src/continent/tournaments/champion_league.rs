@@ -1,5 +1,5 @@
-use crate::continent::{Tournament, TournamentContext};
 use crate::context::GlobalContext;
+use crate::continent::{Tournament, TournamentContext};
 
 pub struct ChampionLeague {}
 

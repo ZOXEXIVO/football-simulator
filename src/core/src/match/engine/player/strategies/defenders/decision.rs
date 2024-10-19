@@ -4,5 +4,5 @@ pub enum DefenderDecision {
     AdjustPosition,
     RunTowardsGoal,
     MarkOpponent,
-    Run
+    Run,
 }

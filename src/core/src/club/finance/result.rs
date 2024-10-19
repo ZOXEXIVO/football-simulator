@@ -1,17 +1,11 @@
 use crate::simulator::SimulatorData;
 
-pub struct ClubFinanceResult {
-    
-}
+pub struct ClubFinanceResult {}
 
 impl ClubFinanceResult {
     pub fn new() -> Self {
-        ClubFinanceResult {
-            
-        }
+        ClubFinanceResult {}
     }
 
-    pub fn process(&self, _: &mut SimulatorData){
-      
-    }
+    pub fn process(&self, _: &mut SimulatorData) {}
 }

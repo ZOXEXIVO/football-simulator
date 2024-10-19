@@ -286,8 +286,6 @@ impl PartialEq for Player {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn player_is_correct() {
         assert_eq!(10, 10);

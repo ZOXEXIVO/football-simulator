@@ -93,7 +93,16 @@ impl Schedule {
             .iter()
             .flat_map(|t| &t.items)
             .filter(|s| s.date == date)
-            .map(|s| ScheduleItem::new(s.league_id, String::from(&s.league_slug), s.home_team_id, s.away_team_id, s.date, None))
+            .map(|s| {
+                ScheduleItem::new(
+                    s.league_id,
+                    String::from(&s.league_slug),
+                    s.home_team_id,
+                    s.away_team_id,
+                    s.date,
+                    None,
+                )
+            })
             .collect()
     }
 
@@ -108,7 +117,14 @@ impl Schedule {
                     None => None,
                 };
 
-                ScheduleItem::new(s.league_id, String::from(&s.league_slug), s.home_team_id, s.away_team_id, s.date, res)
+                ScheduleItem::new(
+                    s.league_id,
+                    String::from(&s.league_slug),
+                    s.home_team_id,
+                    s.away_team_id,
+                    s.date,
+                    res,
+                )
             })
             .collect()
     }

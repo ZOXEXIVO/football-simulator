@@ -1,12 +1,12 @@
 #[derive(Debug, Clone)]
 pub struct MatchPlayerStatistics {
-    pub items: Vec<MatchPlayerStatisticsItem>
+    pub items: Vec<MatchPlayerStatisticsItem>,
 }
 
 impl MatchPlayerStatistics {
     pub fn new() -> Self {
         MatchPlayerStatistics {
-            items: Vec::with_capacity(5)
+            items: Vec::with_capacity(5),
         }
     }
 
@@ -14,17 +14,17 @@ impl MatchPlayerStatistics {
         self.items.is_empty()
     }
 
-    pub fn add_goal(&mut self, match_second: u64){
+    pub fn add_goal(&mut self, match_second: u64) {
         self.items.push(MatchPlayerStatisticsItem {
             stat_type: MatchStatisticType::Goal,
-            match_second
+            match_second,
         })
     }
 
-    pub fn add_assist(&mut self, match_second: u64){
+    pub fn add_assist(&mut self, match_second: u64) {
         self.items.push(MatchPlayerStatisticsItem {
             stat_type: MatchStatisticType::Assist,
-            match_second
+            match_second,
         })
     }
 }
@@ -38,13 +38,13 @@ impl Default for MatchPlayerStatistics {
 #[derive(Debug, Copy, Clone)]
 pub struct MatchPlayerStatisticsItem {
     pub stat_type: MatchStatisticType,
-    pub match_second: u64
+    pub match_second: u64,
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum MatchStatisticType {
     Goal,
-    Assist
+    Assist,
 }
 
 #[cfg(test)]

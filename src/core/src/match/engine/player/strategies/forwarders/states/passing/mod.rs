@@ -10,7 +10,6 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use rand::prelude::SliceRandom;
-use rand::thread_rng;
 use std::sync::LazyLock;
 
 static FORWARD_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -123,7 +122,7 @@ impl ForwardPassingState {
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
         let max_distance = 20.0; // Adjust based on your game's scale
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         // Check if the teammate is within a reasonable distance
@@ -175,7 +174,7 @@ impl ForwardPassingState {
 
     fn space_to_dribble(&self, ctx: &StateProcessingContext) -> bool {
         let dribble_distance = 10.0; // Adjust based on your game's scale
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         // Check if there are no opponents within the dribble distance
@@ -192,7 +191,7 @@ impl ForwardPassingState {
     }
 
     fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.player();
+        let players = ctx.team();
         let opponents = players.opponents();
 
         let opponent_goal_position = match ctx.player.side {

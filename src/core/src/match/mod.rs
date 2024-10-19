@@ -10,6 +10,6 @@ pub mod state;
 pub use engine::*;
 pub use game::*;
 
+pub use position::*;
 pub use squad::*;
 pub use state::*;
-pub use position::*;

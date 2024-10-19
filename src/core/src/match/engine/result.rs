@@ -1,8 +1,7 @@
-﻿use std::sync::atomic::{AtomicU8, Ordering};
-use crate::league::LeagueMatch;
-use crate::r#match::{MatchPlayer, MatchPositionData, TeamSquad};
+﻿use crate::league::LeagueMatch;
 use crate::r#match::statistics::MatchStatisticType;
-use bytes::Bytes;
+use crate::r#match::{MatchPositionData, TeamSquad};
+use std::sync::atomic::{AtomicU8, Ordering};
 
 #[derive(Debug)]
 pub struct MatchResultRaw {
@@ -29,7 +28,6 @@ impl Clone for MatchResultRaw {
         }
     }
 }
-
 
 impl MatchResultRaw {
     pub fn with_match_time(match_time_ms: u64) -> Self {
@@ -63,7 +61,6 @@ impl MatchResultRaw {
         self.right_team_players = FieldSquad::from(away_team_players);
     }
 }
-
 
 #[derive(Debug, Clone)]
 pub struct FieldSquad {
@@ -108,14 +105,14 @@ pub struct Score {
 #[derive(Debug)]
 pub struct TeamScore {
     pub team_id: u32,
-    score: AtomicU8
+    score: AtomicU8,
 }
 
 impl Clone for TeamScore {
     fn clone(&self) -> Self {
         TeamScore {
             team_id: self.team_id,
-            score: AtomicU8::new(self.score.load(Ordering::Relaxed))
+            score: AtomicU8::new(self.score.load(Ordering::Relaxed)),
         }
     }
 }
@@ -124,14 +121,14 @@ impl TeamScore {
     pub fn new(team_id: u32) -> Self {
         TeamScore {
             team_id,
-            score: AtomicU8::new(0)
+            score: AtomicU8::new(0),
         }
     }
 
     pub fn new_with_score(team_id: u32, score: u8) -> Self {
         TeamScore {
             team_id,
-            score: AtomicU8::new(score)
+            score: AtomicU8::new(score),
         }
     }
 
@@ -154,7 +151,7 @@ impl PartialEq<Self> for TeamScore {
 impl PartialOrd for TeamScore {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         let left_score = self.score.load(Ordering::Relaxed);
-        let other_score =  other.score.load(Ordering::Relaxed);
+        let other_score = other.score.load(Ordering::Relaxed);
 
         Some(left_score.cmp(&other_score))
     }
@@ -165,7 +162,7 @@ pub struct GoalDetail {
     pub player_id: u32,
     pub stat_type: MatchStatisticType,
 
-    pub match_second: u64
+    pub match_second: u64,
 }
 
 impl Score {
@@ -177,19 +174,19 @@ impl Score {
         }
     }
 
-    pub fn add_goal_detail(&mut self, goal_detail: GoalDetail){
+    pub fn add_goal_detail(&mut self, goal_detail: GoalDetail) {
         self.details.push(goal_detail)
     }
 
-    pub fn detail(&self) -> &[GoalDetail]{
+    pub fn detail(&self) -> &[GoalDetail] {
         &self.details
     }
 
-    pub fn increment_home_goals(&self){
+    pub fn increment_home_goals(&self) {
         self.home_team.score.fetch_add(1, Ordering::Relaxed);
     }
 
-    pub fn increment_away_goals(&self){
+    pub fn increment_away_goals(&self) {
         self.away_team.score.fetch_add(1, Ordering::Relaxed);
     }
 }
@@ -202,7 +199,7 @@ pub struct MatchResult {
     pub home_team_id: u32,
     pub away_team_id: u32,
     pub details: Option<MatchResultRaw>,
-    pub score: Score
+    pub score: Score,
 }
 
 impl MatchResult {
@@ -218,7 +215,7 @@ impl MatchResult {
             } else {
                 None
             },
-            score: self.score.clone()
+            score: self.score.clone(),
         }
     }
 }
@@ -232,7 +229,7 @@ impl From<&LeagueMatch> for MatchResult {
             home_team_id: m.home_team_id,
             away_team_id: m.away_team_id,
             score: Score::new(m.home_team_id, m.away_team_id),
-            details: None
+            details: None,
         }
     }
 }

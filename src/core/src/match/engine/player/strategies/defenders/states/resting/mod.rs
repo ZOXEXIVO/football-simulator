@@ -1,9 +1,11 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use crate::r#match::defenders::states::DefenderState;
+use crate::r#match::{
+    ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static DEFENDER_RESTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_resting_data.json")));
@@ -22,11 +24,14 @@ impl StateProcessingHandler for DefenderRestingState {
         let stamina = ctx.player.player_attributes.condition_percentage() as f32;
         if stamina >= STAMINA_RECOVERY_THRESHOLD {
             // Transition back to HoldingLine state
-            return Some(StateChangeResult::with_defender_state(DefenderState::HoldingLine));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::HoldingLine,
+            ));
         }
 
         // 2. Check if the ball is close
-        let ball_distance = (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
+        let ball_distance =
+            (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
         if ball_distance < BALL_PROXIMITY_THRESHOLD {
             // If the ball is close, check for nearby opponents
             let opponent_nearby = self.is_opponent_nearby(ctx);
@@ -40,7 +45,9 @@ impl StateProcessingHandler for DefenderRestingState {
         // 3. Check if the team is under threat
         if self.is_team_under_threat(ctx) {
             // Transition to Pressing state to help the team
-            return Some(StateChangeResult::with_defender_state(DefenderState::Pressing));
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Pressing,
+            ));
         }
 
         // 4. Remain in Resting state
@@ -65,15 +72,21 @@ impl StateProcessingHandler for DefenderRestingState {
 impl DefenderRestingState {
     /// Checks if an opponent player is nearby within the MARKING_DISTANCE_THRESHOLD.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        let (_, opponents_count) = ctx.tick_context.object_positions.player_distances.
-            players_within_distance_count(ctx.player, MARKING_DISTANCE_THRESHOLD);
+        let (_, opponents_count) = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .players_within_distance_count(ctx.player, MARKING_DISTANCE_THRESHOLD);
 
         opponents_count > 0
     }
 
     /// Determines if the team is under threat based on the number of opponents in the attacking third.
     fn is_team_under_threat(&self, ctx: &StateProcessingContext) -> bool {
-        let opponents_in_attacking_third = ctx.context.players.raw_players()
+        let opponents_in_attacking_third = ctx
+            .context
+            .players
+            .raw_players()
             .iter()
             .filter(|p| p.team_id != ctx.player.team_id)
             .filter(|opponent| self.is_in_defensive_third(opponent.position, ctx))

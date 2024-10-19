@@ -1,37 +1,31 @@
 use crate::simulator::SimulatorData;
 
 pub struct StaffCollectionResult {
-    pub staff: Vec<StaffResult>
+    pub staff: Vec<StaffResult>,
 }
 
-impl StaffCollectionResult{
+impl StaffCollectionResult {
     pub fn new(staff: Vec<StaffResult>) -> Self {
-        StaffCollectionResult {
-            staff
-        }
+        StaffCollectionResult { staff }
     }
 
-    pub fn process(&self, _: &mut SimulatorData){
-
-    }
+    pub fn process(&self, _: &mut SimulatorData) {}
 }
 
 pub struct StaffResult {
-    pub transfer_requests: Vec<u32>
+    pub transfer_requests: Vec<u32>,
 }
 
-impl StaffResult{
+impl StaffResult {
     pub fn new() -> Self {
         StaffResult {
-            transfer_requests: Vec::new()
+            transfer_requests: Vec::new(),
         }
     }
-    
+
     pub fn request_transfer(&mut self, player_id: u32) {
         self.transfer_requests.push(player_id);
     }
 
-    pub fn process(&self, _: &mut SimulatorData){
-
-    }
+    pub fn process(&self, _: &mut SimulatorData) {}
 }

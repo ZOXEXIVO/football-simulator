@@ -1,4 +1,11 @@
-use crate::r#match::midfielders::states::{MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState, MidfielderDistributingState, MidfielderDribblingState, MidfielderHoldingPossessionState, MidfielderLongPassingState, MidfielderPressingState, MidfielderReturningState, MidfielderRunningState, MidfielderShootingState, MidfielderShortPassingState, MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState, MidfielderTakeBallState, MidfielderTrackingRunnerState, MidfielderWalkingState};
+use crate::r#match::midfielders::states::{
+    MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState,
+    MidfielderDistributingState, MidfielderDribblingState, MidfielderHoldingPossessionState,
+    MidfielderLongPassingState, MidfielderPressingState, MidfielderReturningState,
+    MidfielderRunningState, MidfielderShootingState, MidfielderShortPassingState,
+    MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState,
+    MidfielderTakeBallState, MidfielderTrackingRunnerState, MidfielderWalkingState,
+};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
@@ -80,8 +87,12 @@ impl MidfielderStrategies {
             MidfielderState::TakeBall => {
                 state_processor.process(MidfielderTakeBallState::default())
             }
-            MidfielderState::Dribbling => state_processor.process(MidfielderDribblingState::default()),
-            MidfielderState::Shooting => state_processor.process(MidfielderShootingState::default()),
+            MidfielderState::Dribbling => {
+                state_processor.process(MidfielderDribblingState::default())
+            }
+            MidfielderState::Shooting => {
+                state_processor.process(MidfielderShootingState::default())
+            }
         }
     }
 }

@@ -1,13 +1,13 @@
-use std::sync::LazyLock;
-use nalgebra::Vector3;
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-};
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::player::PlayerSide;
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static MIDFIELDER_SHOOTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_shooting_data.json")));
@@ -20,7 +20,9 @@ impl StateProcessingHandler for MidfielderShootingState {
         // Check if the midfielder still has the ball
         if !ctx.player.has_ball {
             // Lost possession, transition to Pressing
-            return Some(StateChangeResult::with_midfielder_state(MidfielderState::Pressing));
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Pressing,
+            ));
         }
 
         // Perform decision-making (thinking) for the shot
@@ -35,7 +37,9 @@ impl StateProcessingHandler for MidfielderShootingState {
 
         let ball_velocity = shot_direction * shot_power;
 
-        state_change.events.add_player_event(PlayerEvent::MoveBall(ctx.player.id, ball_velocity));
+        state_change
+            .events
+            .add_player_event(PlayerEvent::MoveBall(ctx.player.id, ball_velocity));
 
         // Transition to the next appropriate state (e.g., Standing)
         Some(state_change)
@@ -51,9 +55,7 @@ impl StateProcessingHandler for MidfielderShootingState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, ctx: ConditionContext) {}
 }
 
 impl MidfielderShootingState {
@@ -71,7 +73,8 @@ impl MidfielderShootingState {
         let shooting_power = ctx.player.skills.technical.tackling as f32 / 100.0;
 
         // Adjust power based on distance to goal
-        let distance_to_goal = (ctx.player.position - self.get_opponent_goal_position(ctx)).magnitude();
+        let distance_to_goal =
+            (ctx.player.position - self.get_opponent_goal_position(ctx)).magnitude();
         let max_distance = 30.0; // Maximum effective shooting distance
         let distance_factor = (max_distance - distance_to_goal) / max_distance;
 

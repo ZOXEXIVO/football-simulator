@@ -157,8 +157,6 @@ fn determine_other_factors(player: &Player) -> f64 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn calculate_is_correct() {}
 }

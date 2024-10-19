@@ -6,5 +6,5 @@ mod result;
 
 pub use board::*;
 pub use context::*;
-pub use result::*;
 pub use mood::*;
+pub use result::*;

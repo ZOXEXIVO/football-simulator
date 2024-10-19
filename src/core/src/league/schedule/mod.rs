@@ -1,10 +1,10 @@
-pub mod schedule;
-pub mod round;
 pub mod result;
+pub mod round;
+pub mod schedule;
 
 use crate::league::{LeagueSettings, Season};
-pub use schedule::*;
 pub use result::*;
+pub use schedule::*;
 
 pub trait ScheduleGenerator {
     fn generate(

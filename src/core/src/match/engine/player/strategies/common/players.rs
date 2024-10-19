@@ -1,9 +1,9 @@
-use crate::PlayerFieldPositionGroup;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
     MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, PlayerSide,
     StateProcessingContext,
 };
+use nalgebra::Vector3;
 
 pub struct PlayerOperationsImpl<'p> {
     ctx: &'p StateProcessingContext<'p>,
@@ -20,10 +20,19 @@ impl<'p> PlayerOperationsImpl<'p> {
         let field_half_width = self.ctx.context.field_size.width / 2;
 
         if let Some(side) = self.ctx.player.side {
-            return side == PlayerSide::Left && self.ctx.player.position.x < field_half_width as f32;
+            return side == PlayerSide::Left
+                && self.ctx.player.position.x < field_half_width as f32;
         }
 
         false
+    }
+
+    pub fn opponent_goal_position(&self) -> Vector3<f32> {
+        match self.ctx.player.side {
+            Some(PlayerSide::Left) => self.ctx.context.goal_positions.right,
+            Some(PlayerSide::Right) => self.ctx.context.goal_positions.left,
+            _ => Vector3::new(0.0, 0.0, 0.0),
+        }
     }
 
     pub fn distance_from_start_position(&self) -> f32 {
@@ -58,7 +67,13 @@ impl<'p> PlayerOperationsImpl<'p> {
     }
 
     pub fn calculate_pass_power(&self, teammate: &MatchPlayer) -> f64 {
-        let distance = self.ctx.tick_context.object_positions.player_distances.get(self.ctx.player.id, teammate.id).unwrap();
+        let distance = self
+            .ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .get(self.ctx.player.id, teammate.id)
+            .unwrap();
         let pass_skill = self.ctx.player.skills.technical.passing;
         (distance / pass_skill as f32 * 10.0) as f64
     }
@@ -66,26 +81,6 @@ impl<'p> PlayerOperationsImpl<'p> {
     pub fn is_under_pressure(&self) -> bool {
         let (_, opponents_count) = self.distances();
         opponents_count > 1
-    }
-
-    pub fn opponents(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.get_by_not_team(self.ctx.player.team_id, None)
-    }
-
-    pub fn opponent_with_ball(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.get_by_not_team(self.ctx.player.team_id, Some(true))
-    }
-
-    pub fn defenders(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.get_by_position(PlayerFieldPositionGroup::Defender)
-    }
-
-    pub fn forwards(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.get_by_position(PlayerFieldPositionGroup::Forward)
-    }
-
-    pub fn forwards_teammates(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.get_by_position_and_team(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
     }
 }
 

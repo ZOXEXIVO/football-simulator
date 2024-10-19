@@ -1,7 +1,7 @@
 use crate::context::GlobalContext;
 use crate::continent::ContinentResult;
 use crate::country::CountryResult;
-use crate::utils::{Logging};
+use crate::utils::Logging;
 use crate::Country;
 pub use rayon::prelude::*;
 

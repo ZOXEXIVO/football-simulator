@@ -64,7 +64,10 @@ impl Ball {
         self.check_boundary_collision(context);
 
         // take standing ball
-        if self.is_stands_outside() && self.take_ball_notified_player.is_none() && self.current_owner.is_none() {
+        if self.is_stands_outside()
+            && self.take_ball_notified_player.is_none()
+            && self.current_owner.is_none()
+        {
             if let Some(notified_player) = self.notify_nearest_player(players, events) {
                 self.take_ball_notified_player = Some(notified_player);
             }
@@ -83,7 +86,10 @@ impl Ball {
     }
 
     pub fn is_stands_outside(&self) -> bool {
-        self.is_ball_outside() && self.velocity.x == 0.0 && self.velocity.y == 0.0 && self.current_owner.is_none()
+        self.is_ball_outside()
+            && self.velocity.x == 0.0
+            && self.velocity.y == 0.0
+            && self.current_owner.is_none()
     }
 
     pub fn is_ball_outside(&self) -> bool {
@@ -282,7 +288,7 @@ impl Ball {
     }
 
     fn move_to(&mut self, tick_context: &GameTickContext) {
-        if !self.is_stands_outside(){
+        if !self.is_stands_outside() {
             self.take_ball_notified_player = None;
         }
 

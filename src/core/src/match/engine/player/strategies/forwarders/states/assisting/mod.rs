@@ -21,7 +21,7 @@ impl StateProcessingHandler for ForwardAssistingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
-        if !ctx.team().is_control_ball() && ctx.ball().distance() < 150.0{
+        if !ctx.team().is_control_ball() && ctx.ball().distance() < 150.0 {
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Pressing,
             ));
@@ -99,7 +99,7 @@ impl StateProcessingHandler for ForwardAssistingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if let Some(forwards) = ctx.player().forwards_teammates().first() {
+        if let Some(forwards) = ctx.team().forwards_teammates().first() {
             Some(
                 SteeringBehavior::Flee {
                     target: forwards.position,

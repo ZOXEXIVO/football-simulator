@@ -1,4 +1,4 @@
-use crate::club::{BoardResult, BoardMood, StaffClubContract};
+use crate::club::{BoardMood, BoardResult, StaffClubContract};
 use crate::context::{GlobalContext, SimulationContext};
 
 #[derive(Debug)]
@@ -19,7 +19,7 @@ impl ClubBoard {
 
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> BoardResult {
         let result = BoardResult::new();
-        
+
         if self.director.is_none() {
             self.run_director_election(&ctx.simulation);
         }
@@ -27,7 +27,7 @@ impl ClubBoard {
         if self.sport_director.is_none() {
             self.run_sport_director_election(&ctx.simulation);
         }
-        
+
         if ctx.simulation.check_contract_expiration() {
             if self.is_director_contract_expiring(&ctx.simulation) {}
 

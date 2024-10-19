@@ -22,7 +22,6 @@ pub enum MentalSkill {
     WorkRate,
 }
 
-
 pub static MENTAL_SKILL_INCREASE_SPEED_MAP: LazyLock<HashMap<MentalSkill, f32>> =
     LazyLock::new(|| {
         vec![
@@ -41,8 +40,8 @@ pub static MENTAL_SKILL_INCREASE_SPEED_MAP: LazyLock<HashMap<MentalSkill, f32>> 
             (MentalSkill::Vision, 0.04),
             (MentalSkill::WorkRate, 0.03),
         ]
-            .into_iter()
-            .collect()
+        .into_iter()
+        .collect()
     });
 
 pub fn determine_mental_skills_to_increase(

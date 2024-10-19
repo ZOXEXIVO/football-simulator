@@ -1,7 +1,10 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
+use crate::r#match::{
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
+};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -18,7 +21,7 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.ball().distance() < 100.0 {
             return Some(StateChangeResult::with_goalkeeper_state(
-                GoalkeeperState::PreparingForSave
+                GoalkeeperState::PreparingForSave,
             ));
         }
 
@@ -32,7 +35,7 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
         }
 
         // 2. Check if there are any opponents near the ball
-        let players = ctx.player();
+        let players = ctx.team();
         let nearby_opponents = players.opponents();
         if nearby_opponents.is_empty() {
             // No opponents near the ball, transition to appropriate state (e.g., ReturningToGoal)
@@ -54,10 +57,14 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
         let direction = (ball_position - ctx.player.position).normalize();
         let speed = ctx.player.skills.physical.pace * COMINGOUT_SPEED_MULTIPLIER;
 
-        Some(SteeringBehavior::Pursuit {
-            target: ball_position,
-            velocity: direction * speed,
-        }.calculate(ctx.player).velocity)
+        Some(
+            SteeringBehavior::Pursuit {
+                target: ball_position,
+                velocity: direction * speed,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}

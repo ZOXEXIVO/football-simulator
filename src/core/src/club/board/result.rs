@@ -1,16 +1,11 @@
 use crate::simulator::SimulatorData;
 
-pub struct BoardResult{
-   
-}
+pub struct BoardResult {}
 
 impl BoardResult {
     pub fn new() -> Self {
-        BoardResult {
-        }
+        BoardResult {}
     }
 
-    pub fn process(&self, _: &mut SimulatorData){
-        
-    }
+    pub fn process(&self, _: &mut SimulatorData) {}
 }
