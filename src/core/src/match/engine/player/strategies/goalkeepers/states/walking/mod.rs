@@ -2,11 +2,10 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::strategies::processor::StateChangeResult;
-use crate::r#match::{
-    ConditionContext, StateProcessingContext, StateProcessingHandler, VectorExtensions,
-};
+use crate::r#match::{ConditionContext, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::IntegerUtils;
 
 static GOALKEEPER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
@@ -60,10 +59,17 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let optimal_position = self.calculate_optimal_position(ctx);
-        let direction = (optimal_position - ctx.player.position).normalize();
-        let walking_speed = ctx.player.skills.physical.pace * 0.3; // Walking is slower than running
-        Some(direction * walking_speed)
+        Some(
+            SteeringBehavior::Wander {
+                target: ctx.player.start_position,
+                radius: IntegerUtils::random(5, 50) as f32,
+                jitter: IntegerUtils::random(0, 2) as f32,
+                distance: IntegerUtils::random(10, 30) as f32,
+                angle: IntegerUtils::random(0, 360) as f32,
+            }
+                .calculate(ctx.player)
+                .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {}
