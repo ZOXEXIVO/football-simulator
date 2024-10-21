@@ -3,6 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -48,13 +49,14 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Check if the player should change velocity
-        if self.should_change_velocity(ctx) {
-            // If velocity change is needed, calculate the new velocity
-            Some(self.calculate_new_velocity(ctx))
-        } else {
-            None
-        }
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.tick_context.object_positions.ball_position,
+                slowing_distance: 150.0,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
@@ -88,44 +90,6 @@ impl ForwardCreatingSpaceState {
             distance < OPPONENT_DISTANCE_THRESHOLD
         } else {
             false
-        }
-    }
-
-    fn should_change_velocity(&self, ctx: &StateProcessingContext) -> bool {
-        let player_velocity = ctx.player.velocity;
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = nearest_opponent {
-            distance < VELOCITY_CHANGE_THRESHOLD
-        } else {
-            false
-        }
-    }
-
-    fn calculate_new_velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let player_position = ctx.player.position;
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((opponent_id, _)) = nearest_opponent {
-            let opponent_position = ctx
-                .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(opponent_id)
-                .unwrap();
-
-            let direction_away_from_opponent = (player_position - opponent_position).normalize();
-            direction_away_from_opponent * ctx.player.skills.max_speed()
-        } else {
-            ctx.player.velocity
         }
     }
 
