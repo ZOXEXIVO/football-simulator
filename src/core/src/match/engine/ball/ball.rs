@@ -63,16 +63,19 @@ impl Ball {
         self.check_goal(context, events);
         self.check_boundary_collision(context);
 
-        // take standing ball
-        if self.is_stands_outside()
-            && self.take_ball_notified_player.is_none()
-            && self.current_owner.is_none()
-        {
-            if let Some(notified_player) = self.notify_nearest_player(players, events) {
-                self.take_ball_notified_player = Some(notified_player);
-            }
-        }
+        self.try_notify_standing_ball(players, events);
 
+        self.process_ownership(context, players, events);
+
+        self.move_to(tick_context);
+    }
+
+    pub fn process_ownership(
+        &mut self,
+        context: &MatchContext,
+        players: &[MatchPlayer],
+        events: &mut EventCollection,
+    ) {
         // prevent pass tackling
         if self.flags.in_passing_state_time > 0 {
             self.flags.in_passing_state_time -= 1;
@@ -81,8 +84,21 @@ impl Ball {
         }
 
         self.flags.running_for_ball = self.is_players_running_to_ball(players);
+    }
 
-        self.move_to(tick_context);
+    pub fn try_notify_standing_ball(
+        &mut self,
+        players: &[MatchPlayer],
+        events: &mut EventCollection,
+    ) {
+        if self.is_stands_outside()
+            && self.take_ball_notified_player.is_none()
+            && self.current_owner.is_none()
+        {
+            if let Some(notified_player) = self.notify_nearest_player(players, events) {
+                self.take_ball_notified_player = Some(notified_player);
+            }
+        }
     }
 
     pub fn is_stands_outside(&self) -> bool {

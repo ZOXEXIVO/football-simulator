@@ -34,7 +34,7 @@ impl StateProcessingHandler for DefenderRunningState {
         } else {
             let distance_to_ball = ctx.ball().distance();
 
-            if !ctx.player.has_ball && distance_to_ball < 10.0 {
+            if !ctx.player.has_ball && distance_to_ball < 30.0 {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Intercepting,
                 ));
