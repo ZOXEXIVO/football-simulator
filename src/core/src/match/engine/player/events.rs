@@ -76,7 +76,7 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
             }
-            PlayerEvent::PassTo(player_id, pass_target, pass_power) => {
+            PlayerEvent::PassTo(player_id, pass_target, _pass_power) => {
                 field.players.iter_mut().for_each(|player| {
                     player.has_ball = false;
                 });
@@ -94,7 +94,7 @@ impl PlayerEventDispatcher {
             }
             PlayerEvent::RushOut(_) => {}
             PlayerEvent::StayInGoal(_) => {}
-            PlayerEvent::CommunicateMessage(player_id, message) => {}
+            PlayerEvent::CommunicateMessage(_player_id, _message) => {}
             PlayerEvent::OfferSupport(_) => {}
             PlayerEvent::ClaimBall(player_id) => {
                 // TODO
@@ -111,10 +111,10 @@ impl PlayerEventDispatcher {
 
                 field.ball.flags.in_passing_state_time = 30;
             }
-            PlayerEvent::ClearBall(ball_velocity) => {
+            PlayerEvent::ClearBall(_ball_velocity) => {
                 //field.ball.velocity = *ball_velocity;
             }
-            PlayerEvent::MoveBall(player_id, ball_velocity) => {
+            PlayerEvent::MoveBall(player_id, _ball_velocity) => {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
             }

@@ -112,7 +112,7 @@ impl StateProcessingHandler for MidfielderTacklingState {
 
 impl MidfielderTacklingState {
     /// Attempts a tackle and returns whether it was successful and if a foul was committed.
-    fn attempt_tackle(&self, ctx: &StateProcessingContext, opponent: &MatchPlayer) -> (bool, bool) {
+    fn attempt_tackle(&self, ctx: &StateProcessingContext, _opponent: &MatchPlayer) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 
         // Get midfielder's tackling-related skills

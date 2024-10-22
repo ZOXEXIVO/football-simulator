@@ -102,7 +102,7 @@ impl Ball {
         }
     }
 
-    pub fn try_intercept(&mut self, players: &[MatchPlayer], events: &mut EventCollection) {
+    pub fn try_intercept(&mut self, _players: &[MatchPlayer], _events: &mut EventCollection) {
         if self.current_owner.is_some() {
             return;
         }
@@ -247,7 +247,7 @@ impl Ball {
                     nearby_players
                         .iter()
                         .filter(|p| !p.has_ball)
-                        .for_each(|mut player| {
+                        .for_each(|player| {
                             events.add_ball_event(BallEvent::UnClaim(player.id));
                         });
 

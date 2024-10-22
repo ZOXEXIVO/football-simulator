@@ -20,8 +20,6 @@ pub struct ForwardPassingState {}
 
 impl StateProcessingHandler for ForwardPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let player_ops = ctx.player();
-
         // Check if the player has the ball
         if !ctx.player.has_ball {
             // Transition to Running state if the player doesn't have the ball

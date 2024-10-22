@@ -116,8 +116,6 @@ impl MidfielderRunningState {
     }
 
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
-        // Find an open teammate to pass to
-        let teammates = ctx.players().teammates().all();
         let open_teammates = ctx.players().opponents().all()
             .iter()
             .min_by(|a, b| {
