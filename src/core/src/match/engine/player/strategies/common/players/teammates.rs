@@ -1,4 +1,3 @@
-use std::cmp::Ordering;
 use crate::r#match::{MatchPlayer, StateProcessingContext};
 use crate::PlayerFieldPositionGroup;
 
@@ -58,36 +57,9 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             .collect()
     }
 
-    pub fn nearby_with_distance<'a>(&self, distance: f32) -> Option<&'a MatchPlayer> {
-        let nearest_player = self
-            .ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .distances
-            .iter()
-            .filter(|item| item.distance <= distance)
-            .filter(|item| {
-                item.distance <= distance
-                    && item.player_from_id == self.ctx.player.id
-                    && item.player_from_team == item.player_to_team
-            })
-            .min_by(|a, b| {
-                a.distance
-                    .partial_cmp(&b.distance)
-                    .unwrap_or(Ordering::Equal)
-            })
-            .map(|item| (item.player_to_id, item.distance));
-
-        if let Some((nearest_player_id, nearest_player_distance)) = nearest_player {
-            return self.ctx.context.players.get(nearest_player_id);
-        }
-
-        None
-    }
-
     fn teammates_for_team(&self, team_id: u32, has_ball: Option<bool>) -> Vec<&MatchPlayer> {
-        let teammates = self.ctx
+        let teammates = self
+            .ctx
             .context
             .players
             .players
@@ -104,19 +76,31 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
         teammates.collect()
     }
 
-    pub fn exists_with_distance(&self, distance: f32) -> bool {
-        self
-            .ctx
+    pub fn nearby(&'b self, distance: f32) -> impl Iterator<Item = &MatchPlayer> + 'b {
+        self.ctx
             .tick_context
             .object_positions
             .player_distances
-            .distances
-            .iter()
-            .filter(|item| item.distance <= distance)
-            .any(|item| {
-                item.distance <= distance
-                    && item.player_from_id == self.ctx.player.id
-                    && item.player_from_team == item.player_to_team
+            .teammates(self.ctx.player, distance)
+            .map(|(pid, _)| {
+                self.ctx.context.players.get(pid).unwrap()
             })
+    }
+
+    pub fn nearby_raw(&'b self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
+        self.ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .teammates(self.ctx.player, distance)
+    }
+
+    pub fn exists(&self, distance: f32) -> bool {
+        self.ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .teammates(self.ctx.player, distance)
+            .any(|_| { true })
     }
 }

@@ -90,7 +90,7 @@ impl DefenderHoldingLineState {
 
     /// Checks if an opponent player is nearby within the MARKING_DISTANCE_THRESHOLD.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists_with_distance(MARKING_DISTANCE_THRESHOLD)
+        ctx.players().opponents().exists(MARKING_DISTANCE_THRESHOLD)
     }
 
     /// Determines if the team should set up an offside trap.

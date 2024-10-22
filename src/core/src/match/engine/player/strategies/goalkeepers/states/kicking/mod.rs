@@ -28,23 +28,10 @@ impl StateProcessingHandler for GoalkeeperKickingState {
         }
 
         // 2. Find the best teammate to kick the ball to
-        let teammates = ctx.players().teammates();
+        let players = ctx.players();
+        let teammates = players.teammates();
 
-        let best_teammate = teammates
-            .all()
-            .filter(|teammate| {
-                let distance = (teammate.position - ctx.player.position).magnitude();
-                distance >= KICK_DISTANCE_THRESHOLD
-            })
-            .max_by(|a, b| {
-                let dist_a = (a.position - ctx.player.position).magnitude();
-                let dist_b = (b.position - ctx.player.position).magnitude();
-                dist_a
-                    .partial_cmp(&dist_b)
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            });
-
-        if let Some(teammate) = best_teammate {
+        if let Some(teammate) =  teammates.nearby(KICK_DISTANCE_THRESHOLD).next() {
             // 3. Calculate the kick power based on the distance to the teammate
             let distance_to_teammate = (ctx.player.position - teammate.position).magnitude();
             let kick_power = distance_to_teammate / ctx.player.skills.technical.free_kicks

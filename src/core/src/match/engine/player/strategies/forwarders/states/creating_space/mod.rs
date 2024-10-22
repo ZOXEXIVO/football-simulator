@@ -66,11 +66,11 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
 
 impl ForwardCreatingSpaceState {
     fn has_created_space(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists_with_distance(CREATING_SPACE_THRESHOLD)
+        ctx.players().opponents().exists(CREATING_SPACE_THRESHOLD)
     }
 
     fn is_too_close_to_opponent(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists_with_distance(OPPONENT_DISTANCE_THRESHOLD)
+        ctx.players().opponents().exists(OPPONENT_DISTANCE_THRESHOLD)
     }
 
     fn should_run_to_opponent_side(&self, ctx: &StateProcessingContext) -> bool {

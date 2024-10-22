@@ -69,26 +69,22 @@ impl MidfielderShortPassingState {
     fn find_best_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
         let max_pass_distance = MAX_PASS_DISTANCE;
 
-        if let Some(distances) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player)
-        {
-            for (teammate_id, distance) in distances {
-                let player = ctx.context.players.get(teammate_id)?;
+        let players = ctx.players();
+        let teammates = players.teammates();
 
-                if !player.has_ball {
-                    continue;
-                }
+        for (teammate_id, distance) in teammates.nearby_raw(max_pass_distance) {
+            let player = ctx.context.players.get(teammate_id)?;
 
-                if !self.is_pass_feasible_ray_tracing(ctx, player) {
-                    continue;
-                }
+            if !player.has_ball {
+                continue;
+            }
 
-                if distance < max_pass_distance {
-                    return Some(player);
-                }
+            if !self.is_pass_feasible_ray_tracing(ctx, player) {
+                continue;
+            }
+
+            if distance < max_pass_distance {
+                return Some(player);
             }
         }
 

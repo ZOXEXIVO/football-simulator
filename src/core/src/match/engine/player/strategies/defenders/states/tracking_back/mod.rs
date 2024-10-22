@@ -35,14 +35,6 @@ impl StateProcessingHandler for DefenderTrackingBackState {
             ));
         }
 
-        // Check if there's an opponent nearby to mark
-        let (_teammates_count, opponents_count) = ctx.player().distances();
-        if opponents_count > 0 && ctx.ball().distance() < MARKING_DISTANCE {
-            return Some(StateChangeResult::with_defender_state(
-                DefenderState::Marking,
-            ));
-        }
-
         // If the team is losing and there's little time left, consider a more aggressive stance
         if ctx.team().is_loosing() && ctx.context.time.time > (MATCH_HALF_TIME_MS - 300) {
             return Some(StateChangeResult::with_defender_state(

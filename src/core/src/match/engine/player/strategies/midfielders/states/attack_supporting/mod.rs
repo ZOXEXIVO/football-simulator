@@ -80,7 +80,7 @@ impl MidfielderAttackSupportingState {
     /// Determines if the attack has broken down.
     fn attack_broken_down(&self, ctx: &StateProcessingContext) -> bool {
         // For simplicity, assume attack has broken down if the opponent has the ball
-        ctx.players().opponents().with_ball().is_some()
+        ctx.players().opponents().with_ball().first().is_some()
     }
 
     /// Checks if the midfielder is in a good position to attempt a shot.

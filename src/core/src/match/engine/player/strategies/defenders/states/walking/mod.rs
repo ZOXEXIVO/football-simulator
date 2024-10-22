@@ -55,7 +55,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Press opponent only if they have the ball and are close
-        if let Some(opponent_to_press) = ctx.players().opponents().with_ball() {
+        if let Some(opponent_to_press) = ctx.players().opponents().with_ball().first() {
             if ctx.player.position.distance_to(&opponent_to_press.position) < PRESSING_DISTANCE {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Pressing,
@@ -80,7 +80,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Check if there's an opponent to mark
-        if let Some(opponent_to_mark) = ctx.players().opponents().with_ball() {
+        if let Some(opponent_to_mark) = ctx.players().opponents().with_ball().first() {
             if ctx.player.position.distance_to(&opponent_to_mark.position) < MARKING_DISTANCE {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Marking,
@@ -156,7 +156,7 @@ impl DefenderWalkingState {
     fn has_nearby_threats(&self, ctx: &StateProcessingContext) -> bool {
         let threat_distance = 20.0; // Adjust this value as needed
 
-        if ctx.players().opponents().exists_with_distance(threat_distance){
+        if ctx.players().opponents().exists(threat_distance){
             return true;
         }
 

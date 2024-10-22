@@ -30,7 +30,7 @@ impl StateProcessingHandler for DefenderMarkingState {
         }
 
         // 2. Identify the opponent player to mark
-        if let Some(opponent_to_mark) = ctx.players().opponents().nearby() {
+        if let Some(opponent_to_mark) = ctx.players().opponents().nearby(100.0).next() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent =
                 (ctx.player.position - opponent_to_mark.position).magnitude();
@@ -79,7 +79,7 @@ impl StateProcessingHandler for DefenderMarkingState {
         // Move to maintain position relative to the opponent being marked
 
         // Identify the opponent player to mark
-        if let Some(opponent_to_mark) = ctx.players().opponents().nearby() {
+        if let Some(opponent_to_mark) = ctx.players().opponents().nearby(100.0).next() {
             // Calculate desired position to maintain proper marking
             let opponent_future_position = opponent_to_mark.position + opponent_to_mark.velocity;
             let desired_position = opponent_future_position

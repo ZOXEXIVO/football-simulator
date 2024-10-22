@@ -47,14 +47,6 @@ impl<'p> PlayerOperationsImpl<'p> {
         self.ctx.player.player_attributes.condition_percentage() > 50
     }
 
-    pub fn distances(&self) -> (usize, usize) {
-        self.ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .players_within_distance_count(self.ctx.player, 10.0)
-    }
-
     pub fn calculate_pass_power(&self, teammate: &MatchPlayer) -> f64 {
         let distance = self
             .ctx
@@ -65,11 +57,6 @@ impl<'p> PlayerOperationsImpl<'p> {
             .unwrap();
         let pass_skill = self.ctx.player.skills.technical.passing;
         (distance / pass_skill as f32 * 10.0) as f64
-    }
-
-    pub fn is_under_pressure(&self) -> bool {
-        let (_, opponents_count) = self.distances();
-        opponents_count > 1
     }
 }
 

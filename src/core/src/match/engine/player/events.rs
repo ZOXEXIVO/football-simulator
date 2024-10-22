@@ -40,7 +40,7 @@ impl PlayerEventDispatcher {
         field: &mut MatchField,
         context: &MatchContext,
     ) -> Vec<Event> {
-        let mut remaining_events = Vec::new();
+        let remaining_events = Vec::new();
 
         info!("PLAYER EVENT: {:?}", event);
 
@@ -102,7 +102,7 @@ impl PlayerEventDispatcher {
                     player.has_ball = false;
                 });
 
-                let mut player = field.get_player_mut(player_id).unwrap();
+                let player = field.get_player_mut(player_id).unwrap();
 
                 player.has_ball = true;
 
@@ -140,7 +140,7 @@ impl PlayerEventDispatcher {
             PlayerEvent::RequestShot(_, _) => {}
             PlayerEvent::RequestBallReceive(_) => {}
             PlayerEvent::UnClaimBall(player_id) => {
-                let mut player = field.get_player_mut(player_id).unwrap();
+                let player = field.get_player_mut(player_id).unwrap();
 
                 player.state = PlayerState::Injured
             }
@@ -149,7 +149,7 @@ impl PlayerEventDispatcher {
                     player.has_ball = false;
                 });
 
-                let mut player = field.get_player_mut(player_id).unwrap();
+                let player = field.get_player_mut(player_id).unwrap();
 
                 player.has_ball = true;
 

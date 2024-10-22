@@ -8,8 +8,8 @@ use crate::r#match::{
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
 use std::sync::LazyLock;
+use rand::prelude::IteratorRandom;
 
 static DEFENDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -25,42 +25,32 @@ impl StateProcessingHandler for DefenderPassingState {
             ));
         }
 
-        if let Some(teammate) = self.find_best_pass_option(ctx) {
+        if let Some(teammate_id) = self.find_best_pass_option(ctx) {
             if let Some(teammate_player_position) = ctx
                 .tick_context
                 .object_positions
                 .players_positions
-                .get_player_position(teammate.id)
+                .get_player_position(teammate_id)
             {
-                let pass_power = self.calculate_pass_power(teammate.id, ctx);
+                let pass_power = self.calculate_pass_power(teammate_id, ctx);
 
                 return Some(StateChangeResult::with_defender_state_and_event(
                     DefenderState::Returning,
                     Event::PlayerEvent(PlayerEvent::PassTo(
-                        teammate.id,
+                        teammate_id,
                         teammate_player_position,
                         pass_power,
                     )),
                 ));
             }
         }
-
-        let (nearest_teammates, opponents) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .players_within_distance(ctx.player, 30.0);
-
-        if ctx.player.has_ball && opponents.len() > 1 {
-            return Some(StateChangeResult::with_defender_state(
-                DefenderState::Clearing,
-            ));
-        }
-
         let mut best_player_id = None;
         let mut highest_score = 0.0;
 
-        for (player_id, teammate_distance) in nearest_teammates {
+        let players = ctx.players();
+        let teammates = players.teammates();
+
+        for (player_id, teammate_distance) in teammates.nearby_raw(30.0) {
             let score = 1.0 / (teammate_distance + 1.0);
             if score > highest_score {
                 highest_score = score;
@@ -101,19 +91,14 @@ impl StateProcessingHandler for DefenderPassingState {
 
 impl DefenderPassingState {
     fn find_best_pass_option<'a>(
-        &self,
-        ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
-        let teammates = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player);
+        &'a self,
+        ctx: &'a StateProcessingContext<'a>,
+    ) -> Option<u32> {
+        let players = ctx.players();
+        let teammates = players.teammates();
 
-        if let Some(teammates_result) = teammates {
-            if let Some((teammate_id, _)) = teammates_result.choose(&mut rand::thread_rng()) {
-                return Some(ctx.context.players.get(*teammate_id)?);
-            }
+        if let Some((teammate_id, _)) = teammates.nearby_raw(150.0).choose(&mut rand::thread_rng()) {
+            return Some(teammate_id);
         }
 
         None

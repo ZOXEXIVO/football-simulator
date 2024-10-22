@@ -80,7 +80,7 @@ impl MidfielderDribblingState {
         let players = ctx.players();
         let teammates = players.teammates();
 
-        let teammates = teammates.nearby_with_distance(10.0);
+        let teammates = teammates.nearby_raw(50.0);
 
         if let Some((teammate_id, _)) = teammates.choose(&mut rand::thread_rng()) {
             return Some(teammate_id)
@@ -146,9 +146,7 @@ impl MidfielderDribblingState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if there are opponents close to the player
         let pressure_distance = 10.0;
-
-        ctx.players().teammates().exists_with_distance(pressure_distance)
+        ctx.players().teammates().exists(pressure_distance)
     }
 }

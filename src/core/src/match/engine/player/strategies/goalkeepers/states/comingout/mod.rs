@@ -37,8 +37,7 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
         // 2. Check if there are any opponents near the ball
         let players = ctx.players();
         let opponents = players.opponents();
-        let nearby_opponents = opponents.with_ball();
-        if nearby_opponents.is_none() {
+        if let Some(_) = opponents.with_ball().first() {
             // No opponents near the ball, transition to appropriate state (e.g., ReturningToGoal)
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::ReturningToGoal,

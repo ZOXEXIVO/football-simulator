@@ -41,19 +41,10 @@ impl StateProcessingHandler for DefenderCoveringState {
             ));
         }
 
-        if let Some(opponent) = ctx.players().opponents().nearby() {
-            if ctx
-                .tick_context
-                .object_positions
-                .player_distances
-                .get(opponent.id, ctx.player.id)
-                .unwrap()
-                < MARKING_DISTANCE
-            {
-                return Some(StateChangeResult::with_defender_state(
-                    DefenderState::Marking,
-                ));
-            }
+        if let Some(_) = ctx.players().opponents().nearby(MARKING_DISTANCE).next() {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Marking,
+            ));
         }
 
         if ball_ops.is_towards_player() && ball_ops.distance() < INTERCEPTION_DISTANCE {
@@ -65,7 +56,7 @@ impl StateProcessingHandler for DefenderCoveringState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 

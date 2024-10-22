@@ -32,7 +32,7 @@ impl StateProcessingHandler for DefenderPushingUpState {
         }
 
         if !ctx.team().is_control_ball() {
-            if let Some(opponent) = ctx.players().opponents().nearby() {
+            if let Some(opponent) = ctx.players().opponents().nearby(TACKLING_DISTANCE_THRESHOLD).next() {
                 let distance_to_opponent = ctx
                     .tick_context
                     .object_positions

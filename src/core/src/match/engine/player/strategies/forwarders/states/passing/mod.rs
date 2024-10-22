@@ -9,8 +9,8 @@ use crate::r#match::{
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
 use std::sync::LazyLock;
+use rand::prelude::IteratorRandom;
 
 static FORWARD_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -103,16 +103,11 @@ impl ForwardPassingState {
         &self,
         ctx: &StateProcessingContext<'a>,
     ) -> Option<&'a MatchPlayer> {
-        let teammates = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player);
+        let players = ctx.players();
+        let teammates = players.teammates();
 
-        if let Some(teammates_result) = teammates {
-            if let Some((teammate_id, _)) = teammates_result.choose(&mut rand::thread_rng()) {
-                return Some(ctx.context.players.get(*teammate_id)?);
-            }
+        if let Some((teammate_id, _)) = teammates.nearby_raw(100.0).choose(&mut rand::thread_rng()) {
+            return Some(ctx.context.players.get(teammate_id)?);
         }
 
         None

@@ -86,20 +86,11 @@ impl ForwardStandingState {
 
     /// Finds the best teammate to pass to based on proximity and position.
     fn find_best_teammate_to_pass<'a>(
-        &self,
-        ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
-        // Utilize the find_closest_teammate method from PlayerDistanceClosure
-        let closest_teammates = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(&ctx.player);
-
-        if let Some(closest_teammates) = closest_teammates {
-            if let Some((teammate_id, _)) = closest_teammates.first() {
-                return Some(ctx.context.players.get(*teammate_id)?);
-            }
+        &'a self,
+        ctx: &'a StateProcessingContext<'a>,
+    ) -> Option<u32> {
+        if let Some((teammate_id, _)) = ctx.players().teammates().nearby_raw(100.0).next() {
+            return Some(teammate_id)
         }
 
         None
@@ -110,7 +101,7 @@ impl ForwardStandingState {
         // Example logic: dribble if no immediate threat and space is available
         let safe_distance = 10.0;
 
-        !ctx.players().opponents().exists_with_distance(safe_distance)
+        !ctx.players().opponents().exists(safe_distance)
     }
 
     /// Decides whether the forward should press the opponent.

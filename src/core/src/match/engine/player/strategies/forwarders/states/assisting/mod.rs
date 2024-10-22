@@ -114,7 +114,7 @@ impl StateProcessingHandler for ForwardAssistingState {
 
 impl ForwardAssistingState {
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists_with_distance(10.0)
+        ctx.players().opponents().exists(10.0)
     }
 
     fn should_make_quick_pass(&self, ctx: &StateProcessingContext) -> bool {
@@ -123,21 +123,16 @@ impl ForwardAssistingState {
     }
 
     fn find_best_teammate_to_assist(&self, ctx: &StateProcessingContext) -> Option<u32> {
-        ctx.tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player)
-            .and_then(|teammates| {
-                teammates
-                    .iter()
-                    .filter(|(id, _)| self.is_in_good_scoring_position(ctx, *id))
-                    .min_by(|(_, dist_a), (_, dist_b)| {
-                        dist_a
-                            .partial_cmp(dist_b)
-                            .unwrap_or(std::cmp::Ordering::Equal)
-                    })
-                    .map(|(id, _)| *id)
+        ctx.players()
+            .teammates()
+            .nearby_raw(200.0)
+            .filter(|(id, _)| self.is_in_good_scoring_position(ctx, *id))
+            .min_by(|(_, dist_a), (_, dist_b)| {
+                dist_a
+                    .partial_cmp(dist_b)
+                    .unwrap_or(std::cmp::Ordering::Equal)
             })
+            .map(|(id, _)| id)
     }
 
     fn is_good_assisting_position(&self, ctx: &StateProcessingContext, teammate_id: u32) -> bool {
@@ -172,16 +167,8 @@ impl ForwardAssistingState {
     }
 
     fn should_create_space(&self, ctx: &StateProcessingContext) -> bool {
-        // Logic to decide if the player should focus on creating space
-        // This could involve checking team tactics, player positions, etc.
-        // Simplified version:
-        ctx.player.skills.mental.off_the_ball > 75.0
-            && ctx
-                .tick_context
-                .object_positions
-                .player_distances
-                .find_closest_teammates(ctx.player)
-                .map_or(false, |teammates| teammates.len() < 2)
+        ctx.player.skills.mental.off_the_ball > 15.0
+            && ctx.players().teammates().nearby_raw(100.0).count() < 2
     }
 
     fn is_on_opponent_side(&self, ctx: &StateProcessingContext) -> bool {
@@ -192,10 +179,8 @@ impl ForwardAssistingState {
     fn should_ask_for_pass(&self, ctx: &StateProcessingContext) -> bool {
         // Check if the player is in a good position to receive a pass
         let player_distance_from_goal = ctx.ball().distance_to_opponent_goal();
-        let has_good_space = ctx
-            .tick_context
-            .object_positions
-            .is_big_opponents_concentration(ctx.player);
+
+        let has_good_space = ctx.players().opponents().nearby_raw(100.0).count() > 2;
 
         player_distance_from_goal < 30.0
             && has_good_space

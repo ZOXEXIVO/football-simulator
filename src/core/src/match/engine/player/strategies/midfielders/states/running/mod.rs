@@ -5,7 +5,7 @@ use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler, SteeringBehavior, VectorExtensions,
+    StateProcessingHandler, SteeringBehavior
 };
 use crate::IntegerUtils;
 use nalgebra::Vector3;
@@ -138,19 +138,25 @@ impl MidfielderRunningState {
     }
 
     fn find_space_between_opponents(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let nearest_opponents = ctx.players().opponents().all();
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        if let Some(opponents) = nearest_opponents {
-            if opponents.len() >= 2 {
-                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
-                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+        let mut nearest_opponents = opponents.nearby_raw(150.0);
 
-                let midpoint = (opponent1_position + opponent2_position) * 0.5;
-                let distance_between_opponents =
-                    opponent1_position.distance_to(&opponent2_position);
+        if let Some((first_id, _)) = nearest_opponents.next() {
+            if let Some((second_id, _)) = nearest_opponents.next() {
+                if let Some(distance_between_opponents) = ctx.tick_context.object_positions.player_distances.get(first_id, second_id) {
+                    if distance_between_opponents > 10.0 {
+                        let first_position = ctx.tick_context.object_positions.players_positions
+                            .get_player_position(first_id).unwrap();
 
-                if distance_between_opponents > 10.0 {
-                    return Some(midpoint);
+                        let second_position = ctx.tick_context.object_positions.players_positions
+                            .get_player_position(second_id).unwrap();
+
+                        let midpoint = (first_position + second_position) * 0.5;
+
+                        return Some(midpoint);
+                    }
                 }
             }
         }
@@ -197,6 +203,6 @@ impl MidfielderRunningState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists_with_distance(10.0)
+        ctx.players().opponents().exists(10.0)
     }
 }

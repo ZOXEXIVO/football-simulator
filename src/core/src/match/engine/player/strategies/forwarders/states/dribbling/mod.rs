@@ -18,7 +18,7 @@ pub struct ForwardDribblingState {}
 impl StateProcessingHandler for ForwardDribblingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
-        let player_ops = ctx.player();
+        let players_ops = ctx.players();
 
         // Check if the player has the ball
         if !ctx.player.has_ball {
@@ -27,7 +27,7 @@ impl StateProcessingHandler for ForwardDribblingState {
         }
 
         // Check if the player is under pressure
-        if player_ops.is_under_pressure() {
+        if players_ops.opponents().nearby_raw(50.0).count() >= 2 {
             // Transition to Passing state if under pressure
             return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
         }
@@ -79,7 +79,7 @@ impl ForwardDribblingState {
         let dribble_distance = 10.0; // Adjust based on your game's scale
         let players = ctx.players();
 
-        !players.opponents().exists_with_distance(dribble_distance)
+        !players.opponents().exists(dribble_distance)
     }
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
@@ -99,7 +99,7 @@ impl ForwardDribblingState {
 
         let players = ctx.players();
 
-        !players.opponents().exists_with_distance(5.0)
+        !players.opponents().exists(5.0)
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {

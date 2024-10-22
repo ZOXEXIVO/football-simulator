@@ -44,7 +44,7 @@ impl ForwardShootingState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists_with_distance(20.0)
+        ctx.players().opponents().exists(20.0)
     }
 
     fn should_take_quick_shot(&self, ctx: &StateProcessingContext) -> bool {
@@ -53,10 +53,10 @@ impl ForwardShootingState {
     }
 
     fn find_best_teammate_to_pass(&self, ctx: &StateProcessingContext) -> Option<u32> {
-        ctx.tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player)
-            .and_then(|teammates| teammates.first().map(|(id, _)| *id))
+        if let Some((pid, _)) = ctx.players().teammates().nearby_raw(150.0).next() {
+            return Some(pid);
+        }
+
+        None
     }
 }

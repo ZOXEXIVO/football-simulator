@@ -207,7 +207,7 @@ impl Ball {
                 self.previous_owner = None;
             }
         } else {
-            let mut nearby_players: Vec<&MatchPlayer> = players
+            let nearby_players: Vec<&MatchPlayer> = players
                 .iter()
                 //.filter(|p| p.state != PlayerState::Injured)
                 .filter(|player_position| {

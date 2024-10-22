@@ -42,23 +42,6 @@ impl StateProcessingHandler for DefenderStandingState {
                     }
                 }
 
-                // Consider teammates and opponents more carefully before switching to marking or clearing
-                let (teammates_count, opponents_count) = player_ops.distances();
-                if opponents_count > teammates_count
-                    && ctx.player.has_ball
-                    && ball_ops.on_own_third()
-                {
-                    // Only clear if outnumbered, has ball, and in defensive third
-                    return Some(StateChangeResult::with_defender_state(
-                        DefenderState::Clearing,
-                    ));
-                } else if opponents_count > 1 && ball_ops.distance() < MARKING_DISTANCE {
-                    // Mark if multiple opponents nearby and ball is close
-                    return Some(StateChangeResult::with_defender_state(
-                        DefenderState::Marking,
-                    ));
-                }
-
                 // Track back if far from position and ball moving fast
                 if player_ops.distance_from_start_position() > 20.0 && ball_ops.speed() > 20.0 {
                     return Some(StateChangeResult::with_defender_state(
@@ -67,7 +50,7 @@ impl StateProcessingHandler for DefenderStandingState {
                 }
             } else {
                 // Ball is not towards the player
-                if let Some(opponent) = ctx.players().opponents().nearby() {
+                if let Some(opponent) = ctx.players().opponents().nearby(PRESSING_DISTANCE).next() {
                     if opponent.has_ball
                         && opponent.position.distance_to(&ctx.player.position) < PRESSING_DISTANCE
                     {
@@ -145,7 +128,7 @@ impl DefenderStandingState {
         let standing_too_long = ctx.in_state_time > STANDING_TIME_LIMIT;
         let ball_far_away = ball_ops.distance() > INTERCEPTION_DISTANCE * 2.0;
 
-        let no_immediate_threat = ctx.players().opponents().nearby_with_distance(CLEARING_DISTANCE).is_some();
+        let no_immediate_threat = ctx.players().opponents().nearby(CLEARING_DISTANCE).next().is_some();
 
         let close_to_optimal_position =
             player_ops.distance_from_start_position() < WALK_DISTANCE_THRESHOLD;
@@ -194,7 +177,7 @@ impl DefenderStandingState {
             > ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD
             && ball_ops.distance_to_own_goal()
                 > ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD;
-        let no_immediate_threat = ctx.players().opponents().nearby_with_distance(MARKING_DISTANCE).is_some();
+        let no_immediate_threat = ctx.players().opponents().nearby(MARKING_DISTANCE).next().is_some();
 
         let not_in_optimal_position =
             player_ops.distance_from_start_position() > WALK_DISTANCE_THRESHOLD;

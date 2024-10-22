@@ -4,7 +4,7 @@ use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::position::VectorExtensions;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
@@ -23,12 +23,6 @@ impl StateProcessingHandler for ForwardHeadingState {
         // Check if the ball is within heading range
         if !self.is_ball_within_heading_range(ctx) {
             // Transition to Running state if the ball is not within heading range
-            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        }
-
-        // Check if the player can jump higher than nearby opponents
-        if !self.can_outjump_opponents(ctx) {
-            // Transition to Running state if the player can't outjump opponents
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }
 
@@ -62,27 +56,6 @@ impl ForwardHeadingState {
         let heading_range = 1.5; // Adjust based on your game's scale
 
         ctx.player.position.distance_to(&ball_position) <= heading_range
-    }
-
-    fn can_outjump_opponents(&self, ctx: &StateProcessingContext) -> bool {
-        let player_jumping_reach = ctx.player.skills.physical.jumping;
-        let opponents_close_to_ball = self.get_opponents_close_to_ball(ctx);
-
-        // Check if the player's jumping reach is higher than the opponents' jumping reach
-        opponents_close_to_ball
-            .iter()
-            .all(|opponent| player_jumping_reach > opponent.skills.physical.jumping)
-    }
-
-    fn get_opponents_close_to_ball<'a>(
-        &self,
-        ctx: &StateProcessingContext<'a>,
-    ) -> Vec<&'a MatchPlayer> {
-        let close_distance = 2.0; // Adjust based on your game's scale
-
-        ctx.players()
-            .opponents()
-            .nearby_with_distance(close_distance)
     }
 
     fn calculate_heading_direction(&self, ctx: &StateProcessingContext) -> Vector3<f32> {

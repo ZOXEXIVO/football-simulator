@@ -80,7 +80,7 @@ impl GoalkeeperStandingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        if let Some(opponent_with_ball) = opponents.with_ball() {
+        if let Some(opponent_with_ball) = opponents.with_ball().first() {
             if let Some(opponent_distance) = ctx
                 .tick_context
                 .object_positions

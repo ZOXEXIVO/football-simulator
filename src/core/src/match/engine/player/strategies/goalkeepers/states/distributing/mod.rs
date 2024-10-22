@@ -9,7 +9,7 @@ use crate::r#match::{
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
+use rand::prelude::{IteratorRandom};
 use std::sync::LazyLock;
 
 static GOALKEEPER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -29,19 +29,19 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
             ));
         }
 
-        if let Some(teammate) = self.find_best_pass_option(ctx) {
+        if let Some(teammate_id) = self.find_best_pass_option(ctx) {
             if let Some(teammate_player_position) = ctx
                 .tick_context
                 .object_positions
                 .players_positions
-                .get_player_position(teammate.id)
+                .get_player_position(teammate_id)
             {
-                let pass_power = self.calculate_pass_power(teammate.id, ctx);
+                let pass_power = self.calculate_pass_power(teammate_id, ctx);
 
                 Some(StateChangeResult::with_defender_state_and_event(
                     DefenderState::Returning,
                     Event::PlayerEvent(PlayerEvent::PassTo(
-                        teammate.id,
+                        teammate_id,
                         teammate_player_position,
                         pass_power,
                     )),
@@ -65,21 +65,14 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
 
 impl GoalkeeperDistributingState {
     fn find_best_teammate_to_distribute(&self, ctx: &StateProcessingContext) -> Option<u32> {
-        ctx.tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player)
-            .and_then(|teammates| {
-                teammates
-                    .iter()
-                    .filter(|(id, _)| self.is_in_good_scoring_position(ctx, *id))
-                    .min_by(|(_, dist_a), (_, dist_b)| {
-                        dist_a
-                            .partial_cmp(dist_b)
-                            .unwrap_or(std::cmp::Ordering::Equal)
-                    })
-                    .map(|(id, _)| *id)
-            })
+        let players = ctx.players();
+        let teammates = players.teammates();
+
+        if let Some((teammate_id, _)) = teammates.nearby_raw(150.0).choose(&mut rand::thread_rng()) {
+            return Some(teammate_id);
+        }
+
+        None
     }
 
     fn is_in_good_scoring_position(&self, ctx: &StateProcessingContext, player_id: u32) -> bool {
@@ -92,20 +85,16 @@ impl GoalkeeperDistributingState {
     }
 
     fn find_best_pass_option<'a>(
-        &self,
-        ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
-        let teammates = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player);
+        &'a self,
+        ctx: &'a StateProcessingContext<'a>,
+    ) -> Option<u32> {
+        let players = ctx.players();
+        let teammates = players.teammates();
 
-        if let Some(teammates_result) = teammates {
-            if let Some((teammate_id, _)) = teammates_result.choose(&mut rand::thread_rng()) {
-                return Some(ctx.context.players.get(*teammate_id)?);
-            }
+        if let Some((teammate_id, _)) = teammates.nearby_raw(100.0).choose(&mut rand::thread_rng()) {
+            return Some(teammate_id);
         }
+
 
         None
     }

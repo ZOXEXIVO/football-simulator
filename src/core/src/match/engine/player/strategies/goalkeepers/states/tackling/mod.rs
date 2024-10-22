@@ -36,9 +36,8 @@ impl StateProcessingHandler for GoalkeeperTacklingState {
         // 2. Identify the opponent player with the ball
         let players = ctx.players();
         let opponents = players.opponents();
-        let opponent_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponent_with_ball {
+        if let Some(opponent) = opponents.with_ball().first() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 
@@ -113,7 +112,7 @@ impl StateProcessingHandler for GoalkeeperTacklingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        if let Some(opponent) = opponents.with_ball() {
+        if let Some(opponent) = opponents.with_ball().first() {
             // Calculate direction towards the opponent
             let direction = (opponent.position - ctx.player.position).normalize();
             // Set speed based on player's pace

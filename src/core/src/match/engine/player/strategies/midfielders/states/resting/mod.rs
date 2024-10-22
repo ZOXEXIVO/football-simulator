@@ -72,13 +72,7 @@ impl StateProcessingHandler for MidfielderRestingState {
 impl MidfielderRestingState {
     /// Checks if an opponent player is nearby within the MARKING_DISTANCE_THRESHOLD.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        let (_, opponents_count) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .players_within_distance_count(ctx.player, MARKING_DISTANCE_THRESHOLD);
-
-        opponents_count > 0
+        ctx.players().opponents().exists(MARKING_DISTANCE_THRESHOLD)
     }
 
     /// Determines if the team is under threat based on the number of opponents in the attacking third.

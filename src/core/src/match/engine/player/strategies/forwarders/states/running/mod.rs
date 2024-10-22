@@ -41,13 +41,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 ));
             }
 
-            let (_, opponents_count) = ctx
-                .tick_context
-                .object_positions
-                .player_distances
-                .players_within_distance_count(ctx.player, 100.0);
-
-            if opponents_count > 1 {
+            if ctx.players().opponents().nearby_raw(100.0).count() > 1 {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
 
@@ -71,7 +65,7 @@ impl StateProcessingHandler for ForwardRunningState {
             let players = ctx.players();
             let opponents = players.opponents();
 
-            if let Some(opponent_with_ball) = opponents.with_ball() {
+            if let Some(opponent_with_ball) = opponents.with_ball().first() {
                 let opponent_distance = ctx
                     .tick_context
                     .object_positions
@@ -134,7 +128,7 @@ impl ForwardRunningState {
 
     fn is_leading_forward(&self, ctx: &StateProcessingContext) -> bool {
         let players = ctx.players();
-        let teammates= players.teammates();
+        let teammates = players.teammates();
 
         let forwards = teammates.forwards();
 
@@ -216,21 +210,20 @@ impl ForwardRunningState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        let nearest_opponents = opponents.wi
+        let mut nearest_opponents = opponents.nearby(150.0);
 
-        if let Some(opponents) = nearest_opponents {
-            if opponents.len() >= 2 {
-                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
-                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+        if let Some(first) = nearest_opponents.next() {
+            if let Some(second) = nearest_opponents.next() {
+                let opponent1_position = first.position;
+                let opponent2_position = second.position;
 
                 let distance_between_opponents =
                     (opponent1_position - opponent2_position).magnitude();
-                distance_between_opponents > CREATING_SPACE_THRESHOLD
-            } else {
-                false
+
+                return distance_between_opponents > CREATING_SPACE_THRESHOLD;
             }
-        } else {
-            false
         }
+
+        false
     }
 }

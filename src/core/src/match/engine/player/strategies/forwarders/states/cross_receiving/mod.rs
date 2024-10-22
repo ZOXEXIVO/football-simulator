@@ -79,7 +79,7 @@ impl ForwardCrossReceivingState {
         let min_distance_from_opponents = 3.0; // Adjust based on your game's scale
 
         let players = ctx.players();
-        let is_away_from_opponents = players.opponents().exists_with_distance(min_distance_from_opponents);
+        let is_away_from_opponents = players.opponents().exists(min_distance_from_opponents);
 
         is_in_crossing_zone && is_away_from_opponents
     }

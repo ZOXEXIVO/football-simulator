@@ -26,7 +26,7 @@ impl StateProcessingHandler for MidfielderTacklingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        if let Some(opponent) = opponents.with_ball() {
+        if let Some(opponent) = opponents.with_ball().first() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 

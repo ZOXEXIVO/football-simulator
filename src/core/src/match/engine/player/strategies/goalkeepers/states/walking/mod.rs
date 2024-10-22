@@ -84,9 +84,8 @@ impl GoalkeeperWalkingState {
     fn is_under_threat(&self, ctx: &StateProcessingContext) -> bool {
         let players = ctx.players();
         let opponents = players.opponents();
-        let opponents_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponents_with_ball {
+        if let Some(opponent) = opponents.with_ball().first() {
             let distance_to_opponent = opponent.position.distance_to(&ctx.player.position);
             distance_to_opponent < 30.0 // Adjust this value based on your game's scale
         } else {

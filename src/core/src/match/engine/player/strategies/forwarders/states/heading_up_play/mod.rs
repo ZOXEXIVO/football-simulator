@@ -21,18 +21,10 @@ impl StateProcessingHandler for ForwardHeadingUpPlayState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
-        let player_ops = ctx.player();
-
         // Check if the player has the ball
         if !ctx.player.has_ball {
             // Transition to Running state if the player doesn't have the ball
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        }
-
-        // Check if the player is under pressure
-        if player_ops.is_under_pressure() {
-            // Transition to Passing state if under pressure
-            return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
         }
 
         // Check if there's support from teammates
@@ -82,7 +74,7 @@ impl ForwardHeadingUpPlayState {
 
         let min_support_distance = 10.0;
 
-        teammates.exists_with_distance(min_support_distance)
+        teammates.exists(min_support_distance)
     }
 
     fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {
