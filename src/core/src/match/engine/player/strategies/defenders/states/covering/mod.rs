@@ -94,10 +94,7 @@ impl DefenderCoveringState {
     }
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.players();
-        let defenders = players.defenders();
-
-        defenders
+        ctx.players().defenders()
             .iter()
             .all(|d| d.position.x >= ctx.player.position.x)
     }

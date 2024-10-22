@@ -40,9 +40,7 @@ impl StateProcessingHandler for ForwardPressingState {
             ));
         }
 
-        let players = ctx.players();
-        let opponents = players.opponents();
-        if let Some(opponent) = opponents.nearby(100.0).next()
+        if let Some(opponent) = ctx.players().opponents().nearby(100.0).next()
         {
             // Check if the opponent has the ball
             if opponent.has_ball {

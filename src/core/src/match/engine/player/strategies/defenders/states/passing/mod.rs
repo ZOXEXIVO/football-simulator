@@ -4,12 +4,11 @@ use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::{Event, EventCollection};
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use std::sync::LazyLock;
 use rand::prelude::IteratorRandom;
+use std::sync::LazyLock;
 
 static DEFENDER_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -89,13 +88,13 @@ impl StateProcessingHandler for DefenderPassingState {
 }
 
 impl DefenderPassingState {
-    fn find_best_pass_option<'a>(
-        &'a self,
-        ctx: &'a StateProcessingContext<'a>,
-    ) -> Option<u32> {
-        let players = ctx.players();
-
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(150.0).choose(&mut rand::thread_rng()) {
+    fn find_best_pass_option<'a>(&'a self, ctx: &'a StateProcessingContext<'a>) -> Option<u32> {
+        if let Some((teammate_id, _)) = ctx
+            .players()
+            .teammates()
+            .nearby_raw(150.0)
+            .choose(&mut rand::thread_rng())
+        {
             return Some(teammate_id);
         }
 
