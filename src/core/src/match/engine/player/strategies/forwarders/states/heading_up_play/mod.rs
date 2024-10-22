@@ -9,6 +9,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
 
 static FORWARD_HEADING_UP_PLAY_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
     DefaultNeuralNetworkLoader::load(include_str!("nn_heading_up_play_data.json"))
@@ -19,8 +20,6 @@ pub struct ForwardHeadingUpPlayState {}
 
 impl StateProcessingHandler for ForwardHeadingUpPlayState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let mut result = StateChangeResult::new();
-
         // Check if the player has the ball
         if !ctx.player.has_ball {
             // Transition to Running state if the player doesn't have the ball
@@ -37,23 +36,11 @@ impl StateProcessingHandler for ForwardHeadingUpPlayState {
 
         // Check if there's an opportunity to pass to a teammate
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            let _teammate = &ctx.context.players.get(teammate_id)?;
-
-            // Perform the pass
-            result
-                .events
-                .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
-
-            // Transition to Running state after making the pass
-            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
+             // Transition to Running state after making the pass
+            return Some(StateChangeResult::with_forward_state_and_event(ForwardState::Running, Event::PlayerEvent(PlayerEvent::RequestPass(ctx.player.id))));
         }
 
-        // Move towards the opponent's goal
-        let goal_position = ctx.ball().direction_to_opponent_goal();
-        let direction = (goal_position - ctx.player.position).normalize();
-        result.velocity = Some(direction * ctx.player.skills.physical.acceleration * 0.5);
-
-        Some(result)
+        None
     }
 
     fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
@@ -70,11 +57,10 @@ impl StateProcessingHandler for ForwardHeadingUpPlayState {
 impl ForwardHeadingUpPlayState {
     fn has_support(&self, ctx: &StateProcessingContext) -> bool {
         let players = ctx.players();
-        let teammates = players.teammates();
 
         let min_support_distance = 10.0;
 
-        teammates.exists(min_support_distance)
+        players.teammates().exists(min_support_distance)
     }
 
     fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {

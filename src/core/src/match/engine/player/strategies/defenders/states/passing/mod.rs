@@ -4,7 +4,7 @@ use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::{Event, EventCollection};
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
@@ -48,9 +48,8 @@ impl StateProcessingHandler for DefenderPassingState {
         let mut highest_score = 0.0;
 
         let players = ctx.players();
-        let teammates = players.teammates();
 
-        for (player_id, teammate_distance) in teammates.nearby_raw(30.0) {
+        for (player_id, teammate_distance) in players.teammates().nearby_raw(30.0) {
             let score = 1.0 / (teammate_distance + 1.0);
             if score > highest_score {
                 highest_score = score;
@@ -95,9 +94,8 @@ impl DefenderPassingState {
         ctx: &'a StateProcessingContext<'a>,
     ) -> Option<u32> {
         let players = ctx.players();
-        let teammates = players.teammates();
 
-        if let Some((teammate_id, _)) = teammates.nearby_raw(150.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players.teammates().nearby_raw(150.0).choose(&mut rand::thread_rng()) {
             return Some(teammate_id);
         }
 

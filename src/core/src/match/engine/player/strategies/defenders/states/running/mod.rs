@@ -68,7 +68,7 @@ impl StateProcessingHandler for DefenderRunningState {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.tick_context.object_positions.ball_position,
-                    slowing_distance: 10.0,
+                    slowing_distance: 1.0,
                 }
                 .calculate(ctx.player)
                 .velocity,

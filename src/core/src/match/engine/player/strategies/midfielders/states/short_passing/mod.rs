@@ -12,6 +12,13 @@ use std::sync::LazyLock;
 static MIDFIELDER_SHORT_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_short_passing_data.json")));
 
+// Constants used in passing calculations
+const MAX_PASS_DISTANCE: f32 = 50.0; // Maximum distance for a short pass
+const MIN_PASS_SPEED: f32 = 10.0; // Minimum speed of the pass
+const MAX_PASS_SPEED: f32 = 15.0; // Maximum speed of the pass
+const STAMINA_COST_PASS: f32 = 2.0; // Stamina cost of making a pass
+const OPPONENT_COLLISION_RADIUS: f32 = 0.5; // Radius representing opponent's collision area
+
 #[derive(Default)]
 pub struct MidfielderShortPassingState {}
 
@@ -187,10 +194,3 @@ impl MidfielderShortPassingState {
         t <= max_distance
     }
 }
-
-// Constants used in passing calculations
-const MAX_PASS_DISTANCE: f32 = 20.0; // Maximum distance for a short pass
-const MIN_PASS_SPEED: f32 = 5.0; // Minimum speed of the pass
-const MAX_PASS_SPEED: f32 = 15.0; // Maximum speed of the pass
-const STAMINA_COST_PASS: f32 = 2.0; // Stamina cost of making a pass
-const OPPONENT_COLLISION_RADIUS: f32 = 0.5; // Radius representing opponent's collision area

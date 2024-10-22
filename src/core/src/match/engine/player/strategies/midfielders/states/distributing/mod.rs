@@ -60,9 +60,8 @@ impl MidfielderDistributingState {
         ctx: &StateProcessingContext<'a>,
     ) -> Option<&'a MatchPlayer> {
         let players = ctx.players();
-        let teammates = players.teammates();
 
-        if let Some((teammate_id, _)) = teammates.nearby_raw(150.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
             return Some(ctx.context.players.get(teammate_id)?);
         }
 
