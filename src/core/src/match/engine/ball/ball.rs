@@ -63,6 +63,7 @@ impl Ball {
         self.check_goal(context, events);
         self.check_boundary_collision(context);
 
+        self.try_intercept(players, events);
         self.try_notify_standing_ball(players, events);
 
         self.process_ownership(context, players, events);
@@ -98,6 +99,12 @@ impl Ball {
             if let Some(notified_player) = self.notify_nearest_player(players, events) {
                 self.take_ball_notified_player = Some(notified_player);
             }
+        }
+    }
+
+    pub fn try_intercept(&mut self, players: &[MatchPlayer], events: &mut EventCollection) {
+        if self.current_owner.is_some() {
+            return;
         }
     }
 
