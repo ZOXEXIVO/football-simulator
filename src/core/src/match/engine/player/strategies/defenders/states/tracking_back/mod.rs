@@ -44,7 +44,7 @@ impl StateProcessingHandler for DefenderTrackingBackState {
         }
 
         // If the team is losing and there's little time left, consider a more aggressive stance
-        if ctx.player().is_team_loosing() && ctx.context.time.time > (MATCH_HALF_TIME_MS - 300) {
+        if ctx.team().is_loosing() && ctx.context.time.time > (MATCH_HALF_TIME_MS - 300) {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Pressing,
             ));
@@ -73,13 +73,13 @@ impl StateProcessingHandler for DefenderTrackingBackState {
         }
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }

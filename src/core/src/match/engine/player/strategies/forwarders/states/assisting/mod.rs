@@ -94,7 +94,7 @@ impl StateProcessingHandler for ForwardAssistingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -109,21 +109,12 @@ impl StateProcessingHandler for ForwardAssistingState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardAssistingState {
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        if let Some((_, distance)) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-        {
-            distance < 3.0 // Adjust based on your game's scale
-        } else {
-            false
-        }
+        ctx.players().opponents().exists_with_distance(10.0)
     }
 
     fn should_make_quick_pass(&self, ctx: &StateProcessingContext) -> bool {

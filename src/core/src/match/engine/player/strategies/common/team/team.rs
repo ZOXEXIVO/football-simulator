@@ -1,5 +1,4 @@
-use crate::r#match::{MatchPlayer, StateProcessingContext};
-use crate::PlayerFieldPositionGroup;
+use crate::r#match::StateProcessingContext;
 use nalgebra::Vector3;
 
 pub struct TeamOperationsImpl<'b> {
@@ -23,46 +22,12 @@ impl<'b> TeamOperationsImpl<'b> {
         false
     }
 
-    pub fn opponents(&self) -> Vec<&MatchPlayer> {
-        self.ctx
-            .context
-            .players
-            .get_by_not_team(self.ctx.player.team_id, None)
-    }
-
-    pub fn opponent_with_ball(&self) -> Vec<&MatchPlayer> {
-        self.ctx
-            .context
-            .players
-            .get_by_not_team(self.ctx.player.team_id, Some(true))
-    }
-
-    pub fn defenders(&self) -> Vec<&MatchPlayer> {
-        self.ctx
-            .context
-            .players
-            .get_by_position(PlayerFieldPositionGroup::Defender)
-    }
-
-    pub fn forwards(&self) -> Vec<&MatchPlayer> {
-        self.ctx
-            .context
-            .players
-            .get_by_position(PlayerFieldPositionGroup::Forward)
-    }
-
-    pub fn forwards_teammates(&self) -> Vec<&MatchPlayer> {
-        self.ctx
-            .context
-            .players
-            .get_by_position_and_team(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
-    }
-
-    pub fn goalkeeper_opponents(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.get_by_position_and_not_team(
-            PlayerFieldPositionGroup::Goalkeeper,
-            self.ctx.player.team_id,
-        )
+    pub fn is_loosing(&self) -> bool {
+        if self.ctx.player.team_id == self.ctx.context.score.home_team.team_id {
+            self.ctx.context.score.home_team < self.ctx.context.score.away_team
+        } else {
+            self.ctx.context.score.away_team < self.ctx.context.score.home_team
+        }
     }
 }
 

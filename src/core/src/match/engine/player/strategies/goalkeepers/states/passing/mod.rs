@@ -27,7 +27,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         }
 
         // 2. Find the best teammate to pass to
-        let (nearest_teammates, opponents) = ctx
+        let (nearest_teammates, _opponents) = ctx
             .tick_context
             .object_positions
             .player_distances
@@ -58,7 +58,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         }
 
         if ctx.in_state_time > 50 {
-            let (nearest_teammates, opponents) = ctx
+            let (nearest_teammates, _opponents) = ctx
                 .tick_context
                 .object_positions
                 .player_distances
@@ -88,13 +88,13 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }

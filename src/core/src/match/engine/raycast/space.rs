@@ -29,7 +29,7 @@ impl<T: Collider> Space<T> {
         // Iterate through all colliders in the space
         for collider in &self.colliders {
             // Check if the collider belongs to a player
-            if let Some(player) = collider.match_player() {
+            if let Some(_) = collider.match_player() {
                 if !include_players {
                     // Skip player colliders if include_players is false
                     continue;

@@ -54,7 +54,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -72,7 +72,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl GoalkeeperWalkingState {

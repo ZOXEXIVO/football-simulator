@@ -67,7 +67,7 @@ impl StateProcessingHandler for MidfielderRunningState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -106,7 +106,7 @@ impl StateProcessingHandler for MidfielderRunningState {
         }
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl MidfielderRunningState {
@@ -117,21 +117,9 @@ impl MidfielderRunningState {
 
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
         // Find an open teammate to pass to
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
-        let open_teammates = teammates
+        let teammates = ctx.players().teammates().all();
+        let open_teammates = ctx.players().opponents().all()
             .iter()
-            .filter(|teammate| {
-                // Check if the teammate is open (not closely marked by an opponent)
-                let opponent_distance = ctx
-                    .tick_context
-                    .object_positions
-                    .player_distances
-                    .find_closest_opponent(teammate)
-                    .map(|(_, distance)| distance)
-                    .unwrap_or(f32::MAX);
-
-                opponent_distance > 5.0 // Adjust the threshold as needed
-            })
             .min_by(|a, b| {
                 // Prefer teammates closer to the opponent's goal
                 let a_distance = (a.position - ctx.ball().direction_to_opponent_goal()).magnitude();
@@ -152,11 +140,7 @@ impl MidfielderRunningState {
     }
 
     fn find_space_between_opponents(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let nearest_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player);
+        let nearest_opponents = ctx.players().opponents().all();
 
         if let Some(opponents) = nearest_opponents {
             if opponents.len() >= 2 {
@@ -215,21 +199,6 @@ impl MidfielderRunningState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if there are opponents close to the player
-        let pressure_distance = 5.0;
-        let close_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player)
-            .map(|opponents| {
-                opponents
-                    .iter()
-                    .filter(|(_, dist)| *dist < pressure_distance)
-                    .count()
-            })
-            .unwrap_or(0);
-
-        close_opponents > 0
+        ctx.players().opponents().exists_with_distance(10.0)
     }
 }

@@ -39,7 +39,7 @@ impl StateProcessingHandler for ForwardFinishingState {
         }
 
         // Calculate the shooting direction and power
-        let (shooting_direction, shooting_power) = self.calculate_shooting_parameters(ctx);
+        let (shooting_direction, _) = self.calculate_shooting_parameters(ctx);
 
         // Perform the shooting action
         result
@@ -50,15 +50,15 @@ impl StateProcessingHandler for ForwardFinishingState {
         Some(StateChangeResult::with_forward_state(ForwardState::Running))
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardFinishingState {
@@ -69,7 +69,7 @@ impl ForwardFinishingState {
     }
 
     fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
+        let players = ctx.players();
         let opponents = players.opponents();
 
         let opponent_goal_position = match ctx.player.side {
@@ -80,7 +80,7 @@ impl ForwardFinishingState {
         };
 
         // Check if there are no opponents blocking the shot
-        opponents.iter().all(|opponent| {
+        opponents.all().iter().all(|opponent| {
             let opponent_to_goal = (opponent_goal_position - opponent.position).normalize();
             let player_to_goal = (opponent_goal_position - ctx.player.position).normalize();
             opponent_to_goal.dot(&player_to_goal) < 0.9

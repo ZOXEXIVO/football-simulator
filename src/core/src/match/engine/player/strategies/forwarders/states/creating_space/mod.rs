@@ -44,7 +44,7 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -59,38 +59,18 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
+    fn process_conditions(&self, _ctx: ConditionContext) {
         // No specific conditions to process
     }
 }
 
 impl ForwardCreatingSpaceState {
     fn has_created_space(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = nearest_opponent {
-            distance > CREATING_SPACE_THRESHOLD
-        } else {
-            false
-        }
+        ctx.players().opponents().exists_with_distance(CREATING_SPACE_THRESHOLD)
     }
 
     fn is_too_close_to_opponent(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = nearest_opponent {
-            distance < OPPONENT_DISTANCE_THRESHOLD
-        } else {
-            false
-        }
+        ctx.players().opponents().exists_with_distance(OPPONENT_DISTANCE_THRESHOLD)
     }
 
     fn should_run_to_opponent_side(&self, ctx: &StateProcessingContext) -> bool {
@@ -101,23 +81,15 @@ impl ForwardCreatingSpaceState {
     }
 
     fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player);
+        let opponents = ctx.players().opponents().all();
 
-        if let Some(opponents) = nearest_opponents {
-            if opponents.len() >= 2 {
-                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
-                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+        if opponents.len() >= 2 {
+            let opponent1_position = opponents[0].position;
+            let opponent2_position = opponents[1].position;
 
-                let distance_between_opponents =
-                    (opponent1_position - opponent2_position).magnitude();
-                distance_between_opponents > CREATING_SPACE_THRESHOLD
-            } else {
-                false
-            }
+            let distance_between_opponents =
+                (opponent1_position - opponent2_position).magnitude();
+            distance_between_opponents > CREATING_SPACE_THRESHOLD
         } else {
             false
         }

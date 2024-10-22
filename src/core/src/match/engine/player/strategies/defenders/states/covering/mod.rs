@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
 };
 use nalgebra::Vector3;
@@ -41,7 +41,7 @@ impl StateProcessingHandler for DefenderCoveringState {
             ));
         }
 
-        if let Some(opponent) = self.find_nearby_opponent(ctx) {
+        if let Some(opponent) = ctx.players().opponents().nearby() {
             if ctx
                 .tick_context
                 .object_positions
@@ -102,21 +102,8 @@ impl DefenderCoveringState {
                 < ctx.context.field_size.width as f32 * 0.25
     }
 
-    fn find_nearby_opponent<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
-        if let Some((opponent_id, _)) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-        {
-            return ctx.context.players.get(opponent_id);
-        }
-
-        None
-    }
-
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
+        let players = ctx.players();
         let defenders = players.defenders();
 
         defenders

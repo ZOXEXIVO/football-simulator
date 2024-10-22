@@ -6,7 +6,6 @@ use crate::r#match::{Match, MatchResult};
 use crate::utils::Logging;
 use crate::{Club, Team};
 use chrono::{Datelike, NaiveDate};
-use rayon::iter::IntoParallelRefIterator;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 
 #[derive(Debug)]

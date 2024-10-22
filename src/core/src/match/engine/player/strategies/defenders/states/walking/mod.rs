@@ -3,7 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult,
+    ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult,
     StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions,
 };
 use crate::IntegerUtils;
@@ -43,7 +43,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Mark opponent if they have the ball or are very close
-        if let Some(opponent_to_mark) = self.find_opponent_to_mark(ctx) {
+        if let Some(opponent_to_mark) = ctx.players().opponents().without_ball().first() {
             if opponent_to_mark.has_ball
                 || ctx.player.position.distance_to(&opponent_to_mark.position)
                     < MARKING_DISTANCE / 2.0
@@ -55,7 +55,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Press opponent only if they have the ball and are close
-        if let Some(opponent_to_press) = self.find_opponent_to_press(ctx) {
+        if let Some(opponent_to_press) = ctx.players().opponents().with_ball() {
             if ctx.player.position.distance_to(&opponent_to_press.position) < PRESSING_DISTANCE {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Pressing,
@@ -80,7 +80,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Check if there's an opponent to mark
-        if let Some(opponent_to_mark) = self.find_opponent_to_mark(ctx) {
+        if let Some(opponent_to_mark) = ctx.players().opponents().with_ball() {
             if ctx.player.position.distance_to(&opponent_to_mark.position) < MARKING_DISTANCE {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Marking,
@@ -134,38 +134,6 @@ impl StateProcessingHandler for DefenderWalkingState {
 }
 
 impl DefenderWalkingState {
-    fn find_opponent_to_mark<'a>(
-        &self,
-        ctx: &'a StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
-        ctx.tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-            .and_then(|(opponent_id, _)| {
-                ctx.context
-                    .players
-                    .get(opponent_id)
-                    .filter(|opponent| !opponent.has_ball)
-            })
-    }
-
-    fn find_opponent_to_press<'a>(
-        &self,
-        ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
-        ctx.tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-            .and_then(|(opponent_id, _)| {
-                ctx.context
-                    .players
-                    .get(opponent_id)
-                    .filter(|opponent| opponent.has_ball)
-            })
-    }
-
     fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         // This is a simplified calculation. You might want to make it more sophisticated
         // based on team formation, tactics, and the current game situation.
@@ -177,7 +145,8 @@ impl DefenderWalkingState {
     }
 
     fn calculate_team_center(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
+        let players = ctx.players();
+        let teammates = players.teammates().all();
         let sum: Vector3<f32> = teammates.iter().map(|p| p.position).sum();
         sum / teammates.len() as f32
     }
@@ -185,16 +154,8 @@ impl DefenderWalkingState {
     fn has_nearby_threats(&self, ctx: &StateProcessingContext) -> bool {
         let threat_distance = 20.0; // Adjust this value as needed
 
-        // Check for nearby opponents
-        if let Some((_, distance)) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-        {
-            if distance < threat_distance {
-                return true;
-            }
+        if ctx.players().opponents().exists_with_distance(threat_distance){
+            return true;
         }
 
         // Check if the ball is close and moving towards the player

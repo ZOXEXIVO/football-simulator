@@ -108,7 +108,6 @@ impl Display for MidfielderState {
             MidfielderState::Crossing => write!(f, "Crossing"),
             MidfielderState::LongPassing => write!(f, "Long Passing"),
             MidfielderState::ShortPassing => write!(f, "Short Passing"),
-            MidfielderState::Distributing => write!(f, "Shooting from Distance"),
             MidfielderState::Pressing => write!(f, "Pressing"),
             MidfielderState::TrackingRunner => write!(f, "Tracking Runner"),
             MidfielderState::Tackling => write!(f, "Tackling"),

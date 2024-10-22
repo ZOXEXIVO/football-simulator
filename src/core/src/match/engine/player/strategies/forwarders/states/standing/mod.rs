@@ -32,7 +32,7 @@ impl StateProcessingHandler for ForwardStandingState {
                 ));
             }
 
-            if let Some(target_teammate) = self.find_best_teammate_to_pass(ctx) {
+            if let Some(_) = self.find_best_teammate_to_pass(ctx) {
                 // Transition to Passing state
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
@@ -62,17 +62,17 @@ impl StateProcessingHandler for ForwardStandingState {
         }
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network logic for advanced decision-making if necessary
         // For example, adjust positioning based on opponent movement
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
+    fn process_conditions(&self, _ctx: ConditionContext) {
         // Handle additional conditions or triggers if necessary
     }
 }
@@ -97,7 +97,7 @@ impl ForwardStandingState {
             .find_closest_teammates(&ctx.player);
 
         if let Some(closest_teammates) = closest_teammates {
-            if let Some((teammate_id, distance)) = closest_teammates.first() {
+            if let Some((teammate_id, _)) = closest_teammates.first() {
                 return Some(ctx.context.players.get(*teammate_id)?);
             }
         }
@@ -110,17 +110,7 @@ impl ForwardStandingState {
         // Example logic: dribble if no immediate threat and space is available
         let safe_distance = 10.0;
 
-        let closest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = closest_opponent {
-            distance > safe_distance
-        } else {
-            true
-        }
+        !ctx.players().opponents().exists_with_distance(safe_distance)
     }
 
     /// Decides whether the forward should press the opponent.

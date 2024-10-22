@@ -6,7 +6,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult,
+    ConditionContext, StateChangeResult,
     StateProcessingContext, StateProcessingHandler, VectorExtensions,
 };
 
@@ -67,7 +67,7 @@ impl StateProcessingHandler for DefenderStandingState {
                 }
             } else {
                 // Ball is not towards the player
-                if let Some(opponent) = self.find_nearby_opponent(ctx) {
+                if let Some(opponent) = ctx.players().opponents().nearby() {
                     if opponent.has_ball
                         && opponent.position.distance_to(&ctx.player.position) < PRESSING_DISTANCE
                     {
@@ -123,15 +123,15 @@ impl StateProcessingHandler for DefenderStandingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::zeros())
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
+    fn process_conditions(&self, _ctx: ConditionContext) {
         // Implement condition processing if needed
     }
 }
@@ -144,9 +144,9 @@ impl DefenderStandingState {
         let is_tired = player_ops.is_tired();
         let standing_too_long = ctx.in_state_time > STANDING_TIME_LIMIT;
         let ball_far_away = ball_ops.distance() > INTERCEPTION_DISTANCE * 2.0;
-        let no_immediate_threat = self.find_nearby_opponent(ctx).map_or(true, |opponent| {
-            opponent.position.distance_to(&ctx.player.position) > CLEARING_DISTANCE
-        });
+
+        let no_immediate_threat = ctx.players().opponents().nearby_with_distance(CLEARING_DISTANCE).is_some();
+
         let close_to_optimal_position =
             player_ops.distance_from_start_position() < WALK_DISTANCE_THRESHOLD;
         let team_in_control = ctx.team().is_control_ball();
@@ -174,9 +174,9 @@ impl DefenderStandingState {
     }
 
     fn should_hold_defensive_line(&self, ctx: &StateProcessingContext) -> bool {
-        let player_ops = ctx.team();
         let ball_ops = ctx.ball();
 
+        let player_ops = ctx.players();
         let defenders = player_ops.defenders();
         let avg_defender_x =
             defenders.iter().map(|d| d.position.x).sum::<f32>() / defenders.len() as f32;
@@ -194,30 +194,17 @@ impl DefenderStandingState {
             > ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD
             && ball_ops.distance_to_own_goal()
                 > ctx.context.field_size.width as f32 * FIELD_THIRD_THRESHOLD;
-        let no_immediate_threat = self.find_nearby_opponent(ctx).map_or(true, |opponent| {
-            opponent.position.distance_to(&ctx.player.position) > MARKING_DISTANCE
-        });
+        let no_immediate_threat = ctx.players().opponents().nearby_with_distance(MARKING_DISTANCE).is_some();
+
         let not_in_optimal_position =
             player_ops.distance_from_start_position() > WALK_DISTANCE_THRESHOLD;
 
         ball_in_middle_third && no_immediate_threat && not_in_optimal_position
     }
 
-    fn find_nearby_opponent<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
-        if let Some((opponent_id, _)) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-        {
-            return ctx.context.players.get(opponent_id);
-        }
-
-        None
-    }
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
+        let players = ctx.players();
         let defenders = players.defenders();
 
         defenders

@@ -26,15 +26,15 @@ impl StateProcessingHandler for ForwardShootingState {
         ))
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardShootingState {
@@ -44,16 +44,7 @@ impl ForwardShootingState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        if let Some((_, distance)) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-        {
-            distance < 5.0 // Adjust this value based on your game's scale
-        } else {
-            false
-        }
+        ctx.players().opponents().exists_with_distance(20.0)
     }
 
     fn should_take_quick_shot(&self, ctx: &StateProcessingContext) -> bool {

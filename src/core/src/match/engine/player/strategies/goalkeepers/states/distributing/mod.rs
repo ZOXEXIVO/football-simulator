@@ -52,15 +52,15 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl GoalkeeperDistributingState {
@@ -83,7 +83,7 @@ impl GoalkeeperDistributingState {
     }
 
     fn is_in_good_scoring_position(&self, ctx: &StateProcessingContext, player_id: u32) -> bool {
-        if let Some(player) = ctx.context.players.get(player_id) {
+        if let Some(_) = ctx.context.players.get(player_id) {
             let distance_to_goal = ctx.ball().distance_to_opponent_goal();
             distance_to_goal < 20.0 // Adjust based on your game's scale
         } else {

@@ -52,7 +52,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -81,7 +81,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl GoalkeeperPreSaveState {
@@ -116,7 +116,7 @@ impl GoalkeeperPreSaveState {
             && goalkeeper_skills.physical.acceleration > 10.0
     }
 
-    fn is_ball_in_penalty_area(&self, ctx: &StateProcessingContext) -> bool {
+    fn is_ball_in_penalty_area(&self, _ctx: &StateProcessingContext) -> bool {
         // Implement logic to check if the ball is in the penalty area
         // This will depend on your field dimensions and coordinate system
         true // Placeholder

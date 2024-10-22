@@ -45,15 +45,15 @@ impl StateProcessingHandler for ForwardHeadingState {
         Some(StateChangeResult::with_forward_state(ForwardState::Running))
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardHeadingState {
@@ -78,15 +78,11 @@ impl ForwardHeadingState {
         &self,
         ctx: &StateProcessingContext<'a>,
     ) -> Vec<&'a MatchPlayer> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
         let close_distance = 2.0; // Adjust based on your game's scale
 
-        ctx.context
-            .players
-            .get_by_not_team(ctx.player.team_id, None)
-            .into_iter()
-            .filter(|opponent| opponent.position.distance_to(&ball_position) <= close_distance)
-            .collect()
+        ctx.players()
+            .opponents()
+            .nearby_with_distance(close_distance)
     }
 
     fn calculate_heading_direction(&self, ctx: &StateProcessingContext) -> Vector3<f32> {

@@ -58,10 +58,10 @@ impl StateProcessingHandler for DefenderTacklingState {
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.team();
-        let opponent_with_ball = players.opponent_with_ball();
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        if let Some(opponent) = opponent_with_ball.first() {
+             if let Some(opponent) = opponents.with_ball() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 
@@ -146,10 +146,8 @@ impl StateProcessingHandler for DefenderTacklingState {
             }
 
             // Identify the opponent player with the ball
-            let players = ctx.team();
-            let opponent_with_ball = players.opponent_with_ball();
-
-            if let Some(opponent) = opponent_with_ball.first() {
+            let players = ctx.players();
+            if let Some(opponent) =  players.opponents().with_ball() {
                 Some(
                     SteeringBehavior::Arrive {
                         target: opponent.position,

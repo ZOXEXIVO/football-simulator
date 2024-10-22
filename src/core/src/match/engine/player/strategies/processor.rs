@@ -5,10 +5,7 @@ use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStra
 use crate::r#match::midfielders::states::{MidfielderState, MidfielderStrategies};
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::{Defender, Forward, Goalkeeper, Midfielder};
-use crate::r#match::{
-    BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer,
-    PlayerOperationsImpl, TeamOperationsImpl,
-};
+use crate::r#match::{BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer, PlayerOperationsImpl, PlayersOperationsImpl, TeamOperationsImpl};
 use crate::PlayerFieldPositionGroup;
 use log::info;
 use nalgebra::Vector3;
@@ -144,6 +141,11 @@ impl<'sp> StateProcessingContext<'sp> {
     #[inline]
     pub fn player(&self) -> PlayerOperationsImpl<'_> {
         PlayerOperationsImpl::new(self)
+    }
+
+    #[inline]
+    pub fn players(&self) -> PlayersOperationsImpl<'_> {
+        PlayersOperationsImpl::new(self)
     }
 
     #[inline]

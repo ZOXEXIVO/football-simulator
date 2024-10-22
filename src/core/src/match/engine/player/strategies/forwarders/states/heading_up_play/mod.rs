@@ -64,32 +64,33 @@ impl StateProcessingHandler for ForwardHeadingUpPlayState {
         Some(result)
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardHeadingUpPlayState {
     fn has_support(&self, ctx: &StateProcessingContext) -> bool {
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
-        let min_support_distance = 10.0; // Adjust based on your game's scale
+        let players = ctx.players();
+        let teammates = players.teammates();
 
-        teammates.iter().any(|teammate| {
-            let distance = ctx.player.position.distance_to(&teammate.position);
-            distance < min_support_distance
-        })
+        let min_support_distance = 10.0;
+
+        teammates.exists_with_distance(min_support_distance)
     }
 
     fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
+        let players = ctx.players();
+        let teammates = players.teammates();
 
         teammates
+            .all()
             .iter()
             .enumerate()
             .filter(|(_, teammate)| {

@@ -1,8 +1,5 @@
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, PlayerSide,
-    StateProcessingContext,
-};
+use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, PlayerSide, StateProcessingContext};
 use nalgebra::Vector3;
 
 pub struct PlayerOperationsImpl<'p> {
@@ -56,14 +53,6 @@ impl<'p> PlayerOperationsImpl<'p> {
             .object_positions
             .player_distances
             .players_within_distance_count(self.ctx.player, 10.0)
-    }
-
-    pub fn is_team_loosing(&self) -> bool {
-        if self.ctx.player.team_id == self.ctx.context.score.home_team.team_id {
-            self.ctx.context.score.home_team < self.ctx.context.score.away_team
-        } else {
-            self.ctx.context.score.away_team < self.ctx.context.score.home_team
-        }
     }
 
     pub fn calculate_pass_power(&self, teammate: &MatchPlayer) -> f64 {

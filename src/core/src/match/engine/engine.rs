@@ -6,11 +6,8 @@ use crate::r#match::position::MatchPositionData;
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{
     GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager
-    ,
 };
-use crate::PlayerFieldPositionGroup;
 use nalgebra::Vector3;
-use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use std::collections::HashMap;
 
 pub struct FootballEngine<const W: usize, const H: usize> {}
@@ -311,7 +308,7 @@ impl MatchFieldSize {
 }
 
 pub struct MatchPlayerCollection {
-    players: HashMap<u32, MatchPlayer>,
+    pub players: HashMap<u32, MatchPlayer>,
 }
 
 impl MatchPlayerCollection {
@@ -351,66 +348,6 @@ impl MatchPlayerCollection {
 
     pub fn raw_players(&self) -> Vec<&MatchPlayer> {
         self.players.values().collect()
-    }
-
-    pub fn get_by_position(&self, position_group: PlayerFieldPositionGroup) -> Vec<&MatchPlayer> {
-        self.players
-            .values()
-            .filter(|player| player.tactics_position.position_group() == position_group)
-            .collect()
-    }
-
-    pub fn get_by_position_and_team(
-        &self,
-        position_group: PlayerFieldPositionGroup,
-        team_id: u32,
-    ) -> Vec<&MatchPlayer> {
-        self.players
-            .values()
-            .filter(|player| {
-                player.team_id == team_id
-                    && player.tactics_position.position_group() == position_group
-            })
-            .collect()
-    }
-
-    pub fn get_by_position_and_not_team(
-        &self,
-        position_group: PlayerFieldPositionGroup,
-        team_id: u32,
-    ) -> Vec<&MatchPlayer> {
-        self.players
-            .values()
-            .filter(|player| {
-                player.team_id != team_id
-                    && player.tactics_position.position_group() == position_group
-            })
-            .collect()
-    }
-
-    pub fn get_by_team(&self, team_id: u32) -> Vec<&MatchPlayer> {
-        let teammates = self
-            .players
-            .values()
-            .filter(|player| player.team_id == team_id);
-
-        teammates.collect()
-    }
-
-    pub fn get_by_not_team(&self, team_id: u32, has_ball: Option<bool>) -> Vec<&MatchPlayer> {
-        let opponents = self
-            .players
-            .values()
-            .filter(|player| player.team_id != team_id);
-
-        if has_ball.is_some() {
-            let ball_val = has_ball.unwrap();
-            return opponents
-                .filter(|player| player.has_ball == ball_val)
-                .collect();
-        }
-
-        opponents.collect()
     }
 }
 

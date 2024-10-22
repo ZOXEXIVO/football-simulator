@@ -56,7 +56,7 @@ impl StateProcessingHandler for ForwardDribblingState {
         Some(result)
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -71,28 +71,15 @@ impl StateProcessingHandler for ForwardDribblingState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardDribblingState {
     fn has_space_to_dribble(&self, ctx: &StateProcessingContext) -> bool {
         let dribble_distance = 10.0; // Adjust based on your game's scale
-        let players = ctx.team();
-        let opponents = players.opponents();
+        let players = ctx.players();
 
-        // Check if there are no opponents within the dribble distance
-        opponents.iter().all(|opponent| {
-            if let Some(distance) = ctx
-                .tick_context
-                .object_positions
-                .player_distances
-                .get(ctx.player.id, opponent.id)
-            {
-                return distance > dribble_distance;
-            }
-
-            false
-        })
+        !players.opponents().exists_with_distance(dribble_distance)
     }
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
@@ -110,13 +97,9 @@ impl ForwardDribblingState {
             }
         }
 
-        let players = ctx.team();
-        let opponents = players.opponents();
+        let players = ctx.players();
 
-        // Check if there are no opponents close to the teammate
-        opponents
-            .iter()
-            .all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
+        !players.opponents().exists_with_distance(5.0)
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
@@ -151,7 +134,7 @@ impl ForwardDribblingState {
     }
 
     fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
+        let players = ctx.players();
         let opponents = players.opponents();
 
         let opponent_goal_position = match ctx.player.side {
@@ -162,7 +145,7 @@ impl ForwardDribblingState {
         };
 
         // Check if there are no opponents blocking the shot
-        opponents.iter().all(|opponent| {
+        opponents.all().iter().all(|opponent| {
             let opponent_to_goal = (opponent_goal_position - opponent.position).normalize();
             let player_to_goal = (opponent_goal_position - ctx.player.position).normalize();
             opponent_to_goal.dot(&player_to_goal) < 0.9

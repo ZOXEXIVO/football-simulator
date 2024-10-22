@@ -59,23 +59,23 @@ impl StateProcessingHandler for DefenderHoldingLineState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         // For now, return None to indicate no state change
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::zeros())
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl DefenderHoldingLineState {
     /// Calculates the defensive line position based on team tactics and defender positions.
     fn calculate_defensive_line_position(&self, ctx: &StateProcessingContext) -> f32 {
-        let players = ctx.team();
+        let players = ctx.players();
         let defenders: Vec<&MatchPlayer> = players.defenders();
 
         // If no defenders found, use player's current position
@@ -90,10 +90,7 @@ impl DefenderHoldingLineState {
 
     /// Checks if an opponent player is nearby within the MARKING_DISTANCE_THRESHOLD.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.team().opponents().iter().any(|opponent| {
-            let distance = (ctx.player.position - opponent.position).magnitude();
-            distance < MARKING_DISTANCE_THRESHOLD
-        })
+        ctx.players().opponents().exists_with_distance(MARKING_DISTANCE_THRESHOLD)
     }
 
     /// Determines if the team should set up an offside trap.
@@ -102,9 +99,10 @@ impl DefenderHoldingLineState {
         let defensive_line_position = self.calculate_defensive_line_position(ctx);
 
         let opponents_ahead = ctx
-            .team()
+            .players()
             .opponents()
-            .iter()
+            .all()
+            .into_iter()
             .filter(|opponent| {
                 if ctx.player().on_own_side() {
                     opponent.position.y < defensive_line_position

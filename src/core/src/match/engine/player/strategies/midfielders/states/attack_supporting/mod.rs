@@ -80,7 +80,7 @@ impl MidfielderAttackSupportingState {
     /// Determines if the attack has broken down.
     fn attack_broken_down(&self, ctx: &StateProcessingContext) -> bool {
         // For simplicity, assume attack has broken down if the opponent has the ball
-        ctx.team().opponent_with_ball().len() > 0
+        ctx.players().opponents().with_ball().is_some()
     }
 
     /// Checks if the midfielder is in a good position to attempt a shot.
@@ -146,7 +146,6 @@ impl MidfielderAttackSupportingState {
         let field_length = ctx.context.field_size.width as f32;
         let field_width = ctx.context.field_size.width as f32;
         let penalty_area_depth = 16.5; // Standard penalty area depth in meters
-        let penalty_area_width = 40.32; // Standard penalty area width in meters
 
         let x = if ctx.player.side.unwrap() == PlayerSide::Left {
             field_length - penalty_area_depth / 2.0

@@ -1,7 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::MatchPlayer;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
@@ -31,7 +30,7 @@ impl StateProcessingHandler for DefenderMarkingState {
         }
 
         // 2. Identify the opponent player to mark
-        if let Some(opponent_to_mark) = self.find_opponent_to_mark(ctx) {
+        if let Some(opponent_to_mark) = ctx.players().opponents().nearby() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent =
                 (ctx.player.position - opponent_to_mark.position).magnitude();
@@ -70,7 +69,7 @@ impl StateProcessingHandler for DefenderMarkingState {
         }
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         // For now, return None to indicate no state change
         None
@@ -80,7 +79,7 @@ impl StateProcessingHandler for DefenderMarkingState {
         // Move to maintain position relative to the opponent being marked
 
         // Identify the opponent player to mark
-        if let Some(opponent_to_mark) = self.find_opponent_to_mark(ctx) {
+        if let Some(opponent_to_mark) = ctx.players().opponents().nearby() {
             // Calculate desired position to maintain proper marking
             let opponent_future_position = opponent_to_mark.position + opponent_to_mark.velocity;
             let desired_position = opponent_future_position
@@ -103,19 +102,5 @@ impl StateProcessingHandler for DefenderMarkingState {
 }
 
 impl DefenderMarkingState {
-    fn find_opponent_to_mark<'a>(
-        &self,
-        ctx: &'a StateProcessingContext,
-    ) -> Option<&'a MatchPlayer> {
-        if let Some((opponent_id, _)) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-        {
-            return ctx.context.players.get(opponent_id);
-        }
 
-        None
-    }
 }

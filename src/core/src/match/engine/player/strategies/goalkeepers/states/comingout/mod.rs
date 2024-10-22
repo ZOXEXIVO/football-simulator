@@ -35,8 +35,8 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
         }
 
         // 2. Check if there are any opponents near the ball
-        let players = ctx.team();
-        let nearby_opponents = players.opponents();
+        let players = ctx.players();
+        let nearby_opponents = players.opponents().with_ball();
         if nearby_opponents.is_empty() {
             // No opponents near the ball, transition to appropriate state (e.g., ReturningToGoal)
             return Some(StateChangeResult::with_goalkeeper_state(
@@ -47,7 +47,7 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         None
     }

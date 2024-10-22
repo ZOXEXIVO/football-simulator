@@ -171,11 +171,11 @@ pub struct PlayerDistanceClosure {
 
 pub struct PlayerDistanceItem {
     pub player_from_id: u32,
-    player_from_team: u32,
+    pub player_from_team: u32,
     pub player_from_position: Vector3<f32>,
 
     pub player_to_id: u32,
-    player_to_team: u32,
+    pub player_to_team: u32,
     pub player_to_position: Vector3<f32>,
 
     pub distance: f32,
@@ -303,45 +303,7 @@ impl PlayerDistanceClosure {
             )
     }
 
-    pub fn find_closest_opponent(&self, player: &MatchPlayer) -> Option<(u32, f32)> {
-        self.distances
-            .iter()
-            .filter(|item| {
-                item.player_from_id == player.id && item.player_from_team != item.player_to_team
-            })
-            .min_by(|a, b| {
-                a.distance
-                    .partial_cmp(&b.distance)
-                    .unwrap_or(Ordering::Equal)
-            })
-            .map(|item| (item.player_to_id, item.distance))
-    }
 
-    pub fn find_closest_opponents(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
-        let mut opponents: Vec<_> = self
-            .distances
-            .iter()
-            .filter(|item| {
-                (item.player_from_id == player.id && item.player_from_team != item.player_to_team)
-                    || (item.player_to_id == player.id
-                        && item.player_from_team != item.player_to_team)
-            })
-            .map(|item| {
-                if item.player_from_id == player.id {
-                    (item.player_to_id, item.distance)
-                } else {
-                    (item.player_from_id, item.distance)
-                }
-            })
-            .collect();
-
-        opponents.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(std::cmp::Ordering::Equal));
-        if opponents.is_empty() {
-            None
-        } else {
-            Some(opponents)
-        }
-    }
 
     pub fn find_closest_teammates(&self, player: &MatchPlayer) -> Option<Vec<(u32, f32)>> {
         let mut teammates: Vec<_> = self
