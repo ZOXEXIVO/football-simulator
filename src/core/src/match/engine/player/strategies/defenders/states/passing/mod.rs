@@ -96,7 +96,7 @@ impl StateProcessingHandler for DefenderPassingState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl DefenderPassingState {

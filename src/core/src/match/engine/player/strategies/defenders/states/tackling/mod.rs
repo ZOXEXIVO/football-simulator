@@ -41,7 +41,7 @@ impl StateProcessingHandler for DefenderTacklingState {
                 PlayerDistanceFromStartPosition::Small => None,
             };
 
-            if let Some(is_far_from_start_position) = is_far_from_start_position {
+            if let Some(_is_far_from_start_position) = is_far_from_start_position {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Running,
                 ));
@@ -176,7 +176,7 @@ impl DefenderTacklingState {
     fn attempt_sliding_tackle(
         &self,
         ctx: &StateProcessingContext,
-        opponent: &MatchPlayer,
+        _opponent: &MatchPlayer,
     ) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 

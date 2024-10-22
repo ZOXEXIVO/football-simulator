@@ -45,7 +45,7 @@ impl StateProcessingHandler for MidfielderPressingState {
         let opponents = players.opponents();
         let opponent_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponent_with_ball.first() {
+        if let Some(opponent) = opponent_with_ball {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 

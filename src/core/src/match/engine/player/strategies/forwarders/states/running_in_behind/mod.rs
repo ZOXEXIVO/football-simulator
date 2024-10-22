@@ -66,7 +66,7 @@ impl StateProcessingHandler for ForwardRunningInBehindState {
             .player_distances
             .find_closest_teammates(ctx.player)
         {
-            if let Some((teammate_id, _)) = teammates.first() {
+            if let Some((_teammate_id, _)) = teammates.first() {
                 result
                     .events
                     .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
@@ -173,7 +173,7 @@ impl ForwardRunningInBehindState {
         }
 
         // Check if the player's team is losing
-        if !player_ops.is_team_loosing() {
+        if !ctx.team().is_loosing() {
             return false;
         }
 

@@ -70,7 +70,7 @@ impl StateProcessingHandler for DefenderPushingUpState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 

@@ -146,9 +146,11 @@ impl DefenderWalkingState {
 
     fn calculate_team_center(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let players = ctx.players();
-        let teammates = players.teammates().all();
-        let sum: Vector3<f32> = teammates.iter().map(|p| p.position).sum();
-        sum / teammates.len() as f32
+        let teammates = players.teammates();
+        let all_teammates = teammates.all();
+
+        let sum: Vector3<f32> = all_teammates.iter().map(|p| p.position).sum();
+        sum / all_teammates.len() as f32
     }
 
     fn has_nearby_threats(&self, ctx: &StateProcessingContext) -> bool {

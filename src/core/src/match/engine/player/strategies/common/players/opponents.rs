@@ -18,7 +18,8 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
     }
 
     pub fn with_ball(&self) -> Option<&&MatchPlayer> {
-        self.opponents_for_team(self.ctx.player.team_id, Some(true)).first()
+        self.opponents_for_team(self.ctx.player.team_id, Some(true))
+            .first()
     }
 
     pub fn without_ball(&self) -> Vec<&MatchPlayer> {
@@ -58,8 +59,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
     }
 
     pub fn exists_with_distance(&self, distance: f32) -> bool {
-        self
-            .ctx
+        self.ctx
             .tick_context
             .object_positions
             .player_distances

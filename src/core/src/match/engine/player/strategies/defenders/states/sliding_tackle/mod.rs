@@ -132,7 +132,7 @@ impl DefenderSlidingTackleState {
     fn attempt_sliding_tackle(
         &self,
         ctx: &StateProcessingContext,
-        opponent: &MatchPlayer,
+        _opponent: &MatchPlayer,
     ) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 

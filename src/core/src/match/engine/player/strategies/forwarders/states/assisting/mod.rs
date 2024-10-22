@@ -39,7 +39,7 @@ impl StateProcessingHandler for ForwardAssistingState {
         if self.is_under_pressure(ctx) {
             // If under high pressure, decide between quick pass or dribbling
             if self.should_make_quick_pass(ctx) {
-                if let Some(teammate_id) = self.find_best_teammate_to_assist(ctx) {
+                if let Some(_teammate_id) = self.find_best_teammate_to_assist(ctx) {
                     //result.events.add_player_event(PlayerEvent::Pass(ctx.player.player_id, teammate_id));
                     return Some(result);
                 }
@@ -158,7 +158,7 @@ impl ForwardAssistingState {
     }
 
     fn is_in_good_scoring_position(&self, ctx: &StateProcessingContext, player_id: u32) -> bool {
-        if let Some(player) = ctx.context.players.get(player_id) {
+        if let Some(_player) = ctx.context.players.get(player_id) {
             let distance_to_goal = ctx.ball().distance_to_opponent_goal();
             distance_to_goal < 20.0 // Adjust based on your game's scale
         } else {

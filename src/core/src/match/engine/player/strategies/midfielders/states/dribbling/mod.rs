@@ -8,7 +8,6 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use rand::prelude::IteratorRandom;
 
 static MIDFIELDER_DRIBBLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_dribbling_data.json")));

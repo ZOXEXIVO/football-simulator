@@ -81,11 +81,14 @@ impl ForwardCreatingSpaceState {
     }
 
     fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {
-        let opponents = ctx.players().opponents().all();
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        if opponents.len() >= 2 {
-            let opponent1_position = opponents[0].position;
-            let opponent2_position = opponents[1].position;
+        let opponents_all = opponents.all();
+
+        if opponents_all.len() >= 2 {
+            let opponent1_position = opponents_all[0].position;
+            let opponent2_position = opponents_all[1].position;
 
             let distance_between_opponents =
                 (opponent1_position - opponent2_position).magnitude();
