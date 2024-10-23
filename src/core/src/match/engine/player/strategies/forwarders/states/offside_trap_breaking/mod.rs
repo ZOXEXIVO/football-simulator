@@ -68,7 +68,6 @@ impl ForwardOffsideTrapBreakingState {
 
         let offside_line = opponents
             .all()
-            .iter()
             .map(|opponent| opponent.position.x)
             .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
             .unwrap_or(0.0);

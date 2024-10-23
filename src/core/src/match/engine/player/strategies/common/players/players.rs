@@ -17,12 +17,12 @@ impl<'p> PlayersOperationsImpl<'p> {
 
 impl<'p> PlayersOperationsImpl<'p> {
     // Teammates
-    pub fn teammates(&'p self) -> PlayerTeammatesOperationsImpl<'p> {
+    pub fn teammates(&self) -> PlayerTeammatesOperationsImpl<'_> {
         PlayerTeammatesOperationsImpl::new(self.ctx)
     }
 
     // Opponents
-    pub fn opponents(&'p self) -> PlayerOpponentsOperationsImpl<'p> {
+    pub fn opponents(&self) -> PlayerOpponentsOperationsImpl<'_> {
         PlayerOpponentsOperationsImpl::new(self.ctx)
     }
 

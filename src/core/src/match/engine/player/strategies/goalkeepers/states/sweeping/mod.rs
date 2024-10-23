@@ -31,7 +31,7 @@ impl StateProcessingHandler for GoalkeeperSweepingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        if let Some(_) = opponents.with_ball().first() {
+        if let Some(_) = opponents.with_ball().next() {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Standing,
             ));

@@ -92,15 +92,17 @@ impl ForwardHeadingUpPlayState {
         let players = ctx.players();
         let opponents = players.opponents();
 
+        let distance = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id).unwrap();
+
         // Check if the teammate is within a reasonable distance
-        if ctx.player.position.distance_to(&teammate.position) > max_distance {
+        if distance > max_distance {
             return false;
         }
 
+        let mut all_opponents_close = opponents.all();
+
         // Check if there are no opponents close to the teammate
-        opponents
-            .all()
-            .iter()
+        all_opponents_close
             .all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
     }
 

@@ -40,7 +40,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Mark opponent if they have the ball or are very close
-        if let Some(opponent_to_mark) = ctx.players().opponents().without_ball().first() {
+        if let Some(opponent_to_mark) = ctx.players().opponents().without_ball().next() {
             if opponent_to_mark.has_ball
                 || ctx.player.position.distance_to(&opponent_to_mark.position)
                     < MARKING_DISTANCE / 2.0
@@ -52,7 +52,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Press opponent only if they have the ball and are close
-        if let Some(opponent_to_press) = ctx.players().opponents().with_ball().first() {
+        if let Some(opponent_to_press) = ctx.players().opponents().with_ball().next() {
             if ctx.player.position.distance_to(&opponent_to_press.position) < PRESSING_DISTANCE {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Pressing,
@@ -77,7 +77,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         }
 
         // Check if there's an opponent to mark
-        if let Some(opponent_to_mark) = ctx.players().opponents().with_ball().first() {
+        if let Some(opponent_to_mark) = ctx.players().opponents().with_ball().next() {
             if ctx.player.position.distance_to(&opponent_to_mark.position) < MARKING_DISTANCE {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Marking,

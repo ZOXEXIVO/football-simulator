@@ -69,9 +69,6 @@ impl ForwardFinishingState {
     }
 
     fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.players();
-        let opponents = players.opponents();
-
         let opponent_goal_position = match ctx.player.side {
             // swap for opponents
             Some(PlayerSide::Left) => ctx.context.goal_positions.left,
@@ -79,8 +76,12 @@ impl ForwardFinishingState {
             _ => Vector3::new(0.0, 0.0, 0.0),
         };
 
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut all_opponents = opponents.all();
+
         // Check if there are no opponents blocking the shot
-        opponents.all().iter().all(|opponent| {
+        all_opponents.all(|opponent| {
             let opponent_to_goal = (opponent_goal_position - opponent.position).normalize();
             let player_to_goal = (opponent_goal_position - ctx.player.position).normalize();
             opponent_to_goal.dot(&player_to_goal) < 0.9

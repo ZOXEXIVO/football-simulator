@@ -11,8 +11,8 @@ use std::sync::LazyLock;
 static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_creating_space_data.json")));
 
-const CREATING_SPACE_THRESHOLD: f32 = 100.0; // Adjust based on your game's scale
-const OPPONENT_DISTANCE_THRESHOLD: f32 = 5.0; // Adjust based on your game's scale
+const CREATING_SPACE_THRESHOLD: f32 = 30.0; // Adjust based on your game's scale
+const OPPONENT_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust based on your game's scale
 const VELOCITY_CHANGE_THRESHOLD: f32 = 2.0; // Adjust based on your game's scale
 
 #[derive(Default)]
@@ -84,17 +84,20 @@ impl ForwardCreatingSpaceState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        let opponents_all = opponents.all();
+        let mut opponents_all = opponents.all();
 
-        if opponents_all.len() >= 2 {
-            let opponent1_position = opponents_all[0].position;
-            let opponent2_position = opponents_all[1].position;
+        if let Some(first) = opponents_all.next() {
+            if let Some(second) = opponents_all.next() {
+                let opponent1_position = first.position;
+                let opponent2_position = second.position;
 
-            let distance_between_opponents =
-                (opponent1_position - opponent2_position).magnitude();
-            distance_between_opponents > CREATING_SPACE_THRESHOLD
-        } else {
-            false
+                let distance_between_opponents =
+                    (opponent1_position - opponent2_position).magnitude();
+
+                return distance_between_opponents > CREATING_SPACE_THRESHOLD;
+            }
         }
+
+        false
     }
 }

@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -88,15 +85,11 @@ impl ForwardRunningInBehindState {
     }
 
     fn space_ahead(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if there's open space ahead of the player
-        let space_threshold = 10.0; // Adjust based on your game's scale
-        let player_ops = ctx.players();
+        let space_threshold = 10.0;
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        let opponents = player_ops.opponents();
-        opponents
-            .all()
-            .iter()
-            .all(|p| p.position.distance_to(&ctx.player.position) > space_threshold)
+        !opponents.exists(space_threshold)
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext) -> bool {

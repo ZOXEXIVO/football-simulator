@@ -25,8 +25,9 @@ impl StateProcessingHandler for MidfielderTacklingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let players = ctx.players();
         let opponents = players.opponents();
+        let mut opponents_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponents.with_ball().first() {
+        if let Some(opponent) = opponents_with_ball.next() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 

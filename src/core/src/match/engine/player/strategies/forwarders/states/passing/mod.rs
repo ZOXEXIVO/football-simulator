@@ -114,18 +114,21 @@ impl ForwardPassingState {
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
         let max_distance = 20.0; // Adjust based on your game's scale
+
         let players = ctx.players();
         let opponents = players.opponents();
 
-        // Check if the teammate is within a reasonable distance
-        if ctx.player.position.distance_to(&teammate.position) > max_distance {
+        let distance = ctx.tick_context.object_positions.player_distances
+            .get(ctx.player.id, teammate.id)
+            .unwrap();
+
+        if distance > max_distance {
             return false;
         }
 
-        // Check if there are no opponents close to the teammate
-        opponents
-            .all()
-            .iter()
+        let mut all_opponents = opponents.all();
+
+        all_opponents
             .all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
     }
 
@@ -170,11 +173,7 @@ impl ForwardPassingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        // Check if there are no opponents within the dribble distance
-        opponents
-            .all()
-            .iter()
-            .all(|opponent| ctx.player.position.distance_to(&opponent.position) > dribble_distance)
+        !opponents.exists(dribble_distance)
     }
 
     fn can_shoot(&self, ctx: &StateProcessingContext) -> bool {
@@ -185,9 +184,6 @@ impl ForwardPassingState {
     }
 
     fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.players();
-        let opponents = players.opponents();
-
         let opponent_goal_position = match ctx.player.side {
             // swap for opponents
             Some(PlayerSide::Left) => ctx.context.goal_positions.left,
@@ -195,8 +191,12 @@ impl ForwardPassingState {
             _ => Vector3::new(0.0, 0.0, 0.0),
         };
 
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut opponents_all = opponents.all();
+
         // Check if there are no opponents blocking the shot
-        opponents.all().iter().all(|opponent| {
+        opponents_all.all(|opponent| {
             let opponent_to_goal = (opponent_goal_position - opponent.position).normalize();
             let player_to_goal = (opponent_goal_position - ctx.player.position).normalize();
             opponent_to_goal.dot(&player_to_goal) < 0.9

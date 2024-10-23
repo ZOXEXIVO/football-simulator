@@ -65,7 +65,7 @@ impl StateProcessingHandler for ForwardRunningState {
             let players = ctx.players();
             let opponents = players.opponents();
 
-            if let Some(opponent_with_ball) = opponents.with_ball().first() {
+            if let Some(opponent_with_ball) = opponents.with_ball().next() {
                 let opponent_distance = ctx
                     .tick_context
                     .object_positions

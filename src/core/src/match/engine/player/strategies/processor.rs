@@ -5,7 +5,10 @@ use crate::r#match::goalkeepers::states::state::{GoalkeeperState, GoalkeeperStra
 use crate::r#match::midfielders::states::{MidfielderState, MidfielderStrategies};
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::player::state::PlayerState::{Defender, Forward, Goalkeeper, Midfielder};
-use crate::r#match::{BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer, PlayerOperationsImpl, PlayersOperationsImpl, TeamOperationsImpl};
+use crate::r#match::{
+    BallOperationsImpl, CommonInjuredState, GameTickContext, MatchContext, MatchPlayer,
+    PlayerOperationsImpl, PlayersOperationsImpl, TeamOperationsImpl,
+};
 use crate::PlayerFieldPositionGroup;
 use log::info;
 use nalgebra::Vector3;
@@ -134,22 +137,22 @@ pub struct StateProcessingContext<'sp> {
 
 impl<'sp> StateProcessingContext<'sp> {
     #[inline]
-    pub fn ball(&self) -> BallOperationsImpl<'_> {
+    pub fn ball(&'sp self) -> BallOperationsImpl<'sp> {
         BallOperationsImpl::new(self)
     }
 
     #[inline]
-    pub fn player(&self) -> PlayerOperationsImpl<'_> {
+    pub fn player(&'sp self) -> PlayerOperationsImpl<'sp> {
         PlayerOperationsImpl::new(self)
     }
 
     #[inline]
-    pub fn players(&self) -> PlayersOperationsImpl<'_> {
+    pub fn players(&'sp self) -> PlayersOperationsImpl<'sp> {
         PlayersOperationsImpl::new(self)
     }
 
     #[inline]
-    pub fn team(&self) -> TeamOperationsImpl<'_> {
+    pub fn team(&'sp self) -> TeamOperationsImpl<'sp> {
         TeamOperationsImpl::new(self)
     }
 }

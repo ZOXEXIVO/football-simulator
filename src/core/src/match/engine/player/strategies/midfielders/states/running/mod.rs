@@ -117,7 +117,6 @@ impl MidfielderRunningState {
 
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
         let open_teammates = ctx.players().opponents().all()
-            .iter()
             .min_by(|a, b| {
                 // Prefer teammates closer to the opponent's goal
                 let a_distance = (a.position - ctx.ball().direction_to_opponent_goal()).magnitude();

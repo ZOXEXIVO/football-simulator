@@ -131,13 +131,13 @@ async fn main() {
         );
 
         // FPS
-        const average_fps_bucket_size: usize = 50;
+        const AVERAGE_FPS_BUCKET_SIZE: usize = 50;
 
         let mut max_fps: u128 = 0;
 
-        let mut fps_data = [0u128; average_fps_bucket_size];
+        let mut fps_data = [0u128; AVERAGE_FPS_BUCKET_SIZE];
 
-        let fps_data_current_idx = (current_frame % average_fps_bucket_size as u64) as usize;
+        let fps_data_current_idx = (current_frame % AVERAGE_FPS_BUCKET_SIZE as u64) as usize;
 
         let elapsed_mcs = elapsed.as_micros() as u128;
 
