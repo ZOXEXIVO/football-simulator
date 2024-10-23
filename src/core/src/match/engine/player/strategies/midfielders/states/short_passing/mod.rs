@@ -72,7 +72,6 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 }
 
 impl MidfielderShortPassingState {
-    /// Finds the best teammate to pass to based on proximity and position.
     fn find_best_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
         let max_pass_distance = MAX_PASS_DISTANCE;
 
