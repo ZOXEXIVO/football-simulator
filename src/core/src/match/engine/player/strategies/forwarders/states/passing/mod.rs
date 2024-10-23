@@ -105,7 +105,7 @@ impl ForwardPassingState {
     ) -> Option<&'a MatchPlayer> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(100.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
             return Some(ctx.context.players.get(teammate_id)?);
         }
 

@@ -33,7 +33,6 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
 
         let teammates = teammates.all();
         let best_teammate = teammates
-            .iter()
             .filter(|teammate| {
                 let distance = (teammate.position - ctx.player.position).magnitude();
                 distance >= THROW_DISTANCE_THRESHOLD

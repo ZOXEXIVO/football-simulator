@@ -24,19 +24,19 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
 
     // Teamates
 
-    pub fn all(&self) -> Vec<&MatchPlayer> {
+    pub fn all(&self) -> impl Iterator<Item = &MatchPlayer> {
         self.teammates_for_team(self.ctx.player.team_id, None)
     }
 
-    pub fn players_with_ball(&self) -> Vec<&MatchPlayer> {
+    pub fn players_with_ball(&self) -> impl Iterator<Item = &MatchPlayer> {
         self.teammates_for_team(self.ctx.player.team_id, Some(true))
     }
 
-    pub fn players_without_ball(&self) -> Vec<&MatchPlayer> {
+    pub fn players_without_ball(&self) -> impl Iterator<Item = &MatchPlayer> {
         self.teammates_for_team(self.ctx.player.team_id, Some(false))
     }
 
-    pub fn forwards(&self) -> Vec<&MatchPlayer> {
+    pub fn forwards(&self) -> impl Iterator<Item = &MatchPlayer> {
         self.teammates_by_position(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
     }
 
@@ -44,36 +44,28 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
         &self,
         position_group: PlayerFieldPositionGroup,
         team_id: u32,
-    ) -> Vec<&MatchPlayer> {
+    ) -> impl Iterator<Item = &MatchPlayer> {
         self.ctx
             .context
             .players
             .players
             .values()
-            .filter(|player| {
+            .filter(move |player| {
                 player.team_id == team_id
                     && player.tactics_position.position_group() == position_group
             })
-            .collect()
     }
 
-    fn teammates_for_team(&self, team_id: u32, has_ball: Option<bool>) -> Vec<&MatchPlayer> {
+    fn teammates_for_team(&self, team_id: u32, has_ball: Option<bool>) -> impl Iterator<Item = &MatchPlayer> {
         let teammates = self
             .ctx
             .context
             .players
             .players
             .values()
-            .filter(|player| player.team_id == team_id);
+            .filter(move |player| player.team_id == team_id && (has_ball.is_none() || player.has_ball == has_ball.unwrap()));
 
-        if has_ball.is_some() {
-            let ball_val = has_ball.unwrap();
-            return teammates
-                .filter(|player| player.has_ball == ball_val)
-                .collect();
-        }
-
-        teammates.collect()
+        teammates
     }
 
     pub fn nearby(&'b self, distance: f32) -> impl Iterator<Item = &MatchPlayer> + 'b {

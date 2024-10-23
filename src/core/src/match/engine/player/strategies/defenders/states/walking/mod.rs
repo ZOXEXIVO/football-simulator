@@ -2,10 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::{
-    ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions,
-};
+use crate::r#match::{ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::IntegerUtils;
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -147,7 +144,7 @@ impl DefenderWalkingState {
     fn calculate_team_center(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let players = ctx.players();
         let teammates = players.teammates();
-        let all_teammates = teammates.all();
+        let all_teammates: Vec<&MatchPlayer> = teammates.all().collect();
 
         let sum: Vector3<f32> = all_teammates.iter().map(|p| p.position).sum();
         sum / all_teammates.len() as f32

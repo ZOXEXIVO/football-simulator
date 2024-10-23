@@ -35,7 +35,7 @@ impl StateProcessingHandler for ForwardHeadingUpPlayState {
         }
 
         // Check if there's an opportunity to pass to a teammate
-        if let Some(teammate_id) = self.find_best_pass_option(ctx) {
+        if let Some(_) = self.find_best_pass_option(ctx) {
              // Transition to Running state after making the pass
             return Some(StateChangeResult::with_forward_state_and_event(ForwardState::Running, Event::PlayerEvent(PlayerEvent::RequestPass(ctx.player.id))));
         }
@@ -69,15 +69,13 @@ impl ForwardHeadingUpPlayState {
 
         teammates
             .all()
-            .iter()
-            .enumerate()
-            .filter(|(_, teammate)| {
+            .filter(|teammate| {
                 // Check if the teammate is in a good position to receive a pass
                 let is_open = self.is_open_for_pass(ctx, teammate);
                 let is_in_passing_lane = self.in_passing_lane(ctx, teammate);
                 is_open && is_in_passing_lane
             })
-            .max_by(|(_, a), (_, b)| {
+            .max_by(|a, b| {
                 // Find the teammate with the highest scoring chance
                 let score_a = self.scoring_chance(ctx, a);
                 let score_b = self.scoring_chance(ctx, b);
@@ -85,7 +83,7 @@ impl ForwardHeadingUpPlayState {
                     .partial_cmp(&score_b)
                     .unwrap_or(std::cmp::Ordering::Equal)
             })
-            .map(|(_index, player)| player.id)
+            .map(|player| player.id)
     }
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {

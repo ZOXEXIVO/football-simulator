@@ -134,7 +134,6 @@ impl ForwardRunningState {
 
         let (leading_forward, _) =
             forwards
-                .iter()
                 .fold((None, f32::MIN), |(leading_player, max_score), player| {
                     let distance = (player.position
                         - ctx.tick_context.object_positions.ball_position)
