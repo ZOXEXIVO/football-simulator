@@ -59,7 +59,7 @@ impl StateProcessingHandler for DefenderRunningState {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.ball().direction_to_opponent_goal(),
-                    slowing_distance: 10.0,
+                    slowing_distance: 150.0,
                 }
                 .calculate(ctx.player)
                 .velocity,
@@ -67,8 +67,8 @@ impl StateProcessingHandler for DefenderRunningState {
         } else {
             Some(
                 SteeringBehavior::Arrive {
-                    target: ctx.tick_context.object_positions.ball_position,
-                    slowing_distance: 1.0,
+                    target: ctx.ball().direction_to_opponent_goal(),
+                    slowing_distance: 100.0,
                 }
                 .calculate(ctx.player)
                 .velocity,

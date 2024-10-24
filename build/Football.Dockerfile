@@ -18,7 +18,11 @@ WORKDIR /src
 
 COPY ./ ./
 
+# RUN TESTS
+
 RUN cargo test -p core
+
+# BUILD RELEASE
 
 RUN cargo build --release
 
