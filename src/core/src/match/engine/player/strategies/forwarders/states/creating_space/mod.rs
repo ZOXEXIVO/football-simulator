@@ -20,6 +20,12 @@ pub struct ForwardCreatingSpaceState {}
 
 impl StateProcessingHandler for ForwardCreatingSpaceState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if !ctx.team().is_control_ball() {
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Running,
+            ));
+        }
+
         // Check if the player has created enough space
         if self.has_created_space(ctx) {
             // If space is created, transition to the assisting state

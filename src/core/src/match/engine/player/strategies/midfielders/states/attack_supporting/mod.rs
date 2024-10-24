@@ -56,23 +56,15 @@ impl StateProcessingHandler for MidfielderAttackSupportingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Calculate the target position to support the attack
         let target_position = self.calculate_support_position(ctx);
 
-        // Create a Seek steering behavior towards the target position
-        let seek_behavior = SteeringBehavior::Seek {
+        Some(SteeringBehavior::Seek {
             target: target_position,
-        };
-
-        // Calculate the steering output
-        let steering_output = seek_behavior.calculate(&ctx.player);
-
-        // Return the velocity from the steering output
-        Some(steering_output.velocity)
+        }.calculate(&ctx.player).velocity)
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {
-        // No additional conditions
+
     }
 }
 

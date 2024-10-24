@@ -17,7 +17,7 @@ impl<'p> PlayersOperationsImpl<'p> {
 
 impl<'p> PlayersOperationsImpl<'p> {
     // Teammates
-    pub fn teammates(&self) -> PlayerTeammatesOperationsImpl<'_> {
+    pub fn teammates(self) -> PlayerTeammatesOperationsImpl<'p> {
         PlayerTeammatesOperationsImpl::new(self.ctx)
     }
 

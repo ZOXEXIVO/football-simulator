@@ -24,16 +24,19 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
 
     // Teamates
 
-    pub fn all(&self) -> impl Iterator<Item = &MatchPlayer> {
-        self.teammates_for_team(self.ctx.player.team_id, None)
+    pub fn all(self) -> impl Iterator<Item = &'b MatchPlayer> {
+        let player_id = self.ctx.player.team_id;
+        self.teammates_for_team(player_id, None)
     }
 
     pub fn players_with_ball(&self) -> impl Iterator<Item = &MatchPlayer> {
-        self.teammates_for_team(self.ctx.player.team_id, Some(true))
+        let player_id = self.ctx.player.team_id;
+        self.teammates_for_team(player_id, Some(true))
     }
 
     pub fn players_without_ball(&self) -> impl Iterator<Item = &MatchPlayer> {
-        self.teammates_for_team(self.ctx.player.team_id, Some(false))
+        let player_id = self.ctx.player.team_id;
+        self.teammates_for_team(player_id, Some(false))
     }
 
     pub fn forwards(&self) -> impl Iterator<Item = &MatchPlayer> {
@@ -56,7 +59,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             })
     }
 
-    fn teammates_for_team(&self, team_id: u32, has_ball: Option<bool>) -> impl Iterator<Item = &MatchPlayer> {
+    fn teammates_for_team(self, team_id: u32, has_ball: Option<bool>) -> impl Iterator<Item = &'b MatchPlayer> {
         let teammates = self
             .ctx
             .context
