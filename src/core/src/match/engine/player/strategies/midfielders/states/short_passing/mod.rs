@@ -1,5 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
@@ -13,7 +14,7 @@ static MIDFIELDER_SHORT_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_short_passing_data.json")));
 
 // Constants used in passing calculations
-const MAX_PASS_DISTANCE: f32 = 50.0; // Maximum distance for a short pass
+const MAX_PASS_DISTANCE: f32 = 100.0; // Maximum distance for a short pass
 const MIN_PASS_SPEED: f32 = 10.0; // Minimum speed of the pass
 const MAX_PASS_SPEED: f32 = 15.0; // Maximum speed of the pass
 const STAMINA_COST_PASS: f32 = 2.0; // Stamina cost of making a pass
@@ -34,19 +35,12 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 
         // Determine the best teammate to pass to
         if let Some(target_teammate) = self.find_best_teammate(ctx) {
-            // Calculate pass velocity
             let pass_velocity = self.calculate_pass_velocity(ctx, &target_teammate);
 
-            // Create an event to change the ball's velocity and update possession
-            let mut state_change =
-                StateChangeResult::with_midfielder_state(MidfielderState::Standing);
-
-            state_change
-                .events
-                .add_player_event(PlayerEvent::MoveBall(ctx.player.id, pass_velocity));
-
-            // Transition to the next appropriate state (e.g., Standing)
-            Some(state_change)
+            Some(StateChangeResult::with_midfielder_state_and_event(
+                MidfielderState::Standing,
+                Event::PlayerEvent(PlayerEvent::MoveBall(ctx.player.id, pass_velocity)),
+            ))
         } else {
             // No available teammate found, consider other options
             Some(StateChangeResult::with_midfielder_state(

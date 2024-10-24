@@ -74,7 +74,6 @@ impl StateProcessingHandler for ForwardAssistingState {
             }
         }
 
-        // If no good assist opportunity, consider other options
         if self.is_in_shooting_range(ctx) && ctx.player.has_ball {
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Shooting,
@@ -83,14 +82,8 @@ impl StateProcessingHandler for ForwardAssistingState {
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::CreatingSpace,
             ));
-        } else if self.should_ask_for_pass(ctx) {
-            result
-                .events
-                .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
-            return Some(result);
         }
 
-        // If no clear action, continue in the current state
         None
     }
 
@@ -174,16 +167,5 @@ impl ForwardAssistingState {
     fn is_on_opponent_side(&self, ctx: &StateProcessingContext) -> bool {
         let field_half_length = ctx.context.field_size.width as f32 / 2.0;
         ctx.player.position.x > field_half_length
-    }
-
-    fn should_ask_for_pass(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if the player is in a good position to receive a pass
-        let player_distance_from_goal = ctx.ball().distance_to_opponent_goal();
-
-        let has_good_space = ctx.players().opponents().nearby_raw(100.0).count() > 2;
-
-        player_distance_from_goal < 30.0
-            && has_good_space
-            && ctx.player.skills.mental.off_the_ball > 70.0
     }
 }

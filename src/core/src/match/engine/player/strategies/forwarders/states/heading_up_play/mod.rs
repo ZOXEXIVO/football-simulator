@@ -37,7 +37,7 @@ impl StateProcessingHandler for ForwardHeadingUpPlayState {
         // Check if there's an opportunity to pass to a teammate
         if let Some(_) = self.find_best_pass_option(ctx) {
              // Transition to Running state after making the pass
-            return Some(StateChangeResult::with_forward_state_and_event(ForwardState::Running, Event::PlayerEvent(PlayerEvent::RequestPass(ctx.player.id))));
+            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }
 
         None

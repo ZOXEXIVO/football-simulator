@@ -25,7 +25,6 @@ pub enum PlayerEvent {
     GainBall(u32),
     CaughtBall(u32),
     CommitFoul,
-    RequestPass(u32),
     RequestHeading(u32, Vector3<f32>),
     RequestShot(u32, Vector3<f32>),
     RequestBallReceive(u32),
@@ -114,9 +113,11 @@ impl PlayerEventDispatcher {
             PlayerEvent::ClearBall(_ball_velocity) => {
                 //field.ball.velocity = *ball_velocity;
             }
-            PlayerEvent::MoveBall(player_id, _ball_velocity) => {
+            PlayerEvent::MoveBall(player_id, ball_velocity) => {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
+
+                field.ball.velocity = ball_velocity;
             }
             PlayerEvent::GainBall(player_id) => {
                 field.ball.previous_owner = field.ball.current_owner;
@@ -135,7 +136,6 @@ impl PlayerEventDispatcher {
 
                 field.ball.flags.in_passing_state_time = 10;
             }
-            PlayerEvent::RequestPass(_) => {}
             PlayerEvent::RequestHeading(_, _) => {}
             PlayerEvent::RequestShot(_, _) => {}
             PlayerEvent::RequestBallReceive(_) => {}

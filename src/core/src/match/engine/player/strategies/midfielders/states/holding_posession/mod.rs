@@ -64,6 +64,6 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
 
 impl MidfielderHoldingPossessionState {
     pub fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().nearby_raw(50.0).count() > 1
+        ctx.players().opponents().nearby_raw(30.0).count() >= 1
     }
 }

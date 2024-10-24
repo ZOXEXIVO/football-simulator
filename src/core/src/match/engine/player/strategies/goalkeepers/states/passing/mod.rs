@@ -28,7 +28,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         let players = ctx.players();
         let teammates = players.teammates();
 
-        let mut nearest_teammates = teammates.nearby_raw(30.0);
+        let mut nearest_teammates = teammates.nearby_raw(100.0);
 
         if let Some((teammate_id, teammate_distance)) = nearest_teammates.next() {
             let pass_skill = ctx.player.skills.technical.passing;

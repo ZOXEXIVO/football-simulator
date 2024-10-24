@@ -30,17 +30,15 @@ impl StateProcessingHandler for MidfielderRunningState {
                 ));
             }
 
-            if let Some(teammate_id) = self.find_open_teammate(ctx) {
-                return Some(StateChangeResult::with_midfielder_state_and_event(
-                    MidfielderState::ShortPassing,
-                    Event::PlayerEvent(PlayerEvent::RequestPass(teammate_id)),
-                ));
-            }
-
-            // If no shooting or passing options, consider dribbling
             if self.should_dribble(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Dribbling,
+                ));
+            }
+
+            if let Some(teammate_id) = self.find_open_teammate(ctx) {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::ShortPassing
                 ));
             }
         } else {
@@ -72,7 +70,6 @@ impl StateProcessingHandler for MidfielderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Check if there's space to run between opponents
         if let Some(target_position) = self.find_space_between_opponents(ctx) {
             Some(
                 SteeringBehavior::Arrive {
@@ -82,7 +79,7 @@ impl StateProcessingHandler for MidfielderRunningState {
                 .calculate(ctx.player)
                 .velocity,
             )
-        } else if ctx.team().is_control_ball() {
+        } else if  ctx.player.has_ball || ctx.team().is_control_ball() {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.ball().direction_to_opponent_goal(),
@@ -129,9 +126,8 @@ impl MidfielderRunningState {
     }
 
     fn should_press(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if the player should press the opponent with the ball
         let ball_distance = ctx.ball().distance();
-        let pressing_distance = 150.0; // Adjust the threshold as needed
+        let pressing_distance = 150.0;
 
         !ctx.team().is_control_ball() && ball_distance < pressing_distance
     }
