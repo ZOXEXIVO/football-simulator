@@ -57,6 +57,10 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
         )
     }
 
+    pub fn forwards(&'b self) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
+        self.opponents_by_position(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
+    }
+
     fn opponents_by_position(
         &'b self,
         position_group: PlayerFieldPositionGroup,

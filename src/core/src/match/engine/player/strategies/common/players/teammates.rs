@@ -24,7 +24,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
 
     // Teamates
 
-    pub fn all(&self) -> impl Iterator<Item = &'b MatchPlayer> {
+    pub fn all(&'b self) -> impl Iterator<Item = &'b MatchPlayer> {
         self.teammates_for_team(self.ctx.player.team_id, None)
     }
 

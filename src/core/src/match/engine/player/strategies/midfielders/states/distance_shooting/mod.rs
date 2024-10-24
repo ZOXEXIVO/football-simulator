@@ -43,7 +43,7 @@ impl StateProcessingHandler for MidfielderDistanceShootingState {
         // Evaluate shooting opportunity
         if self.is_favorable_shooting_opportunity(ctx) {
             // Calculate shot direction and power
-            let (shot_direction, shot_power) = self.calculate_shot(ctx);
+            let (shot_direction, _) = self.calculate_shot(ctx);
 
             // Transition to shooting state
             return Some(StateChangeResult::with_midfielder_state_and_event(
@@ -108,7 +108,7 @@ impl MidfielderDistanceShootingState {
 
     fn should_pass(&self, ctx: &StateProcessingContext) -> bool {
         // Determine if the player should pass based on the game state
-        let has_open_teammate = self.find_open_teammate(ctx).is_some();
+        let has_open_teammate = self.find_open_teammate(ctx).next().is_some();
         let under_pressure = self.is_under_pressure(ctx);
 
         has_open_teammate && under_pressure
@@ -189,12 +189,12 @@ impl MidfielderDistanceShootingState {
         ray_cast_result.is_none() // No collisions with opponents
     }
 
-    fn find_open_teammate<'a>(&self, ctx: &'a StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
+    fn find_open_teammate<'a>(&'a self, ctx: &'a StateProcessingContext<'a>) -> impl Iterator<Item = &MatchPlayer> + 'a {
         let players = ctx.players();
         let teammates = players.teammates();
         let all_teammates = teammates.all();
 
-        all_teammates.filter(|teammate| self.is_teammate_open(ctx, teammate)).next()
+        all_teammates.filter(|teammate| self.is_teammate_open(ctx, teammate))
     }
 
     fn is_teammate_open(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {

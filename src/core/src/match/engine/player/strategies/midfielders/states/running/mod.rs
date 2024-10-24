@@ -1,8 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior
@@ -36,7 +34,7 @@ impl StateProcessingHandler for MidfielderRunningState {
                 ));
             }
 
-            if let Some(teammate_id) = self.find_open_teammate(ctx) {
+            if let Some(_) = self.find_open_teammate(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::ShortPassing
                 ));

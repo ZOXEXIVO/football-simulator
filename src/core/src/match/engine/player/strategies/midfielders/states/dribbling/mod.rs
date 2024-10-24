@@ -1,14 +1,12 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use std::sync::LazyLock;
 use rand::prelude::IteratorRandom;
+use std::sync::LazyLock;
 
 static MIDFIELDER_DRIBBLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_dribbling_data.json")));
@@ -26,7 +24,7 @@ impl StateProcessingHandler for MidfielderDribblingState {
                 ));
             }
 
-            if let Some(teammate_id) = self.find_open_teammate(ctx) {
+            if let Some(_) = self.find_open_teammate(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::ShortPassing
                 ));
