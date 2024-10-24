@@ -34,7 +34,7 @@ impl StateProcessingHandler for ForwardHeadingUpPlayState {
 
         // Check if there's an opportunity to pass to a teammate
         if let Some(_) = self.find_best_pass_option(ctx) {
-             // Transition to Running state after making the pass
+            // Transition to Running state after making the pass
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }
 
@@ -90,18 +90,23 @@ impl ForwardHeadingUpPlayState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        let distance = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id).unwrap();
+        let distance = ctx
+            .tick_context
+            .object_positions
+            .player_distances
+            .get(ctx.player.id, teammate.id);
 
         // Check if the teammate is within a reasonable distance
-        if distance > max_distance {
-            return false;
+        if let Some(distance) = distance {
+            if distance > max_distance {
+                return false;
+            }
         }
 
         let mut all_opponents_close = opponents.all();
 
         // Check if there are no opponents close to the teammate
-        all_opponents_close
-            .all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
+        all_opponents_close.all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
