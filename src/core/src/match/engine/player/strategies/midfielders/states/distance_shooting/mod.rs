@@ -108,7 +108,14 @@ impl MidfielderDistanceShootingState {
 
     fn should_pass(&self, ctx: &StateProcessingContext) -> bool {
         // Determine if the player should pass based on the game state
-        let has_open_teammate = self.find_open_teammate(ctx).next().is_some();
+
+        let players = ctx.players();
+        let teammates = players.teammates();
+
+        let mut open_teammates = teammates.all()
+            .filter(|teammate| self.is_teammate_open(ctx, teammate));
+
+        let has_open_teammate = open_teammates.next().is_some();
         let under_pressure = self.is_under_pressure(ctx);
 
         has_open_teammate && under_pressure
@@ -120,24 +127,6 @@ impl MidfielderDistanceShootingState {
         let under_pressure = self.is_under_pressure(ctx);
 
         has_space && !under_pressure
-    }
-
-    fn prepare_input_data(&self, ctx: &StateProcessingContext) -> Vec<f32> {
-        // Prepare the input data for the neural network based on the game state
-        let player_position = ctx.player.position;
-        let ball_position = ctx.tick_context.object_positions.ball_position;
-        let goal_position = self.get_opponent_goal_position(ctx);
-
-        // Include relevant features such as distances, angles, player attributes, etc.
-        vec![
-            player_position.x,
-            player_position.y,
-            ball_position.x,
-            ball_position.y,
-            goal_position.x,
-            goal_position.y,
-            // Add more features as needed
-        ]
     }
 
     fn calculate_desired_shooting_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
@@ -187,14 +176,6 @@ impl MidfielderDistanceShootingState {
         );
 
         ray_cast_result.is_none() // No collisions with opponents
-    }
-
-    fn find_open_teammate<'a>(&'a self, ctx: &'a StateProcessingContext<'a>) -> impl Iterator<Item = &MatchPlayer> + 'a {
-        let players = ctx.players();
-        let teammates = players.teammates();
-        let all_teammates = teammates.all();
-
-        all_teammates.filter(|teammate| self.is_teammate_open(ctx, teammate))
     }
 
     fn is_teammate_open(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
