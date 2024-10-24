@@ -59,7 +59,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
             let mut nearest_teammates = teammates.nearby_raw(300.0);
 
             if let Some((teammate_id, teammate_distance)) = nearest_teammates.next() {
-                let teammaste_position = ctx
+                let teammate_position = ctx
                     .tick_context
                     .object_positions
                     .players_positions
@@ -72,7 +72,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
                     GoalkeeperState::Standing,
                     Event::PlayerEvent(PlayerEvent::PassTo(
                         teammate_id,
-                        teammaste_position,
+                        teammate_position,
                         pass_power,
                     )),
                 ));
