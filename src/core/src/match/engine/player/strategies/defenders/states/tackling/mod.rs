@@ -41,7 +41,7 @@ impl StateProcessingHandler for DefenderTacklingState {
                 PlayerDistanceFromStartPosition::Small => None,
             };
 
-            if let Some(is_far_from_start_position) = is_far_from_start_position {
+            if let Some(_is_far_from_start_position) = is_far_from_start_position {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Running,
                 ));
@@ -58,16 +58,15 @@ impl StateProcessingHandler for DefenderTacklingState {
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.team();
-        let opponent_with_ball = players.opponent_with_ball();
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut opponents_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponent_with_ball.first() {
+        if let Some(opponent) = opponents_with_ball.next() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 
             if distance_to_opponent > TACKLE_DISTANCE_THRESHOLD {
-                // Opponent is too far to attempt a sliding tackle
-                // Transition back to appropriate state (e.g., Pressing)
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Pressing,
                 ));
@@ -86,14 +85,7 @@ impl StateProcessingHandler for DefenderTacklingState {
                     .events
                     .add(Event::PlayerEvent(PlayerEvent::GainBall(ctx.player.id)));
 
-                // Update opponent's state to reflect loss of possession
-                // This assumes you have a mechanism to update other players' states
-                // You may need to send an event or directly modify the opponent's state
-
-                // Optionally reduce defender's stamina
-                // ctx.player.player_attributes.reduce_stamina(tackle_stamina_cost);
-
-                return Some(state_change);
+                Some(state_change)
             } else if committed_foul {
                 // Tackle resulted in a foul
                 let mut state_change =
@@ -104,20 +96,13 @@ impl StateProcessingHandler for DefenderTacklingState {
                     .events
                     .add_player_event(PlayerEvent::CommitFoul);
 
-                // Transition to appropriate state (e.g., ReactingToFoul)
-                // You may need to define additional states for handling fouls
-
-                return Some(state_change);
+                Some(state_change)
             } else {
-                // Tackle failed without committing a foul
-                // Transition back to appropriate state
-                return Some(StateChangeResult::with_defender_state(
+                Some(StateChangeResult::with_defender_state(
                     DefenderState::Standing,
-                ));
+                ))
             }
         } else {
-            // No opponent with the ball found
-            // Transition back to appropriate state
             Some(StateChangeResult::with_defender_state(
                 DefenderState::HoldingLine,
             ))
@@ -146,10 +131,11 @@ impl StateProcessingHandler for DefenderTacklingState {
             }
 
             // Identify the opponent player with the ball
-            let players = ctx.team();
-            let opponent_with_ball = players.opponent_with_ball();
+            let players = ctx.players();
+            let opponents = players.opponents();
+            let mut opponents_with_ball = opponents.with_ball();
 
-            if let Some(opponent) = opponent_with_ball.first() {
+            if let Some(opponent) = opponents_with_ball.next() {
                 Some(
                     SteeringBehavior::Arrive {
                         target: opponent.position,
@@ -178,7 +164,7 @@ impl DefenderTacklingState {
     fn attempt_sliding_tackle(
         &self,
         ctx: &StateProcessingContext,
-        opponent: &MatchPlayer,
+        _opponent: &MatchPlayer,
     ) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 

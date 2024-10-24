@@ -5,9 +5,7 @@ use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use crate::PlayerFieldPositionGroup;
-use log::{error, info};
-use nalgebra::Vector3;
-use std::f32::NAN;
+use log::{error};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Copy, PartialEq)]

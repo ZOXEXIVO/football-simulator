@@ -31,7 +31,7 @@ impl BallEventDispatcher {
         info!("BALL EVENT: {:?}", event);
 
         match event {
-            BallEvent::Goal(side, goalscorer_player_id) => {
+            BallEvent::Goal(side, _goalscorer_player_id) => {
                 field.reset_players_positions();
 
                 match side {

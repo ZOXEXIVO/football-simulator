@@ -9,8 +9,8 @@ use crate::r#match::{
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
 use std::sync::LazyLock;
+use rand::prelude::IteratorRandom;
 
 static FORWARD_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -20,8 +20,6 @@ pub struct ForwardPassingState {}
 
 impl StateProcessingHandler for ForwardPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let player_ops = ctx.player();
-
         // Check if the player has the ball
         if !ctx.player.has_ball {
             // Transition to Running state if the player doesn't have the ball
@@ -76,15 +74,15 @@ impl StateProcessingHandler for ForwardPassingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardPassingState {
@@ -105,16 +103,10 @@ impl ForwardPassingState {
         &self,
         ctx: &StateProcessingContext<'a>,
     ) -> Option<&'a MatchPlayer> {
-        let teammates = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player);
+        let players = ctx.players();
 
-        if let Some(teammates_result) = teammates {
-            if let Some((teammate_id, _)) = teammates_result.choose(&mut rand::thread_rng()) {
-                return Some(ctx.context.players.get(*teammate_id)?);
-            }
+        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
+            return Some(ctx.context.players.get(teammate_id)?);
         }
 
         None
@@ -122,17 +114,21 @@ impl ForwardPassingState {
 
     fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
         let max_distance = 20.0; // Adjust based on your game's scale
-        let players = ctx.team();
+
+        let players = ctx.players();
         let opponents = players.opponents();
 
-        // Check if the teammate is within a reasonable distance
-        if ctx.player.position.distance_to(&teammate.position) > max_distance {
+        let distance = ctx.tick_context.object_positions.player_distances
+            .get(ctx.player.id, teammate.id)
+            .unwrap();
+
+        if distance > max_distance {
             return false;
         }
 
-        // Check if there are no opponents close to the teammate
-        opponents
-            .iter()
+        let mut all_opponents = opponents.all();
+
+        all_opponents
             .all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
     }
 
@@ -174,13 +170,10 @@ impl ForwardPassingState {
 
     fn space_to_dribble(&self, ctx: &StateProcessingContext) -> bool {
         let dribble_distance = 10.0; // Adjust based on your game's scale
-        let players = ctx.team();
+        let players = ctx.players();
         let opponents = players.opponents();
 
-        // Check if there are no opponents within the dribble distance
-        opponents
-            .iter()
-            .all(|opponent| ctx.player.position.distance_to(&opponent.position) > dribble_distance)
+        !opponents.exists(dribble_distance)
     }
 
     fn can_shoot(&self, ctx: &StateProcessingContext) -> bool {
@@ -191,9 +184,6 @@ impl ForwardPassingState {
     }
 
     fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
-        let opponents = players.opponents();
-
         let opponent_goal_position = match ctx.player.side {
             // swap for opponents
             Some(PlayerSide::Left) => ctx.context.goal_positions.left,
@@ -201,8 +191,12 @@ impl ForwardPassingState {
             _ => Vector3::new(0.0, 0.0, 0.0),
         };
 
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut opponents_all = opponents.all();
+
         // Check if there are no opponents blocking the shot
-        opponents.iter().all(|opponent| {
+        opponents_all.all(|opponent| {
             let opponent_to_goal = (opponent_goal_position - opponent.position).normalize();
             let player_to_goal = (opponent_goal_position - ctx.player.position).normalize();
             opponent_to_goal.dot(&player_to_goal) < 0.9

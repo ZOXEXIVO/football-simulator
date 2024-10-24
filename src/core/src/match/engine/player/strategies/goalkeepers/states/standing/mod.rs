@@ -57,7 +57,7 @@ impl StateProcessingHandler for GoalkeeperStandingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         // For now, return None to indicate no state change
         None
@@ -77,7 +77,10 @@ impl StateProcessingHandler for GoalkeeperStandingState {
 
 impl GoalkeeperStandingState {
     fn is_opponent_in_danger_zone(&self, ctx: &StateProcessingContext) -> bool {
-        if let Some(opponent_with_ball) = ctx.team().opponent_with_ball().first() {
+        let players = ctx.players();
+        let opponents = players.opponents();
+
+        if let Some(opponent_with_ball) = opponents.with_ball().next() {
             if let Some(opponent_distance) = ctx
                 .tick_context
                 .object_positions

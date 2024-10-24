@@ -1,11 +1,9 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler, SteeringBehavior, VectorExtensions,
+    StateProcessingHandler, SteeringBehavior
 };
 use crate::IntegerUtils;
 use nalgebra::Vector3;
@@ -30,17 +28,15 @@ impl StateProcessingHandler for MidfielderRunningState {
                 ));
             }
 
-            if let Some(teammate_id) = self.find_open_teammate(ctx) {
-                return Some(StateChangeResult::with_midfielder_state_and_event(
-                    MidfielderState::ShortPassing,
-                    Event::PlayerEvent(PlayerEvent::RequestPass(teammate_id)),
-                ));
-            }
-
-            // If no shooting or passing options, consider dribbling
             if self.should_dribble(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Dribbling,
+                ));
+            }
+
+            if let Some(_) = self.find_open_teammate(ctx) {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::ShortPassing
                 ));
             }
         } else {
@@ -67,12 +63,11 @@ impl StateProcessingHandler for MidfielderRunningState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Check if there's space to run between opponents
         if let Some(target_position) = self.find_space_between_opponents(ctx) {
             Some(
                 SteeringBehavior::Arrive {
@@ -82,7 +77,7 @@ impl StateProcessingHandler for MidfielderRunningState {
                 .calculate(ctx.player)
                 .velocity,
             )
-        } else if ctx.team().is_control_ball() {
+        } else if  ctx.player.has_ball || ctx.team().is_control_ball() {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.ball().direction_to_opponent_goal(),
@@ -106,7 +101,7 @@ impl StateProcessingHandler for MidfielderRunningState {
         }
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl MidfielderRunningState {
@@ -116,22 +111,7 @@ impl MidfielderRunningState {
     }
 
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
-        // Find an open teammate to pass to
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
-        let open_teammates = teammates
-            .iter()
-            .filter(|teammate| {
-                // Check if the teammate is open (not closely marked by an opponent)
-                let opponent_distance = ctx
-                    .tick_context
-                    .object_positions
-                    .player_distances
-                    .find_closest_opponent(teammate)
-                    .map(|(_, distance)| distance)
-                    .unwrap_or(f32::MAX);
-
-                opponent_distance > 5.0 // Adjust the threshold as needed
-            })
+        let open_teammates = ctx.players().opponents().all()
             .min_by(|a, b| {
                 // Prefer teammates closer to the opponent's goal
                 let a_distance = (a.position - ctx.ball().direction_to_opponent_goal()).magnitude();
@@ -144,31 +124,32 @@ impl MidfielderRunningState {
     }
 
     fn should_press(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if the player should press the opponent with the ball
         let ball_distance = ctx.ball().distance();
-        let pressing_distance = 150.0; // Adjust the threshold as needed
+        let pressing_distance = 150.0;
 
         !ctx.team().is_control_ball() && ball_distance < pressing_distance
     }
 
     fn find_space_between_opponents(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let nearest_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player);
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        if let Some(opponents) = nearest_opponents {
-            if opponents.len() >= 2 {
-                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
-                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+        let mut nearest_opponents = opponents.nearby_raw(150.0);
 
-                let midpoint = (opponent1_position + opponent2_position) * 0.5;
-                let distance_between_opponents =
-                    opponent1_position.distance_to(&opponent2_position);
+        if let Some((first_id, _)) = nearest_opponents.next() {
+            if let Some((second_id, _)) = nearest_opponents.next() {
+                if let Some(distance_between_opponents) = ctx.tick_context.object_positions.player_distances.get(first_id, second_id) {
+                    if distance_between_opponents > 10.0 {
+                        let first_position = ctx.tick_context.object_positions.players_positions
+                            .get_player_position(first_id).unwrap();
 
-                if distance_between_opponents > 10.0 {
-                    return Some(midpoint);
+                        let second_position = ctx.tick_context.object_positions.players_positions
+                            .get_player_position(second_id).unwrap();
+
+                        let midpoint = (first_position + second_position) * 0.5;
+
+                        return Some(midpoint);
+                    }
                 }
             }
         }
@@ -215,21 +196,6 @@ impl MidfielderRunningState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if there are opponents close to the player
-        let pressure_distance = 5.0;
-        let close_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player)
-            .map(|opponents| {
-                opponents
-                    .iter()
-                    .filter(|(_, dist)| *dist < pressure_distance)
-                    .count()
-            })
-            .unwrap_or(0);
-
-        close_opponents > 0
+        ctx.players().opponents().exists(10.0)
     }
 }

@@ -50,23 +50,24 @@ impl StateProcessingHandler for ForwardOffsideTrapBreakingState {
         Some(result)
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardOffsideTrapBreakingState {
     fn is_offside_trap_active(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
+        let players = ctx.players();
         let opponents = players.opponents();
+
         let offside_line = opponents
-            .iter()
+            .all()
             .map(|opponent| opponent.position.x)
             .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
             .unwrap_or(0.0);
@@ -78,11 +79,12 @@ impl ForwardOffsideTrapBreakingState {
     fn find_best_position(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         let ball_position = ctx.tick_context.object_positions.ball_position;
 
-        let players = ctx.team();
+        let players = ctx.players();
         let opponents = players.opponents();
 
         let offside_line = opponents
-            .iter()
+            .all()
+            .into_iter()
             .map(|opponent| opponent.position.x)
             .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
             .unwrap_or(0.0);

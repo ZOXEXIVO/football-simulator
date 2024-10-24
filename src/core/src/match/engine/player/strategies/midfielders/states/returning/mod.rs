@@ -35,7 +35,7 @@ impl StateProcessingHandler for MidfielderReturningState {
         }
 
         // 3. Check if the team is losing and time is running out
-        if ctx.player().is_team_loosing() && ctx.context.time.is_running_out() {
+        if ctx.team().is_loosing() && ctx.context.time.is_running_out() {
             // Transition to SupportingAttack to push forward
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::SupportingAttack,
@@ -45,7 +45,7 @@ impl StateProcessingHandler for MidfielderReturningState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -60,5 +60,5 @@ impl StateProcessingHandler for MidfielderReturningState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }

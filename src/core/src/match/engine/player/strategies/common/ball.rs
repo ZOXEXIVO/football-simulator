@@ -94,9 +94,10 @@ impl<'b> BallOperationsImpl<'b> {
         let player = self.ctx.player;
         let ball_position = self.ctx.tick_context.object_positions.ball_position;
 
-        let players = self.ctx.team();
-        let goalkeepers = players.goalkeeper_opponents();
-        let goalkeeper = goalkeepers.first().unwrap();
+        let players = self.ctx.players();
+        let opponents = players.opponents();
+        let mut goalkeepers = opponents.goalkeeper();
+        let goalkeeper = goalkeepers.next().unwrap();
 
         let player_position = player.position;
         let goalkeeper_position = goalkeeper.position;

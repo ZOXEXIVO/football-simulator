@@ -4,7 +4,7 @@ use crate::r#match::events::Event;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
@@ -34,10 +34,11 @@ impl StateProcessingHandler for GoalkeeperTacklingState {
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.team();
-        let opponent_with_ball = players.opponent_with_ball();
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut opponents_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponent_with_ball.first() {
+        if let Some(opponent) = opponents_with_ball.next() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 
@@ -50,7 +51,7 @@ impl StateProcessingHandler for GoalkeeperTacklingState {
             }
 
             // 4. Attempt the tackle
-            let (tackle_success, committed_foul) = self.attempt_tackle(ctx, opponent);
+            let (tackle_success, committed_foul) = self.attempt_tackle(ctx);
 
             if tackle_success {
                 // Tackle is successful
@@ -109,10 +110,11 @@ impl StateProcessingHandler for GoalkeeperTacklingState {
         // Move towards the opponent to attempt the tackle
 
         // Identify the opponent player with the ball
-        let players = ctx.team();
-        let opponent_with_ball = players.opponent_with_ball();
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut opponents_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponent_with_ball.first() {
+        if let Some(opponent) = opponents_with_ball.next() {
             // Calculate direction towards the opponent
             let direction = (opponent.position - ctx.player.position).normalize();
             // Set speed based on player's pace
@@ -132,7 +134,7 @@ impl StateProcessingHandler for GoalkeeperTacklingState {
 
 impl GoalkeeperTacklingState {
     /// Attempts a tackle and returns whether it was successful and if a foul was committed.
-    fn attempt_tackle(&self, ctx: &StateProcessingContext, opponent: &MatchPlayer) -> (bool, bool) {
+    fn attempt_tackle(&self, ctx: &StateProcessingContext) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 
         // Get goalkeeper's tackling-related skills

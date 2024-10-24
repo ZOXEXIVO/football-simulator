@@ -23,10 +23,11 @@ pub struct MidfielderTacklingState {}
 
 impl StateProcessingHandler for MidfielderTacklingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let players = ctx.team();
-        let opponent_with_ball = players.opponent_with_ball();
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut opponents_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponent_with_ball.first() {
+        if let Some(opponent) = opponents_with_ball.next() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 
@@ -112,7 +113,7 @@ impl StateProcessingHandler for MidfielderTacklingState {
 
 impl MidfielderTacklingState {
     /// Attempts a tackle and returns whether it was successful and if a foul was committed.
-    fn attempt_tackle(&self, ctx: &StateProcessingContext, opponent: &MatchPlayer) -> (bool, bool) {
+    fn attempt_tackle(&self, ctx: &StateProcessingContext, _opponent: &MatchPlayer) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 
         // Get midfielder's tackling-related skills

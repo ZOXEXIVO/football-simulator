@@ -101,7 +101,7 @@ impl StateProcessingHandler for DefenderBlockingState {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Defender may need to adjust position slightly to attempt block
         // Calculate minimal movement towards the blocking position
         // For simplicity, we'll assume the defender remains stationary

@@ -34,7 +34,7 @@ impl StateProcessingHandler for DefenderRunningState {
         } else {
             let distance_to_ball = ctx.ball().distance();
 
-            if !ctx.player.has_ball && distance_to_ball < 10.0 {
+            if !ctx.player.has_ball && distance_to_ball < 30.0 {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Intercepting,
                 ));
@@ -50,7 +50,7 @@ impl StateProcessingHandler for DefenderRunningState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -59,7 +59,7 @@ impl StateProcessingHandler for DefenderRunningState {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.ball().direction_to_opponent_goal(),
-                    slowing_distance: 10.0,
+                    slowing_distance: 150.0,
                 }
                 .calculate(ctx.player)
                 .velocity,
@@ -67,8 +67,8 @@ impl StateProcessingHandler for DefenderRunningState {
         } else {
             Some(
                 SteeringBehavior::Arrive {
-                    target: ctx.tick_context.object_positions.ball_position,
-                    slowing_distance: 10.0,
+                    target: ctx.ball().direction_to_opponent_goal(),
+                    slowing_distance: 100.0,
                 }
                 .calculate(ctx.player)
                 .velocity,

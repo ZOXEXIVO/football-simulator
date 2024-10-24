@@ -25,10 +25,6 @@ impl StateProcessingHandler for MidfielderShootingState {
             ));
         }
 
-        // Perform decision-making (thinking) for the shot
-        // Generate an event to change the ball's velocity to simulate the shot
-
-        // Calculate the shot direction and power based on player attributes
         let shot_direction = self.calculate_shot_direction(ctx);
         let shot_power = self.calculate_shot_power(ctx);
 
@@ -55,7 +51,7 @@ impl StateProcessingHandler for MidfielderShootingState {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl MidfielderShootingState {

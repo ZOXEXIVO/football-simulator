@@ -25,7 +25,6 @@ pub enum PlayerEvent {
     GainBall(u32),
     CaughtBall(u32),
     CommitFoul,
-    RequestPass(u32),
     RequestHeading(u32, Vector3<f32>),
     RequestShot(u32, Vector3<f32>),
     RequestBallReceive(u32),
@@ -40,7 +39,7 @@ impl PlayerEventDispatcher {
         field: &mut MatchField,
         context: &MatchContext,
     ) -> Vec<Event> {
-        let mut remaining_events = Vec::new();
+        let remaining_events = Vec::new();
 
         info!("PLAYER EVENT: {:?}", event);
 
@@ -76,7 +75,7 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
             }
-            PlayerEvent::PassTo(player_id, pass_target, pass_power) => {
+            PlayerEvent::PassTo(player_id, pass_target, _pass_power) => {
                 field.players.iter_mut().for_each(|player| {
                     player.has_ball = false;
                 });
@@ -94,7 +93,7 @@ impl PlayerEventDispatcher {
             }
             PlayerEvent::RushOut(_) => {}
             PlayerEvent::StayInGoal(_) => {}
-            PlayerEvent::CommunicateMessage(player_id, message) => {}
+            PlayerEvent::CommunicateMessage(_player_id, _message) => {}
             PlayerEvent::OfferSupport(_) => {}
             PlayerEvent::ClaimBall(player_id) => {
                 // TODO
@@ -102,7 +101,7 @@ impl PlayerEventDispatcher {
                     player.has_ball = false;
                 });
 
-                let mut player = field.get_player_mut(player_id).unwrap();
+                let player = field.get_player_mut(player_id).unwrap();
 
                 player.has_ball = true;
 
@@ -111,12 +110,14 @@ impl PlayerEventDispatcher {
 
                 field.ball.flags.in_passing_state_time = 30;
             }
-            PlayerEvent::ClearBall(ball_velocity) => {
+            PlayerEvent::ClearBall(_ball_velocity) => {
                 //field.ball.velocity = *ball_velocity;
             }
             PlayerEvent::MoveBall(player_id, ball_velocity) => {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
+
+                field.ball.velocity = ball_velocity;
             }
             PlayerEvent::GainBall(player_id) => {
                 field.ball.previous_owner = field.ball.current_owner;
@@ -135,12 +136,11 @@ impl PlayerEventDispatcher {
 
                 field.ball.flags.in_passing_state_time = 10;
             }
-            PlayerEvent::RequestPass(_) => {}
             PlayerEvent::RequestHeading(_, _) => {}
             PlayerEvent::RequestShot(_, _) => {}
             PlayerEvent::RequestBallReceive(_) => {}
             PlayerEvent::UnClaimBall(player_id) => {
-                let mut player = field.get_player_mut(player_id).unwrap();
+                let player = field.get_player_mut(player_id).unwrap();
 
                 player.state = PlayerState::Injured
             }
@@ -149,7 +149,7 @@ impl PlayerEventDispatcher {
                     player.has_ball = false;
                 });
 
-                let mut player = field.get_player_mut(player_id).unwrap();
+                let player = field.get_player_mut(player_id).unwrap();
 
                 player.has_ball = true;
 

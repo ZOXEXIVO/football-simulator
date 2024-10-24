@@ -32,7 +32,7 @@ impl StateProcessingHandler for GoalkeeperPressureState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         None
     }
@@ -48,5 +48,5 @@ impl StateProcessingHandler for GoalkeeperPressureState {
         Some(to_start_position)
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }

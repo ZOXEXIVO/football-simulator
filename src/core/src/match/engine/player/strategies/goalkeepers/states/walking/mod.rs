@@ -54,7 +54,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -72,7 +72,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl GoalkeeperWalkingState {
@@ -82,11 +82,11 @@ impl GoalkeeperWalkingState {
     }
 
     fn is_under_threat(&self, ctx: &StateProcessingContext) -> bool {
-        let player_ops = ctx.team();
-        let opponents_with_ball = player_ops.opponent_with_ball();
+        let players = ctx.players();
+        let opponents = players.opponents();
+        let mut opponents_with_ball = opponents.with_ball();
 
-        if !opponents_with_ball.is_empty() {
-            let opponent = opponents_with_ball[0];
+        if let Some(opponent) = opponents_with_ball.next() {
             let distance_to_opponent = opponent.position.distance_to(&ctx.player.position);
             distance_to_opponent < 30.0 // Adjust this value based on your game's scale
         } else {

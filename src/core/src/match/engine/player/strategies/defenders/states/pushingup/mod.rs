@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
 };
 use nalgebra::Vector3;
@@ -32,7 +32,7 @@ impl StateProcessingHandler for DefenderPushingUpState {
         }
 
         if !ctx.team().is_control_ball() {
-            if let Some(opponent) = self.find_nearby_opponent(ctx) {
+            if let Some(opponent) = ctx.players().opponents().nearby(TACKLING_DISTANCE_THRESHOLD).next() {
                 let distance_to_opponent = ctx
                     .tick_context
                     .object_positions
@@ -70,7 +70,7 @@ impl StateProcessingHandler for DefenderPushingUpState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -91,14 +91,6 @@ impl StateProcessingHandler for DefenderPushingUpState {
 }
 
 impl DefenderPushingUpState {
-    fn find_nearby_opponent<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
-        ctx.tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-            .and_then(|(opponent_id, _)| ctx.context.players.get(opponent_id))
-    }
-
     fn should_retreat(&self, ctx: &StateProcessingContext) -> bool {
         let field_width = ctx.context.field_size.width as f32;
         let max_push_up_x = field_width * (MAX_PUSH_UP_DISTANCE + PUSH_UP_HYSTERESIS);
@@ -107,7 +99,7 @@ impl DefenderPushingUpState {
     }
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
+        let players = ctx.players();
         players
             .defenders()
             .iter()
@@ -126,11 +118,10 @@ impl DefenderPushingUpState {
             0.0,
         );
 
-        let attacking_teammates = ctx
-            .context
-            .players
-            .get_by_team(ctx.player.team_id)
-            .into_iter()
+        let players = ctx.players();
+        let teammates = players.teammates();
+
+        let attacking_teammates = teammates.all().into_iter()
             .filter(|p| p.position.x > field_width * 0.5)
             .collect::<Vec<_>>();
 

@@ -54,12 +54,12 @@ impl StateProcessingHandler for MidfielderRestingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Defender remains stationary or moves minimally while resting
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
@@ -72,13 +72,7 @@ impl StateProcessingHandler for MidfielderRestingState {
 impl MidfielderRestingState {
     /// Checks if an opponent player is nearby within the MARKING_DISTANCE_THRESHOLD.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        let (_, opponents_count) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .players_within_distance_count(ctx.player, MARKING_DISTANCE_THRESHOLD);
-
-        opponents_count > 0
+        ctx.players().opponents().exists(MARKING_DISTANCE_THRESHOLD)
     }
 
     /// Determines if the team is under threat based on the number of opponents in the attacking third.

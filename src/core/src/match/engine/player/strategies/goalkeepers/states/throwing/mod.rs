@@ -28,9 +28,11 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
         }
 
         // 2. Find the best teammate to throw the ball to
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
+        let players = ctx.players();
+        let teammates = players.teammates();
+
+        let teammates = teammates.all();
         let best_teammate = teammates
-            .iter()
             .filter(|teammate| {
                 let distance = (teammate.position - ctx.player.position).magnitude();
                 distance >= THROW_DISTANCE_THRESHOLD
@@ -64,12 +66,12 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Remain stationary while throwing the ball
         Some(Vector3::new(0.0, 0.0, 0.0))
     }

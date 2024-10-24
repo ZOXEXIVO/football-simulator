@@ -8,7 +8,7 @@ use crate::r#match::{
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::SliceRandom;
+use rand::prelude::{IteratorRandom};
 use std::sync::LazyLock;
 
 static MIDFIELDER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -43,15 +43,15 @@ impl StateProcessingHandler for MidfielderDistributingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl MidfielderDistributingState {
@@ -59,16 +59,10 @@ impl MidfielderDistributingState {
         &self,
         ctx: &StateProcessingContext<'a>,
     ) -> Option<&'a MatchPlayer> {
-        let teammates = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player);
+        let players = ctx.players();
 
-        if let Some(teammates_result) = teammates {
-            if let Some((teammate_id, _)) = teammates_result.choose(&mut rand::thread_rng()) {
-                return Some(ctx.context.players.get(*teammate_id)?);
-            }
+        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
+            return Some(ctx.context.players.get(teammate_id)?);
         }
 
         None

@@ -94,6 +94,8 @@ impl SteeringBehavior {
                 }
             }
             SteeringBehavior::Pursuit { target, velocity } => {
+                let _v = velocity;
+
                 let to_target = *target - player.position;
                 let distance = to_target.norm();
 

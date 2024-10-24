@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
 };
 use nalgebra::Vector3;
@@ -41,19 +41,10 @@ impl StateProcessingHandler for DefenderCoveringState {
             ));
         }
 
-        if let Some(opponent) = self.find_nearby_opponent(ctx) {
-            if ctx
-                .tick_context
-                .object_positions
-                .player_distances
-                .get(opponent.id, ctx.player.id)
-                .unwrap()
-                < MARKING_DISTANCE
-            {
-                return Some(StateChangeResult::with_defender_state(
-                    DefenderState::Marking,
-                ));
-            }
+        if let Some(_) = ctx.players().opponents().nearby(MARKING_DISTANCE).next() {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Marking,
+            ));
         }
 
         if ball_ops.is_towards_player() && ball_ops.distance() < INTERCEPTION_DISTANCE {
@@ -65,7 +56,7 @@ impl StateProcessingHandler for DefenderCoveringState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -102,24 +93,8 @@ impl DefenderCoveringState {
                 < ctx.context.field_size.width as f32 * 0.25
     }
 
-    fn find_nearby_opponent<'a>(&self, ctx: &'a StateProcessingContext) -> Option<&'a MatchPlayer> {
-        if let Some((opponent_id, _)) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player)
-        {
-            return ctx.context.players.get(opponent_id);
-        }
-
-        None
-    }
-
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
-        let defenders = players.defenders();
-
-        defenders
+        ctx.players().defenders()
             .iter()
             .all(|d| d.position.x >= ctx.player.position.x)
     }

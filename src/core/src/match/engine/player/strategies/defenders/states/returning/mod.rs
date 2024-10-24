@@ -37,7 +37,7 @@ impl StateProcessingHandler for DefenderReturningState {
         }
 
         // Transition to Pressing late in the game only if ball is close as well
-        if ctx.player().is_team_loosing()
+        if ctx.team().is_loosing()
             && ctx.context.time.time > (MATCH_HALF_TIME_MS - 180)
             && ctx.ball().distance() < 30.0
         {
@@ -49,7 +49,7 @@ impl StateProcessingHandler for DefenderReturningState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -64,5 +64,5 @@ impl StateProcessingHandler for DefenderReturningState {
         )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }

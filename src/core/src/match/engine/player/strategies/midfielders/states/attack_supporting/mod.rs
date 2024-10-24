@@ -56,23 +56,15 @@ impl StateProcessingHandler for MidfielderAttackSupportingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Calculate the target position to support the attack
         let target_position = self.calculate_support_position(ctx);
 
-        // Create a Seek steering behavior towards the target position
-        let seek_behavior = SteeringBehavior::Seek {
+        Some(SteeringBehavior::Seek {
             target: target_position,
-        };
-
-        // Calculate the steering output
-        let steering_output = seek_behavior.calculate(&ctx.player);
-
-        // Return the velocity from the steering output
-        Some(steering_output.velocity)
+        }.calculate(&ctx.player).velocity)
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {
-        // No additional conditions
+
     }
 }
 
@@ -80,7 +72,7 @@ impl MidfielderAttackSupportingState {
     /// Determines if the attack has broken down.
     fn attack_broken_down(&self, ctx: &StateProcessingContext) -> bool {
         // For simplicity, assume attack has broken down if the opponent has the ball
-        ctx.team().opponent_with_ball().len() > 0
+        ctx.players().opponents().with_ball().next().is_some()
     }
 
     /// Checks if the midfielder is in a good position to attempt a shot.
@@ -146,7 +138,6 @@ impl MidfielderAttackSupportingState {
         let field_length = ctx.context.field_size.width as f32;
         let field_width = ctx.context.field_size.width as f32;
         let penalty_area_depth = 16.5; // Standard penalty area depth in meters
-        let penalty_area_width = 40.32; // Standard penalty area width in meters
 
         let x = if ctx.player.side.unwrap() == PlayerSide::Left {
             field_length - penalty_area_depth / 2.0

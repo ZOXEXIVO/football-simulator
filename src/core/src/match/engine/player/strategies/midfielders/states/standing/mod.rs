@@ -85,7 +85,7 @@ impl StateProcessingHandler for MidfielderStandingState {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
@@ -134,13 +134,7 @@ impl MidfielderStandingState {
 
     /// Checks if an opponent player is nearby within the pressing threshold.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-        let (_, opponents_count) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .players_within_distance_count(ctx.player, PRESSING_DISTANCE_THRESHOLD);
-
-        opponents_count > 0
+         ctx.players().opponents().exists(PRESSING_DISTANCE_THRESHOLD)
     }
 
     /// Determines if the midfielder should support an attacking play.

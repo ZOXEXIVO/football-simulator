@@ -19,7 +19,6 @@ pub struct GoalkeeperPenaltyState {}
 impl StateProcessingHandler for GoalkeeperPenaltyState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // 1. Check if the ball is moving towards the goal
-        let ball_velocity = ctx.tick_context.object_positions.ball_velocity;
         let is_ball_moving_towards_goal = ctx.ball().is_towards_player();
 
         if !is_ball_moving_towards_goal {
@@ -50,7 +49,7 @@ impl StateProcessingHandler for GoalkeeperPenaltyState {
         }
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network processing if needed
         None
     }

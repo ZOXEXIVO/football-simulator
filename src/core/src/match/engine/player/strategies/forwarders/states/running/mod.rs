@@ -41,13 +41,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 ));
             }
 
-            let (_, opponents_count) = ctx
-                .tick_context
-                .object_positions
-                .player_distances
-                .players_within_distance_count(ctx.player, 100.0);
-
-            if opponents_count > 1 {
+            if ctx.players().opponents().nearby_raw(100.0).count() > 1 {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
 
@@ -68,7 +62,10 @@ impl StateProcessingHandler for ForwardRunningState {
                 ));
             }
 
-            if let Some(opponent_with_ball) = ctx.team().opponent_with_ball().first() {
+            let players = ctx.players();
+            let opponents = players.opponents();
+
+            if let Some(opponent_with_ball) = opponents.with_ball().next() {
                 let opponent_distance = ctx
                     .tick_context
                     .object_positions
@@ -92,7 +89,7 @@ impl StateProcessingHandler for ForwardRunningState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
@@ -120,7 +117,7 @@ impl StateProcessingHandler for ForwardRunningState {
         }
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardRunningState {
@@ -130,12 +127,13 @@ impl ForwardRunningState {
     }
 
     fn is_leading_forward(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.team();
-        let forwards = players.forwards_teammates();
+        let players = ctx.players();
+        let teammates = players.teammates();
+
+        let forwards = teammates.forwards();
 
         let (leading_forward, _) =
             forwards
-                .iter()
                 .fold((None, f32::MIN), |(leading_player, max_score), player| {
                     let distance = (player.position
                         - ctx.tick_context.object_positions.ball_position)
@@ -208,25 +206,23 @@ impl ForwardRunningState {
     }
 
     fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player);
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        if let Some(opponents) = nearest_opponents {
-            if opponents.len() >= 2 {
-                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
-                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+        let mut nearest_opponents = opponents.nearby(150.0);
+
+        if let Some(first) = nearest_opponents.next() {
+            if let Some(second) = nearest_opponents.next() {
+                let opponent1_position = first.position;
+                let opponent2_position = second.position;
 
                 let distance_between_opponents =
                     (opponent1_position - opponent2_position).magnitude();
-                distance_between_opponents > CREATING_SPACE_THRESHOLD
-            } else {
-                false
+
+                return distance_between_opponents > CREATING_SPACE_THRESHOLD;
             }
-        } else {
-            false
         }
+
+        false
     }
 }

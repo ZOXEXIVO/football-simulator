@@ -1,12 +1,11 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
+use rand::prelude::IteratorRandom;
 use std::sync::LazyLock;
 
 static MIDFIELDER_DRIBBLING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -25,10 +24,9 @@ impl StateProcessingHandler for MidfielderDribblingState {
                 ));
             }
 
-            if let Some(teammate_id) = self.find_open_teammate(ctx) {
-                return Some(StateChangeResult::with_midfielder_state_and_event(
-                    MidfielderState::ShortPassing,
-                    Event::PlayerEvent(PlayerEvent::RequestPass(teammate_id)),
+            if let Some(_) = self.find_open_teammate(ctx) {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::ShortPassing
                 ));
             }
 
@@ -62,44 +60,30 @@ impl StateProcessingHandler for MidfielderDribblingState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        None
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl MidfielderDribblingState {
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {
         // Find an open teammate to pass to
-        let teammates = ctx.context.players.get_by_team(ctx.player.team_id);
-        let open_teammates = teammates
-            .iter()
-            .filter(|teammate| {
-                // Check if the teammate is open (not closely marked by an opponent)
-                let opponent_distance = ctx
-                    .tick_context
-                    .object_positions
-                    .player_distances
-                    .find_closest_opponent(teammate)
-                    .map(|(_, distance)| distance)
-                    .unwrap_or(f32::MAX);
+        let players = ctx.players();
+        let teammates = players.teammates();
 
-                opponent_distance > 5.0 // Adjust the threshold as needed
-            })
-            .min_by(|a, b| {
-                // Prefer teammates closer to the opponent's goal
-                let a_distance = (a.position - ctx.ball().direction_to_opponent_goal()).magnitude();
-                let b_distance = (b.position - ctx.ball().direction_to_opponent_goal()).magnitude();
-                a_distance.partial_cmp(&b_distance).unwrap()
-            })
-            .map(|p| p.id);
+        let teammates = teammates.nearby_raw(50.0);
 
-        open_teammates
+        if let Some((teammate_id, _)) = teammates.choose(&mut rand::thread_rng()) {
+            return Some(teammate_id)
+        }
+
+        None
     }
 
     fn is_in_shooting_position(&self, ctx: &StateProcessingContext) -> bool {
@@ -159,21 +143,7 @@ impl MidfielderDribblingState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if there are opponents close to the player
-        let pressure_distance = 5.0;
-        let close_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player)
-            .map(|opponents| {
-                opponents
-                    .iter()
-                    .filter(|(_, dist)| *dist < pressure_distance)
-                    .count()
-            })
-            .unwrap_or(0);
-
-        close_opponents > 0
+        let pressure_distance = 10.0;
+        ctx.players().teammates().exists(pressure_distance)
     }
 }

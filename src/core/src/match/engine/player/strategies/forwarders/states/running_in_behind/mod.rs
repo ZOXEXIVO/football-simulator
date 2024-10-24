@@ -1,11 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -18,7 +14,7 @@ pub struct ForwardRunningInBehindState {}
 
 impl StateProcessingHandler for ForwardRunningInBehindState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let mut result = StateChangeResult::new();
+        let result = StateChangeResult::new();
         let ball_ops = ctx.ball();
         let player_ops = ctx.player();
 
@@ -59,33 +55,19 @@ impl StateProcessingHandler for ForwardRunningInBehindState {
             ));
         }
 
-        // Check if a teammate is in a position to make a through pass
-        if let Some(teammates) = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(ctx.player)
-        {
-            if let Some((teammate_id, _)) = teammates.first() {
-                result
-                    .events
-                    .add_player_event(PlayerEvent::RequestPass(ctx.player.id));
-            }
-        }
-
         // Continue the run
         Some(result)
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {}
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl ForwardRunningInBehindState {
@@ -103,14 +85,11 @@ impl ForwardRunningInBehindState {
     }
 
     fn space_ahead(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if there's open space ahead of the player
-        let space_threshold = 10.0; // Adjust based on your game's scale
-        let player_ops = ctx.team();
+        let space_threshold = 10.0;
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        let opponents = player_ops.opponents();
-        opponents
-            .iter()
-            .all(|p| p.position.distance_to(&ctx.player.position) > space_threshold)
+        !opponents.exists(space_threshold)
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext) -> bool {
@@ -165,15 +144,8 @@ impl ForwardRunningInBehindState {
             return false;
         }
 
-        // Check if there are no opponents close to the player
-        let (_, opponents_count) = player_ops.distances();
-        let opponents_threshold = 1; // Adjust based on your game's balance
-        if opponents_count > opponents_threshold {
-            return false;
-        }
-
         // Check if the player's team is losing
-        if !player_ops.is_team_loosing() {
+        if !ctx.team().is_loosing() {
             return false;
         }
 

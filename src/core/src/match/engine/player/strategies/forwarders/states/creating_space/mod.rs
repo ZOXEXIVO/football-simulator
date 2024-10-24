@@ -3,6 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -10,8 +11,8 @@ use std::sync::LazyLock;
 static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_creating_space_data.json")));
 
-const CREATING_SPACE_THRESHOLD: f32 = 100.0; // Adjust based on your game's scale
-const OPPONENT_DISTANCE_THRESHOLD: f32 = 5.0; // Adjust based on your game's scale
+const CREATING_SPACE_THRESHOLD: f32 = 30.0; // Adjust based on your game's scale
+const OPPONENT_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust based on your game's scale
 const VELOCITY_CHANGE_THRESHOLD: f32 = 2.0; // Adjust based on your game's scale
 
 #[derive(Default)]
@@ -19,6 +20,12 @@ pub struct ForwardCreatingSpaceState {}
 
 impl StateProcessingHandler for ForwardCreatingSpaceState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if !ctx.team().is_control_ball() {
+            return Some(StateChangeResult::with_forward_state(
+                ForwardState::Running,
+            ));
+        }
+
         // Check if the player has created enough space
         if self.has_created_space(ctx) {
             // If space is created, transition to the assisting state
@@ -43,90 +50,33 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
         None
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Check if the player should change velocity
-        if self.should_change_velocity(ctx) {
-            // If velocity change is needed, calculate the new velocity
-            Some(self.calculate_new_velocity(ctx))
-        } else {
-            None
-        }
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.tick_context.object_positions.ball_position,
+                slowing_distance: 150.0,
+            }
+            .calculate(ctx.player)
+            .velocity,
+        )
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
+    fn process_conditions(&self, _ctx: ConditionContext) {
         // No specific conditions to process
     }
 }
 
 impl ForwardCreatingSpaceState {
     fn has_created_space(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = nearest_opponent {
-            distance > CREATING_SPACE_THRESHOLD
-        } else {
-            false
-        }
+        ctx.players().opponents().exists(CREATING_SPACE_THRESHOLD)
     }
 
     fn is_too_close_to_opponent(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = nearest_opponent {
-            distance < OPPONENT_DISTANCE_THRESHOLD
-        } else {
-            false
-        }
-    }
-
-    fn should_change_velocity(&self, ctx: &StateProcessingContext) -> bool {
-        let player_velocity = ctx.player.velocity;
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = nearest_opponent {
-            distance < VELOCITY_CHANGE_THRESHOLD
-        } else {
-            false
-        }
-    }
-
-    fn calculate_new_velocity(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let player_position = ctx.player.position;
-        let nearest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((opponent_id, _)) = nearest_opponent {
-            let opponent_position = ctx
-                .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(opponent_id)
-                .unwrap();
-
-            let direction_away_from_opponent = (player_position - opponent_position).normalize();
-            direction_away_from_opponent * ctx.player.skills.max_speed()
-        } else {
-            ctx.player.velocity
-        }
+        ctx.players().opponents().exists(OPPONENT_DISTANCE_THRESHOLD)
     }
 
     fn should_run_to_opponent_side(&self, ctx: &StateProcessingContext) -> bool {
@@ -137,25 +87,23 @@ impl ForwardCreatingSpaceState {
     }
 
     fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {
-        let nearest_opponents = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponents(ctx.player);
+        let players = ctx.players();
+        let opponents = players.opponents();
 
-        if let Some(opponents) = nearest_opponents {
-            if opponents.len() >= 2 {
-                let opponent1_position = ctx.context.players.get(opponents[0].0).unwrap().position;
-                let opponent2_position = ctx.context.players.get(opponents[1].0).unwrap().position;
+        let mut opponents_all = opponents.all();
+
+        if let Some(first) = opponents_all.next() {
+            if let Some(second) = opponents_all.next() {
+                let opponent1_position = first.position;
+                let opponent2_position = second.position;
 
                 let distance_between_opponents =
                     (opponent1_position - opponent2_position).magnitude();
-                distance_between_opponents > CREATING_SPACE_THRESHOLD
-            } else {
-                false
+
+                return distance_between_opponents > CREATING_SPACE_THRESHOLD;
             }
-        } else {
-            false
         }
+
+        false
     }
 }

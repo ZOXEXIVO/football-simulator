@@ -75,7 +75,7 @@ impl StateProcessingHandler for DefenderOffsideTrapState {
 
 impl DefenderOffsideTrapState {
     /// Determines if the offside trap should be executed based on team tactics and opponent positions.
-    fn should_execute_offside_trap(&self, ctx: &StateProcessingContext) -> bool {
+    fn should_execute_offside_trap(&self, _ctx: &StateProcessingContext) -> bool {
         // Check if team tactics allow for offside traps
         // if !ctx.context.team_tactics.allow_offside_trap {
         //     return false;
@@ -105,7 +105,7 @@ impl DefenderOffsideTrapState {
     /// Calculates the defensive line position based on the current positions of defenders.
     fn calculate_defensive_line_position(&self, ctx: &StateProcessingContext) -> f32 {
         // Get all defenders on the team
-        let defenders = ctx.team();
+        let defenders = ctx.players();
         let defenders: Vec<&MatchPlayer> = defenders
             .defenders()
             .iter()

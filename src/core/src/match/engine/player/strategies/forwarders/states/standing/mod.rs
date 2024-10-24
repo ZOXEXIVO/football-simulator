@@ -3,7 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::PlayerSide;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
@@ -32,7 +32,7 @@ impl StateProcessingHandler for ForwardStandingState {
                 ));
             }
 
-            if let Some(target_teammate) = self.find_best_teammate_to_pass(ctx) {
+            if let Some(_) = self.find_best_teammate_to_pass(ctx) {
                 // Transition to Passing state
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
@@ -62,17 +62,17 @@ impl StateProcessingHandler for ForwardStandingState {
         }
     }
 
-    fn process_slow(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Implement neural network logic for advanced decision-making if necessary
         // For example, adjust positioning based on opponent movement
         None
     }
 
-    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(Vector3::new(0.0, 0.0, 0.0))
     }
 
-    fn process_conditions(&self, ctx: ConditionContext) {
+    fn process_conditions(&self, _ctx: ConditionContext) {
         // Handle additional conditions or triggers if necessary
     }
 }
@@ -86,20 +86,11 @@ impl ForwardStandingState {
 
     /// Finds the best teammate to pass to based on proximity and position.
     fn find_best_teammate_to_pass<'a>(
-        &self,
-        ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
-        // Utilize the find_closest_teammate method from PlayerDistanceClosure
-        let closest_teammates = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_teammates(&ctx.player);
-
-        if let Some(closest_teammates) = closest_teammates {
-            if let Some((teammate_id, distance)) = closest_teammates.first() {
-                return Some(ctx.context.players.get(*teammate_id)?);
-            }
+        &'a self,
+        ctx: &'a StateProcessingContext<'a>,
+    ) -> Option<u32> {
+        if let Some((teammate_id, _)) = ctx.players().teammates().nearby_raw(100.0).next() {
+            return Some(teammate_id)
         }
 
         None
@@ -110,17 +101,7 @@ impl ForwardStandingState {
         // Example logic: dribble if no immediate threat and space is available
         let safe_distance = 10.0;
 
-        let closest_opponent = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .find_closest_opponent(ctx.player);
-
-        if let Some((_, distance)) = closest_opponent {
-            distance > safe_distance
-        } else {
-            true
-        }
+        !ctx.players().opponents().exists(safe_distance)
     }
 
     /// Decides whether the forward should press the opponent.
