@@ -73,7 +73,10 @@ export class MatchDataService {
 
     getData(timestamp: number): MatchResultData {
         // ball
-        let ts = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx].timestamp;
+
+        let ballData = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx];
+
+        let ts = ballData.timestamp;
 
         while (ts < timestamp && this.match!.ball.currentCoordIdx < this.matchData!.ball_positions.length) {
             ts = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx].timestamp;

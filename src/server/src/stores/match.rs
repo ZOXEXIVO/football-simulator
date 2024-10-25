@@ -34,7 +34,7 @@ impl MatchStore {
 
         let out_file = format!("{}/{}.json.gz", out_dir, result.id);
 
-        let file = File::options()
+        let mut file = File::options()
             .write(true)
             .create(true)
             .truncate(true)
@@ -51,6 +51,8 @@ impl MatchStore {
             info!("uncompressed size = {}", file_data.len());
 
             compressed_file.write_all(&file_data).await.unwrap();
+            compressed_file.write_all(b"\n").await.unwrap();
+
             compressed_file.shutdown().await.unwrap();
         }
     }

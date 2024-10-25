@@ -121,7 +121,15 @@ impl LeagueTable {
             }
         }
 
-        self.rows.sort_by(|a, b| Ord::cmp(&b.points, &a.points));
+        self.rows.sort_by(|a, b| {
+            match b.points.cmp(&a.points) {
+                Ordering::Equal => match (b.goal_scored - b.goal_concerned).cmp(&(a.goal_scored - a.goal_concerned)) {
+                    Ordering::Equal => b.goal_scored.cmp(&a.goal_scored),
+                    other => other,
+                },
+                other => other,
+            }
+        });
     }
 
     pub fn get(&self) -> &[LeagueTableRow] {
