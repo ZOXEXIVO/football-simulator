@@ -107,8 +107,6 @@ impl<'b> BallOperationsImpl<'b> {
         let ball_to_goalkeeper = goalkeeper_position - ball_position;
         let angle = player_to_ball.angle(&ball_to_goalkeeper);
 
-        // Determine the target position based on the angle and player's shooting ability
-        let shooting_ability = player.skills.technical.finishing;
         if angle < 0.5 * std::f32::consts::PI {
             // If the angle is small, aim towards the opposite corner of the goal
             let goal_width = self.ctx.context.field_size.width as f32;
@@ -122,6 +120,7 @@ impl<'b> BallOperationsImpl<'b> {
         } else {
             // If the angle is large, aim towards the goal center with some randomness
             let goal_position = self.ctx.player().opponent_goal_position();
+            let shooting_ability = player.skills.technical.finishing;
             let random_offset = (rand::random::<f32>() - 0.5) * shooting_ability;
             Vector3::new(goal_position.x + random_offset, goal_position.y, 0.0)
         }
