@@ -38,7 +38,7 @@ impl StateProcessingHandler for MidfielderReturningState {
         if ctx.team().is_loosing() && ctx.context.time.is_running_out() {
             // Transition to SupportingAttack to push forward
             return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::SupportingAttack,
+                MidfielderState::AttackSupportinh,
             ));
         }
 

@@ -134,7 +134,7 @@ impl PlayerEventDispatcher {
                 let player = field.get_player_mut(player_id).unwrap();
                 player.has_ball = false;
 
-                field.ball.flags.in_passing_state_time = 10;
+                field.ball.flags.in_passing_state_time = 100;
             }
             PlayerEvent::RequestHeading(_, _) => {}
             PlayerEvent::RequestShot(_, _) => {}

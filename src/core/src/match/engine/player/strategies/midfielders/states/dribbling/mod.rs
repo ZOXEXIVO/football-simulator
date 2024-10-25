@@ -46,7 +46,7 @@ impl StateProcessingHandler for MidfielderDribblingState {
 
             if self.should_support_attack(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::SupportingAttack,
+                    MidfielderState::AttackSupportinh,
                 ));
             }
 

@@ -14,7 +14,7 @@ pub enum MidfielderState {
     Standing,          // Standing still
     Distributing,      // Distributing the ball to teammates
     Dribbling,         // Dribbling the ball
-    SupportingAttack,  // Supporting the attack, moving forward
+    AttackSupportinh,  // Supporting the attack, moving forward
     HoldingPossession, // Holding possession of the ball, maintaining control
     SwitchingPlay,     // Switching the play to the other side of the field
     Crossing,          // Delivering a cross into the box
@@ -46,7 +46,7 @@ impl MidfielderStrategies {
             MidfielderState::Distributing => {
                 state_processor.process(MidfielderDistributingState::default())
             }
-            MidfielderState::SupportingAttack => {
+            MidfielderState::AttackSupportinh => {
                 state_processor.process(MidfielderAttackSupportingState::default())
             }
             MidfielderState::HoldingPossession => {
@@ -102,7 +102,7 @@ impl Display for MidfielderState {
         match self {
             MidfielderState::Standing => write!(f, "Standing"),
             MidfielderState::Distributing => write!(f, "Distributing"),
-            MidfielderState::SupportingAttack => write!(f, "Supporting Attack"),
+            MidfielderState::AttackSupportinh => write!(f, "Supporting Attack"),
             MidfielderState::HoldingPossession => write!(f, "Holding Possession"),
             MidfielderState::SwitchingPlay => write!(f, "Switching Play"),
             MidfielderState::Crossing => write!(f, "Crossing"),

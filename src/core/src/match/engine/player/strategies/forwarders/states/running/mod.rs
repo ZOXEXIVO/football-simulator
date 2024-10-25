@@ -31,7 +31,6 @@ const TARGET_REACHED_THRESHOLD: f32 = 10.0;
 
 impl StateProcessingHandler for ForwardRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let distance_to_ball = ctx.ball().distance();
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
 
         if ctx.player.has_ball {
@@ -79,7 +78,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 }
             }
 
-            if distance_to_ball > ASSISTING_DISTANCE_THRESHOLD {
+            if ctx.ball().distance() > ASSISTING_DISTANCE_THRESHOLD {
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Assisting,
                 ));
