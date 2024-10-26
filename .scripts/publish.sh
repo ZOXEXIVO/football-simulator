@@ -19,4 +19,4 @@ cp -r dist ../publish
 
 cd ..
 cargo build --release
-cp target/release/football_simulator.exe publish/football_simulator.exe
+cp target/release/open_football.exe publish/open_football.exe

@@ -29,7 +29,7 @@ RUN cargo build --release
 FROM rust:1.82-slim
 WORKDIR /app
 
-COPY --from=build-backend /src/target/release/football_simulator .
+COPY --from=build-backend /src/target/release/open_football .
 COPY --from=build-frontend /app/dist ./dist
 
-ENTRYPOINT ["./football_simulator"]
+ENTRYPOINT ["./open_football"]
