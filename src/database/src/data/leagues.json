@@ -1,8 +1,8 @@
 [
   {
     "id": 0,
-    "slug": "tinkoff-premier_league",
-    "name": "Tinkoff Premier league",
+    "slug": "russian-premier-league",
+    "name": "Russian Premier league",
     "country_id": 791,
     "reputation": 6000,
     "settings": {
@@ -43,7 +43,7 @@
   },
   {
     "id": 2,
-    "slug": "serie-a",
+    "slug": "italian-serie-a",
     "name": "Italian Serie A",
     "country_id": 776,
     "reputation": 8000,
@@ -64,7 +64,7 @@
   },
   {
     "id": 3,
-    "slug": "serie-b",
+    "slug": "italian-serie-b",
     "name": "Italian Serie B",
     "country_id": 776,
     "reputation": 6000,
@@ -85,7 +85,7 @@
   },
   {
     "id": 7,
-    "slug": "premier-league",
+    "slug": "english-premier-league",
     "name": "English Premier League",
     "country_id": 765,
     "reputation": 9000,
