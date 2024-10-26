@@ -35,7 +35,7 @@ impl StateProcessingHandler for MidfielderShootingState {
 
         state_change
             .events
-            .add_player_event(PlayerEvent::MoveBall(ctx.player.id, ball_velocity));
+            .add_player_event(PlayerEvent::Shoot(ctx.player.id, ball_velocity));
 
         // Transition to the next appropriate state (e.g., Standing)
         Some(state_change)

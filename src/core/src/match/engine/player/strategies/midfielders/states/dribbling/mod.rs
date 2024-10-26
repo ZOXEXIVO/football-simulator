@@ -29,13 +29,6 @@ impl StateProcessingHandler for MidfielderDribblingState {
                     MidfielderState::ShortPassing
                 ));
             }
-
-            // If no shooting or passing options, consider dribbling
-            if self.should_dribble(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::Dribbling,
-                ));
-            }
         } else {
             // If the player doesn't have the ball, check if they should press, support attack, or return
             if self.should_press(ctx) {
@@ -77,7 +70,7 @@ impl MidfielderDribblingState {
         let players = ctx.players();
         let teammates = players.teammates();
 
-        let teammates = teammates.nearby_raw(50.0);
+        let teammates = teammates.nearby_raw(150.0);
 
         if let Some((teammate_id, _)) = teammates.choose(&mut rand::thread_rng()) {
             return Some(teammate_id)
@@ -94,14 +87,6 @@ impl MidfielderDribblingState {
         let distance_to_goal = (player_position - goal_position).magnitude();
 
         distance_to_goal <= shooting_range
-    }
-
-    fn should_dribble(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if there is space to dribble and no immediate pressure from opponents
-        let space_ahead = self.space_ahead(ctx);
-        let under_pressure = self.is_under_pressure(ctx);
-
-        space_ahead && !under_pressure
     }
 
     fn should_support_attack(&self, ctx: &StateProcessingContext) -> bool {

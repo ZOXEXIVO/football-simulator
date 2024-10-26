@@ -1,6 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
+use crate::r#match::events::{Event, EventCollection};
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
@@ -35,12 +35,14 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 
         // Determine the best teammate to pass to
         if let Some(target_teammate) = self.find_best_teammate(ctx) {
-            let pass_velocity = self.calculate_pass_velocity(ctx, &target_teammate);
-
             Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
-                Event::PlayerEvent(PlayerEvent::MoveBall(ctx.player.id, pass_velocity)),
-            ))
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    target_teammate.id,
+                    target_teammate.position,
+                    1.0,
+                )
+            )))
         } else {
             // No available teammate found, consider other options
             Some(StateChangeResult::with_midfielder_state(
@@ -89,25 +91,6 @@ impl MidfielderShortPassingState {
         }
 
         None
-    }
-
-    /// Calculates the pass velocity vector towards the target teammate.
-    fn calculate_pass_velocity(
-        &self,
-        ctx: &StateProcessingContext,
-        target_teammate: &MatchPlayer,
-    ) -> Vector3<f32> {
-        let player_position = ctx.player.position;
-        let target_position = target_teammate.position;
-
-        // Calculate the direction to the target
-        let direction = (target_position - player_position).normalize();
-
-        // Calculate pass speed based on player's passing skill
-        let passing_skill = ctx.player.skills.technical.passing as f32 / 100.0;
-        let pass_speed = MIN_PASS_SPEED + (MAX_PASS_SPEED - MIN_PASS_SPEED) * passing_skill;
-
-        direction * pass_speed
     }
 
     /// Checks if the pass to the target teammate is feasible using ray tracing.

@@ -50,7 +50,7 @@ impl StateProcessingHandler for DefenderHeadingState {
 
             state_change
                 .events
-                .add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
+                .add_player_event(PlayerEvent::Shoot(ctx.player.id, new_ball_velocity));
 
             // 4. Update player's stamina or condition if needed
             // (e.g., heading might cost some stamina)

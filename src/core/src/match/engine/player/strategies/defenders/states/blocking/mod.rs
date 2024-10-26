@@ -82,7 +82,7 @@ impl StateProcessingHandler for DefenderBlockingState {
 
             state_change
                 .events
-                .add_player_event(PlayerEvent::MoveBall(ctx.player.id, new_ball_velocity));
+                .add_player_event(PlayerEvent::Shoot(ctx.player.id, new_ball_velocity));
 
             // Optionally reduce defender's stamina
             // ctx.player.player_attributes.reduce_stamina(block_stamina_cost);

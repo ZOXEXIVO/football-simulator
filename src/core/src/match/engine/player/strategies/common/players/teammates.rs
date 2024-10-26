@@ -12,18 +12,6 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
 }
 
 impl<'b> PlayerTeammatesOperationsImpl<'b> {
-    pub fn is_control_ball(&self) -> bool {
-        if let Some(owner_id) = self.ctx.ball().owner_id() {
-            if let Some(owner) = self.ctx.context.players.get(owner_id) {
-                return self.ctx.player.team_id == owner.team_id;
-            }
-        }
-
-        false
-    }
-
-    // Teamates
-
     pub fn all(&'b self) -> impl Iterator<Item = &'b MatchPlayer> {
         self.teammates_for_team(self.ctx.player.team_id, None)
     }

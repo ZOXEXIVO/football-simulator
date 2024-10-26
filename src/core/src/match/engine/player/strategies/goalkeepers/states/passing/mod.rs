@@ -23,8 +23,6 @@ impl StateProcessingHandler for GoalkeeperPassingState {
             ));
         }
 
-        let mut result = StateChangeResult::new();
-
         let players = ctx.players();
         let teammates = players.teammates();
 
@@ -36,33 +34,11 @@ impl StateProcessingHandler for GoalkeeperPassingState {
             if let Some(teammate_distance) = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id) {
                 let pass_power = (teammate_distance / pass_skill as f32 * 10.0) as f64;
 
-                result.events.add_player_event(PlayerEvent::PassTo(
+                return Some(StateChangeResult::with_goalkeeper_state_and_event(GoalkeeperState::Standing, Event::PlayerEvent(PlayerEvent::PassTo(
                     teammate.id,
                     teammate.position,
                     pass_power,
-                ));
-            }
-
-            return Some(result);
-        }
-
-        if ctx.in_state_time > 50 {
-            let mut nearest_teammates = teammates.nearby(300.0);
-
-            if let Some(teammate) = nearest_teammates.next() {
-                let pass_skill = ctx.player.skills.technical.passing;
-
-                if let Some(teammate_distance) = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id) {
-                    let pass_power = (teammate_distance / pass_skill as f32 * 10.0) as f64;
-
-                    result.events.add_player_event(PlayerEvent::PassTo(
-                        teammate.id,
-                        teammate.position,
-                        pass_power,
-                    ));
-                }
-
-                return Some(result);
+                ))));
             }
         }
 
