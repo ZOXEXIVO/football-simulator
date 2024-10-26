@@ -77,25 +77,7 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 
     fn process_conditions(&self, ctx: ConditionContext) {
-        if ctx.player.skills.physical.stamina == 0.0 {
-            return;
-        }
 
-        let stamina_reduction = |velocity: f32| -> f32 {
-            let base_reduction = 0.01;
-            let velocity_factor = 0.1;
-            let max_reduction = 0.1;
-
-            (base_reduction + velocity * velocity_factor).min(max_reduction)
-        };
-
-        let stamina_reduction = stamina_reduction(ctx.player.velocity.magnitude());
-
-        ctx.player.skills.physical.stamina -= stamina_reduction;
-
-        if ctx.player.skills.physical.stamina < 0.0 {
-            ctx.player.skills.physical.stamina = 0.0;
-        }
     }
 }
 

@@ -9,7 +9,7 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker build -t football-simulator:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Football.Dockerfile" .
+      - docker build -t open-football:1.0.0.$$DRONE_BUILD_NUMBER -f "build/Football.Dockerfile" .
     when:
       branch:
         - master
@@ -26,8 +26,8 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker stop football-simulator || true
-      - docker rm football-simulator || true
+      - docker stop open-football || true
+      - docker rm open-football || true
     when:
       branch:
         - master
@@ -41,7 +41,7 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker run -d -p 172.17.0.1:18000:18000 --restart always --name football-simulator football-simulator:1.0.0.$$DRONE_BUILD_NUMBER
+      - docker run -d -p 172.17.0.1:18000:18000 --restart always --name open-football open-football:1.0.0.$$DRONE_BUILD_NUMBER
     when:
       branch:
         - master

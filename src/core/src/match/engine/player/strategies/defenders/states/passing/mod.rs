@@ -92,7 +92,7 @@ impl DefenderPassingState {
         if let Some((teammate_id, _)) = ctx
             .players()
             .teammates()
-            .nearby_raw(150.0)
+            .nearby_raw(250.0)
             .choose(&mut rand::thread_rng())
         {
             return Some(teammate_id);

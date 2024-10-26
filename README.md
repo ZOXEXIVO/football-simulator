@@ -1,16 +1,16 @@
-# Football Simulator
+# Open Football
 
-[![Build Status](http://drone.zoxexivo.com/api/badges/ZOXEXIVO/football-simulator/status.svg)](http://drone.zoxexivo.com/ZOXEXIVO/football-simulator)
+[![Build Status](http://drone.zoxexivo.com/api/badges/ZOXEXIVO/open-football/status.svg)](http://drone.zoxexivo.com/ZOXEXIVO/open-football)
 
 Attempt to implement Sigames Football Manager simulation engine without manual control.
 
-**[football-simulator.org](https://football-simulator.org)**
+**[open-football.org](https://open-football.org)**
 
 It is **not gamable** right now and I need a lot of work to make it workable.
 
 Currently, most of elements are stubs, but I change it step by step
 
-Currently available nation for simulation - **Russia**
+Currently available nation for simulation - **Russia**, **Italy**, **England**
 
 #### How to run?
 
@@ -18,11 +18,11 @@ Currently available nation for simulation - **Russia**
 
 ```console
 // run frontend (Angular)
-cd football-simulator/ui
+cd open-football/ui
 npm start
 ...
 // run backend
-cd football-simulator
+cd open-football
 cargo run
 ...
 open chrome at http://localhost:18000
@@ -31,25 +31,25 @@ open chrome at http://localhost:18000
 2) Run in Docker
 
 ```console
-cd football-simulator
-docker build -f .\build\Football.Dockerfile -t football-simulator .
-docker run -d -p 18000:18000 --name football-simulator football-simulator
+cd open-football
+docker build -f .\build\Football.Dockerfile -t open-football .
+docker run -d -p 18000:18000 --name open-football open-football
 
 open chrome at http://localhost:18000
 ```
 
-[Match page example (click on any goals)](https://football-simulator.org/leagues/english-premier-league)
+[Match page example (click on any goals)](https://open-football.org/leagues/english-premier-league)
 
 ![alt text](docs/images/match.jpg "Match page")
 
-[Player page example](https://football-simulator.org/teams/spartak-moscow/players/1)
+[Player page example](https://open-football.org/teams/spartak-moscow/players/1)
 ![alt text](docs/images/player.jpg "Player page")
 
-[Club page example](https://football-simulator.org/teams/spartak-moscow)
+[Club page example](https://open-football.org/teams/spartak-moscow)
 
 ![alt text](docs/images/club.jpg "Club page")
 
-[League page example](https://football-simulator.org/leagues/tinkoff-premier_league)
+[League page example](https://open-football.org/leagues/tinkoff-premier_league)
 
 ![alt text](docs/images/league.jpg "League page")
 
