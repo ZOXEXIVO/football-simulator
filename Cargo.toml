@@ -1,5 +1,5 @@
 [package]
-name = "open-football"
+name = "open_football"
 version = "0.1.0"
 authors = ["ZOXEXIVO <zoxexivo@gmail.com>"]
 edition = "2018"
