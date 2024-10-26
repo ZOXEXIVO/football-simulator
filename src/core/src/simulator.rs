@@ -263,7 +263,7 @@ impl SimulatorData {
 }
 
 pub struct SimulationResult {
-    pub match_results: Vec<MatchResult>,
+    pub match_results: Vec<MatchResult>
 }
 
 impl SimulationResult {
@@ -271,5 +271,9 @@ impl SimulationResult {
         SimulationResult {
             match_results: Vec::new(),
         }
+    }
+
+    pub fn has_match_results(&self) -> bool {
+        !self.match_results.is_empty()
     }
 }
