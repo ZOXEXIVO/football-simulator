@@ -34,7 +34,7 @@ impl MatchStore {
 
         let out_file = format!("{}/{}.json.gz", out_dir, result.id);
 
-        let mut file = File::options()
+        let file = File::options()
             .write(true)
             .create(true)
             .truncate(true)
