@@ -1,5 +1,5 @@
 [package]
-name = "football_simulator"
+name = "open-football"
 version = "0.1.0"
 authors = ["ZOXEXIVO <zoxexivo@gmail.com>"]
 edition = "2018"

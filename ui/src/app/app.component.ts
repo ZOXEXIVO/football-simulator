@@ -7,7 +7,7 @@ import {NavigationEnd, Router} from "@angular/router";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'football-simulator';
+  title = 'open-football';
 
   constructor(private router: Router) {
     router.events.subscribe(event => {

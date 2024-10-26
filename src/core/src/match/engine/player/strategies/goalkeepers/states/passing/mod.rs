@@ -28,26 +28,17 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         let players = ctx.players();
         let teammates = players.teammates();
 
-        let mut nearest_teammates = teammates.nearby_raw(100.0);
+        let mut nearest_teammates = teammates.nearby(200.0);
 
-        if let Some((teammate_id, teammate_distance)) = nearest_teammates.next() {
+        if let Some(teammate) = nearest_teammates.next() {
             let pass_skill = ctx.player.skills.technical.passing;
 
-            let pass_power = (teammate_distance / pass_skill as f32 * 10.0) as f64;
+            if let Some(teammate_distance) = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id) {
+                let pass_power = (teammate_distance / pass_skill as f32 * 10.0) as f64;
 
-            result
-                .events
-                .add_player_event(PlayerEvent::UnClaimBall(ctx.player.id));
-
-            if let Some(teammate_positions) = ctx
-                .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate_id)
-            {
                 result.events.add_player_event(PlayerEvent::PassTo(
-                    teammate_id,
-                    teammate_positions,
+                    teammate.id,
+                    teammate.position,
                     pass_power,
                 ));
             }
@@ -56,26 +47,22 @@ impl StateProcessingHandler for GoalkeeperPassingState {
         }
 
         if ctx.in_state_time > 50 {
-            let mut nearest_teammates = teammates.nearby_raw(300.0);
+            let mut nearest_teammates = teammates.nearby(300.0);
 
-            if let Some((teammate_id, teammate_distance)) = nearest_teammates.next() {
-                let teammate_position = ctx
-                    .tick_context
-                    .object_positions
-                    .players_positions
-                    .get_player_position(teammate_id)
-                    .unwrap();
+            if let Some(teammate) = nearest_teammates.next() {
+                let pass_skill = ctx.player.skills.technical.passing;
 
-                let pass_power = (teammate_distance / ctx.player.skills.technical.passing as f32 * 10.0) as f64;
+                if let Some(teammate_distance) = ctx.tick_context.object_positions.player_distances.get(ctx.player.id, teammate.id) {
+                    let pass_power = (teammate_distance / pass_skill as f32 * 10.0) as f64;
 
-                return Some(StateChangeResult::with_goalkeeper_state_and_event(
-                    GoalkeeperState::Standing,
-                    Event::PlayerEvent(PlayerEvent::PassTo(
-                        teammate_id,
-                        teammate_position,
+                    result.events.add_player_event(PlayerEvent::PassTo(
+                        teammate.id,
+                        teammate.position,
                         pass_power,
-                    )),
-                ));
+                    ));
+                }
+
+                return Some(result);
             }
         }
 

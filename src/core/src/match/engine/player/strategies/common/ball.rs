@@ -91,39 +91,52 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn direction_to_opponent_goal(&self) -> Vector3<f32> {
-        let player = self.ctx.player;
+        let player_position = self.ctx.player.position;
         let ball_position = self.ctx.tick_context.object_positions.ball_position;
+        let opponent_goal_position = self.ctx.player().opponent_goal_position();
+
+        return opponent_goal_position;
 
         let players = self.ctx.players();
         let opponents = players.opponents();
         let mut goalkeepers = opponents.goalkeeper();
         let goalkeeper = goalkeepers.next().unwrap();
-
-        let player_position = player.position;
         let goalkeeper_position = goalkeeper.position;
 
-        // Calculate the angle between the player, ball, and goalkeeper
-        let player_to_ball = ball_position - player_position;
-        let ball_to_goalkeeper = goalkeeper_position - ball_position;
-        let angle = player_to_ball.angle(&ball_to_goalkeeper);
+        // Calculate the direction from the ball to the opponent's goal
+        let ball_to_goal = opponent_goal_position - ball_position;
 
-        if angle < 0.5 * std::f32::consts::PI {
-            // If the angle is small, aim towards the opposite corner of the goal
-            let goal_width = self.ctx.context.field_size.width as f32;
-            let goal_position = self.ctx.player().opponent_goal_position();
-            let target_x = if player_position.x < ball_position.x {
-                goal_position.x + goal_width / 2.0
-            } else {
-                goal_position.x - goal_width / 2.0
-            };
-            Vector3::new(target_x, goal_position.y, 0.0)
+        // Calculate the direction from the ball to the goalkeeper
+        let ball_to_goalkeeper = goalkeeper_position - ball_position;
+
+        // Calculate the perpendicular direction to the goalkeeper
+        let perpendicular_direction = Vector3::new(-ball_to_goalkeeper.y, ball_to_goalkeeper.x, 0.0);
+
+        // Normalize the perpendicular direction
+        let perpendicular_direction = perpendicular_direction.normalize();
+
+        // Calculate the target position by offsetting from the goal center
+        let goal_width = self.ctx.context.field_size.width as f32;
+        let offset_distance = goal_width * 0.2; // Adjust the offset distance as needed
+        let target_position = if player_position.x < ball_position.x {
+            opponent_goal_position + perpendicular_direction * offset_distance
         } else {
-            // If the angle is large, aim towards the goal center with some randomness
-            let goal_position = self.ctx.player().opponent_goal_position();
-            let shooting_ability = player.skills.technical.finishing;
-            let random_offset = (rand::random::<f32>() - 0.5) * shooting_ability;
-            Vector3::new(goal_position.x + random_offset, goal_position.y, 0.0)
-        }
+            opponent_goal_position - perpendicular_direction * offset_distance
+        };
+
+        // Calculate the direction from the ball to the target position
+        let ball_to_target = target_position - ball_position;
+
+        // Normalize the direction vector
+        let direction = ball_to_target.normalize();
+
+        // Add some randomness to the direction based on the player's finishing skill
+        let finishing_skill = self.ctx.player.skills.technical.finishing;
+        let random_angle = (rand::random::<f32>() - 0.5) * finishing_skill.to_radians();
+        let rotation_matrix = nalgebra::Rotation2::new(random_angle);
+        let randomized_direction = rotation_matrix * direction.xy();
+
+        Vector3::new(randomized_direction.x, randomized_direction.y, 0.0)
     }
 
     pub fn distance_to_opponent_goal(&self) -> f32 {
