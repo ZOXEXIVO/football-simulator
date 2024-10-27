@@ -117,8 +117,7 @@ impl DefenderPushingUpState {
             0.0,
         );
 
-        let players = ctx.players();
-        let teammates = players.teammates();
+        let teammates = ctx.players().teammates();
 
         let attacking_teammates = teammates.all().into_iter()
             .filter(|p| p.position.x > field_width * 0.5)

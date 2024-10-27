@@ -24,7 +24,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
         self.opponents_for_team(self.ctx.player.team_id, Some(false))
     }
 
-    pub fn nearby(&'b self, distance: f32) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    pub fn nearby(&'b self, distance: f32) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
         self.ctx
             .tick_context
             .object_positions
@@ -50,7 +50,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
             .any(|_| true)
     }
 
-    pub fn goalkeeper(&'b self) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    pub fn goalkeeper(&'b self) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
         self.opponents_by_position(
             PlayerFieldPositionGroup::Goalkeeper,
             self.ctx.player.team_id,
@@ -65,7 +65,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
         &'b self,
         position_group: PlayerFieldPositionGroup,
         team_id: u32,
-    ) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    ) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
         self.ctx
             .context
             .players

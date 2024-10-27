@@ -109,12 +109,7 @@ impl StateProcessingHandler for GoalkeeperTacklingState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Move towards the opponent to attempt the tackle
 
-        // Identify the opponent player with the ball
-        let players = ctx.players();
-        let opponents = players.opponents();
-        let mut opponents_with_ball = opponents.with_ball();
-
-        if let Some(opponent) = opponents_with_ball.next() {
+        if let Some(opponent) = ctx.players().opponents().with_ball().next() {
             // Calculate direction towards the opponent
             let direction = (opponent.position - ctx.player.position).normalize();
             // Set speed based on player's pace

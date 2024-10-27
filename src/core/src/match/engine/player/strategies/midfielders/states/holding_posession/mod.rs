@@ -57,15 +57,10 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
                 ));
             } else {
                 // If there is no space to dribble, look for a quick pass
-                if let Some(nearby_teammate) = ctx.players().teammates().nearby(150.0).next() {
+                if let Some(_) = ctx.players().teammates().nearby(150.0).next() {
                     // If there is a nearby teammate, transition to the passing state
-                    return Some(StateChangeResult::with_midfielder_state_and_event(
-                        MidfielderState::ShortPassing,
-                        Event::PlayerEvent(PlayerEvent::PassTo(
-                            ctx.player.id,
-                            nearby_teammate.position,
-                            0.8, // Adjust the pass power for a quick pass
-                        )),
+                    return Some(StateChangeResult::with_midfielder_state(
+                        MidfielderState::ShortPassing
                     ));
                 }
             }
@@ -74,11 +69,11 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
         // Check if the midfielder has held possession for too long
         if ctx.in_state_time > 200 {
             // If holding possession for too long, decide the next action based on the situation
-            if self.is_in_attacking_position(ctx) {
+            return if self.is_in_attacking_position(ctx) {
                 // If in an attacking position, transition to the shooting state
-                return Some(StateChangeResult::with_midfielder_state(
+                Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Shooting,
-                ));
+                ))
             } else {
                 let players = ctx.players();
                 let teammates = players.teammates();
@@ -98,21 +93,16 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
                         dist_a.partial_cmp(&dist_b).unwrap()
                     });
 
-                if let Some(forward_teammate) = nearest_forward {
+                if let Some(_) = nearest_forward {
                     // If there is a forward teammate, transition to the passing state
-                    return Some(StateChangeResult::with_midfielder_state_and_event(
-                        MidfielderState::ShortPassing,
-                        Event::PlayerEvent(PlayerEvent::PassTo(
-                            ctx.player.id,
-                            forward_teammate.position,
-                            1.2, // Adjust the pass power for a forward pass
-                        )),
-                    ));
+                    Some(StateChangeResult::with_midfielder_state(
+                        MidfielderState::ShortPassing
+                    ))
                 } else {
                     // If no forward teammate is available, transition to the dribbling state
-                    return Some(StateChangeResult::with_midfielder_state(
+                    Some(StateChangeResult::with_midfielder_state(
                         MidfielderState::Dribbling,
-                    ));
+                    ))
                 }
             }
         }

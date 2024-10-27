@@ -1,5 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
+use crate::r#match::events::Event;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
@@ -8,7 +9,6 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
-use crate::r#match::events::Event;
 
 const KICK_POWER_MULTIPLIER: f32 = 1.5; // Multiplier for kick power calculation
 
@@ -52,28 +52,8 @@ impl StateProcessingHandler for ForwardAssistingState {
         }
 
         // If not under immediate pressure, look for assist opportunities
-        if let Some(teammate_id) = self.find_best_teammate_to_assist(ctx) {
-            if self.is_good_assisting_position(ctx, teammate_id) {
-                let teammate_position = ctx
-                    .tick_context
-                    .object_positions
-                    .players_positions
-                    .get_player_position(teammate_id)
-                    .unwrap();
-
-                // Make the assist
-                let distance_to_teammate = (ctx.player.position - teammate_position).magnitude();
-                let kick_power = distance_to_teammate / ctx.player.skills.technical.free_kicks
-                    * KICK_POWER_MULTIPLIER;
-
-                return Some(StateChangeResult::with_forward_state_and_event(
-                    ForwardState::Standing, Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
-                        teammate_position,
-                        kick_power as f64,
-                    ))
-                ));
-            }
+        if let Some(_) = self.find_best_teammate_to_assist(ctx) {
+            return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
         }
 
         if self.is_in_shooting_range(ctx) && ctx.player.has_ball {

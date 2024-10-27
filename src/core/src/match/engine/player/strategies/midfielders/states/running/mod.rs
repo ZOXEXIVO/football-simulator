@@ -34,12 +34,6 @@ impl StateProcessingHandler for MidfielderRunningState {
                 ));
             }
 
-            if let Some(_) = self.find_open_teammate(ctx) {
-                return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::ShortPassing
-                ));
-            }
-
             if self.is_under_pressure(ctx){
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::ShortPassing

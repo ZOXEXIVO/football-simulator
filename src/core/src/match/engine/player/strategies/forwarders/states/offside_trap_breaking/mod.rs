@@ -63,10 +63,7 @@ impl StateProcessingHandler for ForwardOffsideTrapBreakingState {
 
 impl ForwardOffsideTrapBreakingState {
     fn is_offside_trap_active(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.players();
-        let opponents = players.opponents();
-
-        let offside_line = opponents
+        let offside_line = ctx.players().opponents()
             .all()
             .map(|opponent| opponent.position.x)
             .min_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
