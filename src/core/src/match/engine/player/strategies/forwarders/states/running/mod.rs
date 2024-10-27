@@ -63,25 +63,21 @@ impl StateProcessingHandler for ForwardRunningState {
 
             let players = ctx.players();
             let opponents = players.opponents();
+            let mut opponents_with_ball = opponents.with_ball();
 
-            if let Some(opponent_with_ball) = opponents.with_ball().next() {
+            if let Some(opponent_with_ball) = opponents_with_ball.next() {
                 let opponent_distance = ctx
                     .tick_context
                     .object_positions
                     .player_distances
                     .get(ctx.player.id, opponent_with_ball.id)
                     .unwrap();
+
                 if opponent_distance < PRESSING_DISTANCE_THRESHOLD {
                     return Some(StateChangeResult::with_forward_state(
                         ForwardState::Pressing,
                     ));
                 }
-            }
-
-            if ctx.ball().distance() > ASSISTING_DISTANCE_THRESHOLD {
-                return Some(StateChangeResult::with_forward_state(
-                    ForwardState::Assisting,
-                ));
             }
         }
 
@@ -98,7 +94,7 @@ impl StateProcessingHandler for ForwardRunningState {
 
             let player_goal_velocity = SteeringBehavior::Arrive {
                 target: goal_direction,
-                slowing_distance: 10.0,
+                slowing_distance: 200.0,
             }
             .calculate(ctx.player)
             .velocity;
@@ -108,7 +104,7 @@ impl StateProcessingHandler for ForwardRunningState {
             // Apply pursuit behavior
             let pursuit_result = SteeringBehavior::Arrive {
                 target: ctx.tick_context.object_positions.ball_position,
-                slowing_distance: 30.0,
+                slowing_distance: 10.0,
             }
             .calculate(ctx.player);
 

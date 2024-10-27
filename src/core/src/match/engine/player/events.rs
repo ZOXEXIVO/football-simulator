@@ -84,6 +84,9 @@ impl PlayerEventDispatcher {
                 field.ball.velocity = ball_pass_vector.normalize();
 
                 let player = field.get_player_mut(player_id).unwrap();
+
+                println!("PASSING_PLAYER_STATE = {:?}", player.state);
+
                 player.has_ball = false;
 
                 field.ball.previous_owner = field.ball.current_owner;

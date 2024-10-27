@@ -35,6 +35,10 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 
         // Determine the best teammate to pass to
         if let Some(target_teammate) = self.find_best_teammate(ctx) {
+
+            println!("PASS TARGET POSITION = {:?}", target_teammate.position);
+
+
             Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(

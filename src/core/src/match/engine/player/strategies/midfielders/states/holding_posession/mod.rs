@@ -14,6 +14,9 @@ static MIDFIELDER_HOLDING_POSSESSION_STATE_NETWORK: LazyLock<NeuralNetwork> = La
     DefaultNeuralNetworkLoader::load(include_str!("nn_holding_possession_data.json"))
 });
 
+const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
+const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
+
 #[derive(Default)]
 pub struct MidfielderHoldingPossessionState {}
 
@@ -23,6 +26,12 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
         if !ctx.player.has_ball {
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Returning,
+            ));
+        }
+
+        if self.is_in_shooting_range(ctx) {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Shooting,
             ));
         }
 
@@ -68,7 +77,7 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
         }
 
         // Check if the midfielder has held possession for too long
-        if ctx.in_state_time > 5000 {
+        if ctx.in_state_time > 200 {
             // If holding possession for too long, decide the next action based on the situation
             if self.is_in_attacking_position(ctx) {
                 // If in an attacking position, transition to the shooting state
@@ -182,5 +191,10 @@ impl MidfielderHoldingPossessionState {
         );
 
         ray_cast_result.is_none() // No collisions with opponents
+    }
+
+    fn is_in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
+        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
+        distance_to_goal <= MAX_SHOOTING_DISTANCE && distance_to_goal >= MIN_SHOOTING_DISTANCE
     }
 }

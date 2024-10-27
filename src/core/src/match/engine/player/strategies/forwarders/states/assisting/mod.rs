@@ -8,6 +8,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
 
 const KICK_POWER_MULTIPLIER: f32 = 1.5; // Multiplier for kick power calculation
 
@@ -19,8 +20,6 @@ pub struct ForwardAssistingState {}
 
 impl StateProcessingHandler for ForwardAssistingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        let mut result = StateChangeResult::new();
-
         if !ctx.team().is_control_ball() && ctx.ball().distance() < 150.0 {
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Pressing,
@@ -41,7 +40,9 @@ impl StateProcessingHandler for ForwardAssistingState {
             if self.should_make_quick_pass(ctx) {
                 if let Some(_teammate_id) = self.find_best_teammate_to_assist(ctx) {
                     //result.events.add_player_event(PlayerEvent::Pass(ctx.player.player_id, teammate_id));
-                    return Some(result);
+                    return Some(StateChangeResult::with_forward_state(
+                        ForwardState::Dribbling,
+                    ));
                 }
             }
             // If no good passing option, try to dribble
@@ -65,12 +66,13 @@ impl StateProcessingHandler for ForwardAssistingState {
                 let kick_power = distance_to_teammate / ctx.player.skills.technical.free_kicks
                     * KICK_POWER_MULTIPLIER;
 
-                result.events.add_player_event(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    teammate_position,
-                    kick_power as f64,
+                return Some(StateChangeResult::with_forward_state_and_event(
+                    ForwardState::Standing, Event::PlayerEvent(PlayerEvent::PassTo(
+                        ctx.player.id,
+                        teammate_position,
+                        kick_power as f64,
+                    ))
                 ));
-                return Some(result);
             }
         }
 

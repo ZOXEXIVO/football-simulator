@@ -29,8 +29,13 @@ impl StateProcessingHandler for MidfielderDribblingState {
                     MidfielderState::ShortPassing
                 ));
             }
+
+            if ctx.in_state_time > 100 {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::LongPassing
+                ));
+            }
         } else {
-            // If the player doesn't have the ball, check if they should press, support attack, or return
             if self.should_press(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Pressing,
