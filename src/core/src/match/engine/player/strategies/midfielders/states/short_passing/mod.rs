@@ -1,6 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::{Event, EventCollection};
+use crate::r#match::events::{Event};
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
@@ -14,7 +14,7 @@ static MIDFIELDER_SHORT_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_short_passing_data.json")));
 
 // Constants used in passing calculations
-const MAX_PASS_DISTANCE: f32 = 100.0; // Maximum distance for a short pass
+const MAX_PASS_DISTANCE: f32 = 200.0; // Maximum distance for a short pass
 const MIN_PASS_SPEED: f32 = 10.0; // Minimum speed of the pass
 const MAX_PASS_SPEED: f32 = 15.0; // Maximum speed of the pass
 const STAMINA_COST_PASS: f32 = 2.0; // Stamina cost of making a pass
@@ -35,10 +35,6 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 
         // Determine the best teammate to pass to
         if let Some(target_teammate) = self.find_best_teammate(ctx) {
-
-            println!("PASS TARGET POSITION = {:?}", target_teammate.position);
-
-
             Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
@@ -72,26 +68,17 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 }
 
 impl MidfielderShortPassingState {
-    fn find_best_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
-        let max_pass_distance = MAX_PASS_DISTANCE;
-
-        let players = ctx.players();
-        let teammates = players.teammates();
-
-        for (teammate_id, distance) in teammates.nearby_raw(max_pass_distance) {
-            let player = ctx.context.players.get(teammate_id)?;
-
-            if !player.has_ball {
+    fn find_best_teammate<'a>(&self, ctx: &'a StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
+        for teammate in ctx.players().teammates().nearby(MAX_PASS_DISTANCE) {
+            if !teammate.has_ball {
                 continue;
             }
 
-            if !self.is_pass_feasible_ray_tracing(ctx, player) {
+            if !self.is_pass_feasible_ray_tracing(ctx, teammate) {
                 continue;
             }
 
-            if distance < max_pass_distance {
-                return Some(player);
-            }
+            return Some(teammate);
         }
 
         None

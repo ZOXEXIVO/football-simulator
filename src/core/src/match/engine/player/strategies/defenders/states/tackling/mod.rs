@@ -130,12 +130,7 @@ impl StateProcessingHandler for DefenderTacklingState {
                 );
             }
 
-            // Identify the opponent player with the ball
-            let players = ctx.players();
-            let opponents = players.opponents();
-            let mut opponents_with_ball = opponents.with_ball();
-
-            if let Some(opponent) = opponents_with_ball.next() {
+            if let Some(opponent) = ctx.players().opponents().with_ball().next() {
                 Some(
                     SteeringBehavior::Arrive {
                         target: opponent.position,

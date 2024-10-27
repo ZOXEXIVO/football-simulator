@@ -159,7 +159,7 @@ async fn main() {
     }
 }
 
-const TRACKING_PLAYER_ID: u32 = 1000;
+const TRACKING_PLAYER_ID: u32 = 106;
 
 pub fn get_home_squad() -> TeamSquad {
     let players = [

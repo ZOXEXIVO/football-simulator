@@ -17,18 +17,18 @@ impl<'p> PlayersOperationsImpl<'p> {
 
 impl<'p> PlayersOperationsImpl<'p> {
     // Teammates
-    pub fn teammates(&'p self) -> PlayerTeammatesOperationsImpl<'p> {
+    pub fn teammates(&self) -> PlayerTeammatesOperationsImpl<'p> {
         PlayerTeammatesOperationsImpl::new(self.ctx)
     }
 
     // Opponents
-    pub fn opponents(&'p self) -> PlayerOpponentsOperationsImpl<'_> {
+    pub fn opponents(&self) -> PlayerOpponentsOperationsImpl<'p> {
         PlayerOpponentsOperationsImpl::new(self.ctx)
     }
 
     // Other
 
-    pub fn defenders(&self) -> Vec<&MatchPlayer> {
+    pub fn defenders(&'p self) -> Vec<&'p MatchPlayer> {
         self.get_by_position(PlayerFieldPositionGroup::Defender)
     }
 

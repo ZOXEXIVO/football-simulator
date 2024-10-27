@@ -38,17 +38,12 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
         let players= ctx.players();
         let teammates = players.teammates();
 
-        if let Some(open_teammate) = teammates
+        if let Some(_) = teammates
             .nearby(300.0)
             .filter(|teammate| self.is_teammate_open(ctx, teammate)).next() {
             // If there is an open teammate, transition to the passing state
-            return Some(StateChangeResult::with_midfielder_state_and_event(
-                MidfielderState::ShortPassing,
-                Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    open_teammate.position,
-                    1.0, // Adjust the pass power as needed
-                )),
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::ShortPassing
             ));
         }
 

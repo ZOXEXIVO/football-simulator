@@ -34,11 +34,8 @@ impl StateProcessingHandler for DefenderSlidingTackleState {
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.players();
-        let opponents = players.opponents();
-        let mut opponents_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponents_with_ball.next() {
+        if let Some(opponent) = ctx.players().opponents().with_ball().next() {
             // 3. Calculate the distance to the opponent
             let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
 

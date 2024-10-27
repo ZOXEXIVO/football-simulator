@@ -56,7 +56,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
         teammates
     }
 
-    pub fn nearby(&'b self, distance: f32) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    pub fn nearby<'n>(&'n self, distance: f32) -> impl Iterator<Item = &'b MatchPlayer> + 'n {
         self.ctx
             .tick_context
             .object_positions

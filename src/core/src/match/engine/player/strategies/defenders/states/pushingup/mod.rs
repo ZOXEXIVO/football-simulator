@@ -82,8 +82,8 @@ impl StateProcessingHandler for DefenderPushingUpState {
                 target: optimal_position,
                 velocity: ctx.player.velocity,
             }
-            .calculate(ctx.player)
-            .velocity,
+                .calculate(ctx.player)
+                .velocity,
         )
     }
 
@@ -99,8 +99,7 @@ impl DefenderPushingUpState {
     }
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
-        let players = ctx.players();
-        players
+        ctx.players()
             .defenders()
             .iter()
             .all(|d| d.position.x <= ctx.player.position.x)

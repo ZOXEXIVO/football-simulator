@@ -62,10 +62,7 @@ impl ForwardHeadingUpPlayState {
     }
 
     fn find_best_pass_option(&self, ctx: &StateProcessingContext) -> Option<u32> {
-        let players = ctx.players();
-        let teammates = players.teammates();
-
-        teammates
+        ctx.players().teammates()
             .all()
             .filter(|teammate| {
                 // Check if the teammate is in a good position to receive a pass
