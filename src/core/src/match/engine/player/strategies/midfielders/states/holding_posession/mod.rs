@@ -36,7 +36,7 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
             return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::ShortPassing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    open_teammate.id,
+                    ctx.player.id,
                     open_teammate.position,
                     1.0, // Adjust the pass power as needed
                 )),
@@ -58,7 +58,7 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
                     return Some(StateChangeResult::with_midfielder_state_and_event(
                         MidfielderState::ShortPassing,
                         Event::PlayerEvent(PlayerEvent::PassTo(
-                            nearby_teammate.id,
+                            ctx.player.id,
                             nearby_teammate.position,
                             0.8, // Adjust the pass power for a quick pass
                         )),
@@ -99,7 +99,7 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
                     return Some(StateChangeResult::with_midfielder_state_and_event(
                         MidfielderState::ShortPassing,
                         Event::PlayerEvent(PlayerEvent::PassTo(
-                            forward_teammate.id,
+                            ctx.player.id,
                             forward_teammate.position,
                             1.2, // Adjust the pass power for a forward pass
                         )),

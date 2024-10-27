@@ -38,7 +38,7 @@ impl StateProcessingHandler for MidfielderShortPassingState {
             Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    target_teammate.id,
+                    ctx.player.id,
                     target_teammate.position,
                     1.0,
                 )

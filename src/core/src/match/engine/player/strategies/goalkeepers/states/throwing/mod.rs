@@ -54,7 +54,7 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
             let mut events = EventCollection::new();
 
             events.add_player_event(PlayerEvent::PassTo(
-                teammate.id,
+                ctx.player.id,
                 teammate.position,
                 throw_power as f64,
             ));

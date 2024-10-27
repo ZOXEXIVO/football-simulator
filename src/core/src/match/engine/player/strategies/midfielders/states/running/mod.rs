@@ -39,6 +39,12 @@ impl StateProcessingHandler for MidfielderRunningState {
                     MidfielderState::ShortPassing
                 ));
             }
+
+            if self.is_under_pressure(ctx){
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::ShortPassing
+                ));
+            }
         } else {
             // If the player doesn't have the ball, check if they should press, support attack, or return
             if self.should_press(ctx) {
@@ -56,6 +62,12 @@ impl StateProcessingHandler for MidfielderRunningState {
             if self.should_return_to_position(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Returning,
+                ));
+            }
+
+            if self.is_under_pressure(ctx){
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::ShortPassing
                 ));
             }
         }
@@ -125,9 +137,9 @@ impl MidfielderRunningState {
 
     fn should_press(&self, ctx: &StateProcessingContext) -> bool {
         let ball_distance = ctx.ball().distance();
-        let pressing_distance = 150.0;
+        let pressing_distance = 100.0;
 
-        !ctx.team().is_control_ball() && ball_distance < pressing_distance
+        !ctx.team().is_control_ball() && ball_distance < pressing_distance && ctx.ball().is_towards_player_with_angle(0.8)
     }
 
     fn find_space_between_opponents(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
@@ -170,7 +182,7 @@ impl MidfielderRunningState {
         let team_in_possession = ctx.team().is_control_ball();
         let in_attacking_half = ctx.player.position.x > ctx.context.field_size.width as f32 / 2.0;
 
-        team_in_possession && in_attacking_half
+        team_in_possession && in_attacking_half && ctx.ball().distance() < 200.0
     }
 
     fn should_return_to_position(&self, ctx: &StateProcessingContext) -> bool {
@@ -196,6 +208,6 @@ impl MidfielderRunningState {
     }
 
     fn is_under_pressure(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists(10.0)
+        ctx.players().opponents().exists(25.0)
     }
 }

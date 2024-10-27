@@ -32,7 +32,7 @@ impl StateProcessingHandler for MidfielderDistributingState {
                 return Some(StateChangeResult::with_midfielder_state_and_event(
                     MidfielderState::Returning,
                     Event::PlayerEvent(PlayerEvent::PassTo(
-                        teammate.id,
+                        ctx.player.id,
                         teammate_player_position,
                         pass_power,
                     )),

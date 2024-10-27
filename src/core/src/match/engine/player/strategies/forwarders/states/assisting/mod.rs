@@ -66,7 +66,7 @@ impl StateProcessingHandler for ForwardAssistingState {
                     * KICK_POWER_MULTIPLIER;
 
                 result.events.add_player_event(PlayerEvent::PassTo(
-                    teammate_id,
+                    ctx.player.id,
                     teammate_position,
                     kick_power as f64,
                 ));

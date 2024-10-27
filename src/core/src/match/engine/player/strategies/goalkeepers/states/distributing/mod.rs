@@ -41,7 +41,7 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
                 Some(StateChangeResult::with_defender_state_and_event(
                     DefenderState::Returning,
                     Event::PlayerEvent(PlayerEvent::PassTo(
-                        teammate_id,
+                        ctx.player.id,
                         teammate_player_position,
                         pass_power,
                     )),

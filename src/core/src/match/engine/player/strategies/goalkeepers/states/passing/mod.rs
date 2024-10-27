@@ -35,7 +35,7 @@ impl StateProcessingHandler for GoalkeeperPassingState {
                 let pass_power = (teammate_distance / pass_skill as f32 * 10.0) as f64;
 
                 return Some(StateChangeResult::with_goalkeeper_state_and_event(GoalkeeperState::Standing, Event::PlayerEvent(PlayerEvent::PassTo(
-                    teammate.id,
+                    ctx.player.id,
                     teammate.position,
                     pass_power,
                 ))));

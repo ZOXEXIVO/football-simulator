@@ -36,7 +36,7 @@ impl StateProcessingHandler for DefenderPassingState {
                 return Some(StateChangeResult::with_defender_state_and_event(
                     DefenderState::Returning,
                     Event::PlayerEvent(PlayerEvent::PassTo(
-                        teammate_id,
+                        ctx.player.id,
                         teammate_player_position,
                         pass_power,
                     )),
@@ -64,7 +64,7 @@ impl StateProcessingHandler for DefenderPassingState {
                 .get_player_position(teammate_id)
             {
                 let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
-                    teammate_id,
+                    ctx.player.id,
                     teammate_player_position,
                     1.0,
                 )));
