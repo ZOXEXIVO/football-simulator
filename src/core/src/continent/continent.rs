@@ -15,7 +15,7 @@ impl Continent {
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ContinentResult {
         let country_results: Vec<CountryResult> = self
             .countries
-            .iter_mut()
+            .par_iter_mut()
             .map(|country| {
                 let message = &format!("simulate country: {}", &country.name);
                 Logging::estimate_result(|| country.simulate(ctx.with_country(country.id)), message)

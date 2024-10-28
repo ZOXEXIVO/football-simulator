@@ -1,6 +1,8 @@
 use crate::context::GlobalContext;
 use crate::league::{League, LeagueResult};
 use crate::{Club, Logging};
+use rayon::iter::IntoParallelRefMutIterator;
+use rayon::iter::ParallelIterator;
 
 pub struct LeagueCollection {
     pub leagues: Vec<League>,
@@ -19,7 +21,7 @@ impl LeagueCollection {
             .collect();
 
         self.leagues
-            .iter_mut()
+            .par_iter_mut()
             .map(|league| {
                 let league_team_ids: Vec<u32> = teams_ids
                     .iter()
