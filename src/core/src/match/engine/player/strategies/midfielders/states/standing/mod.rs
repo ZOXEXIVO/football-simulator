@@ -73,7 +73,7 @@ impl StateProcessingHandler for MidfielderStandingState {
         // 4. Check if a teammate is making a run and needs support
         if self.should_support_attack(ctx) {
             return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::AttackSupportinh,
+                MidfielderState::AttackSupporting,
             ));
         }
 

@@ -49,7 +49,7 @@ impl StateProcessingHandler for MidfielderRunningState {
 
             if self.should_support_attack(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::AttackSupportinh,
+                    MidfielderState::AttackSupporting,
                 ));
             }
 

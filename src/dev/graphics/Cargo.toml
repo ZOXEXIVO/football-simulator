@@ -10,5 +10,5 @@ env_logger = "0.11.5"
 log = { version = "0.4.22", features = ["release_max_level_error"] }
 rand = "0.8.5"
 rayon = "1.10.0"
-serde = { version = "1.0.213", features = ["derive"] }
+serde = { version = "1.0.214", features = ["derive"] }
 serde_json = "1.0.132"

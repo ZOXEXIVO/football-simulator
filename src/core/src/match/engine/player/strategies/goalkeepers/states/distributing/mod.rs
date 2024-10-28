@@ -38,7 +38,7 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
             {
                 let pass_power = self.calculate_pass_power(teammate_id, ctx);
 
-                Some(StateChangeResult::with_defender_state_and_event(
+                return Some(StateChangeResult::with_defender_state_and_event(
                     DefenderState::Returning,
                     Event::PlayerEvent(PlayerEvent::PassTo(
                         ctx.player.id,
@@ -92,7 +92,6 @@ impl GoalkeeperDistributingState {
         if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
             return Some(teammate_id);
         }
-
 
         None
     }

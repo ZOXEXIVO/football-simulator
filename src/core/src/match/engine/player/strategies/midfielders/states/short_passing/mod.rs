@@ -35,7 +35,7 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 
         // Determine the best teammate to pass to
         if let Some(target_teammate) = self.find_best_teammate(ctx) {
-            Some(StateChangeResult::with_midfielder_state_and_event(
+            return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     ctx.player.id,
@@ -43,12 +43,15 @@ impl StateProcessingHandler for MidfielderShortPassingState {
                     1.0,
                 )
             )))
-        } else {
-            // No available teammate found, consider other options
-            Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::HoldingPossession,
+        }
+
+        if ctx.in_state_time > 50 {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Running
             ))
         }
+
+        None
     }
 
     fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {

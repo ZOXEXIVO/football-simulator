@@ -2,18 +2,45 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
+    SteeringBehavior, MatchPlayer,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
+use crate::r#match::midfielders::states::MidfielderState;
+use crate::r#match::player::events::PlayerEvent;
 
 static MIDFIELDER_SWITCHING_PLAY_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_switching_play_data.json")));
+
+const SWITCHING_PLAY_DISTANCE_THRESHOLD: f32 = 30.0; // Minimum distance to consider switching play
+const SWITCHING_PLAY_ANGLE_THRESHOLD: f32 = std::f32::consts::PI / 4.0; // 45 degrees
 
 #[derive(Default)]
 pub struct MidfielderSwitchingPlayState {}
 
 impl StateProcessingHandler for MidfielderSwitchingPlayState {
-    fn try_fast(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if !ctx.player.has_ball {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Returning,
+            ));
+        }
+
+        // Check if there's a good opportunity to switch play
+        if let Some(target_position) = self.find_switch_play_target(ctx) {
+            // If a suitable target position is found, switch play
+            return Some(StateChangeResult::with_midfielder_state_and_event(
+                MidfielderState::ShortPassing,
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    ctx.player.id,
+                    target_position,
+                    1.0, // Adjust the pass power as needed
+                )),
+            ));
+        }
+
+        // If no suitable opportunity to switch play, continue with the current state
         None
     }
 
@@ -21,9 +48,76 @@ impl StateProcessingHandler for MidfielderSwitchingPlayState {
         None
     }
 
-    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        // Move towards the best position to switch play
+        if let Some(target_position) = self.find_switch_play_target(ctx) {
+            let steering = SteeringBehavior::Seek {
+                target: target_position,
+            }
+                .calculate(ctx.player);
+
+            Some(steering.velocity)
+        } else {
+            // If no suitable target position is found, stay in the current position
+            Some(Vector3::new(0.0, 0.0, 0.0))
+        }
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {}
+}
+
+impl MidfielderSwitchingPlayState {
+    fn find_switch_play_target(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        // Find the best position to switch play to
+        let player_position = ctx.player.position;
+        let ball_position = ctx.tick_context.object_positions.ball_position;
+
+        // Calculate the direction perpendicular to the player's forward direction
+        let forward_direction = (ball_position - player_position).normalize();
+        let perpendicular_direction = Vector3::new(-forward_direction.y, forward_direction.x, 0.0);
+
+        let players = ctx.players();
+        let teammates = players.teammates();
+
+        // Find teammates on the opposite side of the field
+        let opposite_side_teammates: Vec<&MatchPlayer> = teammates
+            .all()
+            .filter(|teammate| {
+                let teammate_to_player = player_position - teammate.position;
+                let dot_product = teammate_to_player.dot(&perpendicular_direction);
+                dot_product > 0.0 // Teammate is on the opposite side
+            })
+            .collect();
+
+        // Find the teammate with the most space
+        let best_teammate = opposite_side_teammates
+            .iter()
+            .max_by(|a, b| {
+                let space_a = self.calculate_space_around_player(ctx, **a);
+                let space_b = self.calculate_space_around_player(ctx, **b);
+                space_a.partial_cmp(&space_b).unwrap()
+            });
+
+        best_teammate.map(|teammate| teammate.position)
+    }
+
+    fn calculate_space_around_player(
+        &self,
+        ctx: &StateProcessingContext,
+        player: &MatchPlayer,
+    ) -> f32 {
+        // Calculate the amount of free space around a player
+        let space_radius = 10.0; // Adjust the radius as needed
+        let num_opponents_nearby = ctx
+            .players()
+            .opponents()
+            .all()
+            .filter(|opponent| {
+                let distance = (opponent.position - player.position).magnitude();
+                distance <= space_radius
+            })
+            .count();
+
+        space_radius - num_opponents_nearby as f32
+    }
 }

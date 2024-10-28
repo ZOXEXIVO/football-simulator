@@ -25,7 +25,7 @@ impl StateProcessingHandler for MidfielderDistanceShootingState {
         }
 
         // Check if the midfielder is within shooting range
-        let shooting_range = 30.0; // Adjust this value based on your game's scale
+        let shooting_range = 300.0; // Adjust this value based on your game's scale
         let distance_to_goal = self.distance_to_goal(ctx);
         if distance_to_goal > shooting_range {
             // Too far from the goal, consider other options

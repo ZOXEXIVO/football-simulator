@@ -40,12 +40,12 @@ impl StateProcessingHandler for GoalkeeperPenaltyState {
                 .events
                 .add_player_event(PlayerEvent::CaughtBall(ctx.player.id));
 
-            return Some(state_change);
+            Some(state_change)
         } else {
             // Penalty save failed, transition to appropriate state (e.g., Standing)
-            return Some(StateChangeResult::with_goalkeeper_state(
+            Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Standing,
-            ));
+            ))
         }
     }
 
