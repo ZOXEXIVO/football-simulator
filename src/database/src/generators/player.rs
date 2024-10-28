@@ -6,17 +6,17 @@ use core::{
     PlayerSkills, Technical, Utc,
 };
 use std::sync::atomic::{AtomicU32, Ordering};
-use std::sync::Arc;
+use std::sync::{LazyLock};
+
+static PLAYER_ID_SEQUENCE: LazyLock<AtomicU32> = LazyLock::new(|| AtomicU32::new(1));
 
 pub struct PlayerGenerator {
-    sequence: Arc<AtomicU32>,
     people_names_data: PeopleNameGeneratorData,
 }
 
 impl PlayerGenerator {
     pub fn with_people_names(people_names: &PeopleNameGeneratorData) -> Self {
         PlayerGenerator {
-            sequence: Arc::new(AtomicU32::new(1)),
             people_names_data: PeopleNameGeneratorData {
                 first_names: people_names.first_names.clone(),
                 last_names: people_names.last_names.clone(),
@@ -41,7 +41,7 @@ impl PlayerGenerator {
         let day = IntegerUtils::random(1, 29) as u32;
 
         Player::new(
-            self.sequence.fetch_add(1, Ordering::Relaxed),
+            PLAYER_ID_SEQUENCE.fetch_add(1, Ordering::SeqCst),
             FullName::with_full(
                 self.generate_first_name(),
                 self.generate_last_name(),

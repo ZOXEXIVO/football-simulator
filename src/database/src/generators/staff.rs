@@ -9,17 +9,17 @@ use core::{
 };
 use rand::Rng;
 use std::sync::atomic::{AtomicU32, Ordering};
-use std::sync::Arc;
+use std::sync::{LazyLock};
+
+static STAFF_ID_SEQUENCE: LazyLock<AtomicU32> = LazyLock::new(|| AtomicU32::new(1));
 
 pub struct StaffGenerator {
-    sequence: Arc<AtomicU32>,
     people_names_data: PeopleNameGeneratorData,
 }
 
 impl StaffGenerator {
     pub fn with_people_names(people_names: &PeopleNameGeneratorData) -> Self {
         StaffGenerator {
-            sequence: Arc::new(AtomicU32::new(0)),
             people_names_data: PeopleNameGeneratorData {
                 first_names: people_names.first_names.clone(),
                 last_names: people_names.last_names.clone(),
@@ -37,7 +37,7 @@ impl StaffGenerator {
         let day = IntegerUtils::random(1, 29) as u32;
 
         Staff::new(
-            self.sequence.fetch_add(1, Ordering::Relaxed),
+            STAFF_ID_SEQUENCE.fetch_add(1, Ordering::SeqCst),
             FullName::with_full(
                 self.generate_first_name(),
                 self.generate_last_name(),

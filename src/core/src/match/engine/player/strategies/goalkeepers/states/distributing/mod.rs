@@ -38,8 +38,8 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
             {
                 let pass_power = self.calculate_pass_power(teammate_id, ctx);
 
-                return Some(StateChangeResult::with_defender_state_and_event(
-                    DefenderState::Returning,
+                return Some(StateChangeResult::with_goalkeeper_state_and_event(
+                    GoalkeeperState::ReturningToGoal,
                     Event::PlayerEvent(PlayerEvent::PassTo(
                         ctx.player.id,
                         teammate_player_position,

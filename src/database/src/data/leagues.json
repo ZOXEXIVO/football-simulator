@@ -50,13 +50,13 @@
     "settings": {
       "season_starting_half": {
         "from_day": 1,
-        "from_month": 8,
-        "to_day": 31,
+        "from_month": 7,
+        "to_day": 5,
         "to_month": 12
       },
       "season_ending_half": {
         "from_day": 1,
-        "from_month": 1,
+        "from_month": 3,
         "to_day": 31,
         "to_month": 5
       }
@@ -71,13 +71,13 @@
     "settings": {
       "season_starting_half": {
         "from_day": 1,
-        "from_month": 8,
-        "to_day": 31,
+        "from_month": 7,
+        "to_day": 5,
         "to_month": 12
       },
       "season_ending_half": {
         "from_day": 1,
-        "from_month": 1,
+        "from_month": 3,
         "to_day": 31,
         "to_month": 5
       }
@@ -92,13 +92,13 @@
     "settings": {
       "season_starting_half": {
         "from_day": 1,
-        "from_month": 8,
-        "to_day": 31,
+        "from_month": 7,
+        "to_day": 5,
         "to_month": 12
       },
       "season_ending_half": {
         "from_day": 1,
-        "from_month": 1,
+        "from_month": 3,
         "to_day": 31,
         "to_month": 5
       }
