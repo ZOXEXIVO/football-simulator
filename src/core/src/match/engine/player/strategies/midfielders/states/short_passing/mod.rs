@@ -14,11 +14,11 @@ static MIDFIELDER_SHORT_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_short_passing_data.json")));
 
 // Constants used in passing calculations
-const MAX_PASS_DISTANCE: f32 = 200.0; // Maximum distance for a short pass
+const MAX_PASS_DISTANCE: f32 = 300.0; // Maximum distance for a short pass
 const MIN_PASS_SPEED: f32 = 10.0; // Minimum speed of the pass
 const MAX_PASS_SPEED: f32 = 15.0; // Maximum speed of the pass
 const STAMINA_COST_PASS: f32 = 2.0; // Stamina cost of making a pass
-const OPPONENT_COLLISION_RADIUS: f32 = 0.5; // Radius representing opponent's collision area
+const OPPONENT_COLLISION_RADIUS: f32 = 5.0; // Radius representing opponent's collision area
 
 #[derive(Default)]
 pub struct MidfielderShortPassingState {}
@@ -73,13 +73,13 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 impl MidfielderShortPassingState {
     fn find_best_teammate<'a>(&self, ctx: &'a StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
         for teammate in ctx.players().teammates().nearby(MAX_PASS_DISTANCE) {
-            if !teammate.has_ball {
+            if teammate.has_ball {
                 continue;
             }
 
-            if !self.is_pass_feasible_ray_tracing(ctx, teammate) {
-                continue;
-            }
+            // if !self.is_pass_feasible_ray_tracing(ctx, teammate) {
+            //     continue;
+            // }
 
             return Some(teammate);
         }
@@ -107,21 +107,15 @@ impl MidfielderShortPassingState {
         let ray_direction = direction;
 
         // Iterate over opponents to check for intersections
-        for opponent in ctx.context.players.raw_players().iter() {
-            if opponent.team_id != ctx.player.team_id {
-                let opponent_position = opponent.position;
-
-                // Check if opponent is within the pass corridor
-                if self.ray_intersects_sphere(
-                    ray_origin,
-                    ray_direction,
-                    opponent_position,
-                    OPPONENT_COLLISION_RADIUS,
-                    distance_to_target,
-                ) {
-                    // Opponent is obstructing the pass
-                    return false;
-                }
+        for opponent in ctx.players().opponents().all() {
+            if self.ray_intersects_sphere(
+                ray_origin,
+                ray_direction,
+                opponent.position,
+                OPPONENT_COLLISION_RADIUS,
+                distance_to_target,
+            ) {
+                return false;
             }
         }
         true
