@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 
-const DEFAULT_TITLE: string = "Football Simulator";
-
+const DEFAULT_TITLE: string = "Open Football";
+F
 @Injectable({
     providedIn: 'root',
  })
