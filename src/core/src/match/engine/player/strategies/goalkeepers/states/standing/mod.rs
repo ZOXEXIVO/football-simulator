@@ -20,7 +20,7 @@ pub struct GoalkeeperStandingState {}
 
 impl StateProcessingHandler for GoalkeeperStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Passing,
             ));

@@ -19,7 +19,7 @@ pub struct DefenderRunningState {}
 
 impl StateProcessingHandler for DefenderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             if self.is_in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Shooting,
@@ -34,13 +34,13 @@ impl StateProcessingHandler for DefenderRunningState {
         } else {
             let distance_to_ball = ctx.ball().distance();
 
-            if !ctx.player.has_ball && distance_to_ball < 30.0 {
+            if !ctx.player.has_ball(ctx) && distance_to_ball < 30.0 {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Intercepting,
                 ));
             }
 
-            if ctx.player.has_ball && distance_to_ball >= 10.0 && distance_to_ball < 20.0 {
+            if ctx.player.has_ball(ctx) && distance_to_ball >= 10.0 && distance_to_ball < 20.0 {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Clearing,
                 ));
@@ -55,7 +55,7 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.ball().direction_to_opponent_goal(),

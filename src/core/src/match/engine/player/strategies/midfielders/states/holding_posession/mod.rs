@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler, SteeringBehavior,
-};
+use crate::r#match::{ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -21,7 +18,7 @@ pub struct MidfielderHoldingPossessionState {}
 impl StateProcessingHandler for MidfielderHoldingPossessionState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the midfielder has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Returning,
             ));
@@ -132,7 +129,7 @@ impl MidfielderHoldingPossessionState {
         ctx.players().opponents().nearby_raw(30.0).count() >= 1
     }
 
-    fn is_teammate_open(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
+    fn is_teammate_open(&self, ctx: &StateProcessingContext, teammate: &MatchPlayerLite) -> bool {
         // Check if a teammate is open to receive a pass
         let is_in_passing_range = (teammate.position - ctx.player.position).magnitude() <= 30.0;
         let has_clear_passing_lane = self.has_clear_passing_lane(ctx, teammate);
@@ -160,7 +157,7 @@ impl MidfielderHoldingPossessionState {
         ctx.player.position.x >= attacking_position_threshold
     }
 
-    fn has_clear_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
+    fn has_clear_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayerLite) -> bool {
         // Check if there is a clear passing lane to a teammate without any obstructing opponents
         let player_position = ctx.player.position;
         let teammate_position = teammate.position;

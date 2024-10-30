@@ -21,7 +21,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
             ));
         }
 
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Passing,
             ));

@@ -32,7 +32,7 @@ impl StateProcessingHandler for DefenderPressingState {
         let players = ctx.context.players.raw_players();
         let opponent_with_ball = players
             .iter()
-            .find(|p| p.team_id != ctx.player.team_id && p.has_ball);
+            .find(|p| p.team_id != ctx.player.team_id && p.has_ball(ctx));
 
         if let Some(opponent) = opponent_with_ball {
             // 3. Calculate the distance to the opponent
@@ -76,7 +76,7 @@ impl StateProcessingHandler for DefenderPressingState {
         let players = ctx.context.players.raw_players();
         let opponent_with_ball = players
             .iter()
-            .find(|p| p.team_id != ctx.player.team_id && p.has_ball);
+            .find(|p| p.team_id != ctx.player.team_id && p.has_ball(ctx));
 
         if let Some(opponent) = opponent_with_ball {
             // Calculate direction towards the opponent

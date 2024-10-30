@@ -1,6 +1,7 @@
 use crate::r#match::position::VectorExtensions;
-use crate::r#match::{MatchContext, MatchObjectsPositions, MatchPlayer, PlayerDistanceFromStartPosition, PlayerSide, StateProcessingContext};
+use crate::r#match::{MatchPlayer, MatchPlayerLite, PlayerDistanceFromStartPosition, PlayerSide, StateProcessingContext};
 use nalgebra::Vector3;
+use crate::PlayerSkills;
 
 pub struct PlayerOperationsImpl<'p> {
     ctx: &'p StateProcessingContext<'p>,
@@ -13,6 +14,18 @@ impl<'p> PlayerOperationsImpl<'p> {
 }
 
 impl<'p> PlayerOperationsImpl<'p> {
+    pub fn get(&self, player_id: u32) -> MatchPlayerLite {
+        MatchPlayerLite{
+            id: player_id,
+            position: self.ctx.tick_context.player_position(player_id)
+        }
+    }
+
+    pub fn skills(&self, player_id: u32) -> &PlayerSkills {
+        let player = self.ctx.context.players.by_id(player_id).unwrap();
+        &player.skills
+    }
+
     pub fn on_own_side(&self) -> bool {
         let field_half_width = self.ctx.context.field_size.width / 2;
 
@@ -71,26 +84,6 @@ impl<'p> PlayerOperationsImpl<'p> {
 pub struct MatchPlayerLogic;
 
 impl MatchPlayerLogic {
-    pub fn find_leader(
-        context: &mut MatchContext,
-        objects_positions: &MatchObjectsPositions,
-    ) -> u32 {
-        let mut leader_id = 0;
-        let mut highest_leadership = 0.0;
-
-        for player_position in &objects_positions.players_positions.items {
-            let player = context.players.get(player_position.player_id).unwrap();
-            let leadership_skill = player.skills.mental.leadership;
-
-            if leadership_skill > highest_leadership {
-                highest_leadership = leadership_skill;
-                leader_id = player_position.player_id;
-            }
-        }
-
-        leader_id
-    }
-
     pub fn distance_to_start_position(player: &MatchPlayer) -> PlayerDistanceFromStartPosition {
         let start_position_distance = player.position.distance_to(&player.start_position);
 

@@ -4,11 +4,11 @@ use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::{IteratorRandom};
+use rand::prelude::IteratorRandom;
 use std::sync::LazyLock;
 
 static MIDFIELDER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -21,21 +21,18 @@ impl StateProcessingHandler for MidfielderDistributingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx
-                .tick_context
-                .player_position(teammate.id)
-            {
-                let pass_power = self.calculate_pass_power(teammate.id, ctx);
+            let teammate_player_position = ctx.tick_context.player_position(teammate.id);
 
-                return Some(StateChangeResult::with_midfielder_state_and_event(
-                    MidfielderState::Returning,
-                    Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
-                        teammate_player_position,
-                        pass_power,
-                    )),
-                ));
-            }
+            let pass_power = self.calculate_pass_power(teammate.id, ctx);
+
+            return Some(StateChangeResult::with_midfielder_state_and_event(
+                MidfielderState::Returning,
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    ctx.player.id,
+                    teammate_player_position,
+                    pass_power,
+                )),
+            ));
         }
 
         None
@@ -56,11 +53,15 @@ impl MidfielderDistributingState {
     fn find_best_pass_option<'a>(
         &self,
         ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
+    ) -> Option<MatchPlayerLite> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_ids(300.0).choose(&mut rand::thread_rng()) {
-            return Some(ctx.context.players.get(teammate_id)?);
+        if let Some(player) = players
+            .teammates()
+            .nearby(300.0)
+            .choose(&mut rand::thread_rng())
+        {
+            return Some(player);
         }
 
         None

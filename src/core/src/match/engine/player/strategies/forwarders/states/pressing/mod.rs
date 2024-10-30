@@ -18,7 +18,7 @@ impl StateProcessingHandler for ForwardPressingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Dribbling,
             ));
@@ -43,7 +43,7 @@ impl StateProcessingHandler for ForwardPressingState {
         if let Some(opponent) = ctx.players().opponents().nearby(100.0).next()
         {
             // Check if the opponent has the ball
-            if opponent.has_ball {
+            if opponent.has_ball(ctx) {
                 // Move towards the opponent with the ball
                 let direction = (opponent.position - ctx.player.position).normalize();
                 result.velocity = Some(direction * ctx.player.skills.physical.acceleration);

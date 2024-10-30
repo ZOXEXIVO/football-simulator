@@ -3,7 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
 };
 use nalgebra::Vector3;
@@ -40,7 +40,7 @@ impl StateProcessingHandler for MidfielderTacklingState {
             }
 
             // 4. Attempt the tackle
-            let (tackle_success, committed_foul) = self.attempt_tackle(ctx, opponent);
+            let (tackle_success, committed_foul) = self.attempt_tackle(ctx, &opponent);
 
             let option = if tackle_success {
                 // Tackle is successful
@@ -113,7 +113,11 @@ impl StateProcessingHandler for MidfielderTacklingState {
 
 impl MidfielderTacklingState {
     /// Attempts a tackle and returns whether it was successful and if a foul was committed.
-    fn attempt_tackle(&self, ctx: &StateProcessingContext, _opponent: &MatchPlayer) -> (bool, bool) {
+    fn attempt_tackle(
+        &self,
+        ctx: &StateProcessingContext,
+        _opponent: &MatchPlayerLite,
+    ) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 
         // Get midfielder's tackling-related skills

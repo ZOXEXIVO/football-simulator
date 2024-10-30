@@ -5,7 +5,7 @@ use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
-use crate::r#match::{GameTickContext, MatchContext};
+use crate::r#match::{GameTickContext, MatchContext, StateProcessingContext};
 use crate::{
     PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup,
     PlayerPositionType, PlayerSkills,
@@ -24,7 +24,6 @@ pub struct MatchPlayer {
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
     pub velocity: Vector3<f32>,
-    pub has_ball: bool,
     pub side: Option<PlayerSide>,
     pub state: PlayerState,
     pub in_state_time: u64,
@@ -55,7 +54,6 @@ impl MatchPlayer {
             skills: player.skills.clone(),
             tactics_position: position,
             velocity: Vector3::new(0.0, 0.0, 0.0),
-            has_ball: false,
             side: None,
             state: Self::default_state(position),
             in_state_time: 0,
@@ -140,9 +138,20 @@ impl MatchPlayer {
     pub fn heading(&self) -> f32 {
         self.velocity.y.atan2(self.velocity.x)
     }
+
+    pub fn has_ball(&self, ctx: &StateProcessingContext<'_>) -> bool {
+        ctx.ball().owner_id() == Some(self.id)
+    }
 }
 
+#[derive(Copy, Clone)]
 pub struct MatchPlayerLite {
     pub id: u32,
     pub position: Vector3<f32>
+}
+
+impl MatchPlayerLite {
+    pub fn has_ball(&self, ctx: &StateProcessingContext<'_>) -> bool {
+        ctx.ball().owner_id() == Some(self.id)
+    }
 }

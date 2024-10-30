@@ -19,7 +19,7 @@ impl StateProcessingHandler for ForwardFinishingState {
         let mut result = StateChangeResult::new();
 
         // Check if the player has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Transition to Running state if the player doesn't have the ball
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }

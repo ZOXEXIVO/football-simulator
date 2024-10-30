@@ -13,13 +13,7 @@ impl<'b> TeamOperationsImpl<'b> {
 
 impl<'b> TeamOperationsImpl<'b> {
     pub fn is_control_ball(&self) -> bool {
-        if let Some(owner_id) = self.ctx.ball().owner_id() {
-            if let Some(owner) = self.ctx.context.players.get(owner_id) {
-                return self.ctx.player.team_id == owner.team_id;
-            }
-        }
-
-        false
+        self.ctx.ball().owner_id() == Some(self.ctx.player.id)
     }
 
     pub fn is_loosing(&self) -> bool {

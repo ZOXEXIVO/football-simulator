@@ -27,7 +27,7 @@ impl StateProcessingHandler for ForwardOffsideTrapBreakingState {
         }
 
         // Check if the player has the ball
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // Transition to Dribbling state if the player has the ball
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Dribbling,

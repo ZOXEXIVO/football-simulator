@@ -1,4 +1,4 @@
-use crate::r#match::{MatchPlayer, MatchPlayerLite, StateProcessingContext};
+use crate::r#match::{MatchPlayerLite, StateProcessingContext};
 use crate::PlayerFieldPositionGroup;
 
 pub struct PlayerTeammatesOperationsImpl<'b> {
@@ -12,27 +12,27 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
 }
 
 impl<'b> PlayerTeammatesOperationsImpl<'b> {
-    pub fn all(&'b self) -> impl Iterator<Item = &'b MatchPlayer> {
+    pub fn all(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.teammates_for_team(self.ctx.player.team_id, None)
     }
 
-    pub fn players_with_ball(&self) -> impl Iterator<Item = &MatchPlayer> {
+    pub fn players_with_ball(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.teammates_for_team(self.ctx.player.team_id, Some(true))
     }
 
-    pub fn players_without_ball(&self) -> impl Iterator<Item = &MatchPlayer> {
+    pub fn players_without_ball(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.teammates_for_team(self.ctx.player.team_id, Some(false))
     }
 
-    pub fn forwards(&self) -> impl Iterator<Item = &MatchPlayer> {
+    pub fn forwards(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.teammates_by_position(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
     }
 
     fn teammates_by_position(
-        &self,
+        &'b self,
         position_group: PlayerFieldPositionGroup,
         team_id: u32,
-    ) -> impl Iterator<Item = &MatchPlayer> {
+    ) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.ctx
             .context
             .players
@@ -42,32 +42,47 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
                 player.team_id == team_id
                     && player.tactics_position.position_group() == position_group
             })
+            .map(|player| MatchPlayerLite {
+                id: player.id,
+                position: self.ctx.tick_context.player_position(player.id),
+            })
     }
 
-    fn teammates_for_team(&self, team_id: u32, has_ball: Option<bool>) -> impl Iterator<Item = MatchPlayerLite> {
-        let teammates = self
-            .ctx
+    fn teammates_for_team(
+        &'b self,
+        team_id: u32,
+        has_ball: Option<bool>,
+    ) -> impl Iterator<Item = MatchPlayerLite> + 'b {
+        self.ctx
             .context
             .players
             .players
             .values()
-            .filter(move |player| player.team_id == team_id && (has_ball.is_none() || player.has_ball == has_ball.unwrap()));
-
-        teammates
+            .filter(move |player| {
+                // opponent
+                player.team_id == team_id
+                    && (has_ball.is_none()
+                        || (self.ctx.ball().owner_id() == Some(self.ctx.player.id)))
+            })
+            .map(|player| MatchPlayerLite {
+                id: player.id,
+                position: self.ctx.tick_context.player_position(player.id),
+            })
     }
 
-    pub fn nearby<'n>(&'n self, distance: f32) -> impl Iterator<Item = MatchPlayerLite> + 'n {
+    pub fn nearby(&'b self, distance: f32) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.ctx
             .tick_context
             .object_positions
             .player_distances
             .teammates(self.ctx.player, distance)
-            .map(|(pid, _)| {
-                self.ctx.context.players.get(pid).unwrap()
+            .map(|(pid, _)| MatchPlayerLite {
+                id: pid,
+                position: self.ctx.tick_context.player_position(pid),
             })
     }
 
-    pub fn nearby_ids(&'b self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
+    pub fn nearby_ids(&self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
         self.ctx
             .tick_context
             .object_positions
@@ -81,6 +96,6 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             .object_positions
             .player_distances
             .teammates(self.ctx.player, distance)
-            .any(|_| { true })
+            .any(|_| true)
     }
 }

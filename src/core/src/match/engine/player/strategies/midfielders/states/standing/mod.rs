@@ -41,7 +41,7 @@ impl StateProcessingHandler for MidfielderStandingState {
         }
 
         // 1. Check if the midfielder has the ball
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // Decide whether to hold possession or distribute the ball
             return if self.should_hold_possession(ctx) {
                 Some(StateChangeResult::with_midfielder_state(

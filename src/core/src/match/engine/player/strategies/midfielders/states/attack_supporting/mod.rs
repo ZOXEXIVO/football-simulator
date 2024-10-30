@@ -24,7 +24,7 @@ impl StateProcessingHandler for MidfielderAttackSupportingState {
         }
 
         // 1. Check if the midfielder has received the ball
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // Decide next action (e.g., Distributing, HoldingPossession)
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Distributing,

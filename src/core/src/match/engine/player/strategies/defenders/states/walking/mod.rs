@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::{ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
+use crate::r#match::{ConditionContext, MatchPlayerLite, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior, VectorExtensions};
 use crate::IntegerUtils;
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -41,7 +41,7 @@ impl StateProcessingHandler for DefenderWalkingState {
 
         // Mark opponent if they have the ball or are very close
         if let Some(opponent_to_mark) = ctx.players().opponents().without_ball().next() {
-            if opponent_to_mark.has_ball
+            if opponent_to_mark.has_ball(ctx)
                 || ctx.player.position.distance_to(&opponent_to_mark.position)
                     < MARKING_DISTANCE / 2.0
             {
@@ -144,7 +144,7 @@ impl DefenderWalkingState {
     fn calculate_team_center(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let players = ctx.players();
         let teammates = players.teammates();
-        let all_teammates: Vec<&MatchPlayer> = teammates.all().collect();
+        let all_teammates: Vec<MatchPlayerLite> = teammates.all().collect();
 
         let sum: Vector3<f32> = all_teammates.iter().map(|p| p.position).sum();
         sum / all_teammates.len() as f32

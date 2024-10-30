@@ -22,7 +22,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Passing,
             ));

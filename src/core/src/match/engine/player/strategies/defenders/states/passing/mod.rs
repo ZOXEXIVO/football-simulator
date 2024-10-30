@@ -18,28 +18,25 @@ pub struct DefenderPassingState {}
 
 impl StateProcessingHandler for DefenderPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Standing,
             ));
         }
 
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx
-                .tick_context
-                .player_position(teammate_id)
-            {
-                let pass_power = self.calculate_pass_power(teammate_id, ctx);
+            let teammate_player_position = ctx.tick_context.player_position(teammate_id);
 
-                return Some(StateChangeResult::with_defender_state_and_event(
-                    DefenderState::Returning,
-                    Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
-                        teammate_player_position,
-                        pass_power,
-                    )),
-                ));
-            }
+            let pass_power = self.calculate_pass_power(teammate_id, ctx);
+
+            return Some(StateChangeResult::with_defender_state_and_event(
+                DefenderState::Returning,
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    ctx.player.id,
+                    teammate_player_position,
+                    pass_power,
+                )),
+            ));
         }
         let mut best_player_id = None;
         let mut highest_score = 0.0;
@@ -53,18 +50,15 @@ impl StateProcessingHandler for DefenderPassingState {
         }
 
         if let Some(teammate_id) = best_player_id {
-            if let Some(teammate_player_position) = ctx
-                .tick_context
-                .player_position(teammate_id)
-            {
-                let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    teammate_player_position,
-                    1.0,
-                )));
+            let teammate_player_position = ctx.tick_context.player_position(teammate_id);
 
-                return Some(StateChangeResult::with_events(events));
-            }
+            let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
+                ctx.player.id,
+                teammate_player_position,
+                1.0,
+            )));
+
+            return Some(StateChangeResult::with_events(events));
         }
 
         None

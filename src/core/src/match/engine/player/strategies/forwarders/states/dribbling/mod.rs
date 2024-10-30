@@ -21,7 +21,7 @@ impl StateProcessingHandler for ForwardDribblingState {
         let players_ops = ctx.players();
 
         // Check if the player has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Transition to Running state if the player doesn't have the ball
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }

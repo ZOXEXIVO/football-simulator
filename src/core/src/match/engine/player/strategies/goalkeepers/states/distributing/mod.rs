@@ -22,28 +22,27 @@ pub struct GoalkeeperDistributingState {}
 impl StateProcessingHandler for GoalkeeperDistributingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // 1. Check if the goalkeeper has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Standing,
             ));
         }
 
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx
+            let teammate_player_position = ctx
                 .tick_context
-                .player_position(teammate_id)
-            {
-                let pass_power = self.calculate_pass_power(teammate_id, ctx);
+                .player_position(teammate_id);
 
-                return Some(StateChangeResult::with_goalkeeper_state_and_event(
-                    GoalkeeperState::ReturningToGoal,
-                    Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
-                        teammate_player_position,
-                        pass_power,
-                    )),
-                ));
-            }
+            let pass_power = self.calculate_pass_power(teammate_id, ctx);
+
+            return Some(StateChangeResult::with_goalkeeper_state_and_event(
+                GoalkeeperState::ReturningToGoal,
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    ctx.player.id,
+                    teammate_player_position,
+                    pass_power,
+                )),
+            ));
         }
 
         None
@@ -72,12 +71,9 @@ impl GoalkeeperDistributingState {
     }
 
     fn is_in_good_scoring_position(&self, ctx: &StateProcessingContext, player_id: u32) -> bool {
-        if let Some(_) = ctx.context.players.get(player_id) {
-            let distance_to_goal = ctx.ball().distance_to_opponent_goal();
-            distance_to_goal < 20.0 // Adjust based on your game's scale
-        } else {
-            false
-        }
+        // TODO
+        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
+        distance_to_goal < 20.0 // Adjust based on your game's scale
     }
 
     fn find_best_pass_option<'a>(

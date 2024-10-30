@@ -360,7 +360,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
         // Draw the player circle
         draw_circle(translated_x, translated_y, circle_radius, color);
 
-        if player.has_ball {
+        if player.has_ball(ctx) {
             draw_circle_lines(
                 translated_x,
                 translated_y,
@@ -470,7 +470,7 @@ fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, sc
             player_color,
         );
 
-        if player.has_ball {
+        if player.has_ball(ctx) {
             draw_circle_lines(
                 player_x + circle_radius,
                 player_y + circle_radius,

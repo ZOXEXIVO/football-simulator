@@ -3,10 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::events::{Event};
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, MatchPlayer, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -26,7 +23,7 @@ pub struct MidfielderShortPassingState {}
 impl StateProcessingHandler for MidfielderShortPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the midfielder still has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Lost possession, transition to Pressing
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Pressing,
@@ -71,9 +68,9 @@ impl StateProcessingHandler for MidfielderShortPassingState {
 }
 
 impl MidfielderShortPassingState {
-    fn find_best_teammate<'a>(&self, ctx: &'a StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
+    fn find_best_teammate<'a>(&self, ctx: &'a StateProcessingContext<'a>) -> Option<MatchPlayerLite> {
         for teammate in ctx.players().teammates().nearby(MAX_PASS_DISTANCE) {
-            if teammate.has_ball {
+            if teammate.has_ball(ctx) {
                 continue;
             }
 

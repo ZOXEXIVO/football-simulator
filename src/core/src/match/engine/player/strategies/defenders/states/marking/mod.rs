@@ -36,7 +36,7 @@ impl StateProcessingHandler for DefenderMarkingState {
                 (ctx.player.position - opponent_to_mark.position).magnitude();
 
             // 4. If the opponent has the ball and is within tackling distance, attempt a tackle
-            if opponent_to_mark.has_ball && distance_to_opponent < TACKLING_DISTANCE_THRESHOLD {
+            if opponent_to_mark.has_ball(ctx) && distance_to_opponent < TACKLING_DISTANCE_THRESHOLD {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::SlidingTackle,
                 ));
@@ -52,7 +52,7 @@ impl StateProcessingHandler for DefenderMarkingState {
             // 6. If the ball is close to the defender, consider intercepting
             let ball_distance =
                 (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
-            if ball_distance < BALL_PROXIMITY_THRESHOLD && !opponent_to_mark.has_ball {
+            if ball_distance < BALL_PROXIMITY_THRESHOLD && !opponent_to_mark.has_ball(ctx) {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Intercepting,
                 ));

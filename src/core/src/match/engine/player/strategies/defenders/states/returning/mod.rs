@@ -16,7 +16,7 @@ pub struct DefenderReturningState {}
 
 impl StateProcessingHandler for DefenderReturningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Passing,
             ));

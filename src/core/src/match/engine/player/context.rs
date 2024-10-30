@@ -41,8 +41,8 @@ impl GameTickContext {
         }
     }
 
-    pub fn player_position(&self, player_id: u32) -> Option<Vector3<f32>> {
-        self.object_positions.players_positions.get_player_position(player_id)
+    pub fn player_position(&self, player_id: u32) -> Vector3<f32> {
+        self.object_positions.players_positions.get_player_position(player_id).unwrap()
     }
 }
 

@@ -202,7 +202,7 @@ impl Ball {
         const BALL_DISTANCE_THRESHOLD: f32 = 3.0;
 
         if let Some(previous_owner_id) = self.previous_owner {
-            let owner = context.players.get(previous_owner_id).unwrap();
+            let owner = context.players.by_id(previous_owner_id).unwrap();
             if owner.position.distance_to(&self.position) > BALL_DISTANCE_THRESHOLD {
                 self.previous_owner = None;
             }
@@ -218,7 +218,7 @@ impl Ball {
                 })
                 .collect();
 
-            let is_nearby_already_has_ball = nearby_players.iter().any(|player| player.has_ball);
+            let is_nearby_already_has_ball = nearby_players.iter().any(|player| Some(player.id) == self.current_owner);
             if is_nearby_already_has_ball {
                 return;
             }
@@ -227,8 +227,8 @@ impl Ball {
                 nearby_players.first()
             } else {
                 nearby_players.iter().max_by(|player_a, player_b| {
-                    let player_a = context.players.get(player_a.id).unwrap();
-                    let player_b = context.players.get(player_b.id).unwrap();
+                    let player_a = context.players.by_id(player_a.id).unwrap();
+                    let player_b = context.players.by_id(player_b.id).unwrap();
 
                     let tackling_score_a = Self::calculate_tackling_score(player_a);
                     let tackling_score_b = Self::calculate_tackling_score(player_b);
@@ -246,7 +246,7 @@ impl Ball {
                 if is_nearby_already_has_ball {
                     nearby_players
                         .iter()
-                        .filter(|p| !p.has_ball)
+                        .filter(|p| Some(p.id) != self.current_owner)
                         .for_each(|player| {
                             events.add_ball_event(BallEvent::UnClaim(player.id));
                         });
@@ -316,10 +316,7 @@ impl Ball {
         }
 
         if let Some(owner_player_id) = self.current_owner {
-            if let Some(owner_position) = tick_context.player_position(owner_player_id)
-            {
-                self.position = owner_position;
-            }
+            self.position = tick_context.player_position(owner_player_id);
         } else {
             self.position.x += self.velocity.x;
             self.position.y += self.velocity.y;

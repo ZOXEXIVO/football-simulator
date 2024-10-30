@@ -1,6 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 use crate::r#match::events::Event;
@@ -17,7 +17,7 @@ pub struct MidfielderDistanceShootingState {}
 impl StateProcessingHandler for MidfielderDistanceShootingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the midfielder still has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Lost possession, transition to Pressing
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Running,
@@ -178,7 +178,7 @@ impl MidfielderDistanceShootingState {
         ray_cast_result.is_none() // No collisions with opponents
     }
 
-    fn is_teammate_open(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
+    fn is_teammate_open(&self, ctx: &StateProcessingContext, teammate: &MatchPlayerLite) -> bool {
         // Check if a teammate is open to receive a pass
         let is_in_passing_range = (teammate.position - ctx.player.position).magnitude() <= 30.0;
         let has_clear_passing_lane = self.has_clear_passing_lane(ctx, teammate);
@@ -186,7 +186,7 @@ impl MidfielderDistanceShootingState {
         is_in_passing_range && has_clear_passing_lane
     }
 
-    fn has_clear_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
+    fn has_clear_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayerLite) -> bool {
         // Check if there is a clear passing lane to a teammate without any obstructing opponents
         let player_position = ctx.player.position;
         let teammate_position = teammate.position;

@@ -141,7 +141,7 @@ pub struct MatchContext {
     pub time: MatchTime,
     pub score: Score,
     pub field_size: MatchFieldSize,
-    players: MatchPlayerCollection,
+    pub players: MatchPlayerCollection,
     pub goal_positions: GoalPosition,
 }
 
@@ -338,13 +338,14 @@ impl MatchPlayerCollection {
         MatchPlayerCollection { players: result }
     }
 
-    pub fn get(&self, player_id: u32) -> Option<&MatchPlayer> {
+    pub fn by_id(&self, player_id: u32) -> Option<&MatchPlayer> {
         self.players.get(&player_id)
     }
 
-    pub fn get_mut(&mut self, player_id: u32) -> Option<&mut MatchPlayer> {
-        self.players.get_mut(&player_id)
-    }
+    //
+    // pub fn get_mut(&mut self, player_id: u32) -> Option<&mut MatchPlayer> {
+    //     self.players.get_mut(&player_id)
+    // }
 
     pub fn raw_players(&self) -> Vec<&MatchPlayer> {
         self.players.values().collect()
