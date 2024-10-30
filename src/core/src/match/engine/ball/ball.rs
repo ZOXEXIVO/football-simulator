@@ -316,10 +316,7 @@ impl Ball {
         }
 
         if let Some(owner_player_id) = self.current_owner {
-            if let Some(owner_position) = tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(owner_player_id)
+            if let Some(owner_position) = tick_context.player_position(owner_player_id)
             {
                 self.position = owner_position;
             }

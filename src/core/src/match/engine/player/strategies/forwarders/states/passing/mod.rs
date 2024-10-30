@@ -38,9 +38,7 @@ impl StateProcessingHandler for ForwardPassingState {
         if let Some(teammate) = self.find_best_pass_option(ctx) {
             if let Some(teammate_player_position) = ctx
                 .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate.id)
+                .player_position(teammate.id)
             {
                 let pass_power = self.calculate_pass_power(teammate.id, ctx);
 
@@ -105,7 +103,7 @@ impl ForwardPassingState {
     ) -> Option<&'a MatchPlayer> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players.teammates().nearby_ids(300.0).choose(&mut rand::thread_rng()) {
             return Some(ctx.context.players.get(teammate_id)?);
         }
 

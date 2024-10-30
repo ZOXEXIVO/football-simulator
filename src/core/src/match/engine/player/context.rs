@@ -40,6 +40,10 @@ impl GameTickContext {
             space,
         }
     }
+
+    pub fn player_position(&self, player_id: u32) -> Option<Vector3<f32>> {
+        self.object_positions.players_positions.get_player_position(player_id)
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -148,7 +152,7 @@ impl PlayerPositionsClosure {
         }
     }
 
-    pub fn get_player_position(&self, player_id: u32) -> Option<Vector3<f32>> {
+    fn get_player_position(&self, player_id: u32) -> Option<Vector3<f32>> {
         self.items
             .iter()
             .find(|p| p.player_id == player_id)

@@ -67,7 +67,7 @@ impl MidfielderLongPassingState {
         let players = ctx.players();
         let teammates = players.teammates();
 
-        for (teammate_id, distance) in teammates.nearby_raw(max_pass_distance) {
+        for (teammate_id, distance) in teammates.nearby_ids(max_pass_distance) {
             let player = ctx.context.players.get(teammate_id)?;
 
             if !player.has_ball {

@@ -1,8 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
     SteeringBehavior,
@@ -100,7 +98,7 @@ impl ForwardAssistingState {
     fn find_best_teammate_to_assist(&self, ctx: &StateProcessingContext) -> Option<u32> {
         ctx.players()
             .teammates()
-            .nearby_raw(200.0)
+            .nearby_ids(200.0)
             .filter(|(id, _)| self.is_in_good_scoring_position(ctx, *id))
             .min_by(|(_, dist_a), (_, dist_b)| {
                 dist_a
@@ -143,7 +141,7 @@ impl ForwardAssistingState {
 
     fn should_create_space(&self, ctx: &StateProcessingContext) -> bool {
         ctx.player.skills.mental.off_the_ball > 15.0
-            && ctx.players().teammates().nearby_raw(100.0).count() < 2
+            && ctx.players().teammates().nearby_ids(100.0).count() < 2
     }
 
     fn is_on_opponent_side(&self, ctx: &StateProcessingContext) -> bool {

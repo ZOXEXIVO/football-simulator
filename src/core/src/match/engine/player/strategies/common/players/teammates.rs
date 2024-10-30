@@ -1,4 +1,4 @@
-use crate::r#match::{MatchPlayer, StateProcessingContext};
+use crate::r#match::{MatchPlayer, MatchPlayerLite, StateProcessingContext};
 use crate::PlayerFieldPositionGroup;
 
 pub struct PlayerTeammatesOperationsImpl<'b> {
@@ -44,7 +44,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             })
     }
 
-    fn teammates_for_team(&self, team_id: u32, has_ball: Option<bool>) -> impl Iterator<Item = &'b MatchPlayer> {
+    fn teammates_for_team(&self, team_id: u32, has_ball: Option<bool>) -> impl Iterator<Item = MatchPlayerLite> {
         let teammates = self
             .ctx
             .context
@@ -56,7 +56,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
         teammates
     }
 
-    pub fn nearby<'n>(&'n self, distance: f32) -> impl Iterator<Item = &'b MatchPlayer> + 'n {
+    pub fn nearby<'n>(&'n self, distance: f32) -> impl Iterator<Item = MatchPlayerLite> + 'n {
         self.ctx
             .tick_context
             .object_positions
@@ -67,7 +67,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             })
     }
 
-    pub fn nearby_raw(&'b self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
+    pub fn nearby_ids(&'b self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
         self.ctx
             .tick_context
             .object_positions

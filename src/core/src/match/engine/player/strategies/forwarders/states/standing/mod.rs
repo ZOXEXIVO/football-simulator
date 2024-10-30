@@ -89,7 +89,7 @@ impl ForwardStandingState {
         &'a self,
         ctx: &'a StateProcessingContext<'a>,
     ) -> Option<u32> {
-        if let Some((teammate_id, _)) = ctx.players().teammates().nearby_raw(100.0).next() {
+        if let Some((teammate_id, _)) = ctx.players().teammates().nearby_ids(100.0).next() {
             return Some(teammate_id)
         }
 

@@ -141,7 +141,7 @@ pub struct MatchContext {
     pub time: MatchTime,
     pub score: Score,
     pub field_size: MatchFieldSize,
-    pub players: MatchPlayerCollection,
+    players: MatchPlayerCollection,
     pub goal_positions: GoalPosition,
 }
 

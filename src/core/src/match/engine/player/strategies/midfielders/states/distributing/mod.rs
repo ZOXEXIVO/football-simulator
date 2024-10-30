@@ -23,9 +23,7 @@ impl StateProcessingHandler for MidfielderDistributingState {
         if let Some(teammate) = self.find_best_pass_option(ctx) {
             if let Some(teammate_player_position) = ctx
                 .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate.id)
+                .player_position(teammate.id)
             {
                 let pass_power = self.calculate_pass_power(teammate.id, ctx);
 
@@ -61,7 +59,7 @@ impl MidfielderDistributingState {
     ) -> Option<&'a MatchPlayer> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players.teammates().nearby_ids(300.0).choose(&mut rand::thread_rng()) {
             return Some(ctx.context.players.get(teammate_id)?);
         }
 
@@ -69,12 +67,7 @@ impl MidfielderDistributingState {
     }
 
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .get(ctx.player.id, teammate_id)
-            .unwrap();
+        let distance = ctx.player().distance_to_player(teammate_id);
 
         let pass_skill = ctx.player.skills.technical.passing;
 

@@ -141,3 +141,8 @@ impl MatchPlayer {
         self.velocity.y.atan2(self.velocity.x)
     }
 }
+
+pub struct MatchPlayerLite {
+    pub id: u32,
+    pub position: Vector3<f32>
+}

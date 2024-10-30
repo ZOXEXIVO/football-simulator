@@ -58,6 +58,14 @@ impl<'p> PlayerOperationsImpl<'p> {
         let pass_skill = self.ctx.player.skills.technical.passing;
         (distance / pass_skill as f32 * 10.0) as f64
     }
+
+    pub fn distance_to_player(&self, player_id: u32) -> f32 {
+        self.ctx.tick_context
+            .object_positions
+            .player_distances
+            .get(self.ctx.player.id, player_id)
+            .unwrap()
+    }
 }
 
 pub struct MatchPlayerLogic;

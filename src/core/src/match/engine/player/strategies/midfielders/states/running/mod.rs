@@ -146,11 +146,8 @@ impl MidfielderRunningState {
             if let Some((second_id, _)) = nearest_opponents.next() {
                 if let Some(distance_between_opponents) = ctx.tick_context.object_positions.player_distances.get(first_id, second_id) {
                     if distance_between_opponents > 10.0 {
-                        let first_position = ctx.tick_context.object_positions.players_positions
-                            .get_player_position(first_id).unwrap();
-
-                        let second_position = ctx.tick_context.object_positions.players_positions
-                            .get_player_position(second_id).unwrap();
+                        let first_position = ctx.tick_context.player_position(first_id).unwrap();
+                        let second_position = ctx.tick_context.player_position(second_id).unwrap();
 
                         let midpoint = (first_position + second_position) * 0.5;
 

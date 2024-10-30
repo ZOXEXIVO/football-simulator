@@ -1,6 +1,5 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::Event;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::player::events::PlayerEvent;
@@ -32,9 +31,7 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
             if let Some(teammate_player_position) = ctx
                 .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate_id)
+                .player_position(teammate_id)
             {
                 let pass_power = self.calculate_pass_power(teammate_id, ctx);
 
@@ -67,7 +64,7 @@ impl GoalkeeperDistributingState {
     fn find_best_teammate_to_distribute(&self, ctx: &StateProcessingContext) -> Option<u32> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(150.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players.teammates().nearby_ids(150.0).choose(&mut rand::thread_rng()) {
             return Some(teammate_id);
         }
 
@@ -89,7 +86,7 @@ impl GoalkeeperDistributingState {
     ) -> Option<u32> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players.teammates().nearby_ids(300.0).choose(&mut rand::thread_rng()) {
             return Some(teammate_id);
         }
 

@@ -102,8 +102,7 @@ impl ForwardRunningInBehindState {
             .items
             .iter()
             .find(|p| {
-                p.side == ctx.player.side.unwrap()
-                    && ctx.context.players.get(p.player_id).unwrap().has_ball
+                p.side == ctx.player.side.unwrap() && ctx.ball().owner_id() == Some(p.player_id)
             });
 
         if let Some(teammate) = teammate_with_ball {
