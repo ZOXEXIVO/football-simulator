@@ -156,7 +156,6 @@ impl MatchPlayerLite {
     }
 
     pub fn velocity(&self, ctx: &StateProcessingContext<'_>) -> Vector3<f32> {
-        ctx.tick_context.positions.players.
-            get_player_velocity(ctx.player.id).unwrap()
+        ctx.tick_context.positions.players.velocity(ctx.player.id)
     }
 }

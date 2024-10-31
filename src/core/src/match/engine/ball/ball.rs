@@ -1,6 +1,6 @@
 use crate::r#match::ball::events::BallEvent;
 use crate::r#match::events::EventCollection;
-use crate::r#match::position::VectorExtensions;
+use crate::r#match::result::VectorExtensions;
 use crate::r#match::{GameTickContext, MatchContext, MatchPlayer};
 use nalgebra::Vector3;
 
@@ -316,7 +316,7 @@ impl Ball {
         }
 
         if let Some(owner_player_id) = self.current_owner {
-            self.position = tick_context.player_field_metadata(owner_player_id);
+            self.position = tick_context.positions.players.position(owner_player_id);
         } else {
             self.position.x += self.velocity.x;
             self.position.y += self.velocity.y;

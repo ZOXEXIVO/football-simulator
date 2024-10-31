@@ -1,11 +1,11 @@
 use crate::r#match::{MatchField, MatchPlayer};
 use nalgebra::Vector3;
 
-pub struct Space<T: Collider> {
-    colliders: Vec<T>,
+pub struct Space {
+    colliders: Vec<SphereCollider>,
 }
 
-impl<T: Collider> From<&MatchField> for Space<T>{
+impl From<&MatchField> for Space{
     fn from(field: &MatchField) -> Self {
         let mut space = Space::new();
 
@@ -34,14 +34,14 @@ impl<T: Collider> From<&MatchField> for Space<T>{
     }
 }
 
-impl<T: Collider> Space<T> {
+impl Space {
     pub fn new() -> Self {
         Space {
             colliders: Vec::with_capacity(30),
         }
     }
 
-    pub fn add_collider(&mut self, collider: T) {
+    pub fn add_collider(&mut self, collider: SphereCollider) {
         self.colliders.push(collider);
     }
 
@@ -51,8 +51,8 @@ impl<T: Collider> Space<T> {
         direction: Vector3<f32>,
         max_distance: f32,
         include_players: bool,
-    ) -> Option<RaycastHit<T>> {
-        let mut closest_hit: Option<RaycastHit<T>> = None;
+    ) -> Option<RaycastHit<SphereCollider>> {
+        let mut closest_hit: Option<RaycastHit<SphereCollider>> = None;
         let mut closest_distance = max_distance;
 
         // Iterate through all colliders in the space

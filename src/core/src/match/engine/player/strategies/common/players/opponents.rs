@@ -31,7 +31,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
             .opponents(self.ctx.player, distance)
             .map(|(pid, _)| MatchPlayerLite {
                 id: pid,
-                position: self.ctx.tick_context.player_field_metadata(pid),
+                position: self.ctx.tick_context.positions.players.position(pid),
             })
     }
 
@@ -77,7 +77,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
             })
             .map(|player| MatchPlayerLite {
                 id: player.id,
-                position: self.ctx.tick_context.player_field_metadata(player.id),
+                position: self.ctx.tick_context.positions.players.position(player.id),
             })
     }
 
@@ -99,7 +99,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
             })
             .map(|player| MatchPlayerLite {
                 id: player.id,
-                position: self.ctx.tick_context.player_field_metadata(player.id),
+                position: self.ctx.tick_context.positions.players.position(player.id),
             })
     }
 }

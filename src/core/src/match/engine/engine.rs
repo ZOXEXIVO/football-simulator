@@ -2,7 +2,7 @@ use crate::r#match::ball::events::GoalSide;
 use crate::r#match::engine::events::dispatcher::EventCollection;
 use crate::r#match::events::EventDispatcher;
 use crate::r#match::field::MatchField;
-use crate::r#match::position::MatchPositionData;
+use crate::r#match::result::ResultMatchPositionData;
 use crate::r#match::squad::TeamSquad;
 use crate::r#match::{
     GameState, GameTickContext, GoalDetail, MatchPlayer, MatchResultRaw, Score, StateManager
@@ -22,7 +22,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         let players = MatchPlayerCollection::from_squads(&left_squad, &right_squad);
 
-        let mut match_position_data = MatchPositionData::new();
+        let mut match_position_data = ResultMatchPositionData::new();
 
         let mut field = MatchField::new(W, H, left_squad, right_squad);
 
@@ -56,7 +56,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     fn play_inner(
         field: &mut MatchField,
         context: &mut MatchContext,
-        match_data: &mut MatchPositionData,
+        match_data: &mut ResultMatchPositionData,
     ) -> PlayMatchStateResult {
         let result = PlayMatchStateResult::new();
 
@@ -70,7 +70,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn game_tick(
         field: &mut MatchField,
         context: &mut MatchContext,
-        match_data: &mut MatchPositionData,
+        match_data: &mut ResultMatchPositionData,
     ) {
         let game_tick_context = GameTickContext::new(field);
 
@@ -88,7 +88,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
     pub fn write_match_positions(
         field: &mut MatchField,
         timestamp: u64,
-        match_data: &mut MatchPositionData,
+        match_data: &mut ResultMatchPositionData,
     ) {
         // player positions
         field.players.iter().for_each(|player| {

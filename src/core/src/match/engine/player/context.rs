@@ -7,7 +7,7 @@ pub struct GameTickContext {
     pub positions: MatchObjectsPositions,
     pub distances: PlayerDistanceClosure,
     pub ball: BallMetadata,
-    pub space: Space<SphereCollider>,
+    pub space: Space,
 }
 
 impl GameTickContext {
@@ -18,13 +18,6 @@ impl GameTickContext {
             distances: PlayerDistanceClosure::from(field),
             space: Space::from(field),
         }
-    }
-
-    pub fn player_field_metadata(&self, player_id: u32) -> Vector3<f32> {
-        self.positions
-            .players
-            .get_player_position(player_id)
-            .expect(&format!("error get position for player = {}", player_id))
     }
 }
 

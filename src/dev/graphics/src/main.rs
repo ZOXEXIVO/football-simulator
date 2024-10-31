@@ -16,8 +16,8 @@ use core::r#match::MatchPlayerCollection;
 use core::Vector3;
 use env_logger::Env;
 use std::time::Instant;
+use core::r#match::ResultMatchPositionData;
 
-use core::r#match::MatchPositionData;
 use core::r#match::PlayerSide;
 use core::r#match::Score;
 use core::r#match::GOAL_WIDTH;
@@ -68,7 +68,7 @@ async fn main() {
 
     let mut current_frame = 0u64;
 
-    let mut match_data = MatchPositionData::new();
+    let mut match_data = ResultMatchPositionData::new();
 
     let mut left_mouse_pressed = false;
 

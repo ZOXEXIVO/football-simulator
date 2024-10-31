@@ -1,4 +1,4 @@
-use crate::r#match::position::VectorExtensions;
+use crate::r#match::result::VectorExtensions;
 use crate::r#match::{BallSide, PlayerSide, StateProcessingContext};
 use nalgebra::Vector3;
 

@@ -1,4 +1,4 @@
-use crate::r#match::{BallFieldData, MatchField, PlayerFieldData, PlayerFieldMetadata};
+use crate::r#match::{BallFieldData, MatchField, PlayerFieldData};
 
 pub struct MatchObjectsPositions {
     pub ball: BallFieldData,
@@ -7,20 +7,9 @@ pub struct MatchObjectsPositions {
 
 impl MatchObjectsPositions {
     pub fn from(field: &MatchField) -> Self {
-        let positions: Vec<PlayerFieldMetadata> = field
-            .players
-            .iter()
-            .map(|p| PlayerFieldMetadata {
-                player_id: p.id,
-                side: p.side.expect("unknown player side"),
-                position: p.position,
-                velocity: p.velocity,
-            })
-            .collect();
-
         MatchObjectsPositions {
             ball: BallFieldData::from(&field.ball),
-            players: PlayerFieldData::new(positions),
+            players: PlayerFieldData::from(field),
         }
     }
 }

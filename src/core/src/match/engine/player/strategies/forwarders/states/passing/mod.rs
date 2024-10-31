@@ -3,7 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::position::VectorExtensions;
+use crate::r#match::result::VectorExtensions;
 use crate::r#match::{ConditionContext, MatchPlayer, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -39,7 +39,7 @@ impl StateProcessingHandler for ForwardPassingState {
                 ForwardState::Running,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     ctx.player.id,
-                    ctx.tick_context.player_field_metadata(teammate.id),
+                    ctx.tick_context.positions.players.position(teammate.id),
                     pass_power,
                 )),
             ));

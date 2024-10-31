@@ -1,4 +1,4 @@
-use crate::r#match::position::VectorExtensions;
+use crate::r#match::result::VectorExtensions;
 use crate::r#match::{MatchPlayer, MatchPlayerLite, PlayerDistanceFromStartPosition, PlayerSide, StateProcessingContext};
 use nalgebra::Vector3;
 use crate::PlayerSkills;
@@ -17,7 +17,7 @@ impl<'p> PlayerOperationsImpl<'p> {
     pub fn get(&self, player_id: u32) -> MatchPlayerLite {
         MatchPlayerLite{
             id: player_id,
-            position: self.ctx.tick_context.player_field_metadata(player_id)
+            position: self.ctx.tick_context.positions.players.position(player_id)
         }
     }
 

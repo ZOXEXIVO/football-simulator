@@ -6,7 +6,7 @@ pub struct BallFieldData {
     pub velocity: Vector3<f32>,
 }
 
-impl From<Ball> for BallFieldData {
+impl From<&Ball> for BallFieldData {
     fn from(ball: &Ball) -> Self {
         BallFieldData {
             position: ball.position,
