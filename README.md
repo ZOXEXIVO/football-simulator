@@ -18,11 +18,11 @@ Currently available nation for simulation - **Russia**, **Italy**, **England**
 
 ```console
 // run frontend (Angular)
-cd open-football/ui
+cd ui
+npm install --force
 npm start
 ...
 // run backend
-cd open-football
 cargo run
 ...
 open chrome at http://localhost:18000
