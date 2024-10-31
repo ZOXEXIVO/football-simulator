@@ -30,7 +30,7 @@ impl StateProcessingHandler for DefenderReturningState {
         }
 
         // Intercept if ball coming towards player and is closer than before
-        if !ctx.team().is_control_ball() && ctx.ball().is_towards_player_with_angle(0.8) {
+        if !ctx.team().is_control_ball() && ctx.ball().is_towards_player_with_angle(0.9) {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Intercepting,
             ));

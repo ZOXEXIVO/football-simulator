@@ -28,6 +28,10 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
     //
     // })
 
+    pub fn defenders(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
+        self.teammates_by_position(PlayerFieldPositionGroup::Defender, self.ctx.player.team_id)
+    }
+
     pub fn forwards(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.teammates_by_position(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
     }

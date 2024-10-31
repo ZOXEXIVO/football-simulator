@@ -11,12 +11,12 @@ use core::club::player::Player;
 use core::club::player::PlayerPositionType;
 use core::club::team::tactics::{Tactics, TacticsPositioning};
 use core::r#match::squad::TeamSquad;
-use core::r#match::team::MatchBallLogic;
 use core::r#match::MatchPlayerCollection;
 use core::Vector3;
 use env_logger::Env;
 use std::time::Instant;
 use core::r#match::ResultMatchPositionData;
+use core::r#match::strategies::ball::MatchBallLogic;
 
 use core::r#match::PlayerSide;
 use core::r#match::Score;
@@ -161,7 +161,7 @@ async fn main() {
     }
 }
 
-const TRACKING_PLAYER_ID: u32 = 106;
+const TRACKING_PLAYER_ID: u32 = 0;
 
 pub fn get_home_squad() -> TeamSquad {
     let players = [

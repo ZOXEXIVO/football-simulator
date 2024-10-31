@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, MatchPlayer, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -104,13 +101,11 @@ impl DefenderOffsideTrapState {
 
     /// Calculates the defensive line position based on the current positions of defenders.
     fn calculate_defensive_line_position(&self, ctx: &StateProcessingContext) -> f32 {
-        // Get all defenders on the team
-        let defenders = ctx.players();
-        let defenders: Vec<&MatchPlayer> = defenders
+        let defenders: Vec<MatchPlayerLite> = ctx
+            .players()
+            .teammates()
             .defenders()
-            .iter()
-            .filter(|p| p.team_id == ctx.player.team_id)
-            .map(|p| *p)
+            .map(|p| p)
             .collect();
 
         // If no defenders found, use player's current position

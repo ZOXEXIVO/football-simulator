@@ -28,14 +28,17 @@ impl<'b> BallOperationsImpl<'b> {
             .distance_to(&self.ctx.player.position)
     }
 
+    #[inline]
     pub fn speed(&self) -> f32 {
         self.ctx.tick_context.positions.ball.velocity.norm()
     }
 
+    #[inline]
     pub fn is_owned(&self) -> bool {
         self.ctx.tick_context.ball.is_owned
     }
 
+    #[inline]
     pub fn owner_id(&self) -> Option<u32> {
         self.ctx.tick_context.ball.current_owner
     }
@@ -174,8 +177,9 @@ impl<'b> BallOperationsImpl<'b> {
         }
     }
 
+    #[inline]
     pub fn side(&self) -> BallSide {
-        if (self.ctx.tick_context.positions.ball.position.x as usize) < self.ctx.context.field_size.half_width {
+        if (self.ctx.tick_context.positions.ball.position.x as usize) <= self.ctx.context.field_size.half_width {
             return BallSide::Left;
         }
 

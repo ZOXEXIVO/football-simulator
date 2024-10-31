@@ -99,8 +99,8 @@ impl DefenderPushingUpState {
 
     fn is_last_defender(&self, ctx: &StateProcessingContext) -> bool {
         ctx.players()
+            .teammates()
             .defenders()
-            .iter()
             .all(|d| d.position.x <= ctx.player.position.x)
     }
 
