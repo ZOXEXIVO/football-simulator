@@ -74,20 +74,20 @@ export class MatchDataService {
     getData(timestamp: number): MatchResultData {
         // ball
 
-        let ballData = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx];
+        let ballData = this.matchData!.ball[this.match!.ball.currentCoordIdx];
 
         let ts = ballData.timestamp;
 
-        while (ts < timestamp && this.match!.ball.currentCoordIdx < this.matchData!.ball_positions.length) {
-            ts = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx].timestamp;
+        while (ts < timestamp && this.match!.ball.currentCoordIdx < this.matchData!.ball.length) {
+            ts = this.matchData!.ball[this.match!.ball.currentCoordIdx].timestamp;
             this.match!.ball.currentCoordIdx++;
         }
 
-        const ballResult = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx - 1];
+        const ballResult = this.matchData!.ball[this.match!.ball.currentCoordIdx - 1];
 
         let players_results: PlayerDataResultModel[] = [];
 
-        Object.entries(this.matchData?.player_positions!).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
+        Object.entries(this.matchData?.players!).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
             const player = this.match!.players.find((player) => player.id == Number(key))!;
 
             if(player){

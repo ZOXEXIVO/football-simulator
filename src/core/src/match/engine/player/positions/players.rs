@@ -15,12 +15,6 @@ pub struct PlayerFieldMetadata {
 }
 
 impl PlayerFieldData {
-    pub fn new(players_positions: Vec<PlayerFieldMetadata>) -> Self {
-        PlayerFieldData {
-            items: players_positions,
-        }
-    }
-
     pub fn position(&self, player_id: u32) -> Vector3<f32> {
         let pp = self
             .items
@@ -50,11 +44,13 @@ impl PlayerFieldData {
 }
 
 impl From<&MatchField> for PlayerFieldData {
+    #[inline]
     fn from(field: &MatchField) -> Self {
         PlayerFieldData {
             items: field
                 .players
                 .iter()
+                .chain(field.substitutes.iter())
                 .map(|p| PlayerFieldMetadata {
                     player_id: p.id,
                     side: p

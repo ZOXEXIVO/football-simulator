@@ -7,6 +7,7 @@ pub struct BallFieldData {
 }
 
 impl From<&Ball> for BallFieldData {
+    #[inline]
     fn from(ball: &Ball) -> Self {
         BallFieldData {
             position: ball.position,
