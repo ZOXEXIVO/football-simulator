@@ -34,7 +34,7 @@ impl StateProcessingHandler for DefenderBlockingState {
 
         // 2. Check if there is a shot or pass being made
         // For simplicity, let's assume we have access to the ball's recent velocity change
-        let ball_velocity = ctx.tick_context.object_positions.ball_velocity;
+        let ball_velocity = ctx.tick_context.positions.ball.velocity;
         if ball_velocity.magnitude() < 0.1 {
             // Ball is not moving significantly; no shot or pass to block
             return Some(StateChangeResult::with_defender_state(
@@ -43,7 +43,7 @@ impl StateProcessingHandler for DefenderBlockingState {
         }
 
         // 3. Calculate the defender's position relative to the ball's path
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let defender_position = ctx.player.position;
 
         // Calculate vector from defender to ball

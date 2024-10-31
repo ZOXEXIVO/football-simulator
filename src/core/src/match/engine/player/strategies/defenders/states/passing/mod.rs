@@ -25,7 +25,7 @@ impl StateProcessingHandler for DefenderPassingState {
         }
 
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            let teammate_player_position = ctx.tick_context.player_position(teammate_id);
+            let teammate_player_position = ctx.tick_context.player_field_metadata(teammate_id);
 
             let pass_power = self.calculate_pass_power(teammate_id, ctx);
 
@@ -50,7 +50,7 @@ impl StateProcessingHandler for DefenderPassingState {
         }
 
         if let Some(teammate_id) = best_player_id {
-            let teammate_player_position = ctx.tick_context.player_position(teammate_id);
+            let teammate_player_position = ctx.tick_context.player_field_metadata(teammate_id);
 
             let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
                 ctx.player.id,
@@ -92,8 +92,7 @@ impl DefenderPassingState {
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
         let distance = ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(ctx.player.id, teammate_id)
             .unwrap();
 

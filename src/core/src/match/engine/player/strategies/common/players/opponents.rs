@@ -27,28 +27,25 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
     pub fn nearby(&self, distance: f32) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .opponents(self.ctx.player, distance)
             .map(|(pid, _)| MatchPlayerLite {
                 id: pid,
-                position: self.ctx.tick_context.player_position(pid),
+                position: self.ctx.tick_context.player_field_metadata(pid),
             })
     }
 
     pub fn nearby_raw(&self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
         self.ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .opponents(self.ctx.player, distance)
     }
 
     pub fn exists(&self, distance: f32) -> bool {
         self.ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .opponents(self.ctx.player, distance)
             .any(|_| true)
     }
@@ -80,7 +77,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
             })
             .map(|player| MatchPlayerLite {
                 id: player.id,
-                position: self.ctx.tick_context.player_position(player.id),
+                position: self.ctx.tick_context.player_field_metadata(player.id),
             })
     }
 
@@ -102,7 +99,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
             })
             .map(|player| MatchPlayerLite {
                 id: player.id,
-                position: self.ctx.tick_context.player_position(player.id),
+                position: self.ctx.tick_context.player_field_metadata(player.id),
             })
     }
 }

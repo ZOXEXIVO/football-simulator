@@ -92,7 +92,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
 
 impl GoalkeeperDivingState {
     fn calculate_dive_direction(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let to_ball = ball_position - ctx.player.position;
         to_ball.normalize()
     }

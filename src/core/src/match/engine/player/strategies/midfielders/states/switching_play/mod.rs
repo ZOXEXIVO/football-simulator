@@ -70,7 +70,7 @@ impl MidfielderSwitchingPlayState {
     fn find_switch_play_target(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Find the best position to switch play to
         let player_position = ctx.player.position;
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
 
         // Calculate the direction perpendicular to the player's forward direction
         let forward_direction = (ball_position - player_position).normalize();

@@ -21,7 +21,7 @@ impl StateProcessingHandler for MidfielderDistributingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            let teammate_player_position = ctx.tick_context.player_position(teammate.id);
+            let teammate_player_position = ctx.tick_context.player_field_metadata(teammate.id);
 
             let pass_power = self.calculate_pass_power(teammate.id, ctx);
 

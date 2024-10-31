@@ -31,7 +31,7 @@ impl StateProcessingHandler for DefenderRestingState {
 
         // 2. Check if the ball is close
         let ball_distance =
-            (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
+            (ctx.tick_context.positions.ball.position - ctx.player.position).magnitude();
         if ball_distance < BALL_PROXIMITY_THRESHOLD {
             // If the ball is close, check for nearby opponents
             let opponent_nearby = self.is_opponent_nearby(ctx);

@@ -316,7 +316,7 @@ impl Ball {
         }
 
         if let Some(owner_player_id) = self.current_owner {
-            self.position = tick_context.player_position(owner_player_id);
+            self.position = tick_context.player_field_metadata(owner_player_id);
         } else {
             self.position.x += self.velocity.x;
             self.position.y += self.velocity.y;

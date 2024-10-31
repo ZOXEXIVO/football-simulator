@@ -83,8 +83,7 @@ impl GoalkeeperStandingState {
         if let Some(opponent_with_ball) = opponents.with_ball().next() {
             if let Some(opponent_distance) = ctx
                 .tick_context
-                .object_positions
-                .player_distances
+                .distances
                 .get(ctx.player.id, opponent_with_ball.id)
             {
                 return opponent_distance < DANGER_ZONE_RADIUS;
@@ -96,7 +95,7 @@ impl GoalkeeperStandingState {
 
     fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let goal_center = ctx.ball().direction_to_own_goal();
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
 
         // Calculate a position on the line between the ball and the center of the goal
         let to_ball = ball_position - goal_center;

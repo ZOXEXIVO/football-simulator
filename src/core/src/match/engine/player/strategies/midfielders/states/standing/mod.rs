@@ -147,7 +147,7 @@ impl MidfielderStandingState {
             field_length / 3.0
         };
 
-        let ball_position_x = ctx.tick_context.object_positions.ball_position.x;
+        let ball_position_x = ctx.tick_context.positions.ball.position.x;
 
         if ctx.player.side == Some(PlayerSide::Left) {
             ball_position_x > attacking_third_start

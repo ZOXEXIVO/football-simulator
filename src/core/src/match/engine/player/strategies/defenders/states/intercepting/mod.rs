@@ -167,8 +167,8 @@ impl DefenderInterceptingState {
     /// Calculates the interception point of the ball
     fn calculate_interception_point(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         // Get ball position and velocity
-        let ball_position = ctx.tick_context.object_positions.ball_position;
-        let ball_velocity = ctx.tick_context.object_positions.ball_velocity;
+        let ball_position = ctx.tick_context.positions.ball.position;
+        let ball_velocity = ctx.tick_context.positions.ball.velocity;
 
         // Defender's speed
         let defender_speed = ctx.player.skills.physical.pace.max(0.1);

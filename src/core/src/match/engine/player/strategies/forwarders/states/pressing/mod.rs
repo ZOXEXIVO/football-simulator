@@ -49,7 +49,7 @@ impl StateProcessingHandler for ForwardPressingState {
                 result.velocity = Some(direction * ctx.player.skills.physical.acceleration);
             } else {
                 // Move towards the ball if the opponent is far
-                let direction = (ctx.tick_context.object_positions.ball_position
+                let direction = (ctx.tick_context.positions.ball.position
                     - ctx.player.position)
                     .normalize();
                 result.velocity = Some(direction * ctx.player.skills.physical.acceleration);
@@ -57,7 +57,7 @@ impl StateProcessingHandler for ForwardPressingState {
         } else {
             // Move towards the ball if no close opponents
             let direction =
-                (ctx.tick_context.object_positions.ball_position - ctx.player.position).normalize();
+                (ctx.tick_context.positions.ball.position - ctx.player.position).normalize();
             result.velocity = Some(direction * ctx.player.skills.physical.acceleration);
         }
 
@@ -71,7 +71,7 @@ impl StateProcessingHandler for ForwardPressingState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(
             SteeringBehavior::Arrive {
-                target: ctx.tick_context.object_positions.ball_position,
+                target: ctx.tick_context.positions.ball.position,
                 slowing_distance: 10.0,
             }
             .calculate(ctx.player)

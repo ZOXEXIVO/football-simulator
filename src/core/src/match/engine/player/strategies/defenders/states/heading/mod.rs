@@ -21,7 +21,7 @@ pub struct DefenderHeadingState {}
 impl StateProcessingHandler for DefenderHeadingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // 1. Check if the ball is within heading distance and at the correct height
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_position = ctx.player.position;
         let distance_to_ball = (ball_position - player_position).magnitude();
 

@@ -64,8 +64,7 @@ impl StateProcessingHandler for ForwardRunningState {
             if let Some(opponent_with_ball) = ctx.players().opponents().with_ball().next() {
                 let opponent_distance = ctx
                     .tick_context
-                    .object_positions
-                    .player_distances
+                    .distances
                     .get(ctx.player.id, opponent_with_ball.id)
                     .unwrap();
 
@@ -99,7 +98,7 @@ impl StateProcessingHandler for ForwardRunningState {
         } else {
             // Apply pursuit behavior
             let pursuit_result = SteeringBehavior::Arrive {
-                target: ctx.tick_context.object_positions.ball_position,
+                target: ctx.tick_context.positions.ball.position,
                 slowing_distance: 10.0,
             }
             .calculate(ctx.player);
@@ -126,7 +125,7 @@ impl ForwardRunningState {
         let (leading_forward, _) =
             forwards
                 .fold((None, f32::MIN), |(leading_player, max_score), player| {
-                    let distance = (player.position - ctx.tick_context.object_positions.ball_position)
+                    let distance = (player.position - ctx.tick_context.positions.ball.position)
                         .magnitude();
 
                     let players = ctx.player();
@@ -158,7 +157,7 @@ impl ForwardRunningState {
                     false
                 } else {
                     // Check if the current player has a better score than the leading forward
-                    let player_distance = (ctx.player.position  - ctx.tick_context.object_positions.ball_position).magnitude();
+                    let player_distance = (ctx.player.position  - ctx.tick_context.positions.ball.position).magnitude();
 
                     let player = ctx.player();
                     let skills = player.skills(leading_forward.id);
@@ -171,7 +170,7 @@ impl ForwardRunningState {
                         - player_time_to_ball;
 
                     let leading_forward_distance = (leading_forward.position
-                        - ctx.tick_context.object_positions.ball_position)
+                        - ctx.tick_context.positions.ball.position)
                         .magnitude();
                     let leading_forward_speed = skills.max_speed();
                     let leading_forward_time_to_ball =

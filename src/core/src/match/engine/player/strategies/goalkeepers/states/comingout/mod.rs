@@ -53,7 +53,7 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let direction = (ball_position - ctx.player.position).normalize();
         let speed = ctx.player.skills.physical.pace * COMINGOUT_SPEED_MULTIPLIER;
 

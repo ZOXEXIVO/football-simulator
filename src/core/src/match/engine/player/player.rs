@@ -147,11 +147,16 @@ impl MatchPlayer {
 #[derive(Copy, Clone)]
 pub struct MatchPlayerLite {
     pub id: u32,
-    pub position: Vector3<f32>
+    pub position: Vector3<f32>,
 }
 
 impl MatchPlayerLite {
     pub fn has_ball(&self, ctx: &StateProcessingContext<'_>) -> bool {
         ctx.ball().owner_id() == Some(self.id)
+    }
+
+    pub fn velocity(&self, ctx: &StateProcessingContext<'_>) -> Vector3<f32> {
+        ctx.tick_context.positions.players.
+            get_player_velocity(ctx.player.id).unwrap()
     }
 }

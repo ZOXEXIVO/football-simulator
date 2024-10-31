@@ -97,8 +97,8 @@ impl ForwardRunningInBehindState {
         // This is a simplified version and may need to be more complex in practice
         let teammate_with_ball = ctx
             .tick_context
-            .object_positions
-            .players_positions
+            .positions
+            .players
             .items
             .iter()
             .find(|p| {

@@ -88,8 +88,7 @@ impl ForwardDribblingState {
         // Check if the teammate is within a reasonable distance
         if let Some(distance) = ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(ctx.player.id, teammate.id)
         {
             if distance > max_distance {
@@ -103,7 +102,7 @@ impl ForwardDribblingState {
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_to_ball = (ball_position - ctx.player.position).normalize();
         let player_to_teammate = (teammate.position - ctx.player.position).normalize();
 

@@ -39,7 +39,7 @@ impl StateProcessingHandler for GoalkeeperCatchingState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // During catching, the goalkeeper's velocity should be minimal
         // but we can add a small adjustment towards the ball
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let direction = (ball_position - ctx.player.position).normalize();
         let speed = 0.5; // Very low speed for final adjustments
 
@@ -53,7 +53,7 @@ impl GoalkeeperCatchingState {
     fn is_catch_successful(&self, ctx: &StateProcessingContext) -> bool {
         let catch_skill =
             (ctx.player.skills.technical.first_touch + ctx.player.skills.technical.technique) / 2.0;
-        let ball_speed = ctx.tick_context.object_positions.ball_velocity.norm();
+        let ball_speed = ctx.tick_context.positions.ball.velocity.norm();
         let distance_to_ball = ctx.ball().distance();
 
         // Scale catch_skill from 1-20 range to 0-1 range
@@ -73,8 +73,8 @@ impl GoalkeeperCatchingState {
     }
 
     fn calculate_catch_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
-        let ball_velocity = ctx.tick_context.object_positions.ball_velocity;
+        let ball_position = ctx.tick_context.positions.ball.position;
+        let ball_velocity = ctx.tick_context.positions.ball.velocity;
 
         // Predict ball position slightly ahead of time
         let prediction_time = 0.1; // 100ms prediction

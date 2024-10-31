@@ -135,7 +135,7 @@ impl DefenderWalkingState {
         // This is a simplified calculation. You might want to make it more sophisticated
         // based on team formation, tactics, and the current game situation.
         let team_center = self.calculate_team_center(ctx);
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
 
         // Position between team center and ball, slightly closer to team center
         (team_center * 0.7 + ball_position * 0.3).into()

@@ -51,7 +51,7 @@ impl StateProcessingHandler for DefenderMarkingState {
 
             // 6. If the ball is close to the defender, consider intercepting
             let ball_distance =
-                (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
+                (ctx.tick_context.positions.ball.position - ctx.player.position).magnitude();
             if ball_distance < BALL_PROXIMITY_THRESHOLD && !opponent_to_mark.has_ball(ctx) {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Intercepting,
@@ -81,9 +81,9 @@ impl StateProcessingHandler for DefenderMarkingState {
         // Identify the opponent player to mark
         if let Some(opponent_to_mark) = ctx.players().opponents().nearby(100.0).next() {
             // Calculate desired position to maintain proper marking
-            let opponent_future_position = opponent_to_mark.position + opponent_to_mark.velocity;
+            let opponent_future_position = opponent_to_mark.position + opponent_to_mark.velocity(ctx);
             let desired_position = opponent_future_position
-                - (opponent_to_mark.velocity.normalize() * MARKING_DISTANCE_THRESHOLD);
+                - (opponent_to_mark.velocity(ctx).normalize() * MARKING_DISTANCE_THRESHOLD);
 
             let direction = (desired_position - ctx.player.position).normalize();
             // Set speed based on player's pace

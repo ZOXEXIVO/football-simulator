@@ -17,7 +17,7 @@ impl<'p> PlayerOperationsImpl<'p> {
     pub fn get(&self, player_id: u32) -> MatchPlayerLite {
         MatchPlayerLite{
             id: player_id,
-            position: self.ctx.tick_context.player_position(player_id)
+            position: self.ctx.tick_context.player_field_metadata(player_id)
         }
     }
 
@@ -64,8 +64,7 @@ impl<'p> PlayerOperationsImpl<'p> {
         let distance = self
             .ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(self.ctx.player.id, teammate.id)
             .unwrap();
         let pass_skill = self.ctx.player.skills.technical.passing;
@@ -74,8 +73,7 @@ impl<'p> PlayerOperationsImpl<'p> {
 
     pub fn distance_to_player(&self, player_id: u32) -> f32 {
         self.ctx.tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(self.ctx.player.id, player_id)
             .unwrap()
     }

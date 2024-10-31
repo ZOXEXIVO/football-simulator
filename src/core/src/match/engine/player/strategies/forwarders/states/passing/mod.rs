@@ -39,7 +39,7 @@ impl StateProcessingHandler for ForwardPassingState {
                 ForwardState::Running,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     ctx.player.id,
-                    ctx.tick_context.player_position(teammate.id),
+                    ctx.tick_context.player_field_metadata(teammate.id),
                     pass_power,
                 )),
             ));
@@ -79,8 +79,7 @@ impl ForwardPassingState {
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
         let distance = ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(ctx.player.id, teammate_id)
             .unwrap();
 
@@ -108,7 +107,7 @@ impl ForwardPassingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        let distance = ctx.tick_context.object_positions.player_distances
+        let distance = ctx.tick_context.distances
             .get(ctx.player.id, teammate.id)
             .unwrap();
 
@@ -123,7 +122,7 @@ impl ForwardPassingState {
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_to_ball = (ball_position - ctx.player.position).normalize();
         let player_to_teammate = (teammate.position - ctx.player.position).normalize();
 

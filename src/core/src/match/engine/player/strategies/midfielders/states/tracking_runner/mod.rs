@@ -76,7 +76,7 @@ impl StateProcessingHandler for MidfielderTrackingRunnerState {
         if let Some(runner) = nearest_forward {
             let steering = SteeringBehavior::Pursuit {
                 target: runner.position,
-                velocity: runner.velocity,
+                velocity: runner.velocity(ctx),
             }
             .calculate(ctx.player);
 

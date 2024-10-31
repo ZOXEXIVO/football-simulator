@@ -60,22 +60,23 @@ impl MatchPositionData {
     pub fn add_ball_positions(&mut self, timestamp: u64, position: Vector3<f32>) {
         let position = PositionDataItem::new(timestamp, position);
 
-        if let Some(last_position) = self.ball_positions.last() {
+        if let Some(last_position) = self.ball.positions.last() {
             if last_position != &position {
-                self.ball_positions.push(position);
+                self.ball.positions.push(position);
             }
         } else {
-            self.ball_positions.push(position);
+            self.ball.positions.push(position);
         }
     }
 }
 
 const MAX_NORMALIZED_VALUE: f32 = 0.5f32;
 
-pub struct PlayerFieldPosition {
+pub struct PlayerFieldMetadata {
     pub player_id: u32,
     pub side: PlayerSide,
     pub position: Vector3<f32>,
+    pub velocity: Vector3<f32>,
 }
 
 pub trait VectorExtensions {

@@ -66,7 +66,7 @@ impl StateProcessingHandler for MidfielderPressingState {
         if ctx.ball().distance() < 150.0 {
             Some(
                 SteeringBehavior::Pursuit {
-                    target: ctx.tick_context.object_positions.ball_position,
+                    target: ctx.tick_context.positions.ball.position,
                     velocity: ctx.player.velocity,
                 }
                 .calculate(ctx.player)
