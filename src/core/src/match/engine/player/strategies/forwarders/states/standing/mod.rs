@@ -23,7 +23,7 @@ pub struct ForwardStandingState {}
 impl StateProcessingHandler for ForwardStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the forward still has the ball
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // Decide next action based on game context
             if self.is_in_shooting_range(ctx) {
                 // Transition to Shooting state
@@ -89,7 +89,7 @@ impl ForwardStandingState {
         &'a self,
         ctx: &'a StateProcessingContext<'a>,
     ) -> Option<u32> {
-        if let Some((teammate_id, _)) = ctx.players().teammates().nearby_raw(100.0).next() {
+        if let Some((teammate_id, _)) = ctx.players().teammates().nearby_ids(100.0).next() {
             return Some(teammate_id)
         }
 
@@ -106,7 +106,7 @@ impl ForwardStandingState {
 
     /// Decides whether the forward should press the opponent.
     fn should_press(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.ball().distance() < PRESS_DISTANCE && ctx.player.has_ball
+        ctx.ball().distance() < PRESS_DISTANCE && ctx.player.has_ball(ctx)
     }
 
     /// Calculates the optimal attacking position for the forward.

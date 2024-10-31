@@ -1,4 +1,4 @@
-use crate::r#match::{MatchPlayer, StateProcessingContext};
+use crate::r#match::{MatchPlayerLite, StateProcessingContext};
 use crate::PlayerFieldPositionGroup;
 
 pub struct PlayerOpponentsOperationsImpl<'b> {
@@ -12,52 +12,52 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
 }
 
 impl<'b> PlayerOpponentsOperationsImpl<'b> {
-    pub fn all(&'b self) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    pub fn all(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.opponents_for_team(self.ctx.player.team_id, None)
     }
 
-    pub fn with_ball(&'b self) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    pub fn with_ball(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.opponents_for_team(self.ctx.player.team_id, Some(true))
     }
 
-    pub fn without_ball(&'b self) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    pub fn without_ball(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.opponents_for_team(self.ctx.player.team_id, Some(false))
     }
 
-    pub fn nearby(&'b self, distance: f32) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
+    pub fn nearby(&self, distance: f32) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .opponents(self.ctx.player, distance)
-            .map(|(pid, _)| self.ctx.context.players.get(pid).unwrap())
+            .map(|(pid, _)| MatchPlayerLite {
+                id: pid,
+                position: self.ctx.tick_context.positions.players.position(pid),
+            })
     }
 
-    pub fn nearby_raw(&'b self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
+    pub fn nearby_raw(&self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
         self.ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .opponents(self.ctx.player, distance)
     }
 
     pub fn exists(&self, distance: f32) -> bool {
         self.ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .opponents(self.ctx.player, distance)
             .any(|_| true)
     }
 
-    pub fn goalkeeper(&'b self) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
+    pub fn goalkeeper(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.opponents_by_position(
             PlayerFieldPositionGroup::Goalkeeper,
             self.ctx.player.team_id,
         )
     }
 
-    pub fn forwards(&'b self) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
+    pub fn forwards(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.opponents_by_position(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
     }
 
@@ -65,7 +65,7 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
         &'b self,
         position_group: PlayerFieldPositionGroup,
         team_id: u32,
-    ) -> impl Iterator<Item = &'b MatchPlayer> + 'b {
+    ) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.ctx
             .context
             .players
@@ -75,21 +75,31 @@ impl<'b> PlayerOpponentsOperationsImpl<'b> {
                 player.team_id != team_id
                     && player.tactics_position.position_group() == position_group
             })
+            .map(|player| MatchPlayerLite {
+                id: player.id,
+                position: self.ctx.tick_context.positions.players.position(player.id),
+            })
     }
 
     fn opponents_for_team(
         &'b self,
         team_id: u32,
         has_ball: Option<bool>,
-    ) -> impl Iterator<Item = &MatchPlayer> + 'b {
+    ) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.ctx
             .context
             .players
             .players
             .values()
             .filter(move |player| {
+                // opponent
                 player.team_id != team_id
-                    && (has_ball.is_none() || player.has_ball == has_ball.unwrap())
+                    && (has_ball.is_none()
+                        || (self.ctx.ball().owner_id() == Some(self.ctx.player.id)))
+            })
+            .map(|player| MatchPlayerLite {
+                id: player.id,
+                position: self.ctx.tick_context.positions.players.position(player.id),
             })
     }
 }

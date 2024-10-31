@@ -1,7 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::position::VectorExtensions;
+use crate::r#match::result::VectorExtensions;
 use crate::r#match::{
     ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
@@ -21,7 +21,7 @@ impl StateProcessingHandler for ForwardDribblingState {
         let players_ops = ctx.players();
 
         // Check if the player has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Transition to Running state if the player doesn't have the ball
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }
@@ -88,8 +88,7 @@ impl ForwardDribblingState {
         // Check if the teammate is within a reasonable distance
         if let Some(distance) = ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(ctx.player.id, teammate.id)
         {
             if distance > max_distance {
@@ -103,7 +102,7 @@ impl ForwardDribblingState {
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_to_ball = (ball_position - ctx.player.position).normalize();
         let player_to_teammate = (teammate.position - ctx.player.position).normalize();
 

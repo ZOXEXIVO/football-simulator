@@ -20,7 +20,7 @@ pub struct MidfielderRunningState {}
 
 impl StateProcessingHandler for MidfielderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // If the player has the ball, consider shooting, passing, or dribbling
             if self.is_in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
@@ -83,7 +83,7 @@ impl StateProcessingHandler for MidfielderRunningState {
                 .calculate(ctx.player)
                 .velocity,
             )
-        } else if  ctx.player.has_ball || ctx.team().is_control_ball() {
+        } else if  ctx.player.has_ball(ctx) || ctx.team().is_control_ball() {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.ball().direction_to_opponent_goal(),
@@ -144,13 +144,10 @@ impl MidfielderRunningState {
 
         if let Some((first_id, _)) = nearest_opponents.next() {
             if let Some((second_id, _)) = nearest_opponents.next() {
-                if let Some(distance_between_opponents) = ctx.tick_context.object_positions.player_distances.get(first_id, second_id) {
+                if let Some(distance_between_opponents) = ctx.tick_context.distances.get(first_id, second_id) {
                     if distance_between_opponents > 10.0 {
-                        let first_position = ctx.tick_context.object_positions.players_positions
-                            .get_player_position(first_id).unwrap();
-
-                        let second_position = ctx.tick_context.object_positions.players_positions
-                            .get_player_position(second_id).unwrap();
+                        let first_position = ctx.tick_context.positions.players.position(first_id);
+                        let second_position = ctx.tick_context.positions.players.position(second_id);
 
                         let midpoint = (first_position + second_position) * 0.5;
 

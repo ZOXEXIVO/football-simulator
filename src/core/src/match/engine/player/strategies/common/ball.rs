@@ -1,4 +1,4 @@
-use crate::r#match::position::VectorExtensions;
+use crate::r#match::result::VectorExtensions;
 use crate::r#match::{BallSide, PlayerSide, StateProcessingContext};
 use nalgebra::Vector3;
 
@@ -14,7 +14,7 @@ impl<'b> BallOperationsImpl<'b> {
 
 impl<'b> BallOperationsImpl<'b> {
     pub fn on_own_side(&self) -> bool {
-        match self.ctx.tick_context.ball.side {
+        match self.side() {
             BallSide::Left => self.ctx.player.side == Some(PlayerSide::Left),
             BallSide::Right => self.ctx.player.side == Some(PlayerSide::Right),
         }
@@ -23,13 +23,13 @@ impl<'b> BallOperationsImpl<'b> {
     pub fn distance(&self) -> f32 {
         self.ctx
             .tick_context
-            .object_positions
-            .ball_position
+            .positions
+            .ball.position
             .distance_to(&self.ctx.player.position)
     }
 
     pub fn speed(&self) -> f32 {
-        self.ctx.tick_context.object_positions.ball_velocity.norm()
+        self.ctx.tick_context.positions.ball.velocity.norm()
     }
 
     pub fn is_owned(&self) -> bool {
@@ -42,8 +42,8 @@ impl<'b> BallOperationsImpl<'b> {
 
     pub fn is_towards_player(&self) -> bool {
         let (is_towards, _) = MatchBallLogic::is_heading_towards_player(
-            &self.ctx.tick_context.object_positions.ball_position,
-            &self.ctx.tick_context.object_positions.ball_velocity,
+            &self.ctx.tick_context.positions.ball.position,
+            &self.ctx.tick_context.positions.ball.velocity,
             &self.ctx.player.position,
             0.95,
         );
@@ -52,8 +52,8 @@ impl<'b> BallOperationsImpl<'b> {
 
     pub fn is_towards_player_with_angle(&self, angle: f32) -> bool {
         let (is_towards, _) = MatchBallLogic::is_heading_towards_player(
-            &self.ctx.tick_context.object_positions.ball_position,
-            &self.ctx.tick_context.object_positions.ball_velocity,
+            &self.ctx.tick_context.positions.ball.position,
+            &self.ctx.tick_context.positions.ball.velocity,
             &self.ctx.player.position,
             angle,
         );
@@ -77,8 +77,8 @@ impl<'b> BallOperationsImpl<'b> {
 
         self.ctx
             .tick_context
-            .object_positions
-            .ball_position
+            .positions
+            .ball.position
             .distance_to(&target_goal)
     }
 
@@ -92,7 +92,7 @@ impl<'b> BallOperationsImpl<'b> {
 
     pub fn direction_to_opponent_goal(&self) -> Vector3<f32> {
         let player_position = self.ctx.player.position;
-        let ball_position = self.ctx.tick_context.object_positions.ball_position;
+        let ball_position = self.ctx.tick_context.positions.ball.position;
         let opponent_goal_position = self.ctx.player().opponent_goal_position();
 
         return opponent_goal_position;
@@ -156,14 +156,14 @@ impl<'b> BallOperationsImpl<'b> {
 
         self.ctx
             .tick_context
-            .object_positions
-            .ball_position
+            .positions
+            .ball.position
             .distance_to(&target_goal)
     }
 
     pub fn on_own_third(&self) -> bool {
         let field_length = self.ctx.context.field_size.width as f32;
-        let ball_x = self.ctx.tick_context.object_positions.ball_position.x;
+        let ball_x = self.ctx.tick_context.positions.ball.position.x;
 
         if self.ctx.player.side == Some(PlayerSide::Left) {
             // Home team defends the left side (negative X)
@@ -172,6 +172,14 @@ impl<'b> BallOperationsImpl<'b> {
             // Away team defends the right side (positive X)
             ball_x > field_length / 3.0
         }
+    }
+
+    pub fn side(&self) -> BallSide {
+        if (self.ctx.tick_context.positions.ball.position.x as usize) < self.ctx.context.field_size.half_width {
+            return BallSide::Left;
+        }
+
+        BallSide::Right
     }
 }
 

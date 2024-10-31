@@ -28,6 +28,10 @@ export class MatchDataService {
     refreshData(timestamp: number){
         let lastData = this.getData(timestamp);
 
+        if(!lastData){
+            return;
+        }
+
         // update ball position
         if (lastData.ball) {
             let ballPosition = this.translateToField(lastData.ball.position[0], lastData.ball.position[1]);
@@ -71,23 +75,27 @@ export class MatchDataService {
         };
     }
 
-    getData(timestamp: number): MatchResultData {
+    getData(timestamp: number): MatchResultData | null {
         // ball
 
-        let ballData = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx];
+        let ballData = this.matchData!.ball[this.match!.ball.currentCoordIdx];
 
         let ts = ballData.timestamp;
 
-        while (ts < timestamp && this.match!.ball.currentCoordIdx < this.matchData!.ball_positions.length) {
-            ts = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx].timestamp;
+        while (ts < timestamp && this.match!.ball.currentCoordIdx < this.matchData!.ball.length) {
+            const data = this.matchData!.ball[this.match!.ball.currentCoordIdx];
+            if(!data) {
+                return null;
+            }
+            ts = data.timestamp;
             this.match!.ball.currentCoordIdx++;
         }
 
-        const ballResult = this.matchData!.ball_positions[this.match!.ball.currentCoordIdx - 1];
+        const ballResult = this.matchData!.ball[this.match!.ball.currentCoordIdx - 1];
 
         let players_results: PlayerDataResultModel[] = [];
 
-        Object.entries(this.matchData?.player_positions!).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
+        Object.entries(this.matchData?.players!).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
             const player = this.match!.players.find((player) => player.id == Number(key))!;
 
             if(player){

@@ -1,18 +1,47 @@
-use crate::r#match::MatchPlayer;
+use crate::r#match::{MatchField, MatchPlayer};
 use nalgebra::Vector3;
 
-pub struct Space<T: Collider> {
-    colliders: Vec<T>,
+pub struct Space {
+    colliders: Vec<SphereCollider>,
 }
 
-impl<T: Collider> Space<T> {
+impl From<&MatchField> for Space{
+    fn from(field: &MatchField) -> Self {
+        let mut space = Space::new();
+
+        // Add ball collider
+        let ball_radius = 0.11; // Assuming the ball radius is 0.11 meters (size 5 football)
+        let ball_collider = SphereCollider {
+            center: field.ball.position,
+            radius: ball_radius,
+            player: None,
+        };
+
+        space.add_collider(ball_collider);
+
+        // Add player colliders
+        for player in &field.players {
+            let player_radius = 0.5; // Assuming the player radius is 0.5 meters
+            let player_collider = SphereCollider {
+                center: player.position,
+                radius: player_radius,
+                player: Some(player.clone()),
+            };
+            space.add_collider(player_collider);
+        }
+
+        space
+    }
+}
+
+impl Space {
     pub fn new() -> Self {
         Space {
-            colliders: Vec::new(),
+            colliders: Vec::with_capacity(30),
         }
     }
 
-    pub fn add_collider(&mut self, collider: T) {
+    pub fn add_collider(&mut self, collider: SphereCollider) {
         self.colliders.push(collider);
     }
 
@@ -22,8 +51,8 @@ impl<T: Collider> Space<T> {
         direction: Vector3<f32>,
         max_distance: f32,
         include_players: bool,
-    ) -> Option<RaycastHit<T>> {
-        let mut closest_hit: Option<RaycastHit<T>> = None;
+    ) -> Option<RaycastHit<SphereCollider>> {
+        let mut closest_hit: Option<RaycastHit<SphereCollider>> = None;
         let mut closest_distance = max_distance;
 
         // Iterate through all colliders in the space

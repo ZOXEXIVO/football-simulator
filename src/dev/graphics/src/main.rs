@@ -16,8 +16,8 @@ use core::r#match::MatchPlayerCollection;
 use core::Vector3;
 use env_logger::Env;
 use std::time::Instant;
+use core::r#match::ResultMatchPositionData;
 
-use core::r#match::MatchPositionData;
 use core::r#match::PlayerSide;
 use core::r#match::Score;
 use core::r#match::GOAL_WIDTH;
@@ -68,7 +68,7 @@ async fn main() {
 
     let mut current_frame = 0u64;
 
-    let mut match_data = MatchPositionData::new();
+    let mut match_data = ResultMatchPositionData::new();
 
     let mut left_mouse_pressed = false;
 
@@ -113,7 +113,7 @@ async fn main() {
         let elapsed = start.elapsed();
 
         draw_goals(offset_x, offset_y, &context, field_width, scale);
-        draw_players(offset_x, offset_y, &field, scale);
+        draw_players(offset_x, offset_y, &field, field.ball.current_owner, scale);
 
         draw_ball(offset_x, offset_y, &field.ball, scale);
 
@@ -121,12 +121,14 @@ async fn main() {
             offset_x + 20.0,
             offset_y + field_height + 10.0,
             field.players.iter().filter(|p| p.team_id == 2).collect(),
+            field.ball.current_owner,
             scale,
         );
         draw_player_list(
             offset_x + 20.0,
             offset_y - 50.0,
             field.players.iter().filter(|p| p.team_id == 1).collect(),
+            field.ball.current_owner,
             scale,
         );
 
@@ -340,7 +342,7 @@ fn draw_goals(offset_x: f32, offset_y: f32, context: &MatchContext, field_width:
     );
 }
 
-fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
+fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, ball_owner_id: Option<u32>, scale: f32) {
     field.players.iter().for_each(|player| {
         let translated_x = offset_x + player.position.x * scale;
         let translated_y = offset_y + player.position.y * scale;
@@ -360,7 +362,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, scale: f32) {
         // Draw the player circle
         draw_circle(translated_x, translated_y, circle_radius, color);
 
-        if player.has_ball {
+        if Some(player.id) == ball_owner_id {
             draw_circle_lines(
                 translated_x,
                 translated_y,
@@ -441,7 +443,7 @@ fn draw_ball(offset_x: f32, offset_y: f32, ball: &Ball, scale: f32) {
     );
 }
 
-fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, scale: f32) {
+fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, ball_owner_id: Option<u32>, scale: f32) {
     let player_width = 25.0 * scale;
     let player_height = 25.0 * scale;
     let player_spacing = 40.0 * scale;
@@ -470,7 +472,7 @@ fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, sc
             player_color,
         );
 
-        if player.has_ball {
+        if Some(player.id) == ball_owner_id {
             draw_circle_lines(
                 player_x + circle_radius,
                 player_y + circle_radius,

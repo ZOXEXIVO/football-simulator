@@ -19,7 +19,7 @@ pub struct MidfielderPressingState {}
 
 impl StateProcessingHandler for MidfielderPressingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if !ctx.ball().is_owned() || ctx.player.has_ball {
+        if !ctx.ball().is_owned() || ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Running,
             ));
@@ -66,7 +66,7 @@ impl StateProcessingHandler for MidfielderPressingState {
         if ctx.ball().distance() < 150.0 {
             Some(
                 SteeringBehavior::Pursuit {
-                    target: ctx.tick_context.object_positions.ball_position,
+                    target: ctx.tick_context.positions.ball.position,
                     velocity: ctx.player.velocity,
                 }
                 .calculate(ctx.player)

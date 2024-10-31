@@ -27,7 +27,7 @@ impl StateProcessingHandler for ForwardOffsideTrapBreakingState {
         }
 
         // Check if the player has the ball
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // Transition to Dribbling state if the player has the ball
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Dribbling,
@@ -74,7 +74,7 @@ impl ForwardOffsideTrapBreakingState {
     }
 
     fn find_best_position(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
 
         let players = ctx.players();
         let opponents = players.opponents();

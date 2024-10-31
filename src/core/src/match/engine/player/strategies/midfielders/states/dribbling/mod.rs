@@ -16,7 +16,7 @@ pub struct MidfielderDribblingState {}
 
 impl StateProcessingHandler for MidfielderDribblingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // If the player has the ball, consider shooting, passing, or dribbling
             if self.is_in_shooting_position(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
@@ -75,7 +75,7 @@ impl MidfielderDribblingState {
         let players = ctx.players();
         let teammates = players.teammates();
 
-        let teammates = teammates.nearby_raw(150.0);
+        let teammates = teammates.nearby_ids(150.0);
 
         if let Some((teammate_id, _)) = teammates.choose(&mut rand::thread_rng()) {
             return Some(teammate_id)

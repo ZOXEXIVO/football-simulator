@@ -1,11 +1,8 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
-};
+use crate::r#match::result::VectorExtensions;
+use crate::r#match::{ConditionContext, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -19,7 +16,7 @@ pub struct ForwardHeadingUpPlayState {}
 impl StateProcessingHandler for ForwardHeadingUpPlayState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the player has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Transition to Running state if the player doesn't have the ball
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }
@@ -81,7 +78,7 @@ impl ForwardHeadingUpPlayState {
             .map(|player| player.id)
     }
 
-    fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
+    fn is_open_for_pass(&self, ctx: &StateProcessingContext, teammate: &MatchPlayerLite) -> bool {
         let max_distance = 20.0; // Adjust based on your game's scale
 
         let players = ctx.players();
@@ -89,8 +86,7 @@ impl ForwardHeadingUpPlayState {
 
         let distance = ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(ctx.player.id, teammate.id);
 
         // Check if the teammate is within a reasonable distance
@@ -106,8 +102,8 @@ impl ForwardHeadingUpPlayState {
         all_opponents_close.all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
     }
 
-    fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+    fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayerLite) -> bool {
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_to_ball = (ball_position - ctx.player.position).normalize();
         let player_to_teammate = (teammate.position - ctx.player.position).normalize();
 
@@ -115,8 +111,8 @@ impl ForwardHeadingUpPlayState {
         player_to_ball.dot(&player_to_teammate) > 0.8
     }
 
-    fn scoring_chance(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> f32 {
-        let goal_position = match teammate.side {
+    fn scoring_chance(&self, ctx: &StateProcessingContext, teammate: &MatchPlayerLite) -> f32 {
+        let goal_position = match ctx.player.side {
             Some(PlayerSide::Left) => ctx.context.goal_positions.right,
             Some(PlayerSide::Right) => ctx.context.goal_positions.left,
             _ => Vector3::new(0.0, 0.0, 0.0),

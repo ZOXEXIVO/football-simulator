@@ -51,8 +51,7 @@ impl StateProcessingHandler for DefenderStandingState {
             } else {
                 // Ball is not towards the player
                 if let Some(opponent) = ctx.players().opponents().nearby(PRESSING_DISTANCE).next() {
-                    if opponent.has_ball
-                        && opponent.position.distance_to(&ctx.player.position) < PRESSING_DISTANCE
+                    if opponent.has_ball(ctx) && opponent.position.distance_to(&ctx.player.position) < PRESSING_DISTANCE
                     {
                         // Only press if opponent has ball and is very close
                         return Some(StateChangeResult::with_defender_state(

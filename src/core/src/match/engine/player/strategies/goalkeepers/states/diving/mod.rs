@@ -22,7 +22,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let mut result = StateChangeResult::new();
 
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Passing,
             ));
@@ -92,7 +92,7 @@ impl StateProcessingHandler for GoalkeeperDivingState {
 
 impl GoalkeeperDivingState {
     fn calculate_dive_direction(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let to_ball = ball_position - ctx.player.position;
         to_ball.normalize()
     }

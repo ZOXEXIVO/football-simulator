@@ -16,7 +16,7 @@ pub struct DefenderReturningState {}
 
 impl StateProcessingHandler for DefenderReturningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Passing,
             ));
@@ -30,7 +30,7 @@ impl StateProcessingHandler for DefenderReturningState {
         }
 
         // Intercept if ball coming towards player and is closer than before
-        if ctx.ball().is_towards_player_with_angle(0.8) {
+        if !ctx.team().is_control_ball() && ctx.ball().is_towards_player_with_angle(0.8) {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Intercepting,
             ));

@@ -4,11 +4,11 @@ use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
-    ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext,
+    ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::{IteratorRandom};
+use rand::prelude::IteratorRandom;
 use std::sync::LazyLock;
 
 static MIDFIELDER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -21,23 +21,16 @@ impl StateProcessingHandler for MidfielderDistributingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx
-                .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate.id)
-            {
-                let pass_power = self.calculate_pass_power(teammate.id, ctx);
+            let pass_power = self.calculate_pass_power(teammate.id, ctx);
 
-                return Some(StateChangeResult::with_midfielder_state_and_event(
-                    MidfielderState::Returning,
-                    Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
-                        teammate_player_position,
-                        pass_power,
-                    )),
-                ));
-            }
+            return Some(StateChangeResult::with_midfielder_state_and_event(
+                MidfielderState::Returning,
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    ctx.player.id,
+                    ctx.tick_context.positions.players.position(teammate.id),
+                    pass_power,
+                )),
+            ));
         }
 
         None
@@ -58,23 +51,22 @@ impl MidfielderDistributingState {
     fn find_best_pass_option<'a>(
         &self,
         ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
+    ) -> Option<MatchPlayerLite> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
-            return Some(ctx.context.players.get(teammate_id)?);
+        if let Some(player) = players
+            .teammates()
+            .nearby(300.0)
+            .choose(&mut rand::thread_rng())
+        {
+            return Some(player);
         }
 
         None
     }
 
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx
-            .tick_context
-            .object_positions
-            .player_distances
-            .get(ctx.player.id, teammate_id)
-            .unwrap();
+        let distance = ctx.player().distance_to_player(teammate_id);
 
         let pass_skill = ctx.player.skills.technical.passing;
 

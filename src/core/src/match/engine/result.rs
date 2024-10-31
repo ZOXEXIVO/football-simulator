@@ -1,13 +1,13 @@
 ﻿use crate::league::LeagueMatch;
 use crate::r#match::statistics::MatchStatisticType;
-use crate::r#match::{MatchPositionData, TeamSquad};
+use crate::r#match::{ResultMatchPositionData, TeamSquad};
 use std::sync::atomic::{AtomicU8, Ordering};
 
 #[derive(Debug)]
 pub struct MatchResultRaw {
     pub score: Option<Score>,
 
-    pub position_data: MatchPositionData,
+    pub position_data: ResultMatchPositionData,
 
     pub left_team_players: FieldSquad,
     pub right_team_players: FieldSquad,
@@ -33,7 +33,7 @@ impl MatchResultRaw {
     pub fn with_match_time(match_time_ms: u64) -> Self {
         MatchResultRaw {
             score: None,
-            position_data: MatchPositionData::new(),
+            position_data: ResultMatchPositionData::new(),
             left_team_players: FieldSquad::new(),
             right_team_players: FieldSquad::new(),
             match_time_ms,
@@ -44,7 +44,7 @@ impl MatchResultRaw {
     pub fn copy_without_data_positions(&self) -> Self {
         MatchResultRaw {
             score: self.score.clone(),
-            position_data: MatchPositionData::new(),
+            position_data: ResultMatchPositionData::new(),
             left_team_players: self.left_team_players.clone(),
             right_team_players: self.right_team_players.clone(),
             match_time_ms: self.match_time_ms,

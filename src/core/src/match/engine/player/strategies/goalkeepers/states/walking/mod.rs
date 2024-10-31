@@ -21,7 +21,7 @@ impl StateProcessingHandler for GoalkeeperWalkingState {
             ));
         }
 
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Passing,
             ));
@@ -128,7 +128,7 @@ impl GoalkeeperWalkingState {
 
     fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let goal_position = ctx.ball().direction_to_own_goal();
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
 
         // Calculate the angle between the ball and the goal
         let angle_to_ball = (ball_position - goal_position).normalize();

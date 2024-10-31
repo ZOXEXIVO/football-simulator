@@ -19,7 +19,7 @@ impl StateProcessingHandler for ForwardRunningInBehindState {
         let player_ops = ctx.player();
 
         // Check if the player has received the ball
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             // Transition to Dribbling or Shooting based on position
             return if ball_ops.distance_to_opponent_goal() < 25.0 {
                 Some(StateChangeResult::with_forward_state(
@@ -97,13 +97,12 @@ impl ForwardRunningInBehindState {
         // This is a simplified version and may need to be more complex in practice
         let teammate_with_ball = ctx
             .tick_context
-            .object_positions
-            .players_positions
+            .positions
+            .players
             .items
             .iter()
             .find(|p| {
-                p.side == ctx.player.side.unwrap()
-                    && ctx.context.players.get(p.player_id).unwrap().has_ball
+                p.side == ctx.player.side.unwrap() && ctx.ball().owner_id() == Some(p.player_id)
             });
 
         if let Some(teammate) = teammate_with_ball {

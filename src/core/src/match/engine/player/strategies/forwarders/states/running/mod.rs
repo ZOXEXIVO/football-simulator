@@ -33,7 +33,7 @@ impl StateProcessingHandler for ForwardRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
 
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             if self.is_in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Shooting,
@@ -54,7 +54,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
         } else {
-            if !self.is_leading_forward(ctx) {
+            if ctx.team().is_control_ball() && !self.is_leading_forward(ctx) {
                 // If not the leading forward, transition to a supporting state
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Assisting,
@@ -64,8 +64,7 @@ impl StateProcessingHandler for ForwardRunningState {
             if let Some(opponent_with_ball) = ctx.players().opponents().with_ball().next() {
                 let opponent_distance = ctx
                     .tick_context
-                    .object_positions
-                    .player_distances
+                    .distances
                     .get(ctx.player.id, opponent_with_ball.id)
                     .unwrap();
 
@@ -85,7 +84,7 @@ impl StateProcessingHandler for ForwardRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             let goal_direction = ctx.ball().direction_to_opponent_goal();
 
             let player_goal_velocity = SteeringBehavior::Arrive {
@@ -99,7 +98,7 @@ impl StateProcessingHandler for ForwardRunningState {
         } else {
             // Apply pursuit behavior
             let pursuit_result = SteeringBehavior::Arrive {
-                target: ctx.tick_context.object_positions.ball_position,
+                target: ctx.tick_context.positions.ball.position,
                 slowing_distance: 10.0,
             }
             .calculate(ctx.player);
@@ -126,13 +125,16 @@ impl ForwardRunningState {
         let (leading_forward, _) =
             forwards
                 .fold((None, f32::MIN), |(leading_player, max_score), player| {
-                    let distance = (player.position
-                        - ctx.tick_context.object_positions.ball_position)
+                    let distance = (player.position - ctx.tick_context.positions.ball.position)
                         .magnitude();
-                    let speed = player.skills.max_speed();
+
+                    let players = ctx.player();
+                    let skills  = players.skills(player.id);
+
+                    let speed = skills.max_speed();
                     let time_to_ball = distance / speed;
 
-                    let score = player.skills.technical.average() + player.skills.mental.average()
+                    let score = skills.technical.average() + skills.mental.average()
                         - time_to_ball;
 
                     if score > max_score {
@@ -155,25 +157,27 @@ impl ForwardRunningState {
                     false
                 } else {
                     // Check if the current player has a better score than the leading forward
-                    let player_distance = (ctx.player.position
-                        - ctx.tick_context.object_positions.ball_position)
-                        .magnitude();
-                    let player_speed = ctx.player.skills.max_speed();
+                    let player_distance = (ctx.player.position  - ctx.tick_context.positions.ball.position).magnitude();
+
+                    let player = ctx.player();
+                    let skills = player.skills(leading_forward.id);
+
+                    let player_speed = skills.max_speed();
                     let player_time_to_ball = player_distance / player_speed;
 
-                    let player_score = ctx.player.skills.technical.average()
-                        + ctx.player.skills.mental.average()
+                    let player_score = skills.technical.average()
+                        + skills.mental.average()
                         - player_time_to_ball;
 
                     let leading_forward_distance = (leading_forward.position
-                        - ctx.tick_context.object_positions.ball_position)
+                        - ctx.tick_context.positions.ball.position)
                         .magnitude();
-                    let leading_forward_speed = leading_forward.skills.max_speed();
+                    let leading_forward_speed = skills.max_speed();
                     let leading_forward_time_to_ball =
                         leading_forward_distance / leading_forward_speed;
 
-                    let leading_forward_score = leading_forward.skills.technical.average()
-                        + leading_forward.skills.mental.average()
+                    let leading_forward_score = skills.technical.average()
+                        + skills.mental.average()
                         - leading_forward_time_to_ball;
 
                     player_score > leading_forward_score

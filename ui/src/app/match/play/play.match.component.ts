@@ -114,7 +114,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         if (!this.gameContainer) return;
 
         //create players
-        Object.entries(data.player_positions).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
+        Object.entries(data.players).forEach(([key, value]: [string, ObjectPositionDto[]]) => {
             let player = this.getPlayer(Number(key));
 
             if(player) {
@@ -306,7 +306,7 @@ export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {
         ball.height = 20;
 
         const translatedBallCoods = this.matchDataService.translateToField(
-            data.ball_positions[0].position[0], data.ball_positions[0].position[1]
+            data.ball[0].position[0], data.ball[0].position[1]
         );
 
         ball.position.x = translatedBallCoods.x;

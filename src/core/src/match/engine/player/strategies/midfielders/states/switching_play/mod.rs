@@ -1,14 +1,14 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior, MatchPlayer,
-};
-use nalgebra::Vector3;
-use std::sync::LazyLock;
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static MIDFIELDER_SWITCHING_PLAY_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_switching_play_data.json")));
@@ -21,7 +21,7 @@ pub struct MidfielderSwitchingPlayState {}
 
 impl StateProcessingHandler for MidfielderSwitchingPlayState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Returning,
             ));
@@ -54,7 +54,7 @@ impl StateProcessingHandler for MidfielderSwitchingPlayState {
             let steering = SteeringBehavior::Seek {
                 target: target_position,
             }
-                .calculate(ctx.player);
+            .calculate(ctx.player);
 
             Some(steering.velocity)
         } else {
@@ -70,7 +70,7 @@ impl MidfielderSwitchingPlayState {
     fn find_switch_play_target(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Find the best position to switch play to
         let player_position = ctx.player.position;
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
 
         // Calculate the direction perpendicular to the player's forward direction
         let forward_direction = (ball_position - player_position).normalize();
@@ -80,7 +80,7 @@ impl MidfielderSwitchingPlayState {
         let teammates = players.teammates();
 
         // Find teammates on the opposite side of the field
-        let opposite_side_teammates: Vec<&MatchPlayer> = teammates
+        let opposite_side_teammates: Vec<MatchPlayerLite> = teammates
             .all()
             .filter(|teammate| {
                 let teammate_to_player = player_position - teammate.position;
@@ -90,13 +90,11 @@ impl MidfielderSwitchingPlayState {
             .collect();
 
         // Find the teammate with the most space
-        let best_teammate = opposite_side_teammates
-            .iter()
-            .max_by(|a, b| {
-                let space_a = self.calculate_space_around_player(ctx, **a);
-                let space_b = self.calculate_space_around_player(ctx, **b);
-                space_a.partial_cmp(&space_b).unwrap()
-            });
+        let best_teammate = opposite_side_teammates.iter().max_by(|a, b| {
+            let space_a = self.calculate_space_around_player(ctx, *a);
+            let space_b = self.calculate_space_around_player(ctx, *b);
+            space_a.partial_cmp(&space_b).unwrap()
+        });
 
         best_teammate.map(|teammate| teammate.position)
     }
@@ -104,7 +102,7 @@ impl MidfielderSwitchingPlayState {
     fn calculate_space_around_player(
         &self,
         ctx: &StateProcessingContext,
-        player: &MatchPlayer,
+        player: &MatchPlayerLite,
     ) -> f32 {
         // Calculate the amount of free space around a player
         let space_radius = 10.0; // Adjust the radius as needed

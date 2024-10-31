@@ -1,8 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::events::Event;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerEvent;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
     SteeringBehavior,
@@ -56,7 +54,7 @@ impl StateProcessingHandler for ForwardAssistingState {
             return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
         }
 
-        if self.is_in_shooting_range(ctx) && ctx.player.has_ball {
+        if self.is_in_shooting_range(ctx) && ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_forward_state(
                 ForwardState::Shooting,
             ));
@@ -100,7 +98,7 @@ impl ForwardAssistingState {
     fn find_best_teammate_to_assist(&self, ctx: &StateProcessingContext) -> Option<u32> {
         ctx.players()
             .teammates()
-            .nearby_raw(200.0)
+            .nearby_ids(200.0)
             .filter(|(id, _)| self.is_in_good_scoring_position(ctx, *id))
             .min_by(|(_, dist_a), (_, dist_b)| {
                 dist_a
@@ -111,39 +109,24 @@ impl ForwardAssistingState {
     }
 
     fn is_good_assisting_position(&self, ctx: &StateProcessingContext, teammate_id: u32) -> bool {
-        // Complex logic to determine if the current position is good for assisting
-        // This could involve checking angles, distances, and opponent positions
-        // Simplified version:
-        if let Some(teammate) = ctx.context.players.get(teammate_id) {
-            if let Some(pass_distance) = ctx
-                .tick_context
-                .object_positions
-                .player_distances
-                .get(ctx.player.id, teammate.id)
-            {
-                return pass_distance > 5.0 && pass_distance < 30.0;
-            }
-        }
-        false
+        let pass_distance = ctx.player().distance_to_player(teammate_id);
+        pass_distance > 5.0 && pass_distance < 30.0
     }
 
     fn is_in_good_scoring_position(&self, ctx: &StateProcessingContext, player_id: u32) -> bool {
-        if let Some(_player) = ctx.context.players.get(player_id) {
-            let distance_to_goal = ctx.ball().distance_to_opponent_goal();
-            distance_to_goal < 20.0 // Adjust based on your game's scale
-        } else {
-            false
-        }
+        // TODO
+        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
+        distance_to_goal < 20.0
     }
 
     fn is_in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
-        distance_to_goal < 25.0 // Adjust based on your game's scale
+        distance_to_goal < 25.0
     }
 
     fn should_create_space(&self, ctx: &StateProcessingContext) -> bool {
         ctx.player.skills.mental.off_the_ball > 15.0
-            && ctx.players().teammates().nearby_raw(100.0).count() < 2
+            && ctx.players().teammates().nearby_ids(100.0).count() < 2
     }
 
     fn is_on_opponent_side(&self, ctx: &StateProcessingContext) -> bool {

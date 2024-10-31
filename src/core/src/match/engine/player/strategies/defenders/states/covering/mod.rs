@@ -100,7 +100,7 @@ impl DefenderCoveringState {
     }
 
     fn calculate_optimal_covering_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_position = ctx.player.position;
         let field_width = ctx.context.field_size.width as f32;
         let field_height = ctx.context.field_size.height as f32;

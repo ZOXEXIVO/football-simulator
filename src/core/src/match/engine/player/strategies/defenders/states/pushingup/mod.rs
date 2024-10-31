@@ -35,8 +35,7 @@ impl StateProcessingHandler for DefenderPushingUpState {
             if let Some(opponent) = ctx.players().opponents().nearby(TACKLING_DISTANCE_THRESHOLD).next() {
                 let distance_to_opponent = ctx
                     .tick_context
-                    .object_positions
-                    .player_distances
+                    .distances
                     .get(opponent.id, ctx.player.id)
                     .unwrap();
 
@@ -106,7 +105,7 @@ impl DefenderPushingUpState {
     }
 
     fn calculate_optimal_pushing_up_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_position = ctx.player.position;
         let field_width = ctx.context.field_size.width as f32;
         let field_height = ctx.context.field_size.height as f32;

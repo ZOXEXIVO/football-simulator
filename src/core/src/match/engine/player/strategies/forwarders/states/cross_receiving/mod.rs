@@ -64,7 +64,7 @@ impl StateProcessingHandler for ForwardCrossReceivingState {
 
 impl ForwardCrossReceivingState {
     fn is_in_good_position(&self, ctx: &StateProcessingContext) -> bool {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let goal_position = ctx.ball().direction_to_opponent_goal();
 
         // Check if the player is within the crossing zone
@@ -84,7 +84,7 @@ impl ForwardCrossReceivingState {
     }
 
     fn calculate_target_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let goal_position = ctx.ball().direction_to_opponent_goal();
 
         // Calculate the target position within the crossing zone

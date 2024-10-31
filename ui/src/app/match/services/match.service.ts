@@ -20,8 +20,8 @@ export class MatchService {
 }
 
 export interface MatchDataDto {
-    player_positions: Map<number, ObjectPositionDto[]>,
-    ball_positions: ObjectPositionDto[]
+    players: Map<number, ObjectPositionDto[]>,
+    ball: ObjectPositionDto[]
 }
 
 export class ObjectPositionDto {

@@ -1,6 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayer, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 use crate::r#match::events::Event;
@@ -24,7 +24,7 @@ pub struct MidfielderLongPassingState {}
 impl StateProcessingHandler for MidfielderLongPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the midfielder still has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Lost possession, transition to Pressing
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Pressing,
@@ -61,26 +61,22 @@ impl StateProcessingHandler for MidfielderLongPassingState {
 }
 
 impl MidfielderLongPassingState {
-    fn find_best_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<&'a MatchPlayer> {
+    fn find_best_teammate(&self, ctx: &StateProcessingContext<'_>) -> Option<MatchPlayerLite> {
         let max_pass_distance = MAX_PASS_DISTANCE;
 
         let players = ctx.players();
         let teammates = players.teammates();
 
-        for (teammate_id, distance) in teammates.nearby_raw(max_pass_distance) {
-            let player = ctx.context.players.get(teammate_id)?;
-
-            if !player.has_ball {
+        for teammate in teammates.nearby(max_pass_distance) {
+            if !teammate.has_ball(ctx) {
                 continue;
             }
 
-            if !self.is_pass_feasible_ray_tracing(ctx, player) {
+            if !self.is_pass_feasible_ray_tracing(ctx, &teammate) {
                 continue;
             }
 
-            if distance < max_pass_distance {
-                return Some(player);
-            }
+            return Some(teammate);
         }
 
         None
@@ -90,7 +86,7 @@ impl MidfielderLongPassingState {
     fn is_pass_feasible_ray_tracing(
         &self,
         ctx: &StateProcessingContext,
-        target_teammate: &MatchPlayer,
+        target_teammate: &MatchPlayerLite,
     ) -> bool {
         let player_position = ctx.player.position;
         let target_position = target_teammate.position;

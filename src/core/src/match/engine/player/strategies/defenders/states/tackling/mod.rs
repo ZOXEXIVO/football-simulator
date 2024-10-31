@@ -3,10 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::Event;
 use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, PlayerDistanceFromStartPosition, StateChangeResult,
-    StateProcessingContext, StateProcessingHandler, SteeringBehavior,
-};
+use crate::r#match::{ConditionContext, MatchPlayerLite, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use rand::Rng;
 use std::sync::LazyLock;
@@ -24,7 +21,7 @@ pub struct DefenderTacklingState {}
 
 impl StateProcessingHandler for DefenderTacklingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             if ctx.team().is_control_ball() {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Running,
@@ -68,7 +65,7 @@ impl StateProcessingHandler for DefenderTacklingState {
             }
 
             // 4. Attempt the sliding tackle
-            let (tackle_success, committed_foul) = self.attempt_sliding_tackle(ctx, opponent);
+            let (tackle_success, committed_foul) = self.attempt_sliding_tackle(ctx, &opponent);
 
             if tackle_success {
                 // Tackle is successful
@@ -154,7 +151,7 @@ impl DefenderTacklingState {
     fn attempt_sliding_tackle(
         &self,
         ctx: &StateProcessingContext,
-        _opponent: &MatchPlayer,
+        _opponent: &MatchPlayerLite,
     ) -> (bool, bool) {
         let mut rng = rand::thread_rng();
 

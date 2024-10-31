@@ -53,7 +53,7 @@ impl ForwardShootingState {
     }
 
     fn find_best_teammate_to_pass(&self, ctx: &StateProcessingContext) -> Option<u32> {
-        if let Some((pid, _)) = ctx.players().teammates().nearby_raw(150.0).next() {
+        if let Some((pid, _)) = ctx.players().teammates().nearby_ids(150.0).next() {
             return Some(pid);
         }
 

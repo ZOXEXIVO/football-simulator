@@ -18,7 +18,7 @@ pub struct MidfielderShootingState {}
 impl StateProcessingHandler for MidfielderShootingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the midfielder still has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Lost possession, transition to Pressing
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Pressing,

@@ -5,78 +5,72 @@ use serde::Serialize;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize)]
-pub struct PositionDataItem {
+pub struct ResultPositionDataItem {
     pub timestamp: u64,
     pub position: Vector3<f32>,
 }
 
-impl PositionDataItem {
+impl ResultPositionDataItem {
     pub fn new(timestamp: u64, position: Vector3<f32>) -> Self {
-        PositionDataItem {
+        ResultPositionDataItem {
             timestamp,
             position,
         }
     }
 }
 
-impl PartialEq<PositionDataItem> for PositionDataItem {
+impl PartialEq<ResultPositionDataItem> for ResultPositionDataItem {
     fn eq(&self, other: &Self) -> bool {
         self.timestamp == other.timestamp && self.position == other.position
     }
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct MatchPositionData {
-    ball_positions: Vec<PositionDataItem>,
-    player_positions: HashMap<u32, Vec<PositionDataItem>>,
+pub struct ResultMatchPositionData {
+    ball: Vec<ResultPositionDataItem>,
+    players: HashMap<u32, Vec<ResultPositionDataItem>>,
 }
 
-impl MatchPositionData {
+impl ResultMatchPositionData {
     pub fn new() -> Self {
-        MatchPositionData {
-            ball_positions: Vec::new(),
-            player_positions: HashMap::with_capacity(22 * 2 * 9000),
+        ResultMatchPositionData {
+            ball: Vec::new(),
+            players: HashMap::with_capacity(22 * 2 * 9000),
         }
     }
 
     pub fn compress(&mut self) {}
 
     pub fn add_player_positions(&mut self, player_id: u32, timestamp: u64, position: Vector3<f32>) {
-        if let Some(player_data) = self.player_positions.get_mut(&player_id) {
+        if let Some(player_data) = self.players.get_mut(&player_id) {
             let last_data = player_data.last().unwrap();
             if last_data.position.x != position.x
                 || last_data.position.y != position.y
                 || last_data.position.z != position.z
             {
-                let position_data = PositionDataItem::new(timestamp, position);
+                let position_data = ResultPositionDataItem::new(timestamp, position);
                 player_data.push(position_data);
             }
         } else {
-            self.player_positions
-                .insert(player_id, vec![PositionDataItem::new(timestamp, position)]);
+            self.players
+                .insert(player_id, vec![ResultPositionDataItem::new(timestamp, position)]);
         }
     }
 
     pub fn add_ball_positions(&mut self, timestamp: u64, position: Vector3<f32>) {
-        let position = PositionDataItem::new(timestamp, position);
+        let position = ResultPositionDataItem::new(timestamp, position);
 
-        if let Some(last_position) = self.ball_positions.last() {
+        if let Some(last_position) = self.ball.last() {
             if last_position != &position {
-                self.ball_positions.push(position);
+                self.ball.push(position);
             }
         } else {
-            self.ball_positions.push(position);
+            self.ball.push(position);
         }
     }
 }
 
 const MAX_NORMALIZED_VALUE: f32 = 0.5f32;
-
-pub struct PlayerFieldPosition {
-    pub player_id: u32,
-    pub side: PlayerSide,
-    pub position: Vector3<f32>,
-}
 
 pub trait VectorExtensions {
     fn length(&self) -> f32;

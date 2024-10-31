@@ -16,7 +16,7 @@ pub struct GoalkeeperPreSaveState {}
 
 impl StateProcessingHandler for GoalkeeperPreSaveState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.has_ball {
+        if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Passing,
             ));
@@ -57,7 +57,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let to_target = ctx.tick_context.object_positions.ball_position - ctx.player.position;
+        let to_target = ctx.tick_context.positions.ball.position - ctx.player.position;
         let distance = to_target.length();
 
         // Define a slowing radius
@@ -73,7 +73,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
 
         Some(
             SteeringBehavior::Pursuit {
-                target: ctx.tick_context.object_positions.ball_position,
+                target: ctx.tick_context.positions.ball.position,
                 velocity: desired_velocity,
             }
             .calculate(ctx.player)
@@ -86,7 +86,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
 
 impl GoalkeeperPreSaveState {
     fn should_dive(&self, ctx: &StateProcessingContext) -> bool {
-        let ball_velocity = ctx.tick_context.object_positions.ball_velocity;
+        let ball_velocity = ctx.tick_context.positions.ball.velocity;
         let ball_distance = ctx.ball().distance();
         let ball_speed = ball_velocity.norm();
 
@@ -99,7 +99,7 @@ impl GoalkeeperPreSaveState {
 
     fn is_ball_catchable(&self, ctx: &StateProcessingContext) -> bool {
         let ball_distance = ctx.ball().distance();
-        let ball_speed = ctx.tick_context.object_positions.ball_velocity.norm();
+        let ball_speed = ctx.tick_context.positions.ball.velocity.norm();
         let goalkeeper_reach = ctx.player.skills.physical.jumping * 0.5 + 2.0; // Adjust as needed
 
         ball_distance < goalkeeper_reach && ball_speed < 10.0
@@ -124,7 +124,7 @@ impl GoalkeeperPreSaveState {
 
     fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let goal_position = ctx.ball().direction_to_own_goal();
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
 
         // Calculate a position on the line between the ball and the center of the goal
         let to_ball = ball_position - goal_position;

@@ -31,7 +31,7 @@ impl StateProcessingHandler for DefenderRestingState {
 
         // 2. Check if the ball is close
         let ball_distance =
-            (ctx.tick_context.object_positions.ball_position - ctx.player.position).magnitude();
+            (ctx.tick_context.positions.ball.position - ctx.player.position).magnitude();
         if ball_distance < BALL_PROXIMITY_THRESHOLD {
             // If the ball is close, check for nearby opponents
             let opponent_nearby = self.is_opponent_nearby(ctx);
@@ -77,12 +77,7 @@ impl DefenderRestingState {
 
     /// Determines if the team is under threat based on the number of opponents in the attacking third.
     fn is_team_under_threat(&self, ctx: &StateProcessingContext) -> bool {
-        let opponents_in_attacking_third = ctx
-            .context
-            .players
-            .raw_players()
-            .iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
+        let opponents_in_attacking_third = ctx.players().opponents().all()
             .filter(|opponent| self.is_in_defensive_third(opponent.position, ctx))
             .count();
 

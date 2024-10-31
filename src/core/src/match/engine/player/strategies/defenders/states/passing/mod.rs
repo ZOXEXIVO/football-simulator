@@ -18,35 +18,30 @@ pub struct DefenderPassingState {}
 
 impl StateProcessingHandler for DefenderPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Standing,
             ));
         }
 
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx
-                .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate_id)
-            {
-                let pass_power = self.calculate_pass_power(teammate_id, ctx);
+            let teammate_player_position = ctx.tick_context.positions.players.position(teammate_id);
 
-                return Some(StateChangeResult::with_defender_state_and_event(
-                    DefenderState::Returning,
-                    Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
-                        teammate_player_position,
-                        pass_power,
-                    )),
-                ));
-            }
+            let pass_power = self.calculate_pass_power(teammate_id, ctx);
+
+            return Some(StateChangeResult::with_defender_state_and_event(
+                DefenderState::Returning,
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    ctx.player.id,
+                    teammate_player_position,
+                    pass_power,
+                )),
+            ));
         }
         let mut best_player_id = None;
         let mut highest_score = 0.0;
 
-        for (player_id, teammate_distance) in ctx.players().teammates().nearby_raw(30.0) {
+        for (player_id, teammate_distance) in ctx.players().teammates().nearby_ids(30.0) {
             let score = 1.0 / (teammate_distance + 1.0);
             if score > highest_score {
                 highest_score = score;
@@ -55,20 +50,13 @@ impl StateProcessingHandler for DefenderPassingState {
         }
 
         if let Some(teammate_id) = best_player_id {
-            if let Some(teammate_player_position) = ctx
-                .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate_id)
-            {
-                let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    teammate_player_position,
-                    1.0,
-                )));
+             let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
+                ctx.player.id,
+                ctx.tick_context.positions.players.position(teammate_id),
+                1.0,
+            )));
 
-                return Some(StateChangeResult::with_events(events));
-            }
+            return Some(StateChangeResult::with_events(events));
         }
 
         None
@@ -90,7 +78,7 @@ impl DefenderPassingState {
         if let Some((teammate_id, _)) = ctx
             .players()
             .teammates()
-            .nearby_raw(250.0)
+            .nearby_ids(250.0)
             .choose(&mut rand::thread_rng())
         {
             return Some(teammate_id);
@@ -102,8 +90,7 @@ impl DefenderPassingState {
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
         let distance = ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(ctx.player.id, teammate_id)
             .unwrap();
 

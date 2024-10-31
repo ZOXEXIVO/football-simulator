@@ -3,11 +3,8 @@ use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::forwarders::states::ForwardState;
 use crate::r#match::player::events::PlayerEvent;
-use crate::r#match::position::VectorExtensions;
-use crate::r#match::{
-    ConditionContext, MatchPlayer, PlayerSide, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
-};
+use crate::r#match::result::VectorExtensions;
+use crate::r#match::{ConditionContext, MatchPlayer, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 use rand::prelude::IteratorRandom;
@@ -21,7 +18,7 @@ pub struct ForwardPassingState {}
 impl StateProcessingHandler for ForwardPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the player has the ball
-        if !ctx.player.has_ball {
+        if !ctx.player.has_ball(ctx) {
             // Transition to Running state if the player doesn't have the ball
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
         }
@@ -36,23 +33,16 @@ impl StateProcessingHandler for ForwardPassingState {
 
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            if let Some(teammate_player_position) = ctx
-                .tick_context
-                .object_positions
-                .players_positions
-                .get_player_position(teammate.id)
-            {
-                let pass_power = self.calculate_pass_power(teammate.id, ctx);
+            let pass_power = self.calculate_pass_power(teammate.id, ctx);
 
-                return Some(StateChangeResult::with_forward_state_and_event(
-                    ForwardState::Running,
-                    Event::PlayerEvent(PlayerEvent::PassTo(
-                        ctx.player.id,
-                        teammate_player_position,
-                        pass_power,
-                    )),
-                ));
-            }
+            return Some(StateChangeResult::with_forward_state_and_event(
+                ForwardState::Running,
+                Event::PlayerEvent(PlayerEvent::PassTo(
+                    ctx.player.id,
+                    ctx.tick_context.positions.players.position(teammate.id),
+                    pass_power,
+                )),
+            ));
         }
 
         // Check if there's space to dribble forward
@@ -89,8 +79,7 @@ impl ForwardPassingState {
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
         let distance = ctx
             .tick_context
-            .object_positions
-            .player_distances
+            .distances
             .get(ctx.player.id, teammate_id)
             .unwrap();
 
@@ -102,11 +91,11 @@ impl ForwardPassingState {
     fn find_best_pass_option<'a>(
         &self,
         ctx: &StateProcessingContext<'a>,
-    ) -> Option<&'a MatchPlayer> {
+    ) -> Option<MatchPlayerLite> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_raw(300.0).choose(&mut rand::thread_rng()) {
-            return Some(ctx.context.players.get(teammate_id)?);
+        if let Some(player) = players.teammates().nearby(300.0).choose(&mut rand::thread_rng()) {
+            return Some(player);
         }
 
         None
@@ -118,7 +107,7 @@ impl ForwardPassingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        let distance = ctx.tick_context.object_positions.player_distances
+        let distance = ctx.tick_context.distances
             .get(ctx.player.id, teammate.id)
             .unwrap();
 
@@ -133,7 +122,7 @@ impl ForwardPassingState {
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {
-        let ball_position = ctx.tick_context.object_positions.ball_position;
+        let ball_position = ctx.tick_context.positions.ball.position;
         let player_to_ball = (ball_position - ctx.player.position).normalize();
         let player_to_teammate = (teammate.position - ctx.player.position).normalize();
 
