@@ -24,6 +24,10 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
         self.teammates_for_team(self.ctx.player.team_id, Some(false))
     }
 
+    // pub fn near_to_ball(&'b self, distance: f32) -> impl Iterator<Item = MatchPlayerLite> + 'b {
+    //
+    // })
+
     pub fn forwards(&'b self) -> impl Iterator<Item = MatchPlayerLite> + 'b {
         self.teammates_by_position(PlayerFieldPositionGroup::Forward, self.ctx.player.team_id)
     }

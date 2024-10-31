@@ -299,11 +299,17 @@ impl GoalPosition {
 pub struct MatchFieldSize {
     pub width: usize,
     pub height: usize,
+
+    pub half_width: usize
 }
 
 impl MatchFieldSize {
     pub fn new(width: usize, height: usize) -> Self {
-        MatchFieldSize { width, height }
+        MatchFieldSize {
+            width,
+            height,
+            half_width: width / 2
+        }
     }
 }
 

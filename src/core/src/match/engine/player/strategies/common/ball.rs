@@ -14,7 +14,7 @@ impl<'b> BallOperationsImpl<'b> {
 
 impl<'b> BallOperationsImpl<'b> {
     pub fn on_own_side(&self) -> bool {
-        match self.ctx.tick_context.ball.side {
+        match self.side() {
             BallSide::Left => self.ctx.player.side == Some(PlayerSide::Left),
             BallSide::Right => self.ctx.player.side == Some(PlayerSide::Right),
         }
@@ -172,6 +172,14 @@ impl<'b> BallOperationsImpl<'b> {
             // Away team defends the right side (positive X)
             ball_x > field_length / 3.0
         }
+    }
+
+    pub fn side(&self) -> BallSide {
+        if (self.ctx.tick_context.positions.ball.position.x as usize) < self.ctx.context.field_size.half_width {
+            return BallSide::Left;
+        }
+
+        BallSide::Right
     }
 }
 

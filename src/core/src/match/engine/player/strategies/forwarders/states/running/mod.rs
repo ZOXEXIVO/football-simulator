@@ -54,7 +54,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
         } else {
-            if !self.is_leading_forward(ctx) {
+            if ctx.team().is_control_ball() && !self.is_leading_forward(ctx) {
                 // If not the leading forward, transition to a supporting state
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Assisting,

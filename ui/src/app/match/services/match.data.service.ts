@@ -28,6 +28,10 @@ export class MatchDataService {
     refreshData(timestamp: number){
         let lastData = this.getData(timestamp);
 
+        if(!lastData){
+            return;
+        }
+
         // update ball position
         if (lastData.ball) {
             let ballPosition = this.translateToField(lastData.ball.position[0], lastData.ball.position[1]);
@@ -71,7 +75,7 @@ export class MatchDataService {
         };
     }
 
-    getData(timestamp: number): MatchResultData {
+    getData(timestamp: number): MatchResultData | null {
         // ball
 
         let ballData = this.matchData!.ball[this.match!.ball.currentCoordIdx];
@@ -79,7 +83,11 @@ export class MatchDataService {
         let ts = ballData.timestamp;
 
         while (ts < timestamp && this.match!.ball.currentCoordIdx < this.matchData!.ball.length) {
-            ts = this.matchData!.ball[this.match!.ball.currentCoordIdx].timestamp;
+            const data = this.matchData!.ball[this.match!.ball.currentCoordIdx];
+            if(!data) {
+                return null;
+            }
+            ts = data.timestamp;
             this.match!.ball.currentCoordIdx++;
         }
 
