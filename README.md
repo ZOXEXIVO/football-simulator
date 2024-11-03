@@ -6,9 +6,21 @@ Attempt to implement Sigames Football Manager simulation engine without manual c
 
 **[open-football.org](https://open-football.org)**
 
-It is **not gamable** right now and I need a lot of work to make it workable.
+The project is a simulation of soccer leagues and clubs, including match simulation.
 
-Currently, most of elements are stubs, but I change it step by step
+The project is NOT a game, it is a simulation without the possibility of control.
+
+The goal is to get as close as possible to a real soccer simulation and based on this data:
+
+- Predict match results
+- Predict the success of player transfers
+  Example: send Kylian Mbappé to Italian Bari and run simulation for 5 years and watch results
+
+What do I need to do?
+1) Make a simulation of the match
+2) Simulate the rest of soccer activities (training, transfers, etc.)
+3) Change the synthetic player database to a real one and run the simulation.
+4) Use the simulation
 
 Currently available nation for simulation - **Russia**, **Italy**, **England**
 
@@ -42,14 +54,14 @@ open chrome at http://localhost:18000
 
 ![alt text](docs/images/match.jpg "Match page")
 
-[Player page example](https://open-football.org/teams/spartak-moscow/players/1)
+[Player page example (click on any player)](https://open-football.org/teams/juventus)
 ![alt text](docs/images/player.jpg "Player page")
 
-[Club page example](https://open-football.org/teams/spartak-moscow)
+[Club page example](https://open-football.org/teams/juventus)
 
 ![alt text](docs/images/club.jpg "Club page")
 
-[League page example](https://open-football.org/leagues/tinkoff-premier_league)
+[League page example](https://open-football.org/leagues/italian-serie-a)
 
 ![alt text](docs/images/league.jpg "League page")
 
