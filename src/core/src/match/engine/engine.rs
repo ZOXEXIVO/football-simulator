@@ -45,8 +45,8 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
 
         result.score = Some(context.score.clone());
 
-        result.left_team_players = field.left_side_players.unwrap();
-        result.right_team_players = field.right_side_players.unwrap();
+        result.left_team_players = field.left_side_players.expect("left team players");
+        result.right_team_players = field.right_side_players.expect("right team players");
 
         result.position_data = match_position_data;
 
@@ -175,7 +175,7 @@ impl MatchContext {
             for stat in &player.statistics.items {
                 let detail = GoalDetail {
                     player_id: player.id,
-                    match_second: stat.match_second,
+                    time: stat.match_second,
                     stat_type: stat.stat_type,
                 };
 
@@ -348,11 +348,6 @@ impl MatchPlayerCollection {
         self.players.get(&player_id)
     }
 
-    //
-    // pub fn get_mut(&mut self, player_id: u32) -> Option<&mut MatchPlayer> {
-    //     self.players.get_mut(&player_id)
-    // }
-
     pub fn raw_players(&self) -> Vec<&MatchPlayer> {
         self.players.values().collect()
     }
@@ -376,6 +371,7 @@ impl MatchTime {
         MatchTime { time: 0 }
     }
 
+    #[inline]
     pub fn increment(&mut self, val: u64) -> u64 {
         self.time += val;
         self.time

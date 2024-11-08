@@ -1,9 +1,7 @@
 use crate::r#match::{
-    MatchPlayer,
     PlayerOpponentsOperationsImpl, PlayerTeammatesOperationsImpl,
     StateProcessingContext,
 };
-use crate::PlayerFieldPositionGroup;
 
 pub struct PlayersOperationsImpl<'p> {
     ctx: &'p StateProcessingContext<'p>,
@@ -24,29 +22,5 @@ impl<'p> PlayersOperationsImpl<'p> {
     // Opponents
     pub fn opponents(&'p self) -> PlayerOpponentsOperationsImpl<'p> {
         PlayerOpponentsOperationsImpl::new(self.ctx)
-    }
-
-    // Other
-
-    pub fn defenders(&'p self) -> Vec<&'p MatchPlayer> {
-        self.get_by_position(PlayerFieldPositionGroup::Defender)
-    }
-
-    pub fn forwards(&self) -> Vec<&MatchPlayer> {
-        self.get_by_position(PlayerFieldPositionGroup::Forward)
-    }
-
-    pub fn raw_players(&self) -> Vec<&MatchPlayer> {
-        self.ctx.context.players.players.values().collect()
-    }
-
-    pub fn get_by_position(&self, position_group: PlayerFieldPositionGroup) -> Vec<&MatchPlayer> {
-        self.ctx
-            .context
-            .players
-            .players
-            .values()
-            .filter(|player| player.tactics_position.position_group() == position_group)
-            .collect()
     }
 }

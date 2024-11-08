@@ -132,7 +132,14 @@ impl StaffCollection {
             .staffs
             .iter()
             .filter(|staff| staff.contract.is_some())
-            .find(|staff| staff.contract.as_ref().unwrap().position == StaffPosition::Manager);
+            .find(|staff| {
+                staff
+                    .contract
+                    .as_ref()
+                    .expect("no staff contract found")
+                    .position
+                    == StaffPosition::Manager
+            });
 
         match manager {
             Some(_) => manager,

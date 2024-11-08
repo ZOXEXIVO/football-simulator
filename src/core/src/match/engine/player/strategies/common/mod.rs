@@ -1,4 +1,4 @@
-mod ball;
+pub mod ball;
 pub mod players;
 pub mod states;
 pub mod team;

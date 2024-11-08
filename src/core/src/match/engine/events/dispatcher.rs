@@ -59,7 +59,7 @@ impl EventDispatcher {
     pub fn dispatch(
         events: Vec<Event>,
         field: &mut MatchField,
-        context: &MatchContext,
+        context: &mut MatchContext,
         process_remaining_events: bool,
     ) {
         let mut remaining_events = Vec::with_capacity(10);

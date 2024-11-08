@@ -24,7 +24,7 @@ impl ClubFinances {
     pub fn simulate(&mut self, ctx: GlobalContext<'_>) -> ClubFinanceResult {
         let result = ClubFinanceResult::new();
 
-        let club_name = ctx.club.as_ref().unwrap().name;
+        let club_name = ctx.club.as_ref().expect("no club found").name;
 
         if ctx.simulation.is_month_beginning() {
             debug!("club: {}, finance: start new month", club_name);

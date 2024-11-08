@@ -1,5 +1,5 @@
 use crate::r#match::StateProcessingContext;
-use nalgebra::Vector3;
+use crate::Tactics;
 
 pub struct TeamOperationsImpl<'b> {
     ctx: &'b StateProcessingContext<'b>,
@@ -12,8 +12,19 @@ impl<'b> TeamOperationsImpl<'b> {
 }
 
 impl<'b> TeamOperationsImpl<'b> {
+    pub fn tactics(&self) -> Option<Tactics> {
+        None
+    }
+
     pub fn is_control_ball(&self) -> bool {
         self.ctx.ball().owner_id() == Some(self.ctx.player.id)
+    }
+
+    pub fn is_leading(&self) -> bool {
+        let team_score = self.get_home_team_score();
+        let opponent_score = self.get_away_score();
+
+        team_score > opponent_score
     }
 
     pub fn is_loosing(&self) -> bool {
@@ -23,45 +34,20 @@ impl<'b> TeamOperationsImpl<'b> {
             self.ctx.context.score.away_team < self.ctx.context.score.home_team
         }
     }
-}
 
-pub struct MatchBallLogic;
-
-impl MatchBallLogic {
-    pub fn is_heading_towards_player(
-        ball_position: &Vector3<f32>,
-        ball_velocity: &Vector3<f32>,
-        player_position: &Vector3<f32>,
-        angle: f32,
-    ) -> (bool, f32) {
-        Self::is_heading_towards_player_witj_angle(
-            ball_position,
-            ball_velocity,
-            player_position,
-            angle,
-        )
+    fn get_home_team_score(&self) -> u8 {
+        if self.ctx.player.team_id == self.ctx.context.score.home_team.team_id {
+            self.ctx.context.score.home_team.get()
+        } else {
+            self.ctx.context.score.away_team.get()
+        }
     }
 
-    pub fn is_heading_towards_player_witj_angle(
-        ball_position: &Vector3<f32>,
-        ball_velocity: &Vector3<f32>,
-        player_position: &Vector3<f32>,
-        angle: f32,
-    ) -> (bool, f32) {
-        let velocity_xy = Vector3::new(ball_velocity.x, ball_velocity.y, 0.0);
-        let ball_to_player_xy = Vector3::new(
-            player_position.x - ball_position.x,
-            player_position.y - ball_position.y,
-            0.0,
-        );
-
-        let velocity_norm = velocity_xy.norm();
-        let direction_norm = ball_to_player_xy.norm();
-
-        let normalized_velocity = velocity_xy / velocity_norm;
-        let normalized_direction = ball_to_player_xy / direction_norm;
-        let dot_product = normalized_velocity.dot(&normalized_direction);
-
-        (dot_product >= angle, dot_product)
+    fn get_away_score(&self) -> u8 {
+        if self.ctx.player.team_id == self.ctx.context.score.home_team.team_id {
+            self.ctx.context.score.away_team.get()
+        } else {
+            self.ctx.context.score.home_team.get()
+        }
     }
 }

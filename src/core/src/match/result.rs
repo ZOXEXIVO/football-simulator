@@ -74,28 +74,16 @@ const MAX_NORMALIZED_VALUE: f32 = 0.5f32;
 
 pub trait VectorExtensions {
     fn length(&self) -> f32;
-    fn random_in_unit_circle() -> Vector3<f32>;
     fn distance_to(&self, other: &Vector3<f32>) -> f32;
 }
 
 impl VectorExtensions for Vector3<f32> {
+    #[inline]
     fn length(&self) -> f32 {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
-    fn random_in_unit_circle() -> Vector3<f32> {
-        let mut rng = rand::thread_rng();
-
-        let u = rng.gen::<f32>();
-        let v = rng.gen::<f32>();
-
-        let phi = std::f32::consts::PI * 2.0 * u;
-        let costheta = (1.0 - 2.0 * v).sqrt();
-        let sintheta = (1.0 - costheta * costheta).sqrt();
-
-        Vector3::new(sintheta * phi.cos(), sintheta * phi.sin(), costheta)
-    }
-
+    #[inline]
     fn distance_to(&self, other: &Vector3<f32>) -> f32 {
         let diff = self - other;
         diff.dot(&diff).sqrt()

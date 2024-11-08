@@ -1,8 +1,9 @@
 use crate::r#match::events::Event;
 use crate::r#match::player::state::PlayerState;
-use crate::r#match::{MatchContext, MatchField};
+use crate::r#match::{GoalDetail, MatchContext, MatchField};
 use log::info;
 use nalgebra::Vector3;
+use crate::r#match::statistics::MatchStatisticType;
 
 #[derive(Debug)]
 pub enum PlayerEvent {
@@ -37,7 +38,7 @@ impl PlayerEventDispatcher {
     pub fn dispatch<'a>(
         event: PlayerEvent,
         field: &mut MatchField,
-        context: &MatchContext,
+        context: &mut MatchContext,
     ) -> Vec<Event> {
         let remaining_events = Vec::new();
 
@@ -48,11 +49,23 @@ impl PlayerEventDispatcher {
                 let player = field.get_player_mut(player_id).unwrap();
                 player.statistics.add_goal(context.time.time);
 
+                context.score.add_goal_detail(GoalDetail{
+                    player_id,
+                    stat_type: MatchStatisticType::Goal,
+                    time: context.time.time,
+                });
+
                 field.ball.previous_owner = None;
                 field.ball.current_owner = None;
             }
             PlayerEvent::Assist(player_id) => {
                 let player = field.get_player_mut(player_id).unwrap();
+
+                context.score.add_goal_detail(GoalDetail{
+                    player_id,
+                    stat_type: MatchStatisticType::Assist,
+                    time: context.time.time,
+                });
 
                 player.statistics.add_assist(context.time.time)
             }

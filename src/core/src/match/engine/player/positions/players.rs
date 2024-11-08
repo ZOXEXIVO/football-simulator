@@ -23,7 +23,7 @@ impl PlayerFieldData {
             .map(|p| p.position);
 
         if let Some(p) = pp {
-            return p;
+            p
             //.expect(&format!("no position for player = {}", player_id))
         } else {
             let pp: Vec<u32> = self.items.iter().map(|p| p.player_id).collect();

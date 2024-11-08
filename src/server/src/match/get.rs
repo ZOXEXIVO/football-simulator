@@ -11,7 +11,7 @@ pub async fn match_get_action(
 ) -> Response {
     let guard = state.data.read().await;
 
-    let simulator_data = guard.as_ref().unwrap();
+    let simulator_data = guard.as_ref().expect("no simulator data");
 
     let league_id = simulator_data
         .indexes

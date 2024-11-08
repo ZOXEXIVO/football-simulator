@@ -37,7 +37,7 @@ impl Match {
 
         let match_result = FootballEngine::<840, 545>::play(self.home_squad, self.away_squad);
 
-        let score = match_result.score.as_ref().unwrap();
+        let score = match_result.score.as_ref().expect("no score");
 
         debug!(
             "match played: {} {}:{} {}",

@@ -31,13 +31,17 @@ impl BallEventDispatcher {
         info!("BALL EVENT: {:?}", event);
 
         match event {
-            BallEvent::Goal(side, _goalscorer_player_id) => {
-                field.reset_players_positions();
-
+            BallEvent::Goal(side, goalscorer_player_id) => {
                 match side {
                     GoalSide::Home => context.score.increment_home_goals(),
                     GoalSide::Away => context.score.increment_away_goals(),
                 }
+
+                if let Some(goalscorer_player_id) = goalscorer_player_id {
+                    remaining_events.push(Event::PlayerEvent(PlayerEvent::Goal(goalscorer_player_id)));
+                }
+
+                field.reset_players_positions();
             }
             BallEvent::Claimed(player_id) => {
                 remaining_events.push(Event::PlayerEvent(PlayerEvent::ClaimBall(player_id)));

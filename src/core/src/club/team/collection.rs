@@ -23,7 +23,11 @@ impl TeamCollection {
     }
 
     pub fn by_id(&self, id: u32) -> &Team {
-        self.teams.iter().find(|t| t.id == id).map(|t| t).unwrap()
+        self.teams
+            .iter()
+            .find(|t| t.id == id)
+            .map(|t| t)
+            .expect(format!("no team with id = {}", id).as_str())
     }
 
     pub fn main_team_id(&self) -> Option<u32> {

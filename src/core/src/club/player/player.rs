@@ -136,7 +136,11 @@ impl Player {
 
     #[inline]
     pub fn position(&self) -> PlayerPositionType {
-        *self.positions.positions().first().unwrap()
+        *self
+            .positions
+            .positions()
+            .first()
+            .expect("no position found")
     }
 
     pub fn preferred_foot_str(&self) -> &'static str {
@@ -274,7 +278,11 @@ impl Index<u32> for PlayerCollection {
     type Output = Player;
 
     fn index(&self, player_id: u32) -> &Self::Output {
-        &self.players.iter().find(|p| p.id == player_id).unwrap()
+        &self
+            .players
+            .iter()
+            .find(|p| p.id == player_id)
+            .expect(format!("no player with id = {}", player_id).as_str())
     }
 }
 

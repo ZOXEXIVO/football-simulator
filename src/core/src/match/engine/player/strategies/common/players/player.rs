@@ -1,7 +1,10 @@
 use crate::r#match::result::VectorExtensions;
-use crate::r#match::{MatchPlayer, MatchPlayerLite, PlayerDistanceFromStartPosition, PlayerSide, StateProcessingContext};
-use nalgebra::Vector3;
+use crate::r#match::{
+    MatchPlayer, MatchPlayerLite, PlayerDistanceFromStartPosition, PlayerSide,
+    StateProcessingContext,
+};
 use crate::PlayerSkills;
+use nalgebra::Vector3;
 
 pub struct PlayerOperationsImpl<'p> {
     ctx: &'p StateProcessingContext<'p>,
@@ -15,9 +18,9 @@ impl<'p> PlayerOperationsImpl<'p> {
 
 impl<'p> PlayerOperationsImpl<'p> {
     pub fn get(&self, player_id: u32) -> MatchPlayerLite {
-        MatchPlayerLite{
+        MatchPlayerLite {
             id: player_id,
-            position: self.ctx.tick_context.positions.players.position(player_id)
+            position: self.ctx.tick_context.positions.players.position(player_id),
         }
     }
 
@@ -72,7 +75,8 @@ impl<'p> PlayerOperationsImpl<'p> {
     }
 
     pub fn distance_to_player(&self, player_id: u32) -> f32 {
-        self.ctx.tick_context
+        self.ctx
+            .tick_context
             .distances
             .get(self.ctx.player.id, player_id)
             .unwrap()
