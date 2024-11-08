@@ -1,9 +1,7 @@
 use crate::r#match::{
-    MatchPlayer,
     PlayerOpponentsOperationsImpl, PlayerTeammatesOperationsImpl,
     StateProcessingContext,
 };
-use crate::PlayerFieldPositionGroup;
 
 pub struct PlayersOperationsImpl<'p> {
     ctx: &'p StateProcessingContext<'p>,

@@ -263,7 +263,7 @@ fn player_state(player: &MatchPlayer) -> String {
 
     let cleaned_state = state.split(':').nth(1).unwrap_or(&state).trim();
 
-    return cleaned_state.to_string();
+    cleaned_state.to_string()
 }
 
 fn distance(a: &Vector3<f32>, b: &Vector3<f32>) -> usize {

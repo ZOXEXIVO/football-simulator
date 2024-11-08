@@ -1,6 +1,5 @@
 use crate::r#match::StateProcessingContext;
 use crate::Tactics;
-use nalgebra::Vector3;
 
 pub struct TeamOperationsImpl<'b> {
     ctx: &'b StateProcessingContext<'b>,

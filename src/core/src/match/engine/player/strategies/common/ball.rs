@@ -196,20 +196,6 @@ impl MatchBallLogic {
         player_position: &Vector3<f32>,
         angle: f32,
     ) -> (bool, f32) {
-        Self::is_heading_towards_player_witj_angle(
-            ball_position,
-            ball_velocity,
-            player_position,
-            angle,
-        )
-    }
-
-    pub fn is_heading_towards_player_witj_angle(
-        ball_position: &Vector3<f32>,
-        ball_velocity: &Vector3<f32>,
-        player_position: &Vector3<f32>,
-        angle: f32,
-    ) -> (bool, f32) {
         let velocity_xy = Vector3::new(ball_velocity.x, ball_velocity.y, 0.0);
         let ball_to_player_xy = Vector3::new(
             player_position.x - ball_position.x,
