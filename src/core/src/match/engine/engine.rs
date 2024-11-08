@@ -348,11 +348,6 @@ impl MatchPlayerCollection {
         self.players.get(&player_id)
     }
 
-    //
-    // pub fn get_mut(&mut self, player_id: u32) -> Option<&mut MatchPlayer> {
-    //     self.players.get_mut(&player_id)
-    // }
-
     pub fn raw_players(&self) -> Vec<&MatchPlayer> {
         self.players.values().collect()
     }
@@ -376,6 +371,7 @@ impl MatchTime {
         MatchTime { time: 0 }
     }
 
+    #[inline]
     pub fn increment(&mut self, val: u64) -> u64 {
         self.time += val;
         self.time

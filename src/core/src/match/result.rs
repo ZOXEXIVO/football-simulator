@@ -78,10 +78,12 @@ pub trait VectorExtensions {
 }
 
 impl VectorExtensions for Vector3<f32> {
+    #[inline]
     fn length(&self) -> f32 {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
+    #[inline]
     fn distance_to(&self, other: &Vector3<f32>) -> f32 {
         let diff = self - other;
         diff.dot(&diff).sqrt()
