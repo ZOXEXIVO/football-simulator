@@ -162,7 +162,7 @@ pub struct GoalDetail {
     pub player_id: u32,
     pub stat_type: MatchStatisticType,
 
-    pub match_second: u64,
+    pub time: u64,
 }
 
 impl Score {

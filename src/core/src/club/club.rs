@@ -66,8 +66,10 @@ impl Club {
     fn process_salaries(&mut self, ctx: GlobalContext<'_>) {
         for team in &self.teams.teams {
             let weekly_salary = team.get_week_salary();
-            self.finance
-                .push_salary(ctx.club.as_ref().unwrap().name, weekly_salary as i32);
+            self.finance.push_salary(
+                ctx.club.as_ref().expect("no club found").name,
+                weekly_salary as i32,
+            );
         }
     }
 }

@@ -2,7 +2,7 @@ use crate::r#match::goalkeepers::states::{
     GoalkeeperCatchingState, GoalkeeperComingOutState, GoalkeeperDistributingState,
     GoalkeeperDivingState, GoalkeeperHoldingState, GoalkeeperJumpingState, GoalkeeperKickingState,
     GoalkeeperPassingState, GoalkeeperPenaltyState, GoalkeeperPickingUpState,
-    GoalkeeperPreSaveState, GoalkeeperPressureState, GoalkeeperPunchingState,
+    GoalkeeperPreparingForSaveState, GoalkeeperPressureState, GoalkeeperPunchingState,
     GoalkeeperRestingState, GoalkeeperReturningGoalState, GoalkeeperShootingState,
     GoalkeeperStandingState, GoalkeeperSweepingState, GoalkeeperTacklingState,
     GoalkeeperTakeBallState, GoalkeeperThrowingState, GoalkeeperWalkingState,
@@ -88,7 +88,7 @@ impl GoalkeeperStrategies {
                 state_processor.process(GoalkeeperShootingState::default())
             }
             GoalkeeperState::PreparingForSave => {
-                state_processor.process(GoalkeeperPreSaveState::default())
+                state_processor.process(GoalkeeperPreparingForSaveState::default())
             }
             GoalkeeperState::PenaltySave => {
                 state_processor.process(GoalkeeperPenaltyState::default())

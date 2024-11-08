@@ -9,12 +9,12 @@ use nalgebra::Vector3;
 use std::sync::LazyLock;
 
 static GOALKEEPER_PRESAVE_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_presave_data.json")));
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_preparing_for_save_data.json")));
 
 #[derive(Default)]
-pub struct GoalkeeperPreSaveState {}
+pub struct GoalkeeperPreparingForSaveState {}
 
-impl StateProcessingHandler for GoalkeeperPreSaveState {
+impl StateProcessingHandler for GoalkeeperPreparingForSaveState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball(ctx) {
             return Some(StateChangeResult::with_goalkeeper_state(
@@ -84,7 +84,7 @@ impl StateProcessingHandler for GoalkeeperPreSaveState {
     fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
-impl GoalkeeperPreSaveState {
+impl GoalkeeperPreparingForSaveState {
     fn should_dive(&self, ctx: &StateProcessingContext) -> bool {
         let ball_velocity = ctx.tick_context.positions.ball.velocity;
         let ball_distance = ctx.ball().distance();

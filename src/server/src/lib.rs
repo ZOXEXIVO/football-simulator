@@ -35,7 +35,9 @@ impl FootballSimulatorServer {
 
         info!("listen at: http://localhost:18000");
 
-        axum::serve(listener, app).await.unwrap();
+        axum::serve(listener, app)
+            .await
+            .expect("failed to start server");
     }
 }
 

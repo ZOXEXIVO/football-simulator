@@ -66,7 +66,7 @@ impl StateProcessingHandler for ForwardRunningState {
                     .tick_context
                     .distances
                     .get(ctx.player.id, opponent_with_ball.id)
-                    .unwrap();
+                    .expect(&format!("no distance between player {} and {}", ctx.player.id, opponent_with_ball.id));
 
                 if opponent_distance < PRESSING_DISTANCE_THRESHOLD {
                     return Some(StateChangeResult::with_forward_state(

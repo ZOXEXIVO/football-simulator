@@ -1,3 +1,4 @@
+use std::fmt::format;
 use crate::club::academy::result::ClubAcademyResult;
 use crate::club::{BoardResult, ClubFinanceResult};
 use crate::simulator::SimulatorData;
@@ -47,7 +48,7 @@ impl ClubResult {
 
     fn process_player_contract_interaction(result: &PlayerResult, data: &mut SimulatorData) {
         if result.contract.no_contract || result.contract.want_improve_contract {
-            let player = data.player(result.player_id).unwrap();
+            let player = data.player(result.player_id).expect(&format!("player {} not found", result.player_id));
 
             let player_growth_potential = player.growth_potential(data.date.date());
 

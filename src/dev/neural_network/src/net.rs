@@ -39,15 +39,13 @@ impl NeuralNetwork {
     }
 
     pub fn save_json(&self) -> String {
-        serde_json::to_string(self).unwrap()
+        serde_json::to_string(self).expect("failed to serialize")
     }
     
     pub fn run(&self, inputs: &[f64]) -> Vec<f64> {
-        // run network
         let mut results = self.run_internal(inputs);
-        
-        // latest output will be at the end of vec
-        results.pop().unwrap()
+
+        results.pop().expect("failed to pop results from network")
     }
 
     pub(crate) fn run_internal(&self, inputs: &[f64]) -> Vec<Vec<f64>> {
@@ -91,14 +89,12 @@ pub struct Layer {
 
 impl Layer {
     pub fn new(neurons: u32, inputs: u32) -> Layer {
-        let mut layer = Layer {
+         Layer {
             // neurons
             neurons: (0..neurons).map(|n| {
                 Neuron::new(inputs)
             }).collect()
-        };
-
-        layer
+        }
     }
 }
 

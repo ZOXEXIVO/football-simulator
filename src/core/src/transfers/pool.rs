@@ -21,7 +21,7 @@ impl<T> TransferPool<T> {
     }
 
     pub fn pull_transfers(&mut self, club_id: u32) -> Option<Vec<T>> {
-        let mut inner_map = self.pool.lock().unwrap();
+        let mut inner_map = self.pool.lock().expect("lock poisoned");
 
         if !inner_map.contains_key(&club_id) {
             return None;
