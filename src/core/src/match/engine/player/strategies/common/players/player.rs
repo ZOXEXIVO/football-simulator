@@ -68,8 +68,8 @@ impl<'p> PlayerOperationsImpl<'p> {
             .ctx
             .tick_context
             .distances
-            .get(self.ctx.player.id, teammate.id)
-            .unwrap();
+            .get(self.ctx.player.id, teammate.id);
+
         let pass_skill = self.ctx.player.skills.technical.passing;
         (distance / pass_skill as f32 * 10.0) as f64
     }
@@ -79,7 +79,6 @@ impl<'p> PlayerOperationsImpl<'p> {
             .tick_context
             .distances
             .get(self.ctx.player.id, player_id)
-            .unwrap()
     }
 }
 

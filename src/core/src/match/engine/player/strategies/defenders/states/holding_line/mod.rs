@@ -31,12 +31,7 @@ impl StateProcessingHandler for DefenderHoldingLineState {
             ));
         }
 
-        // 4. Calculate the distance to the ball
-        let ball_distance =
-            (ctx.tick_context.positions.ball.position - ctx.player.position).magnitude();
-
-        // 5. If the ball is close, decide whether to Mark or Intercept
-        if ball_distance < BALL_PROXIMITY_THRESHOLD {
+        if ctx.ball().distance() < BALL_PROXIMITY_THRESHOLD {
             let opponent_nearby = self.is_opponent_nearby(ctx);
             return Some(StateChangeResult::with_defender_state(if opponent_nearby {
                 DefenderState::Marking

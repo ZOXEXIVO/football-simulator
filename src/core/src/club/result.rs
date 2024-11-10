@@ -1,4 +1,3 @@
-use std::fmt::format;
 use crate::club::academy::result::ClubAcademyResult;
 use crate::club::{BoardResult, ClubFinanceResult};
 use crate::simulator::SimulatorData;

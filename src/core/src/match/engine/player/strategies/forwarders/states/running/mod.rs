@@ -65,8 +65,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 let opponent_distance = ctx
                     .tick_context
                     .distances
-                    .get(ctx.player.id, opponent_with_ball.id)
-                    .expect(&format!("no distance between player {} and {}", ctx.player.id, opponent_with_ball.id));
+                    .get(ctx.player.id, opponent_with_ball.id);
 
                 if opponent_distance < PRESSING_DISTANCE_THRESHOLD {
                     return Some(StateChangeResult::with_forward_state(
@@ -123,26 +122,24 @@ impl ForwardRunningState {
         let forwards = teammates.forwards();
 
         let (leading_forward, _) =
-            forwards
-                .fold((None, f32::MIN), |(leading_player, max_score), player| {
-                    let distance = (player.position - ctx.tick_context.positions.ball.position)
-                        .magnitude();
+            forwards.fold((None, f32::MIN), |(leading_player, max_score), player| {
+                let distance =
+                    (player.position - ctx.tick_context.positions.ball.position).magnitude();
 
-                    let players = ctx.player();
-                    let skills  = players.skills(player.id);
+                let players = ctx.player();
+                let skills = players.skills(player.id);
 
-                    let speed = skills.max_speed();
-                    let time_to_ball = distance / speed;
+                let speed = skills.max_speed();
+                let time_to_ball = distance / speed;
 
-                    let score = skills.technical.average() + skills.mental.average()
-                        - time_to_ball;
+                let score = skills.technical.average() + skills.mental.average() - time_to_ball;
 
-                    if score > max_score {
-                        (Some(player), score)
-                    } else {
-                        (leading_player, max_score)
-                    }
-                });
+                if score > max_score {
+                    (Some(player), score)
+                } else {
+                    (leading_player, max_score)
+                }
+            });
 
         if let Some(leading_forward) = leading_forward {
             if leading_forward.id == ctx.player.id {
@@ -157,7 +154,9 @@ impl ForwardRunningState {
                     false
                 } else {
                     // Check if the current player has a better score than the leading forward
-                    let player_distance = (ctx.player.position  - ctx.tick_context.positions.ball.position).magnitude();
+                    let player_distance = (ctx.player.position
+                        - ctx.tick_context.positions.ball.position)
+                        .magnitude();
 
                     let player = ctx.player();
                     let skills = player.skills(leading_forward.id);
@@ -165,9 +164,8 @@ impl ForwardRunningState {
                     let player_speed = skills.max_speed();
                     let player_time_to_ball = player_distance / player_speed;
 
-                    let player_score = skills.technical.average()
-                        + skills.mental.average()
-                        - player_time_to_ball;
+                    let player_score =
+                        skills.technical.average() + skills.mental.average() - player_time_to_ball;
 
                     let leading_forward_distance = (leading_forward.position
                         - ctx.tick_context.positions.ball.position)
@@ -208,13 +206,8 @@ impl ForwardRunningState {
 
         if let Some(first) = nearest_opponents.next() {
             if let Some(second) = nearest_opponents.next() {
-                let opponent1_position = first.position;
-                let opponent2_position = second.position;
-
-                let distance_between_opponents =
-                    (opponent1_position - opponent2_position).magnitude();
-
-                return distance_between_opponents > CREATING_SPACE_THRESHOLD;
+                return ctx.tick_context.distances.get(first.id, second.id)
+                    > CREATING_SPACE_THRESHOLD;
             }
         }
 

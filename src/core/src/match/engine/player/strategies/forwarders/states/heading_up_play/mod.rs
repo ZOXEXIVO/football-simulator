@@ -90,10 +90,8 @@ impl ForwardHeadingUpPlayState {
             .get(ctx.player.id, teammate.id);
 
         // Check if the teammate is within a reasonable distance
-        if let Some(distance) = distance {
-            if distance > max_distance {
-                return false;
-            }
+        if distance > max_distance {
+            return false;
         }
 
         let mut all_opponents_close = opponents.all();

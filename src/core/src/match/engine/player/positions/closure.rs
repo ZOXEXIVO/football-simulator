@@ -1,4 +1,5 @@
 use crate::r#match::{MatchField, MatchPlayer, VectorExtensions};
+use log::debug;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
@@ -10,11 +11,9 @@ pub struct PlayerDistanceItem {
     pub player_from_id: u32,
     pub player_from_team: u32,
     //pub player_from_position: Vector3<f32>,
-
     pub player_to_id: u32,
     pub player_to_team: u32,
     //pub player_to_position: Vector3<f32>,
-
     pub distance: f32,
 }
 
@@ -48,14 +47,19 @@ impl From<&MatchField> for PlayerDistanceClosure {
             }
         }
 
-        PlayerDistanceClosure {
-            distances
-        }
+        PlayerDistanceClosure { distances }
     }
 }
 
 impl PlayerDistanceClosure {
-    pub fn get(&self, player_from_id: u32, player_to_id: u32) -> Option<f32> {
+    pub fn get(&self, player_from_id: u32, player_to_id: u32) -> f32 {
+        if player_from_id == player_to_id {
+            debug!(
+                "player {} and {} are the same",
+                player_from_id, player_to_id
+            );
+            return 0.0;
+        }
         self.distances
             .iter()
             .find(|distance| {
@@ -64,6 +68,10 @@ impl PlayerDistanceClosure {
                         && distance.player_to_id == player_from_id)
             })
             .map(|dist| dist.distance)
+            .expect(&format!(
+                "no distance between {} and {}",
+                player_from_id, player_to_id
+            ))
     }
 
     pub fn get_collisions(&self, max_distance: f32) -> Vec<&PlayerDistanceItem> {

@@ -29,14 +29,8 @@ impl StateProcessingHandler for DefenderPressingState {
         }
 
         // 2. Identify the opponent player with the ball
-        let players = ctx.context.players.raw_players();
-        let opponent_with_ball = players
-            .iter()
-            .find(|p| p.team_id != ctx.player.team_id && p.has_ball(ctx));
-
-        if let Some(opponent) = opponent_with_ball {
-            // 3. Calculate the distance to the opponent
-            let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
+        if let Some(opponent) = ctx.players().opponents().with_ball().next() {
+            let distance_to_opponent = opponent.distance(ctx);
 
             // 4. If close enough to tackle, transition to Tackling state
             if distance_to_opponent < TACKLING_DISTANCE_THRESHOLD {

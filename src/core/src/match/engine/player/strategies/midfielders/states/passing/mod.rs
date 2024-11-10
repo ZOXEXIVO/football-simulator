@@ -8,7 +8,7 @@ use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
 
 static MIDFIELDER_LONG_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_long_passing_data.json")));
+    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
 
 // Constants used in passing calculations
 const MAX_PASS_DISTANCE: f32 = 300.0; // Maximum distance for a short pass
@@ -19,9 +19,9 @@ const OPPONENT_COLLISION_RADIUS: f32 = 0.5; // Radius representing opponent's co
 
 
 #[derive(Default)]
-pub struct MidfielderLongPassingState {}
+pub struct MidfielderPassingState {}
 
-impl StateProcessingHandler for MidfielderLongPassingState {
+impl StateProcessingHandler for MidfielderPassingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Check if the midfielder still has the ball
         if !ctx.player.has_ball(ctx) {
@@ -60,14 +60,11 @@ impl StateProcessingHandler for MidfielderLongPassingState {
     fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
-impl MidfielderLongPassingState {
+impl MidfielderPassingState {
     fn find_best_teammate(&self, ctx: &StateProcessingContext<'_>) -> Option<MatchPlayerLite> {
         let max_pass_distance = MAX_PASS_DISTANCE;
 
-        let players = ctx.players();
-        let teammates = players.teammates();
-
-        for teammate in teammates.nearby(max_pass_distance) {
+        for teammate in ctx.players().teammates().nearby(max_pass_distance) {
             if !teammate.has_ball(ctx) {
                 continue;
             }

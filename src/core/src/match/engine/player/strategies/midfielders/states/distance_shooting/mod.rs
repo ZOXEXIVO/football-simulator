@@ -31,7 +31,7 @@ impl StateProcessingHandler for MidfielderDistanceShootingState {
             // Too far from the goal, consider other options
             if self.should_pass(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::ShortPassing,
+                    MidfielderState::Passing,
                 ));
             } else if self.should_dribble(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(

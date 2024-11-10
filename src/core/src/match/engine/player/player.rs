@@ -7,8 +7,8 @@ use crate::r#match::player::state::{PlayerMatchState, PlayerState};
 use crate::r#match::player::statistics::MatchPlayerStatistics;
 use crate::r#match::{GameTickContext, MatchContext, StateProcessingContext};
 use crate::{
-    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup,
-    PlayerPositionType, PlayerSkills,
+    PersonAttributes, Player, PlayerAttributes, PlayerFieldPositionGroup, PlayerPositionType,
+    PlayerSkills,
 };
 use nalgebra::Vector3;
 use std::fmt::*;
@@ -157,5 +157,11 @@ impl MatchPlayerLite {
 
     pub fn velocity(&self, ctx: &StateProcessingContext<'_>) -> Vector3<f32> {
         ctx.tick_context.positions.players.velocity(ctx.player.id)
+    }
+
+    pub fn distance(&self, ctx: &StateProcessingContext<'_>) -> f32 {
+        ctx.tick_context
+            .distances
+            .get(self.id, ctx.player.id)
     }
 }

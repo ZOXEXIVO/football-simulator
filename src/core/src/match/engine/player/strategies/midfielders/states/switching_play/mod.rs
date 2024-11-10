@@ -31,7 +31,7 @@ impl StateProcessingHandler for MidfielderSwitchingPlayState {
         if let Some(target_position) = self.find_switch_play_target(ctx) {
             // If a suitable target position is found, switch play
             return Some(StateChangeResult::with_midfielder_state_and_event(
-                MidfielderState::ShortPassing,
+                MidfielderState::Passing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     ctx.player.id,
                     target_position,

@@ -41,12 +41,7 @@ impl StateProcessingHandler for MidfielderPressingState {
         }
 
         if let Some(opponent) = ctx.players().opponents().with_ball().next() {
-            // 3. Calculate the distance to the opponent
-            let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
-
-            // 4. If the opponent is too far away, stop pressing
-            if distance_to_opponent > PRESSING_DISTANCE_THRESHOLD {
-                // Transition to Standing state
+            if opponent.distance(ctx) > PRESSING_DISTANCE_THRESHOLD {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Standing,
                 ));
@@ -58,17 +53,16 @@ impl StateProcessingHandler for MidfielderPressingState {
     }
 
     fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // Implement neural network processing if needed
         None
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(
             SteeringBehavior::Pursuit {
-                target: ctx.tick_context.positions.ball.position
+                target: ctx.tick_context.positions.ball.position,
             }
-                .calculate(ctx.player)
-                .velocity,
+            .calculate(ctx.player)
+            .velocity,
         )
     }
 
