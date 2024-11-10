@@ -76,11 +76,11 @@ impl StateProcessingHandler for DefenderRunningState {
 
 impl DefenderRunningState {
     pub fn should_clear(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.ball().in_own_penalty_area() && ctx.players().opponents().nearby(100.0).next().is_some()
+        ctx.ball().in_own_penalty_area() && ctx.players().opponents().exists(100.0)
     }
 
     pub fn should_pass(&self, ctx: &StateProcessingContext) -> bool {
-        if let Some(_) = ctx.players().opponents().nearby(50.0).next() {
+        if ctx.players().opponents().exists(50.0) {
             return true;
         }
 

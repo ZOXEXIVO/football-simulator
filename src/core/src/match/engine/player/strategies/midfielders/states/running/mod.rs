@@ -22,7 +22,7 @@ impl StateProcessingHandler for MidfielderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball(ctx) {
             // If the player has the ball, consider shooting, passing, or dribbling
-            if self.is_in_shooting_range(ctx) {
+            if self.in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::DistanceShooting,
                 ));
@@ -111,9 +111,8 @@ impl StateProcessingHandler for MidfielderRunningState {
 }
 
 impl MidfielderRunningState {
-    fn is_in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
-        let distance_to_goal = ctx.ball().distance_to_opponent_goal();
-        distance_to_goal <= MAX_SHOOTING_DISTANCE && distance_to_goal >= MIN_SHOOTING_DISTANCE
+    fn in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
+        (MIN_SHOOTING_DISTANCE..=MAX_SHOOTING_DISTANCE).contains(&ctx.ball().distance_to_opponent_goal())
     }
 
     fn find_open_teammate<'a>(&self, ctx: &StateProcessingContext<'a>) -> Option<u32> {

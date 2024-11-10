@@ -24,7 +24,8 @@ impl<'b> BallOperationsImpl<'b> {
         self.ctx
             .tick_context
             .positions
-            .ball.position
+            .ball
+            .position
             .distance_to(&self.ctx.player.position)
     }
 
@@ -81,7 +82,8 @@ impl<'b> BallOperationsImpl<'b> {
         self.ctx
             .tick_context
             .positions
-            .ball.position
+            .ball
+            .position
             .distance_to(&target_goal)
     }
 
@@ -113,7 +115,8 @@ impl<'b> BallOperationsImpl<'b> {
         let ball_to_goalkeeper = goalkeeper_position - ball_position;
 
         // Calculate the perpendicular direction to the goalkeeper
-        let perpendicular_direction = Vector3::new(-ball_to_goalkeeper.y, ball_to_goalkeeper.x, 0.0);
+        let perpendicular_direction =
+            Vector3::new(-ball_to_goalkeeper.y, ball_to_goalkeeper.x, 0.0);
 
         // Normalize the perpendicular direction
         let perpendicular_direction = perpendicular_direction.normalize();
@@ -160,7 +163,8 @@ impl<'b> BallOperationsImpl<'b> {
         self.ctx
             .tick_context
             .positions
-            .ball.position
+            .ball
+            .position
             .distance_to(&target_goal)
     }
 
@@ -179,19 +183,22 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn in_own_penalty_area(&self) -> bool {
-        let penalty_area = self.ctx
+        let penalty_area = self
+            .ctx
             .context
             .penalty_area(self.ctx.player.side == Some(PlayerSide::Left));
 
         let ball_position = self.ctx.tick_context.positions.ball.position;
 
-        ball_position.x >= penalty_area.min.x && ball_position.x <= penalty_area.max.x &&
-        ball_position.y >= penalty_area.min.y && ball_position.x <= penalty_area.max.y
+        (penalty_area.min.x..=penalty_area.max.x).contains(&ball_position.x)
+            && (penalty_area.min.y..=penalty_area.max.y).contains(&ball_position.y)
     }
 
     #[inline]
     pub fn side(&self) -> BallSide {
-        if (self.ctx.tick_context.positions.ball.position.x as usize) <= self.ctx.context.field_size.half_width {
+        if (self.ctx.tick_context.positions.ball.position.x as usize)
+            <= self.ctx.context.field_size.half_width
+        {
             return BallSide::Left;
         }
 
