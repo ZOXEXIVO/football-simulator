@@ -164,6 +164,7 @@ impl<'b> BallOperationsImpl<'b> {
             .distance_to(&target_goal)
     }
 
+    #[inline]
     pub fn on_own_third(&self) -> bool {
         let field_length = self.ctx.context.field_size.width as f32;
         let ball_x = self.ctx.tick_context.positions.ball.position.x;
@@ -175,6 +176,17 @@ impl<'b> BallOperationsImpl<'b> {
             // Away team defends the right side (positive X)
             ball_x > field_length / 3.0
         }
+    }
+
+    pub fn in_own_penalty_area(&self) -> bool {
+        let penalty_area = self.ctx
+            .context
+            .penalty_area(self.ctx.player.side == Some(PlayerSide::Left));
+
+        let ball_position = self.ctx.tick_context.positions.ball.position;
+
+        ball_position.x >= penalty_area.min.x && ball_position.x <= penalty_area.max.x &&
+        ball_position.y >= penalty_area.min.y && ball_position.x <= penalty_area.max.y
     }
 
     #[inline]

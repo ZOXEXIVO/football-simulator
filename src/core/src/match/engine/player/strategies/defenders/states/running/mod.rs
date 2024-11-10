@@ -1,10 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior,
-};
+use crate::r#match::{ConditionContext, PlayerDistanceFromStartPosition, StateChangeResult, StateProcessingContext, StateProcessingHandler, SteeringBehavior};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -19,10 +16,18 @@ pub struct DefenderRunningState {}
 
 impl StateProcessingHandler for DefenderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        let distance_to_ball = ctx.ball().distance();
+
         if ctx.player.has_ball(ctx) {
             if self.is_in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Shooting,
+                ));
+            }
+
+            if self.should_clear(ctx) {
+                return Some(StateChangeResult::with_defender_state(
+                    DefenderState::Clearing,
                 ));
             }
 
@@ -31,18 +36,17 @@ impl StateProcessingHandler for DefenderRunningState {
                     DefenderState::Passing,
                 ));
             }
-        } else {
-            let distance_to_ball = ctx.ball().distance();
 
-            if !ctx.player.has_ball(ctx) && distance_to_ball < 30.0 {
+        } else {
+            if ctx.player().position_to_distance() == PlayerDistanceFromStartPosition::Big {
                 return Some(StateChangeResult::with_defender_state(
-                    DefenderState::Intercepting,
+                    DefenderState::Returning,
                 ));
             }
 
-            if ctx.player.has_ball(ctx) && distance_to_ball >= 10.0 && distance_to_ball < 20.0 {
+            if distance_to_ball < 30.0 {
                 return Some(StateChangeResult::with_defender_state(
-                    DefenderState::Clearing,
+                    DefenderState::Intercepting,
                 ));
             }
         }
@@ -55,25 +59,14 @@ impl StateProcessingHandler for DefenderRunningState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.player.has_ball(ctx) {
-            Some(
-                SteeringBehavior::Arrive {
-                    target: ctx.ball().direction_to_opponent_goal(),
-                    slowing_distance: 150.0,
-                }
+        Some(
+            SteeringBehavior::Arrive {
+                target: ctx.ball().direction_to_opponent_goal(),
+                slowing_distance: if ctx.player.has_ball(ctx) { 150.0 } else { 100.0 },
+            }
                 .calculate(ctx.player)
                 .velocity,
-            )
-        } else {
-            Some(
-                SteeringBehavior::Arrive {
-                    target: ctx.ball().direction_to_opponent_goal(),
-                    slowing_distance: 100.0,
-                }
-                .calculate(ctx.player)
-                .velocity,
-            )
-        }
+        )
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {
@@ -82,7 +75,15 @@ impl StateProcessingHandler for DefenderRunningState {
 }
 
 impl DefenderRunningState {
+    pub fn should_clear(&self, ctx: &StateProcessingContext) -> bool {
+        ctx.ball().in_own_penalty_area() && ctx.players().opponents().nearby(100.0).next().is_some()
+    }
+
     pub fn should_pass(&self, ctx: &StateProcessingContext) -> bool {
+        if let Some(_) = ctx.players().opponents().nearby(50.0).next() {
+            return true;
+        }
+
         let wait_ticks = match ctx.player.skills.mental.decisions {
             0.0..5.0 => 1000,
             5.0..10.0 => 800,

@@ -11,8 +11,7 @@ pub enum SteeringBehavior {
         slowing_distance: f32,
     },
     Pursuit {
-        target: Vector3<f32>,
-        velocity: Vector3<f32>,
+        target: Vector3<f32>
     },
     Evade {
         target: Vector3<f32>,
@@ -93,8 +92,7 @@ impl SteeringBehavior {
                     rotation: 0.0,
                 }
             }
-            SteeringBehavior::Pursuit { target, velocity } => {
-                let _v = velocity;
+            SteeringBehavior::Pursuit { target} => {
 
                 let to_target = *target - player.position;
                 let distance = to_target.norm();

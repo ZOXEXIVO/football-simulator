@@ -63,25 +63,13 @@ impl StateProcessingHandler for MidfielderPressingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.ball().distance() < 150.0 {
-            Some(
-                SteeringBehavior::Pursuit {
-                    target: ctx.tick_context.positions.ball.position,
-                    velocity: ctx.player.velocity,
-                }
+        Some(
+            SteeringBehavior::Pursuit {
+                target: ctx.tick_context.positions.ball.position
+            }
                 .calculate(ctx.player)
                 .velocity,
-            )
-        } else {
-            Some(
-                SteeringBehavior::Arrive {
-                    target: ctx.player.position,
-                    slowing_distance: 1.0,
-                }
-                .calculate(ctx.player)
-                .velocity,
-            )
-        }
+        )
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {

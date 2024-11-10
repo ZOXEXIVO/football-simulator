@@ -1,11 +1,7 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::PlayerSide;
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
@@ -121,7 +117,7 @@ impl ForwardStandingState {
         let field_length = ctx.context.field_size.width as f32;
         let field_width = ctx.context.field_size.width as f32;
 
-        if ctx.player.side.unwrap() == PlayerSide::Left {
+        if ctx.player.side == Some(PlayerSide::Left) {
             // Attacking towards the right (positive x)
             Vector3::new(field_length, field_width / 2.0, 0.0)
         } else {

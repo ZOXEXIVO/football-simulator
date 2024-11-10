@@ -57,24 +57,9 @@ impl StateProcessingHandler for GoalkeeperPreparingForSaveState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let to_target = ctx.tick_context.positions.ball.position - ctx.player.position;
-        let distance = to_target.length();
-
-        // Define a slowing radius
-        let slowing_radius = 5.0; // Adjust this value as needed
-
-        let target_speed = if distance > slowing_radius {
-            ctx.player.skills.max_speed()
-        } else {
-            ctx.player.skills.max_speed() * (distance / slowing_radius)
-        };
-
-        let desired_velocity = to_target.normalize() * target_speed;
-
         Some(
             SteeringBehavior::Pursuit {
-                target: ctx.tick_context.positions.ball.position,
-                velocity: desired_velocity,
+                target: ctx.tick_context.positions.ball.position
             }
             .calculate(ctx.player)
             .velocity,
