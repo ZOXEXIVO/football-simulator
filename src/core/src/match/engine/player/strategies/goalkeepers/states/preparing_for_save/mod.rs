@@ -8,8 +8,9 @@ use crate::r#match::{
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 
-static GOALKEEPER_PRESAVE_STATE_NETWORK: LazyLock<NeuralNetwork> =
-    LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_preparing_for_save_data.json")));
+static GOALKEEPER_PRESAVE_STATE_NETWORK: LazyLock<NeuralNetwork> = LazyLock::new(|| {
+    DefaultNeuralNetworkLoader::load(include_str!("nn_preparing_for_save_data.json"))
+});
 
 #[derive(Default)]
 pub struct GoalkeeperPreparingForSaveState {}
@@ -20,33 +21,34 @@ impl StateProcessingHandler for GoalkeeperPreparingForSaveState {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Passing,
             ));
-        }
-        // Transition to Walking if the ball is far away
-        if ctx.ball().distance() > 150.0 {
-            return Some(StateChangeResult::with_goalkeeper_state(
-                GoalkeeperState::Walking,
-            ));
-        }
+        } else {
+            // Transition to Walking if the ball is far away
+            if ctx.ball().distance() > 150.0 {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::Walking,
+                ));
+            }
 
-        // Transition to Diving if the ball is close and moving fast towards goal
-        if self.should_dive(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(
-                GoalkeeperState::Diving,
-            ));
-        }
+            // Transition to Diving if the ball is close and moving fast towards goal
+            if self.should_dive(ctx) {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::Diving,
+                ));
+            }
 
-        // Transition to Catching if the ball is catchable
-        if self.is_ball_catchable(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(
-                GoalkeeperState::Catching,
-            ));
-        }
+            // Transition to Catching if the ball is catchable
+            if self.is_ball_catchable(ctx) {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::Catching,
+                ));
+            }
 
-        // Transition to Coming Out if necessary
-        if self.should_come_out(ctx) {
-            return Some(StateChangeResult::with_goalkeeper_state(
-                GoalkeeperState::ComingOut,
-            ));
+            // Transition to Coming Out if necessary
+            if self.should_come_out(ctx) {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::ComingOut,
+                ));
+            }
         }
 
         None
@@ -59,7 +61,7 @@ impl StateProcessingHandler for GoalkeeperPreparingForSaveState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(
             SteeringBehavior::Pursuit {
-                target: ctx.tick_context.positions.ball.position
+                target: ctx.tick_context.positions.ball.position,
             }
             .calculate(ctx.player)
             .velocity,

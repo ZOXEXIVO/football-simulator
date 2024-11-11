@@ -19,9 +19,7 @@ pub struct GoalkeeperPunchingState {}
 
 impl StateProcessingHandler for GoalkeeperPunchingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // 1. Check if the ball is within punching distance
-        let ball_distance = ctx.ball().distance();
-        if ball_distance > PUNCHING_DISTANCE_THRESHOLD {
+        if ctx.ball().distance() > PUNCHING_DISTANCE_THRESHOLD {
             // Ball is too far to punch, transition to appropriate state (e.g., Jumping)
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Jumping,

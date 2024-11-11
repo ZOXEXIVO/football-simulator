@@ -20,10 +20,7 @@ pub struct GoalkeeperPressureState {}
 
 impl StateProcessingHandler for GoalkeeperPressureState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // 1. Check if the goalkeeper is within the pressure distance threshold from the goal
-        let distance_to_goal = ctx.player.position.distance_to(&ctx.player.start_position);
-        if distance_to_goal > PRESSURE_DISTANCE_THRESHOLD {
-            // Goalkeeper is not under pressure, transition to appropriate state (e.g., Standing)
+        if ctx.player().distance_from_start_position() > PRESSURE_DISTANCE_THRESHOLD {
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::Standing,
             ));
