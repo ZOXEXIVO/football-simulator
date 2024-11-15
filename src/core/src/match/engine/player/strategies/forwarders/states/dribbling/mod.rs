@@ -20,7 +20,6 @@ impl StateProcessingHandler for ForwardDribblingState {
         let mut result = StateChangeResult::new();
         let players_ops = ctx.players();
 
-        // Check if the player has the ball
         if !ctx.player.has_ball(ctx) {
             // Transition to Running state if the player doesn't have the ball
             return Some(StateChangeResult::with_forward_state(ForwardState::Running));
@@ -76,7 +75,7 @@ impl StateProcessingHandler for ForwardDribblingState {
 
 impl ForwardDribblingState {
     fn has_space_to_dribble(&self, ctx: &StateProcessingContext) -> bool {
-        let dribble_distance = 10.0; // Adjust based on your game's scale
+        let dribble_distance = 10.0;
         let players = ctx.players();
 
         !players.opponents().exists(dribble_distance)
@@ -86,14 +85,10 @@ impl ForwardDribblingState {
         let max_distance = 20.0; // Adjust based on your game's scale
 
         // Check if the teammate is within a reasonable distance
-        if let Some(distance) = ctx
-            .tick_context
-            .distances
-            .get(ctx.player.id, teammate.id)
-        {
-            if distance > max_distance {
-                return false;
-            }
+        let distance = ctx.tick_context.distances.get(ctx.player.id, teammate.id);
+
+        if distance > max_distance {
+            return false;
         }
 
         let players = ctx.players();

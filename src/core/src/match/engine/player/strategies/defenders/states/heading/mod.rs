@@ -20,13 +20,9 @@ pub struct DefenderHeadingState {}
 
 impl StateProcessingHandler for DefenderHeadingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // 1. Check if the ball is within heading distance and at the correct height
         let ball_position = ctx.tick_context.positions.ball.position;
-        let player_position = ctx.player.position;
-        let distance_to_ball = (ball_position - player_position).magnitude();
 
-        // Check if ball is within heading distance
-        if distance_to_ball > HEADING_DISTANCE_THRESHOLD {
+        if ctx.ball().distance() > HEADING_DISTANCE_THRESHOLD {
             // Transition back to appropriate state (e.g., HoldingLine)
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::HoldingLine,
@@ -51,10 +47,6 @@ impl StateProcessingHandler for DefenderHeadingState {
             state_change
                 .events
                 .add_player_event(PlayerEvent::Shoot(ctx.player.id, new_ball_velocity));
-
-            // 4. Update player's stamina or condition if needed
-            // (e.g., heading might cost some stamina)
-            // ctx.player.player_attributes.reduce_stamina(heading_stamina_cost);
 
             Some(state_change)
         } else {

@@ -80,8 +80,7 @@ impl ForwardPassingState {
         let distance = ctx
             .tick_context
             .distances
-            .get(ctx.player.id, teammate_id)
-            .unwrap();
+            .get(ctx.player.id, teammate_id);
 
         let pass_skill = ctx.player.skills.technical.passing;
 
@@ -108,8 +107,7 @@ impl ForwardPassingState {
         let opponents = players.opponents();
 
         let distance = ctx.tick_context.distances
-            .get(ctx.player.id, teammate.id)
-            .unwrap();
+            .get(ctx.player.id, teammate.id);
 
         if distance > max_distance {
             return false;

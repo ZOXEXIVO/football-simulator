@@ -89,8 +89,7 @@ impl GoalkeeperDistributingState {
         let distance = ctx
             .tick_context
             .distances
-            .get(ctx.player.id, teammate_id)
-            .unwrap();
+            .get(ctx.player.id, teammate_id);
 
         let pass_skill = ctx.player.skills.technical.passing;
 

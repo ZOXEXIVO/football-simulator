@@ -1,10 +1,10 @@
 use crate::r#match::midfielders::states::{
     MidfielderAttackSupportingState, MidfielderCrossingState, MidfielderDistanceShootingState,
     MidfielderDistributingState, MidfielderDribblingState, MidfielderHoldingPossessionState,
-    MidfielderLongPassingState, MidfielderPressingState, MidfielderReturningState,
-    MidfielderRunningState, MidfielderShootingState, MidfielderShortPassingState,
-    MidfielderStandingState, MidfielderSwitchingPlayState, MidfielderTacklingState,
-    MidfielderTakeBallState, MidfielderTrackingRunnerState, MidfielderWalkingState,
+    MidfielderPassingState, MidfielderPressingState, MidfielderReturningState,
+    MidfielderRunningState, MidfielderShootingState, MidfielderStandingState,
+    MidfielderSwitchingPlayState, MidfielderTacklingState, MidfielderTakeBallState,
+    MidfielderTrackingRunnerState, MidfielderWalkingState,
 };
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
@@ -18,9 +18,8 @@ pub enum MidfielderState {
     HoldingPossession, // Holding possession of the ball, maintaining control
     SwitchingPlay,     // Switching the play to the other side of the field
     Crossing,          // Delivering a cross into the box
-    LongPassing,       // Executing a long pass
+    Passing,           // Executing a  pass
     Running,           // Running in the direction of the ball
-    ShortPassing,      // Executing a short pass
     DistanceShooting,  // Taking a shot from a long distance
     Pressing,          // Pressing the opponent to regain possession
     TrackingRunner,    // Tracking a runner to prevent a break
@@ -58,12 +57,7 @@ impl MidfielderStrategies {
             MidfielderState::Crossing => {
                 state_processor.process(MidfielderCrossingState::default())
             }
-            MidfielderState::LongPassing => {
-                state_processor.process(MidfielderLongPassingState::default())
-            }
-            MidfielderState::ShortPassing => {
-                state_processor.process(MidfielderShortPassingState::default())
-            }
+            MidfielderState::Passing => state_processor.process(MidfielderPassingState::default()),
             MidfielderState::DistanceShooting => {
                 state_processor.process(MidfielderDistanceShootingState::default())
             }
@@ -106,8 +100,7 @@ impl Display for MidfielderState {
             MidfielderState::HoldingPossession => write!(f, "Holding Possession"),
             MidfielderState::SwitchingPlay => write!(f, "Switching Play"),
             MidfielderState::Crossing => write!(f, "Crossing"),
-            MidfielderState::LongPassing => write!(f, "Long Passing"),
-            MidfielderState::ShortPassing => write!(f, "Short Passing"),
+            MidfielderState::Passing => write!(f, "Passing"),
             MidfielderState::Pressing => write!(f, "Pressing"),
             MidfielderState::TrackingRunner => write!(f, "Tracking Runner"),
             MidfielderState::Tackling => write!(f, "Tackling"),

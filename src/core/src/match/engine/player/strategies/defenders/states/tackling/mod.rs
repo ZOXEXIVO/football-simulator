@@ -55,10 +55,7 @@ impl StateProcessingHandler for DefenderTacklingState {
         }
 
         if let Some(opponent) = ctx.players().opponents().with_ball().next() {
-            // 3. Calculate the distance to the opponent
-            let distance_to_opponent = (ctx.player.position - opponent.position).magnitude();
-
-            if distance_to_opponent > TACKLE_DISTANCE_THRESHOLD {
+            if opponent.distance(ctx) > TACKLE_DISTANCE_THRESHOLD {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Pressing,
                 ));

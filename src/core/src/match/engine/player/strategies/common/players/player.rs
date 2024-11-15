@@ -68,8 +68,8 @@ impl<'p> PlayerOperationsImpl<'p> {
             .ctx
             .tick_context
             .distances
-            .get(self.ctx.player.id, teammate.id)
-            .unwrap();
+            .get(self.ctx.player.id, teammate.id);
+
         let pass_skill = self.ctx.player.skills.technical.passing;
         (distance / pass_skill as f32 * 10.0) as f64
     }
@@ -79,7 +79,6 @@ impl<'p> PlayerOperationsImpl<'p> {
             .tick_context
             .distances
             .get(self.ctx.player.id, player_id)
-            .unwrap()
     }
 }
 
@@ -89,9 +88,9 @@ impl MatchPlayerLogic {
     pub fn distance_to_start_position(player: &MatchPlayer) -> PlayerDistanceFromStartPosition {
         let start_position_distance = player.position.distance_to(&player.start_position);
 
-        if start_position_distance < 50.0 {
+        if start_position_distance < 100.0 {
             PlayerDistanceFromStartPosition::Small
-        } else if start_position_distance < 100.0 {
+        } else if start_position_distance < 250.0 {
             PlayerDistanceFromStartPosition::Medium
         } else {
             PlayerDistanceFromStartPosition::Big

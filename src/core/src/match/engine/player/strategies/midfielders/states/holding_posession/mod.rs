@@ -38,7 +38,7 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
             .filter(|teammate| self.is_teammate_open(ctx, teammate)).next() {
             // If there is an open teammate, transition to the passing state
             return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::ShortPassing
+                MidfielderState::Passing
             ));
         }
 
@@ -52,10 +52,10 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
                 ));
             } else {
                 // If there is no space to dribble, look for a quick pass
-                if let Some(_) = ctx.players().teammates().nearby(150.0).next() {
+                if ctx.players().teammates().exists(150.0) {
                     // If there is a nearby teammate, transition to the passing state
                     return Some(StateChangeResult::with_midfielder_state(
-                        MidfielderState::ShortPassing
+                        MidfielderState::Passing
                     ));
                 }
             }
@@ -91,7 +91,7 @@ impl StateProcessingHandler for MidfielderHoldingPossessionState {
                 if let Some(_) = nearest_forward {
                     // If there is a forward teammate, transition to the passing state
                     Some(StateChangeResult::with_midfielder_state(
-                        MidfielderState::ShortPassing
+                        MidfielderState::Passing
                     ))
                 } else {
                     // If no forward teammate is available, transition to the dribbling state
@@ -138,15 +138,7 @@ impl MidfielderHoldingPossessionState {
     }
 
     fn has_space_to_dribble(&self, ctx: &StateProcessingContext) -> bool {
-        // Check if the player has space to dribble the ball
-        let dribble_distance = 10.0; // Adjust this value based on your game's scale
-
-        let players = ctx.players();
-        let opponents = players.opponents();
-
-        let mut nearby_opponents = opponents.nearby_raw(dribble_distance);
-
-        nearby_opponents.all(|(_, distance)| distance > dribble_distance)
+        ctx.players().opponents().exists(10.0)
     }
 
     fn is_in_attacking_position(&self, ctx: &StateProcessingContext) -> bool {

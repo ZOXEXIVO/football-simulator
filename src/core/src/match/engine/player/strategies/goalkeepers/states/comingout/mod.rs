@@ -53,14 +53,9 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let ball_position = ctx.tick_context.positions.ball.position;
-        let direction = (ball_position - ctx.player.position).normalize();
-        let speed = ctx.player.skills.physical.pace * COMINGOUT_SPEED_MULTIPLIER;
-
         Some(
             SteeringBehavior::Pursuit {
-                target: ball_position,
-                velocity: direction * speed,
+                target: ctx.tick_context.positions.ball.position,
             }
             .calculate(ctx.player)
             .velocity,

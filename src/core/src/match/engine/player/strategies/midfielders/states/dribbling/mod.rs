@@ -26,13 +26,13 @@ impl StateProcessingHandler for MidfielderDribblingState {
 
             if let Some(_) = self.find_open_teammate(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::ShortPassing
+                    MidfielderState::Passing
                 ));
             }
 
             if ctx.in_state_time > 100 {
                 return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::LongPassing
+                    MidfielderState::Passing
                 ));
             }
         } else {

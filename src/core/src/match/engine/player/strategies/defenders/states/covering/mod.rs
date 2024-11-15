@@ -65,8 +65,7 @@ impl StateProcessingHandler for DefenderCoveringState {
 
         Some(
             SteeringBehavior::Pursuit {
-                target: optimal_position,
-                velocity: ctx.player.velocity,
+                target: optimal_position
             }
             .calculate(ctx.player)
             .velocity,

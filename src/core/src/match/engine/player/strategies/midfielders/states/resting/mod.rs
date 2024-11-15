@@ -29,10 +29,7 @@ impl StateProcessingHandler for MidfielderRestingState {
             ));
         }
 
-        // 2. Check if the ball is close
-        let ball_distance =
-            (ctx.tick_context.positions.ball.position - ctx.player.position).magnitude();
-        if ball_distance < BALL_PROXIMITY_THRESHOLD {
+        if ctx.ball().distance() < BALL_PROXIMITY_THRESHOLD {
             // If the ball is close, check for nearby opponents
             let opponent_nearby = self.is_opponent_nearby(ctx);
             return Some(StateChangeResult::with_defender_state(if opponent_nearby {
