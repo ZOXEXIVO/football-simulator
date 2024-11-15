@@ -17,14 +17,19 @@ impl<'b> TeamOperationsImpl<'b> {
     }
 
     pub fn is_control_ball(&self) -> bool {
-        self.ctx.ball().owner_id() == Some(self.ctx.player.id)
+        let current_player_team_id = self.ctx.player.team_id;
+
+        if let Some(owner_id) = self.ctx.ball().owner_id() {
+            if let Some(ball_owner) = self.ctx.context.players.by_id(owner_id) {
+                return ball_owner.team_id == current_player_team_id;
+            }
+        }
+
+        false
     }
 
     pub fn is_leading(&self) -> bool {
-        let team_score = self.get_home_team_score();
-        let opponent_score = self.get_away_score();
-
-        team_score > opponent_score
+        !self.is_loosing()
     }
 
     pub fn is_loosing(&self) -> bool {
