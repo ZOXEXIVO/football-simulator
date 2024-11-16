@@ -1,4 +1,4 @@
-use crate::r#match::{MatchPlayerLite, StateProcessingContext};
+use crate::r#match::{MatchPlayerLite, PlayerSide, StateProcessingContext};
 use crate::PlayerFieldPositionGroup;
 
 pub struct PlayerTeammatesOperationsImpl<'b> {
@@ -83,6 +83,22 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
                 id: pid,
                 position: self.ctx.tick_context.positions.players.position(pid),
             })
+    }
+
+    pub fn nearby_to_opponent_goal(&'b self) -> Option<MatchPlayerLite> {
+        let mut teammates: Vec<MatchPlayerLite> = self.nearby(300.0).collect();
+
+        if teammates.len() == 0 {
+            return None;
+        }
+
+        teammates.sort_by(|a, b| a.position.x.partial_cmp(&b.position.x).unwrap());
+
+        if self.ctx.player.side == Some(PlayerSide::Right) {
+            Some(teammates[0])
+        } else {
+            Some(teammates[teammates.len() - 1])
+        }
     }
 
     pub fn nearby_ids(&self, distance: f32) -> impl Iterator<Item = (u32, f32)> + 'b {
