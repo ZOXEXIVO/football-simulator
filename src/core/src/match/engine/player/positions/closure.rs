@@ -3,30 +3,30 @@ use log::debug;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
+#[derive(Debug)]
 pub struct PlayerDistanceClosure {
     pub distances: BinaryHeap<PlayerDistanceItem>,
 }
 
+#[derive(Debug)]
 pub struct PlayerDistanceItem {
     pub player_from_id: u32,
     pub player_from_team: u32,
-    //pub player_from_position: Vector3<f32>,
     pub player_to_id: u32,
     pub player_to_team: u32,
-    //pub player_to_position: Vector3<f32>,
     pub distance: f32,
 }
 
 impl From<&MatchField> for PlayerDistanceClosure {
     fn from(field: &MatchField) -> Self {
-        let mut distances = BinaryHeap::with_capacity(50);
+        let n = field.players.len();
+        let capacity = (n * (n - 1)) / 2;
 
-        for outer_player in &field.players {
-            for inner_player in &field.players {
-                if outer_player.id == inner_player.id {
-                    continue;
-                }
+        let mut distances = BinaryHeap::with_capacity(capacity);
 
+        for (i, outer_player) in field.players.iter().enumerate() {
+            // Start from i+1 to avoid duplicates and self-comparisons
+            for inner_player in field.players[i + 1..].iter() {
                 let distance = outer_player.position.distance_to(&inner_player.position);
 
                 distances.push(PlayerDistanceItem {
@@ -34,14 +34,6 @@ impl From<&MatchField> for PlayerDistanceClosure {
                     player_from_team: outer_player.team_id,
                     player_to_id: inner_player.id,
                     player_to_team: inner_player.team_id,
-                    distance,
-                });
-
-                distances.push(PlayerDistanceItem {
-                    player_from_id: inner_player.id,
-                    player_from_team: inner_player.team_id,
-                    player_to_id: outer_player.id,
-                    player_to_team: outer_player.team_id,
                     distance,
                 });
             }
@@ -54,18 +46,19 @@ impl From<&MatchField> for PlayerDistanceClosure {
 impl PlayerDistanceClosure {
     pub fn get(&self, player_from_id: u32, player_to_id: u32) -> f32 {
         if player_from_id == player_to_id {
+            panic!("SAME");
             debug!(
                 "player {} and {} are the same",
                 player_from_id, player_to_id
             );
             return 0.0;
         }
+
         self.distances
             .iter()
             .find(|distance| {
                 (distance.player_from_id == player_from_id && distance.player_to_id == player_to_id)
-                    || (distance.player_from_id == player_to_id
-                        && distance.player_to_id == player_from_id)
+                    || (distance.player_from_id == player_to_id && distance.player_to_id == player_from_id)
             })
             .map(|dist| dist.distance)
             .expect(&format!(
@@ -89,12 +82,18 @@ impl PlayerDistanceClosure {
         self.distances
             .iter()
             .filter(move |p| p.distance <= distance)
-            .filter(|item| {
-                item.player_from_id == player.id
-                    && item.player_from_team == item.player_to_team
-                    && item.player_from_id != item.player_to_id
+            .filter_map(|item| {
+                if item.player_from_id == player.id && item.player_from_team == item.player_to_team
+                {
+                    return Some((item.player_to_id, item.distance));
+                }
+
+                if item.player_to_id == player.id && item.player_from_team == item.player_to_team {
+                    return Some((item.player_from_id, item.distance));
+                }
+
+                None
             })
-            .map(|item| (item.player_to_id, item.distance))
     }
 
     pub fn opponents<'t>(
@@ -105,12 +104,18 @@ impl PlayerDistanceClosure {
         self.distances
             .iter()
             .filter(move |p| p.distance <= distance)
-            .filter(|item| {
-                item.player_from_id == player.id
-                    && item.player_from_team != item.player_to_team
-                    && item.player_from_id != item.player_to_id
+            .filter_map(|item| {
+                if item.player_from_id == player.id && item.player_from_team != item.player_to_team
+                {
+                    return Some((item.player_to_id, item.distance));
+                }
+
+                if item.player_to_id == player.id && item.player_from_team != item.player_to_team {
+                    return Some((item.player_from_id, item.distance));
+                }
+
+                None
             })
-            .map(|item| (item.player_to_id, item.distance))
     }
 }
 

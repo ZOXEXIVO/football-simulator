@@ -1,11 +1,14 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
-use crate::r#match::{ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler};
-use nalgebra::Vector3;
-use std::sync::LazyLock;
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::{
+    ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, SteeringBehavior,
+};
+use nalgebra::Vector3;
+use std::sync::LazyLock;
 
 static MIDFIELDER_LONG_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -16,7 +19,6 @@ const MIN_PASS_SPEED: f32 = 10.0; // Minimum speed of the pass
 const MAX_PASS_SPEED: f32 = 15.0; // Maximum speed of the pass
 const STAMINA_COST_PASS: f32 = 2.0; // Stamina cost of making a pass
 const OPPONENT_COLLISION_RADIUS: f32 = 0.5; // Radius representing opponent's collision area
-
 
 #[derive(Default)]
 pub struct MidfielderPassingState {}
@@ -33,28 +35,46 @@ impl StateProcessingHandler for MidfielderPassingState {
 
         // Determine the best teammate to pass to
         if let Some(target_teammate) = self.find_best_teammate(ctx) {
-            Some(StateChangeResult::with_midfielder_state_and_event(
+            return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     target_teammate.id,
                     target_teammate.position,
                     1.0,
-                )
-                )))
-        } else {
-            // No available teammate found, consider other options
-            Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::HoldingPossession,
-            ))
+                )),
+            ));
         }
+
+        if ctx.in_state_time > 50 {
+            if ctx.ball().distance_to_opponent_goal() < 200.0 {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Shooting,
+                ))
+            }
+        }
+
+        None
     }
 
     fn process_slow(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         None
     }
 
-    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        if ctx.in_state_time % 30 == 0 {
+            if let Some(nearest_teammate) = ctx.players().teammates().nearby_to_opponent_goal() {
+                return Some(
+                    SteeringBehavior::Arrive {
+                        target: nearest_teammate.position,
+                        slowing_distance: 50.0,
+                    }
+                    .calculate(ctx.player)
+                    .velocity,
+                );
+            }
+        }
+
+        None
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {}
@@ -85,6 +105,8 @@ impl MidfielderPassingState {
         ctx: &StateProcessingContext,
         target_teammate: &MatchPlayerLite,
     ) -> bool {
+        return true;
+
         let player_position = ctx.player.position;
         let target_position = target_teammate.position;
 
