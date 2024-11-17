@@ -145,7 +145,7 @@ impl MidfielderRunningState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        let mut nearest_opponents = opponents.nearby_raw(150.0);
+        let mut nearest_opponents = opponents.nearby_raw(200.0);
 
         if let Some((first_id, _)) = nearest_opponents.next() {
             if let Some((second_id, _)) = nearest_opponents.next() {
