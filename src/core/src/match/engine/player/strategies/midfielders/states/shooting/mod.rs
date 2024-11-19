@@ -26,16 +26,13 @@ impl StateProcessingHandler for MidfielderShootingState {
         }
 
         let shot_direction = self.calculate_shot_direction(ctx);
-        let shot_power = self.calculate_shot_power(ctx);
 
         // Create an event to change the ball's velocity
         let mut state_change = StateChangeResult::with_midfielder_state(MidfielderState::Standing);
 
-        let ball_velocity = shot_direction * shot_power;
-
         state_change
             .events
-            .add_player_event(PlayerEvent::Shoot(ctx.player.id, ball_velocity));
+            .add_player_event(PlayerEvent::Shoot(ctx.player.id, shot_direction));
 
         // Transition to the next appropriate state (e.g., Standing)
         Some(state_change)
@@ -57,10 +54,7 @@ impl StateProcessingHandler for MidfielderShootingState {
 impl MidfielderShootingState {
     /// Calculates the shot direction towards the opponent's goal.
     fn calculate_shot_direction(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let player_position = ctx.player.position;
-        let goal_position = self.get_opponent_goal_position(ctx);
-
-        (goal_position - player_position).normalize()
+        ctx.ball().direction_to_opponent_goal()
     }
 
     /// Calculates the shot power based on player attributes and distance to goal.
