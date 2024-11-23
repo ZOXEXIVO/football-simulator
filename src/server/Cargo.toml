@@ -6,12 +6,12 @@ edition = "2021"
 [dependencies]
 core = { path = "../core" }
 database = { path = "../database" }
-axum = "0.7.8"
+axum = "0.7.9"
 log = { version = "0.4.22", features = ["release_max_level_error"] }
 tokio = { version = "1.41.1", features = ["full"] }
-tower-http = { version = "0.6.1", features = ["fs"] }
+tower-http = { version = "0.6.2", features = ["fs"] }
 serde = { version = "1.0.215", features = ["derive"] }
-serde_json = "1.0.132"
+serde_json = "1.0.133"
 chrono = "0.4.38"
 itertools = "0.13.0"
 async-compression = { version = "0.4.17", features = ["gzip", "tokio"] }
