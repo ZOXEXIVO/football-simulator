@@ -45,12 +45,10 @@ impl StateProcessingHandler for MidfielderPassingState {
             ));
         }
 
-        if ctx.in_state_time > 50 {
-            if ctx.ball().distance_to_opponent_goal() < 200.0 {
-                return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::Shooting,
-                ))
-            }
+        if ctx.in_state_time > 50 && ctx.ball().distance_to_opponent_goal() < 200.0 {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Shooting,
+            ))
         }
 
         None

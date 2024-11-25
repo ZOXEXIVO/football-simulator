@@ -8,6 +8,7 @@ use crate::r#match::{
 use nalgebra::Vector3;
 use rand::Rng;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
 
 static DEFENDER_INTERCEPTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_intercepting_data.json")));
@@ -29,7 +30,6 @@ impl StateProcessingHandler for DefenderInterceptingState {
             ));
         }
 
-        // 1. Check if the ball is too far away, transition to Returning state
         let ball_ops = ctx.ball();
 
         // 3. If the defender has intercepted the ball, transition to appropriate state
@@ -39,16 +39,11 @@ impl StateProcessingHandler for DefenderInterceptingState {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Tackling,
                 ));
-            } else {
-                if self.calculate_tackling_success(ctx) {
-                    let mut state = StateChangeResult::with_defender_state(DefenderState::Running);
-
-                    state
-                        .events
-                        .add_player_event(PlayerEvent::ClaimBall(ctx.player.id));
-
-                    return Some(state);
-                }
+            } else if self.calculate_tackling_success(ctx) {
+                return Some(StateChangeResult::with_defender_state_and_event(
+                    DefenderState::Running,
+                    Event::PlayerEvent(PlayerEvent::ClaimBall(ctx.player.id))
+                ));
             }
         }
 

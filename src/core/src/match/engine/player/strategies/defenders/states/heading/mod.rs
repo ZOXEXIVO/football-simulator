@@ -36,7 +36,7 @@ impl StateProcessingHandler for DefenderHeadingState {
                 DefenderState::Standing,
             ));
         }
-
+       
         // 2. Attempt to head the ball
         if self.attempt_heading(ctx) {
             // 3. Generate event to change ball's velocity (e.g., clear the ball)
