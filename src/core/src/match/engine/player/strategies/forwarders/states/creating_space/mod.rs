@@ -56,9 +56,8 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(
-            SteeringBehavior::Arrive {
-                target: ctx.tick_context.positions.ball.position,
-                slowing_distance: 150.0,
+            SteeringBehavior::Flee {
+                target: ctx.tick_context.positions.ball.position
             }
             .calculate(ctx.player)
             .velocity,
