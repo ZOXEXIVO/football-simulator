@@ -13,7 +13,6 @@ static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
 
 const CREATING_SPACE_THRESHOLD: f32 = 30.0; // Adjust based on your game's scale
 const OPPONENT_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust based on your game's scale
-const VELOCITY_CHANGE_THRESHOLD: f32 = 2.0; // Adjust based on your game's scale
 
 #[derive(Default)]
 pub struct ForwardCreatingSpaceState {}

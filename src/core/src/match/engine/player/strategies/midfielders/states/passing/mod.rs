@@ -38,16 +38,22 @@ impl StateProcessingHandler for MidfielderPassingState {
             return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    target_teammate.id,
+                    ctx.player.id,
                     target_teammate.position,
-                    1.0,
+                    ctx.player().pass_teammate_power(target_teammate.id),
                 )),
             ));
         }
 
-        if ctx.in_state_time > 50 && ctx.ball().distance_to_opponent_goal() < 200.0 {
+        if ctx.ball().distance_to_opponent_goal() < 200.0 {
             return Some(StateChangeResult::with_midfielder_state(
                 MidfielderState::Shooting,
+            ))
+        }
+        
+        if ctx.in_state_time > 100 {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Distributing,
             ))
         }
 

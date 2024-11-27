@@ -29,14 +29,12 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
         }
 
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            let pass_power = self.calculate_pass_power(teammate_id, ctx);
-
             return Some(StateChangeResult::with_goalkeeper_state_and_event(
                 GoalkeeperState::ReturningToGoal,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     ctx.player.id,
                     ctx.tick_context.positions.players.position(teammate_id),
-                    pass_power,
+                    ctx.player().pass_teammate_power(teammate_id)
                 )),
             ));
         }

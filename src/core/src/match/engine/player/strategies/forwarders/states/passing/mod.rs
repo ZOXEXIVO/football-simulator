@@ -33,14 +33,12 @@ impl StateProcessingHandler for ForwardPassingState {
 
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            let pass_power = self.calculate_pass_power(teammate.id, ctx);
-
             return Some(StateChangeResult::with_forward_state_and_event(
                 ForwardState::Running,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     ctx.player.id,
                     ctx.tick_context.positions.players.position(teammate.id),
-                    pass_power,
+                    ctx.player().pass_teammate_power(teammate.id),
                 )),
             ));
         }
