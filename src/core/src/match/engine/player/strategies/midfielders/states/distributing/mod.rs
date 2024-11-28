@@ -70,6 +70,6 @@ impl MidfielderDistributingState {
 
         let pass_skill = ctx.player.skills.technical.passing;
 
-        (distance / pass_skill as f32 * 10.0) as f64
+        (distance / pass_skill * 10.0) as f64
     }
 }

@@ -127,7 +127,7 @@ impl SquadSelector {
             }
         }
 
-        return squad;
+        squad
     }
 
     fn calculate_player_rating(
