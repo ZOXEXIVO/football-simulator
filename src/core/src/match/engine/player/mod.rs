@@ -1,11 +1,11 @@
 ﻿pub mod behaviours;
 pub mod context;
-pub mod events;
 pub mod player;
 pub mod state;
 pub mod statistics;
 pub mod strategies;
 pub mod positions;
+pub mod events;
 
 pub use behaviours::*;
 pub use context::*;

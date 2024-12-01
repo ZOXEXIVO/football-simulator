@@ -3,6 +3,7 @@ use crate::r#match::player::state::PlayerState;
 use crate::r#match::{GoalDetail, MatchContext, MatchField};
 use log::info;
 use nalgebra::Vector3;
+use crate::r#match::player::events::PassingEventModel;
 use crate::r#match::statistics::MatchStatisticType;
 
 #[derive(Debug)]
@@ -12,7 +13,7 @@ pub enum PlayerEvent {
     BallCollision(u32),
     TacklingBall(u32),
     BallOwnerChange(u32),
-    PassTo(u32, Vector3<f32>, f64),
+    PassTo(PassingEventModel),
     ClearBall(Vector3<f32>),
     RushOut(u32),
     Shoot(u32, Vector3<f32>),
@@ -85,8 +86,8 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
             }
-            PlayerEvent::PassTo(_player_id, pass_target, _pass_power) => {
-                let ball_pass_vector = pass_target - field.ball.position;
+            PlayerEvent::PassTo(event_model) => {
+                let ball_pass_vector = event_model.pass_target - field.ball.position;
                 field.ball.velocity = ball_pass_vector.normalize();
 
                 field.ball.previous_owner = field.ball.current_owner;

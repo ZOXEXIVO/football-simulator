@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
     ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
@@ -26,9 +26,11 @@ impl StateProcessingHandler for MidfielderDistributingState {
             return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Returning,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    ctx.tick_context.positions.players.position(teammate.id),
-                    pass_power,
+                    PassingEventModel::build()
+                        .from_player_id(ctx.player.id)
+                        .target(ctx.tick_context.positions.players.position(teammate.id))
+                        .force(pass_power)
+                        .build(),
                 )),
             ));
         }

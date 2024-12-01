@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::{Event, EventCollection};
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
@@ -30,9 +30,11 @@ impl StateProcessingHandler for DefenderPassingState {
             return Some(StateChangeResult::with_defender_state_and_event(
                 DefenderState::Returning,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    teammate_id,
-                    teammate_player_position,
-                    ctx.player().pass_teammate_power(teammate_id),
+                    PassingEventModel::build()
+                        .from_player_id(ctx.player.id)
+                        .target(teammate_player_position)
+                        .force(ctx.player().pass_teammate_power(teammate_id))
+                        .build()
                 )),
             ));
         }
@@ -49,9 +51,11 @@ impl StateProcessingHandler for DefenderPassingState {
 
         if let Some(teammate_id) = best_player_id {
             let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
-                ctx.player.id,
-                ctx.tick_context.positions.players.position(teammate_id),
-                ctx.player().pass_teammate_power(teammate_id),
+                PassingEventModel::build()
+                    .from_player_id(ctx.player.id)
+                    .target(ctx.tick_context.positions.players.position(teammate_id))
+                    .force(ctx.player().pass_teammate_power(teammate_id))
+                    .build(),
             )));
 
             return Some(StateChangeResult::with_events(events));
