@@ -45,7 +45,7 @@ impl StateProcessingHandler for DefenderRunningState {
             }
 
             if !ctx.team().is_control_ball() {
-                if ctx.ball().is_towards_player_with_angle(0.9) && distance_to_ball < 150.0 {
+                if ctx.ball().is_towards_player_with_angle(0.9) && distance_to_ball < 250.0 {
                     return Some(StateChangeResult::with_defender_state(
                         DefenderState::Intercepting,
                     ));

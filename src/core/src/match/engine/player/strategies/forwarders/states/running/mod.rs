@@ -62,16 +62,19 @@ impl StateProcessingHandler for ForwardRunningState {
             }
 
             if let Some(opponent_with_ball) = ctx.players().opponents().with_ball().next() {
-                let opponent_distance = ctx
-                    .tick_context
-                    .distances
-                    .get(ctx.player.id, opponent_with_ball.id);
+                let opponent_distance = ctx.player().distance_to_player(opponent_with_ball.id);
 
                 if opponent_distance < PRESSING_DISTANCE_THRESHOLD {
                     return Some(StateChangeResult::with_forward_state(
                         ForwardState::Pressing,
                     ));
                 }
+            }
+
+            if ctx.ball().distance() < 80.0 {
+                return Some(StateChangeResult::with_forward_state(
+                    ForwardState::Intercepting,
+                ));
             }
         }
 

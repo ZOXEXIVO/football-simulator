@@ -42,9 +42,9 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
         }
 
         // Check if the player should run to the opponent's side between opponents
-        if self.should_run_to_opponent_side(ctx) {
-            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        }
+        // if self.should_run_to_opponent_side(ctx) {
+        //     return Some(StateChangeResult::with_forward_state(ForwardState::Running));
+        // }
 
         None
     }
@@ -70,7 +70,7 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
 
 impl ForwardCreatingSpaceState {
     fn has_created_space(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists(CREATING_SPACE_THRESHOLD)
+        !ctx.players().opponents().exists(CREATING_SPACE_THRESHOLD)
     }
 
     fn is_too_close_to_opponent(&self, ctx: &StateProcessingContext) -> bool {

@@ -1,10 +1,4 @@
-use crate::r#match::forwarders::states::{
-    ForwardAssistingState, ForwardCreatingSpaceState, ForwardCrossReceivingState,
-    ForwardDribblingState, ForwardFinishingState, ForwardHeadingState, ForwardHeadingUpPlayState,
-    ForwardOffsideTrapBreakingState, ForwardPassingState, ForwardPressingState,
-    ForwardRunningInBehindState, ForwardRunningState, ForwardShootingState, ForwardStandingState,
-    ForwardTacklingState, ForwardTakeBallState,
-};
+use crate::r#match::forwarders::states::{ForwardAssistingState, ForwardCreatingSpaceState, ForwardCrossReceivingState, ForwardDribblingState, ForwardFinishingState, ForwardHeadingState, ForwardHeadingUpPlayState, ForwardInterceptingState, ForwardOffsideTrapBreakingState, ForwardPassingState, ForwardPressingState, ForwardReturningState, ForwardRunningInBehindState, ForwardRunningState, ForwardShootingState, ForwardStandingState, ForwardTacklingState, ForwardTakeBallState};
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
 
@@ -25,7 +19,9 @@ pub enum ForwardState {
     OffsideTrapBreaking, // Trying to beat the offside trap by timing runs
     Tackling,            // Tackling the ball
     Assisting,           // Providing an assist by passing or crossing to a teammate
-    TakeBall,            // Take the ball
+    TakeBall,            // Take the ball,
+    Intercepting,        // Intercepting the ball,
+    Returning,           // Returning the ball
 }
 
 pub struct ForwardStrategies {}
@@ -59,6 +55,8 @@ impl ForwardStrategies {
             ForwardState::Assisting => state_processor.process(ForwardAssistingState::default()),
             ForwardState::Running => state_processor.process(ForwardRunningState::default()),
             ForwardState::TakeBall => state_processor.process(ForwardTakeBallState::default()),
+            ForwardState::Intercepting => state_processor.process(ForwardInterceptingState::default()),
+            ForwardState::Returning => state_processor.process(ForwardReturningState::default()),
         }
     }
 }
@@ -82,6 +80,8 @@ impl Display for ForwardState {
             ForwardState::Tackling => write!(f, "Tackling"),
             ForwardState::Running => write!(f, "Running"),
             ForwardState::TakeBall => write!(f, "Take Ball"),
+            ForwardState::Intercepting => write!(f, "Intercepting"),
+            ForwardState::Returning => write!(f, "Returning"),
         }
     }
 }

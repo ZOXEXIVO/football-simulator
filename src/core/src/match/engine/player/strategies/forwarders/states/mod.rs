@@ -16,6 +16,8 @@ pub mod state;
 pub mod tackling;
 pub mod takeball;
 pub mod walking;
+pub mod intercepting;
+pub mod returning;
 
 pub use assisting::*;
 pub use creating_space::*;
@@ -35,3 +37,5 @@ pub use state::*;
 pub use tackling::*;
 pub use takeball::*;
 pub use walking::*;
+pub use intercepting::*;
+pub use returning::*;

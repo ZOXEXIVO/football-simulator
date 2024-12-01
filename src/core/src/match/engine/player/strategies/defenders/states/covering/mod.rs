@@ -61,11 +61,9 @@ impl StateProcessingHandler for DefenderCoveringState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        let optimal_position = self.calculate_optimal_covering_position(ctx);
-
         Some(
             SteeringBehavior::Pursuit {
-                target: optimal_position
+                target: self.calculate_optimal_covering_position(ctx)
             }
             .calculate(ctx.player)
             .velocity,
@@ -103,24 +101,51 @@ impl DefenderCoveringState {
         let field_width = ctx.context.field_size.width as f32;
         let field_height = ctx.context.field_size.height as f32;
 
-        // Calculate the center of the middle third
-        let middle_third_center = Vector3::new(field_width * 0.5, field_height * 0.5, 0.0);
+        // Calculate the center of the middle third with slight offset towards own goal
+        let middle_third_center = Vector3::new(
+            field_width * 0.4, // Moved slightly back from 0.5
+            field_height * 0.5,
+            0.0,
+        );
 
-        // Calculate the vector from the ball to the center of our goal
-        let ball_to_goal = ctx.ball().direction_to_own_goal() - ball_position;
+        // Get direction to own goal and normalize it
+        let ball_to_goal = (ctx.ball().direction_to_own_goal() - ball_position).normalize();
 
-        // Calculate a position that's between the ball and our goal, but in the middle third
-        let covering_position = ball_position + ball_to_goal * 0.4; // Adjust this factor as needed
+        // Calculate base covering position with better distance scaling
+        let covering_distance = (ball_position - ctx.ball().direction_to_own_goal()).magnitude() * 0.35;
+        let covering_position = ball_position + ball_to_goal * covering_distance.min(field_width * 0.3);
 
-        // Blend the covering position with the middle third center and the player's current position
-        let optimal_position =
-            (covering_position * 0.6 + middle_third_center * 0.3 + player_position * 0.1)
-                .cap_magnitude(field_width * 0.4);
+        // Apply exponential moving average for position smoothing
+        const SMOOTHING_FACTOR: f32 = 0.15; // Adjust this value (0.0 to 1.0) to control smoothing
+        let previous_position = ctx.player.position;
 
-        // Ensure the optimal position is within the field boundaries
+        // Calculate blended position with weighted factors
+        let target_position = Vector3::new(
+            covering_position.x * 0.5 +  // Reduced weight from 0.6
+                middle_third_center.x * 0.4 + // Increased weight from 0.3
+                player_position.x * 0.1,
+            covering_position.y * 0.5 +
+                middle_third_center.y * 0.4 +
+                player_position.y * 0.1,
+            0.0,
+        );
+
+        // Apply smoothing between frames
+        let smoothed_position = previous_position.lerp(&target_position, SMOOTHING_FACTOR);
+
+        // Ensure the position stays within reasonable bounds
+        let max_distance_from_center = field_width * 0.35;
+        let position_relative_to_center = smoothed_position - middle_third_center;
+        let capped_position = if position_relative_to_center.magnitude() > max_distance_from_center {
+            middle_third_center + position_relative_to_center.normalize() * max_distance_from_center
+        } else {
+            smoothed_position
+        };
+
+        // Final boundary check
         Vector3::new(
-            optimal_position.x.clamp(0.0, field_width),
-            optimal_position.y.clamp(0.0, field_height),
+            capped_position.x.clamp(field_width * 0.1, field_width * 0.7),  // Prevent getting too close to either goal
+            capped_position.y.clamp(field_height * 0.1, field_height * 0.9), // Keep away from sidelines
             0.0,
         )
     }
