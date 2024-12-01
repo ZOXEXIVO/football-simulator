@@ -30,7 +30,6 @@ impl StateProcessingHandler for MidfielderWalkingState {
             ));
         }
 
-        // 3. Remain in Walking state
         None
     }
 

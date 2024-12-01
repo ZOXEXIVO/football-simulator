@@ -183,6 +183,7 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn in_own_penalty_area(&self) -> bool {
+        // TODO
         let penalty_area = self
             .ctx
             .context

@@ -133,11 +133,10 @@ impl MidfielderRunningState {
     }
 
     fn should_press(&self, ctx: &StateProcessingContext) -> bool {
-        let ball_distance = ctx.ball().distance();
         let pressing_distance = 100.0;
 
         !ctx.team().is_control_ball()
-            && ball_distance < pressing_distance
+            && ctx.ball().distance() < pressing_distance
             && ctx.ball().is_towards_player_with_angle(0.8)
     }
 

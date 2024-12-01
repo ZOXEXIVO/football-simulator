@@ -52,7 +52,7 @@ impl StateProcessingHandler for MidfielderSwitchingPlayState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Move towards the best position to switch play
-        if let Some((teammate_id, teammate_position)) = self.find_switch_play_target(ctx) {
+        if let Some((_, teammate_position)) = self.find_switch_play_target(ctx) {
             let steering = SteeringBehavior::Seek {
                 target: teammate_position,
             }
