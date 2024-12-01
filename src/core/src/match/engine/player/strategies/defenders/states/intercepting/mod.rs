@@ -47,7 +47,7 @@ impl StateProcessingHandler for DefenderInterceptingState {
             }
         }
 
-        if ball_ops.distance() > 150.0 {
+        if ball_distance > 150.0 {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Returning,
             ));
@@ -148,13 +148,14 @@ impl DefenderInterceptingState {
 
         // Find the minimum time for any opponent to reach the interception point
         let opponent_time = ctx
-            .context
-            .players
-            .raw_players()
-            .iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
+            .players()
+            .opponents()
+            .all()
             .map(|opponent| {
-                let opponent_speed = opponent.skills.physical.pace.max(0.1);
+                let player = ctx.player();
+                let skills = player.skills(opponent.id);
+                
+                let opponent_speed = skills.physical.pace.max(0.1);
                 let opponent_distance = (interception_point - opponent.position).magnitude();
                 opponent_distance / opponent_speed
             })

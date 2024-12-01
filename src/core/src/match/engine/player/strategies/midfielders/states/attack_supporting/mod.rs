@@ -58,14 +58,16 @@ impl StateProcessingHandler for MidfielderAttackSupportingState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         let target_position = self.calculate_support_position(ctx);
 
-        Some(SteeringBehavior::Seek {
-            target: target_position,
-        }.calculate(&ctx.player).velocity)
+        Some(
+            SteeringBehavior::Seek {
+                target: target_position,
+            }
+            .calculate(&ctx.player)
+            .velocity,
+        )
     }
 
-    fn process_conditions(&self, _ctx: ConditionContext) {
-
-    }
+    fn process_conditions(&self, _ctx: ConditionContext) {}
 }
 
 impl MidfielderAttackSupportingState {
@@ -90,11 +92,9 @@ impl MidfielderAttackSupportingState {
     fn calculate_support_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         // For simplicity, position yourself slightly behind the forwards
         let forwards_positions: Vec<Vector3<f32>> = ctx
-            .context
-            .players
-            .raw_players()
-            .iter()
-            .filter(|p| p.team_id == ctx.player.team_id && p.tactics_position.is_forward())
+            .players()
+            .teammates()
+            .forwards()
             .map(|p| p.position)
             .collect();
 

@@ -124,11 +124,9 @@ impl DefenderOffsideTrapState {
         // Get the positions of opponents and the defensive line
         let defensive_line_position = self.calculate_defensive_line_position(ctx);
         let opponent_positions: Vec<f32> = ctx
-            .context
-            .players
-            .raw_players()
-            .iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
+            .players()
+            .opponents()
+            .all()
             .map(|p| p.position.x)
             .collect();
 

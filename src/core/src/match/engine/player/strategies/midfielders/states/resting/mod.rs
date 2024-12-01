@@ -75,11 +75,9 @@ impl MidfielderRestingState {
     /// Determines if the team is under threat based on the number of opponents in the attacking third.
     fn is_team_under_threat(&self, ctx: &StateProcessingContext) -> bool {
         let opponents_in_attacking_third = ctx
-            .context
-            .players
-            .raw_players()
-            .iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
+            .players()
+            .opponents()
+            .all()
             .filter(|opponent| self.is_in_defensive_third(opponent.position, ctx))
             .count();
 
