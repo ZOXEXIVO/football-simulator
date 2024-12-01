@@ -19,6 +19,12 @@ pub struct PassingEventBuilder {
     pass_force: Option<f64>
 }
 
+impl Default for PassingEventBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PassingEventBuilder {
     pub fn new() -> Self {
         PassingEventBuilder {
