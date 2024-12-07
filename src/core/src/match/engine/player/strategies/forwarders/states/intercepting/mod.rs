@@ -32,7 +32,7 @@ impl StateProcessingHandler for ForwardInterceptingState {
 
         // 3. If the defender has intercepted the ball, transition to appropriate state
         let ball_distance = ball_ops.distance();
-        if ball_distance < 10.0 {
+        if ball_distance < 30.0 {
             if ctx.tick_context.ball.is_owned {
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Pressing,

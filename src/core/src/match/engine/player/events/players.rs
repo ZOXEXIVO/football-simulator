@@ -93,7 +93,7 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = None;
 
-                field.ball.flags.in_passing_state_time = 50;
+                field.ball.flags.in_passing_state_time = 100;
             }
             PlayerEvent::RushOut(_) => {}
             PlayerEvent::StayInGoal(_) => {}

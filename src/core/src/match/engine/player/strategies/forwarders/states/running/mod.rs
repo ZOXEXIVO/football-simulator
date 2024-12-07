@@ -25,7 +25,7 @@ const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0;
 const BALL_DISTANCE_THRESHOLD: f32 = 20.0;
 const MAX_PLAYER_SPEED: f32 = 50.0;
 const SHOOTING_DISTANCE_THRESHOLD: f32 = 200.0;
-const PASSING_DISTANCE_THRESHOLD: f32 = 500.0;
+const PASSING_DISTANCE_THRESHOLD: f32 = 400.0;
 const ASSISTING_DISTANCE_THRESHOLD: f32 = 200.0;
 const TARGET_REACHED_THRESHOLD: f32 = 10.0;
 
@@ -71,11 +71,11 @@ impl StateProcessingHandler for ForwardRunningState {
                 }
             }
 
-            if ctx.ball().distance() < 80.0 {
-                return Some(StateChangeResult::with_forward_state(
-                    ForwardState::Intercepting,
-                ));
-            }
+            // if ctx.ball().distance() < 80.0 {
+            //     return Some(StateChangeResult::with_forward_state(
+            //         ForwardState::Intercepting,
+            //     ));
+            // }
         }
 
         None
@@ -99,13 +99,13 @@ impl StateProcessingHandler for ForwardRunningState {
             Some(player_goal_velocity)
         } else {
             // Apply pursuit behavior
-            let pursuit_result = SteeringBehavior::Arrive {
+            let result = SteeringBehavior::Arrive {
                 target: ctx.tick_context.positions.ball.position,
                 slowing_distance: 10.0,
             }
             .calculate(ctx.player);
 
-            Some(pursuit_result.velocity)
+            Some(result.velocity)
         }
     }
 
@@ -115,7 +115,7 @@ impl StateProcessingHandler for ForwardRunningState {
 impl ForwardRunningState {
     fn is_in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
-        distance_to_goal <= MAX_SHOOTING_DISTANCE && distance_to_goal >= MIN_SHOOTING_DISTANCE
+        (MIN_SHOOTING_DISTANCE..=MAX_SHOOTING_DISTANCE).contains(&distance_to_goal)
     }
 
     fn is_leading_forward(&self, ctx: &StateProcessingContext) -> bool {
