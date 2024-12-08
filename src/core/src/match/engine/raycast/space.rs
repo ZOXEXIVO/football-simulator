@@ -58,11 +58,8 @@ impl Space {
         // Iterate through all colliders in the space
         for collider in &self.colliders {
             // Check if the collider belongs to a player
-            if let Some(_) = collider.match_player() {
-                if !include_players {
-                    // Skip player colliders if include_players is false
-                    continue;
-                }
+            if collider.match_player().is_some() && !include_players {
+                continue;
             }
 
             // Perform ray intersection test with the collider
