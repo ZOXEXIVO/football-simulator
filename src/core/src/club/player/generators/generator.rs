@@ -116,7 +116,7 @@ impl PlayerGenerator {
             training: PlayerTraining::new(),
             training_history: PlayerTrainingHistory::new(),
             relations: Relations::new(),
-            statistics: PlayerStatistics::new(),
+            statistics: PlayerStatistics::default(),
             statistics_history: PlayerStatisticsHistory::new(),
         }
     }

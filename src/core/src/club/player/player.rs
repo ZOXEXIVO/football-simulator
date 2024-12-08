@@ -73,7 +73,7 @@ impl Player {
             training_history: PlayerTrainingHistory::new(),
             mailbox: PlayerMailbox::new(),
             relations: Relations::new(),
-            statistics: PlayerStatistics::new(),
+            statistics: PlayerStatistics::default(),
             statistics_history: PlayerStatisticsHistory::new(),
         }
     }
@@ -278,7 +278,7 @@ impl Index<u32> for PlayerCollection {
     type Output = Player;
 
     fn index(&self, player_id: u32) -> &Self::Output {
-        &self
+        self
             .players
             .iter()
             .find(|p| p.id == player_id)
