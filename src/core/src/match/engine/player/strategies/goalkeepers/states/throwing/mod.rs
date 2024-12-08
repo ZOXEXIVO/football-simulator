@@ -55,9 +55,9 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
 
             events.add_player_event(PlayerEvent::PassTo(
                 PassingEventModel::build()
-                    .from_player_id(ctx.player.id)
-                    .target(teammate.position)
-                    .force(throw_power as f64)
+                    .with_player_id(ctx.player.id)
+                    .with_target(teammate.position)
+                    .with_force(throw_power as f64)
                     .build()
             ));
             events.add_player_event(PlayerEvent::UnClaimBall(ctx.player.id));

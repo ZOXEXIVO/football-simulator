@@ -39,9 +39,9 @@ impl StateProcessingHandler for MidfielderPassingState {
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     PassingEventModel::build()
-                        .from_player_id(ctx.player.id)
-                        .target(target_teammate.position)
-                        .force(ctx.player().pass_teammate_power(target_teammate.id))
+                        .with_player_id(ctx.player.id)
+                        .with_target(target_teammate.position)
+                        .with_force(ctx.player().pass_teammate_power(target_teammate.id))
                         .build()
                 )),
             ));

@@ -31,9 +31,9 @@ impl StateProcessingHandler for DefenderPassingState {
                 DefenderState::Returning,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     PassingEventModel::build()
-                        .from_player_id(ctx.player.id)
-                        .target(teammate_player_position)
-                        .force(ctx.player().pass_teammate_power(teammate_id))
+                        .with_player_id(ctx.player.id)
+                        .with_target(teammate_player_position)
+                        .with_force(ctx.player().pass_teammate_power(teammate_id))
                         .build()
                 )),
             ));
@@ -52,9 +52,9 @@ impl StateProcessingHandler for DefenderPassingState {
         if let Some(teammate_id) = best_player_id {
             let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
                 PassingEventModel::build()
-                    .from_player_id(ctx.player.id)
-                    .target(ctx.tick_context.positions.players.position(teammate_id))
-                    .force(ctx.player().pass_teammate_power(teammate_id))
+                    .with_player_id(ctx.player.id)
+                    .with_target(ctx.tick_context.positions.players.position(teammate_id))
+                    .with_force(ctx.player().pass_teammate_power(teammate_id))
                     .build(),
             )));
 

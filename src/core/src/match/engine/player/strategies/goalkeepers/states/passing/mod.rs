@@ -32,9 +32,9 @@ impl StateProcessingHandler for GoalkeeperPassingState {
             return Some(StateChangeResult::with_goalkeeper_state_and_event(
                 GoalkeeperState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(PassingEventModel::build()
-                    .from_player_id(ctx.player.id)
-                    .target(teammate.position)
-                    .force(ctx.player().pass_teammate_power(teammate.id))
+                    .with_player_id(ctx.player.id)
+                    .with_target(teammate.position)
+                    .with_force(ctx.player().pass_teammate_power(teammate.id))
                     .build())),
             ));
         }

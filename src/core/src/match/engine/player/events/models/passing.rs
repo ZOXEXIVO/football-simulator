@@ -34,17 +34,17 @@ impl PassingEventBuilder {
         }
     }
     
-    pub fn from_player_id(mut self, from_player_id: u32) -> Self {
+    pub fn with_player_id(mut self, from_player_id: u32) -> Self {
         self.from_player_id = Some(from_player_id);
         self
     }
 
-    pub fn target(mut self, pass_target: Vector3<f32>) -> Self {
+    pub fn with_target(mut self, pass_target: Vector3<f32>) -> Self {
         self.pass_target = Some(pass_target);
         self
     }  
     
-    pub fn force(mut self, pass_force: f64) -> Self {
+    pub fn with_force(mut self, pass_force: f64) -> Self {
         self.pass_force = Some(pass_force);
         self
     }    

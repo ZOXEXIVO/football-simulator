@@ -22,8 +22,14 @@ impl StateProcessingHandler for GoalkeeperPreparingForSaveState {
                 GoalkeeperState::Passing,
             ));
         } else {
+            if ctx.team().is_control_ball() {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::ReturningToGoal
+                ));
+            }
+            
             // Transition to Walking if the ball is far away
-            if ctx.ball().distance() > 150.0 {
+            if ctx.ball().distance() > 250.0 {
                 return Some(StateChangeResult::with_goalkeeper_state(
                     GoalkeeperState::Walking,
                 ));

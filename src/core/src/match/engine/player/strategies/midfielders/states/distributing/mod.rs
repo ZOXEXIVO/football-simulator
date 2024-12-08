@@ -27,9 +27,9 @@ impl StateProcessingHandler for MidfielderDistributingState {
                 MidfielderState::Returning,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     PassingEventModel::build()
-                        .from_player_id(ctx.player.id)
-                        .target(ctx.tick_context.positions.players.position(teammate.id))
-                        .force(pass_power)
+                        .with_player_id(ctx.player.id)
+                        .with_target(ctx.tick_context.positions.players.position(teammate.id))
+                        .with_force(pass_power)
                         .build(),
                 )),
             ));

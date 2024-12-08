@@ -32,9 +32,9 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
                 GoalkeeperState::ReturningToGoal,
                 Event::PlayerEvent(PlayerEvent::PassTo(
                     PassingEventModel::build()
-                        .from_player_id(ctx.player.id)
-                        .target(ctx.tick_context.positions.players.position(teammate_id))
-                        .force(ctx.player().pass_teammate_power(teammate_id))
+                        .with_player_id(ctx.player.id)
+                        .with_target(ctx.tick_context.positions.players.position(teammate_id))
+                        .with_force(ctx.player().pass_teammate_power(teammate_id))
                         .build()
                 )),
             ));
