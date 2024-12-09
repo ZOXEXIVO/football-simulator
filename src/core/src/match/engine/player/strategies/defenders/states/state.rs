@@ -8,7 +8,6 @@ use crate::r#match::defenders::states::{
 };
 use crate::r#match::{StateProcessingResult, StateProcessor};
 use std::fmt::{Display, Formatter};
-use crate::r#match::defenders::states::common::DefenderCommonState;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum DefenderState {

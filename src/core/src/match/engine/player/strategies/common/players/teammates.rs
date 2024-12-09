@@ -44,7 +44,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             .values()
             .filter(move |player| {
                 player.team_id == team_id
-                    && player.tactics_position.position_group() == position_group
+                    && player.tactical_position.current_position.position_group() == position_group
             })
             .map(|player| MatchPlayerLite {
                 id: player.id,

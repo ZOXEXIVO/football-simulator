@@ -1,7 +1,6 @@
 use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::result::VectorExtensions;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
     SteeringBehavior,

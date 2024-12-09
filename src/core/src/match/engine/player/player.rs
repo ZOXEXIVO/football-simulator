@@ -12,7 +12,7 @@ use crate::{
 };
 use nalgebra::Vector3;
 use std::fmt::*;
-use crate::r#match::engine::tactics::{MatchTactics};
+use crate::r#match::engine::tactics::{TacticalPositions};
 
 #[derive(Debug, Clone)]
 pub struct MatchPlayer {
@@ -23,8 +23,7 @@ pub struct MatchPlayer {
     pub team_id: u32,
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
-    pub tactics_position: PlayerPositionType,
-    pub tactic: MatchTactics,
+    pub tactical_position: TacticalPositions,
     pub velocity: Vector3<f32>,
     pub side: Option<PlayerSide>,
     pub state: PlayerState,
@@ -54,8 +53,8 @@ impl MatchPlayer {
             team_id,
             player_attributes: player.player_attributes,
             skills: player.skills,
-            tactics_position: position,
             velocity: Vector3::new(0.0, 0.0, 0.0),
+            tactical_position: TacticalPositions::new(position, Vec::new()),
             side: None,
             state: Self::default_state(position),
             in_state_time: 0,
@@ -93,7 +92,7 @@ impl MatchPlayer {
     }
 
     pub fn set_default_state(&mut self) {
-        self.state = Self::default_state(self.tactics_position);
+        self.state = Self::default_state(self.tactical_position.current_position);
     }
 
     fn default_state(position: PlayerPositionType) -> PlayerState {
@@ -110,7 +109,7 @@ impl MatchPlayer {
     }
 
     pub fn run_for_ball(&mut self) {
-        self.state = match self.tactics_position.position_group() {
+        self.state = match self.tactical_position.current_position.position_group() {
             PlayerFieldPositionGroup::Goalkeeper => {
                 PlayerState::Goalkeeper(GoalkeeperState::TakeBall)
             }

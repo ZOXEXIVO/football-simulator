@@ -37,7 +37,7 @@ impl PlayerMatchState {
         context: &MatchContext,
         tick_context: &GameTickContext,
     ) -> EventCollection {
-        let player_position_group = player.tactics_position.position_group();
+        let player_position_group = player.tactical_position.current_position.position_group();
 
         let state_change_result =
             player_position_group.process(player.in_state_time, player, context, tick_context);

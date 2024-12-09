@@ -4,7 +4,7 @@ use nalgebra::Vector3;
 use std::sync::LazyLock;
 
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::{ConditionContext, MatchPlayer, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 
 static DEFENDER_HOLDING_LINE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_holding_line_data.json")));

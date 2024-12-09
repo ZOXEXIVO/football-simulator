@@ -353,7 +353,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, ball_owner_id:
             Color::from_rgba(208, 139, 255, 255)
         };
 
-        if player.tactics_position == PlayerPositionType::Goalkeeper {
+        if player.tactical_position.current_position == PlayerPositionType::Goalkeeper {
             color = YELLOW;
         }
 
@@ -373,7 +373,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, ball_owner_id:
         }
 
         // Player position
-        let position = &player.tactics_position.get_short_name();
+        let position = &player.tactical_position.current_position.get_short_name();
         let position_font_size = 17.0 * scale;
         let position_text_dimensions = measure_text(position, None, position_font_size as u16, 1.0);
         draw_text(
@@ -453,7 +453,7 @@ fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, ba
         let player_y = offset_y;
 
         // Draw player circle
-        let player_color: Color = if player.tactics_position == PlayerPositionType::Goalkeeper {
+        let player_color: Color = if player.tactical_position.current_position == PlayerPositionType::Goalkeeper {
             YELLOW
         } else {
             if player.team_id == 1 {

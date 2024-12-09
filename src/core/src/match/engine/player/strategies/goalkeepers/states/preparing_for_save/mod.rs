@@ -3,7 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior, VectorExtensions,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
