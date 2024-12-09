@@ -88,7 +88,14 @@ impl PlayerEventDispatcher {
             }
             PlayerEvent::PassTo(event_model) => {
                 let ball_pass_vector = event_model.pass_target - field.ball.position;
-                field.ball.velocity = ball_pass_vector.normalize();
+                let direction = ball_pass_vector.normalize();
+                let pass_force = event_model.pass_force as f32;
+                let pass_force_multiplier = 1.7;
+
+                // Calculate the ball's velocity based on the pass force
+                let velocity = direction * (pass_force * pass_force_multiplier);
+
+                field.ball.velocity = velocity;
 
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = None;

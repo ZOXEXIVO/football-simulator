@@ -71,8 +71,18 @@ impl<'p> PlayerOperationsImpl<'p> {
             .get(self.ctx.player.id, teammate_id);
 
         let pass_skill = self.ctx.player.skills.technical.passing;
-        
-        (distance / pass_skill * 10.0) as f64
+
+        let raw_power = (distance / pass_skill * 10.0) as f64;
+
+        // Normalize the pass force based on a desired range
+        let min_power = 3.0;
+        let max_power = 10.0;
+        let normalized_power = (raw_power - min_power) / (max_power - min_power);
+
+        // Clamp the normalized power between 0.0 and 1.0
+        let clamped_power = normalized_power.clamp(0.0, 1.0);
+
+        clamped_power
     }
 
     pub fn distance_to_player(&self, player_id: u32) -> f32 {

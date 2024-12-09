@@ -60,9 +60,25 @@ impl StateProcessingHandler for DefenderOffsideTrapState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Move forward quickly to execute the offside trap
-        let direction = self.calculate_offside_trap_direction(ctx);
-        let speed = ctx.player.skills.physical.pace * OFFSIDE_TRAP_SPEED_MULTIPLIER;
+        // Move forward smoothly to execute the offside trap
+        let target_position = self.calculate_offside_trap_target_position(ctx);
+        let current_position = ctx.player.position;
+        let direction = (target_position - current_position).normalize();
+
+        // Calculate the distance to the target position
+        let distance_to_target = (target_position - current_position).magnitude();
+
+        // Define a threshold distance for smooth deceleration
+        let deceleration_threshold = 2.0;
+
+        // Calculate the speed based on the distance to the target position
+        let speed = if distance_to_target <= deceleration_threshold {
+            // Smoothly decelerate as the player approaches the target position
+            ctx.player.skills.physical.pace * OFFSIDE_TRAP_SPEED_MULTIPLIER * (distance_to_target / deceleration_threshold)
+        } else {
+            // Move at the normal offside trap speed
+            ctx.player.skills.physical.pace * OFFSIDE_TRAP_SPEED_MULTIPLIER
+        };
 
         Some(direction * speed)
     }
@@ -131,8 +147,8 @@ impl DefenderOffsideTrapState {
             .collect();
 
         // Calculate the success probability based on teamwork and concentration
-        let teamwork = ctx.player.skills.mental.teamwork as f32 / 100.0;
-        let concentration = ctx.player.skills.mental.concentration as f32 / 100.0;
+        let teamwork = ctx.player.skills.mental.teamwork as f32 / 20.0;
+        let concentration = ctx.player.skills.mental.concentration as f32 / 20.0;
         let mut rng = rand::thread_rng();
         let success_probability = (teamwork + concentration) / 2.0;
 
@@ -200,5 +216,17 @@ impl DefenderOffsideTrapState {
         let blended_direction = (team_direction + direction).normalize();
 
         blended_direction
+    }
+
+    fn calculate_offside_trap_target_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
+        let player_position = ctx.player.position;
+        let defensive_line_position = self.calculate_defensive_line_position(ctx);
+
+        // Calculate the target position for the offside trap
+        if ctx.player.side.unwrap() == PlayerSide::Left {
+            Vector3::new(defensive_line_position + OFFSIDE_TRAP_DISTANCE, player_position.y, 0.0)
+        } else {
+            Vector3::new(defensive_line_position - OFFSIDE_TRAP_DISTANCE, player_position.y, 0.0)
+        }
     }
 }
