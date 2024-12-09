@@ -12,6 +12,7 @@ use crate::{
 };
 use nalgebra::Vector3;
 use std::fmt::*;
+use crate::r#match::engine::tactics::{MatchTactics};
 
 #[derive(Debug, Clone)]
 pub struct MatchPlayer {
@@ -23,6 +24,7 @@ pub struct MatchPlayer {
     pub player_attributes: PlayerAttributes,
     pub skills: PlayerSkills,
     pub tactics_position: PlayerPositionType,
+    pub tactic: MatchTactics,
     pub velocity: Vector3<f32>,
     pub side: Option<PlayerSide>,
     pub state: PlayerState,

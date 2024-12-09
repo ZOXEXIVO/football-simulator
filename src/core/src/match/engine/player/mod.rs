@@ -6,12 +6,14 @@ pub mod statistics;
 pub mod strategies;
 pub mod positions;
 pub mod events;
+pub mod position;
 
 pub use behaviours::*;
 pub use context::*;
 use itertools::Itertools;
 pub use player::*;
 pub use strategies::*;
+pub use positions::*;
 pub use positions::*;
 
 pub struct GameFieldContextInput<'p> {
