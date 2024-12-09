@@ -8,10 +8,10 @@ pub struct TacticalPositions {
 }
 
 impl TacticalPositions {
-    pub fn new(current_position: PlayerPositionType, tactical_positions: Vec<MatchTacticalPosition>) -> Self {
+    pub fn new(current_position: PlayerPositionType) -> Self {
         TacticalPositions {
             current_position,
-            tactical_positions
+            tactical_positions: Vec::new()
         }
     }
 }

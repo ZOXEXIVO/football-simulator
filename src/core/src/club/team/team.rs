@@ -3,7 +3,7 @@ use crate::context::GlobalContext;
 use crate::r#match::{SquadSelector, TeamSquad};
 use crate::shared::CurrencyValue;
 use crate::{
-    MatchHistory, Player, PlayerCollection, StaffCollection, Tactics, TacticsPositioning,
+    MatchHistory, Player, PlayerCollection, StaffCollection, Tactics, MatchTacticType,
     TacticsSelector, TeamReputation, TeamResult, TeamTraining, TrainingSchedule, TransferItem,
     Transfers,
 };
@@ -115,7 +115,7 @@ impl Team {
         if let Some(tactics) = &self.tactics {
             Cow::Borrowed(tactics)
         } else {
-            Cow::Owned(Tactics::new(TacticsPositioning::T442))
+            Cow::Owned(Tactics::new(MatchTacticType::T442))
         }
     }
 

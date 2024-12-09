@@ -54,7 +54,7 @@ impl MatchPlayer {
             player_attributes: player.player_attributes,
             skills: player.skills,
             velocity: Vector3::new(0.0, 0.0, 0.0),
-            tactical_position: TacticalPositions::new(position, Vec::new()),
+            tactical_position: TacticalPositions::new(position),
             side: None,
             state: Self::default_state(position),
             in_state_time: 0,

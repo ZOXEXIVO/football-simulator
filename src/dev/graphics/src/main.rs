@@ -9,7 +9,7 @@ use std::time::Duration;
 //tactics
 use core::club::player::Player;
 use core::club::player::PlayerPositionType;
-use core::club::team::tactics::{Tactics, TacticsPositioning};
+use core::club::team::tactics::{Tactics, MatchTacticType};
 use core::r#match::squad::TeamSquad;
 use core::r#match::MatchPlayerCollection;
 use core::Vector3;
@@ -193,7 +193,7 @@ pub fn get_home_squad() -> TeamSquad {
     let home_squad = TeamSquad {
         team_id: 1,
         team_name: String::from("123"),
-        tactics: Tactics::new(TacticsPositioning::T442),
+        tactics: Tactics::new(MatchTacticType::T442),
         main_squad: match_players,
         substitutes: Vec::new(),
     };
@@ -231,7 +231,7 @@ pub fn get_away_squad() -> TeamSquad {
     let away_squad = TeamSquad {
         team_id: 2,
         team_name: String::from("321"),
-        tactics: Tactics::new(TacticsPositioning::T442),
+        tactics: Tactics::new(MatchTacticType::T442),
         main_squad: match_players,
         substitutes: Vec::new(),
     };

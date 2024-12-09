@@ -3,26 +3,26 @@ use crate::Team;
 
 #[derive(Debug, Clone)]
 pub struct Tactics {
-    pub positioning: TacticsPositioning,
+    pub tactic_type: MatchTacticType,
 }
 
 impl Tactics {
-    pub fn new(positioning: TacticsPositioning) -> Self {
-        Tactics { positioning }
+    pub fn new(tactic_type: MatchTacticType) -> Self {
+        Tactics { tactic_type }
     }
 
     pub fn positions(&self) -> &[PlayerPositionType; 11] {
         let (_, positions) = TACTICS_POSITIONS
             .iter()
-            .find(|(positioning, _)| *positioning == self.positioning)
+            .find(|(positioning, _)| *positioning == self.tactic_type)
             .unwrap();
 
         positions
     }
 }
 
-pub const TACTICS_POSITIONS: &[(TacticsPositioning, [PlayerPositionType; 11])] = &[(
-    TacticsPositioning::T442,
+pub const TACTICS_POSITIONS: &[(MatchTacticType, [PlayerPositionType; 11])] = &[(
+    MatchTacticType::T442,
     [
         PlayerPositionType::Goalkeeper,
         PlayerPositionType::DefenderLeft,
@@ -39,7 +39,7 @@ pub const TACTICS_POSITIONS: &[(TacticsPositioning, [PlayerPositionType; 11])] =
 )];
 
 #[derive(Debug, Eq, PartialEq, PartialOrd, Clone)]
-pub enum TacticsPositioning {
+pub enum MatchTacticType {
     T442,
     // T235,
     // T451,
@@ -62,9 +62,9 @@ pub struct TacticsSelector;
 impl TacticsSelector {
     pub fn select(_: &Team, coach: &Staff) -> Tactics {
         match coach.behaviour.state {
-            PersonBehaviourState::Poor => Tactics::new(TacticsPositioning::T442),
-            PersonBehaviourState::Normal => Tactics::new(TacticsPositioning::T442),
-            PersonBehaviourState::Good => Tactics::new(TacticsPositioning::T442),
+            PersonBehaviourState::Poor => Tactics::new(MatchTacticType::T442),
+            PersonBehaviourState::Normal => Tactics::new(MatchTacticType::T442),
+            PersonBehaviourState::Good => Tactics::new(MatchTacticType::T442),
         }
     }
 }

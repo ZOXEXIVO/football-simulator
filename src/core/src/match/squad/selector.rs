@@ -157,7 +157,7 @@ mod tests {
     use super::*;
     use crate::{
         IntegerUtils, PlayerCollection, PlayerGenerator, StaffCollection
-        , TacticsPositioning, TeamReputation, TeamType, TrainingSchedule,
+        , MatchTacticType, TeamReputation, TeamType, TrainingSchedule,
         TACTICS_POSITIONS,
     };
     use chrono::{NaiveTime, Utc};
@@ -193,7 +193,7 @@ mod tests {
             StaffCollection::new(Vec::new()),
         );
 
-        team.tactics = Some(Tactics::new(TacticsPositioning::T442));
+        team.tactics = Some(Tactics::new(MatchTacticType::T442));
 
         team
     }
@@ -201,7 +201,7 @@ mod tests {
     fn generate_players() -> Vec<Player> {
         let tactics = TACTICS_POSITIONS
             .iter()
-            .find(|(tp, _)| *tp == TacticsPositioning::T442)
+            .find(|(tp, _)| *tp == MatchTacticType::T442)
             .map(|(_, pt)| pt)
             .unwrap();
 
