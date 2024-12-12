@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
     ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
@@ -38,19 +38,25 @@ impl StateProcessingHandler for MidfielderPassingState {
             return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Standing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    target_teammate.id,
-                    target_teammate.position,
-                    1.0,
+                    PassingEventModel::build()
+                        .with_player_id(ctx.player.id)
+                        .with_target(target_teammate.position)
+                        .with_force(ctx.player().pass_teammate_power(target_teammate.id))
+                        .build()
                 )),
             ));
         }
 
-        if ctx.in_state_time > 50 {
-            if ctx.ball().distance_to_opponent_goal() < 200.0 {
-                return Some(StateChangeResult::with_midfielder_state(
-                    MidfielderState::Shooting,
-                ))
-            }
+        if ctx.ball().distance_to_opponent_goal() < 200.0 {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Shooting,
+            ))
+        }
+        
+        if ctx.in_state_time > 100 {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Distributing,
+            ))
         }
 
         None
@@ -105,39 +111,6 @@ impl MidfielderPassingState {
         ctx: &StateProcessingContext,
         target_teammate: &MatchPlayerLite,
     ) -> bool {
-        return true;
-
-        let player_position = ctx.player.position;
-        let target_position = target_teammate.position;
-
-        // Direction vector from player to target teammate
-        let direction = (target_position - player_position).normalize();
-
-        // Distance to the target teammate
-        let distance_to_target = (target_position - player_position).magnitude();
-
-        // Ray parameters
-        let ray_origin = player_position;
-        let ray_direction = direction;
-
-        // Iterate over opponents to check for intersections
-        for opponent in ctx.context.players.raw_players().iter() {
-            if opponent.team_id != ctx.player.team_id {
-                let opponent_position = opponent.position;
-
-                // Check if opponent is within the pass corridor
-                if self.ray_intersects_sphere(
-                    ray_origin,
-                    ray_direction,
-                    opponent_position,
-                    OPPONENT_COLLISION_RADIUS,
-                    distance_to_target,
-                ) {
-                    // Opponent is obstructing the pass
-                    return false;
-                }
-            }
-        }
         true
     }
 

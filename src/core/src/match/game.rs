@@ -48,7 +48,7 @@ impl Match {
         );
 
         MatchResult {
-            id: String::from(self.id),
+            id: self.id,
             league_id: self.league_id,
             league_slug: String::from(&self.league_slug),
             home_team_id,

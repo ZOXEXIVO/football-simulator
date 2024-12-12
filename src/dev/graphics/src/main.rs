@@ -9,7 +9,7 @@ use std::time::Duration;
 //tactics
 use core::club::player::Player;
 use core::club::player::PlayerPositionType;
-use core::club::team::tactics::{Tactics, TacticsPositioning};
+use core::club::team::tactics::{Tactics, MatchTacticType};
 use core::r#match::squad::TeamSquad;
 use core::r#match::MatchPlayerCollection;
 use core::Vector3;
@@ -193,7 +193,7 @@ pub fn get_home_squad() -> TeamSquad {
     let home_squad = TeamSquad {
         team_id: 1,
         team_name: String::from("123"),
-        tactics: Tactics::new(TacticsPositioning::T442),
+        tactics: Tactics::new(MatchTacticType::T442),
         main_squad: match_players,
         substitutes: Vec::new(),
     };
@@ -231,7 +231,7 @@ pub fn get_away_squad() -> TeamSquad {
     let away_squad = TeamSquad {
         team_id: 2,
         team_name: String::from("321"),
-        tactics: Tactics::new(TacticsPositioning::T442),
+        tactics: Tactics::new(MatchTacticType::T442),
         main_squad: match_players,
         substitutes: Vec::new(),
     };
@@ -353,7 +353,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, ball_owner_id:
             Color::from_rgba(208, 139, 255, 255)
         };
 
-        if player.tactics_position == PlayerPositionType::Goalkeeper {
+        if player.tactical_position.current_position == PlayerPositionType::Goalkeeper {
             color = YELLOW;
         }
 
@@ -373,7 +373,7 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, ball_owner_id:
         }
 
         // Player position
-        let position = &player.tactics_position.get_short_name();
+        let position = &player.tactical_position.current_position.get_short_name();
         let position_font_size = 17.0 * scale;
         let position_text_dimensions = measure_text(position, None, position_font_size as u16, 1.0);
         draw_text(
@@ -453,7 +453,7 @@ fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, ba
         let player_y = offset_y;
 
         // Draw player circle
-        let player_color: Color = if player.tactics_position == PlayerPositionType::Goalkeeper {
+        let player_color: Color = if player.tactical_position.current_position == PlayerPositionType::Goalkeeper {
             YELLOW
         } else {
             if player.team_id == 1 {

@@ -10,7 +10,7 @@ use std::sync::LazyLock;
 static DEFENDER_WALKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_walking_data.json")));
 
-const INTERCEPTION_DISTANCE: f32 = 150.0;
+const INTERCEPTION_DISTANCE: f32 = 250.0;
 const MARKING_DISTANCE: f32 = 50.0;
 const PRESSING_DISTANCE: f32 = 30.0;
 
@@ -22,9 +22,7 @@ impl StateProcessingHandler for DefenderWalkingState {
         let mut result = StateChangeResult::new();
 
         // Transition to Intercepting only if ball moving slowly or player very close
-        if ctx.ball().is_towards_player_with_angle(0.9)
-            && (ctx.ball().speed() < 10.0 || ctx.ball().distance() < INTERCEPTION_DISTANCE / 2.0)
-        {
+        if ctx.ball().is_towards_player_with_angle(0.9) && ctx.ball().distance() < INTERCEPTION_DISTANCE{
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Intercepting,
             ));

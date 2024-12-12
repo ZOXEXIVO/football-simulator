@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
     ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
     StateProcessingHandler, SteeringBehavior,
@@ -28,14 +28,16 @@ impl StateProcessingHandler for MidfielderSwitchingPlayState {
         }
 
         // Check if there's a good opportunity to switch play
-        if let Some(target_position) = self.find_switch_play_target(ctx) {
+        if let Some((teammate_id, teammate_position)) = self.find_switch_play_target(ctx) {
             // If a suitable target position is found, switch play
             return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Passing,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    target_position,
-                    1.0, // Adjust the pass power as needed
+                    PassingEventModel::build()
+                        .with_player_id(ctx.player.id)
+                        .with_target(teammate_position)
+                        .with_force(ctx.player().pass_teammate_power(teammate_id))
+                        .build()
                 )),
             ));
         }
@@ -50,9 +52,9 @@ impl StateProcessingHandler for MidfielderSwitchingPlayState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Move towards the best position to switch play
-        if let Some(target_position) = self.find_switch_play_target(ctx) {
+        if let Some((_, teammate_position)) = self.find_switch_play_target(ctx) {
             let steering = SteeringBehavior::Seek {
-                target: target_position,
+                target: teammate_position,
             }
             .calculate(ctx.player);
 
@@ -67,7 +69,7 @@ impl StateProcessingHandler for MidfielderSwitchingPlayState {
 }
 
 impl MidfielderSwitchingPlayState {
-    fn find_switch_play_target(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+    fn find_switch_play_target(&self, ctx: &StateProcessingContext) -> Option<(u32, Vector3<f32>)> {
         // Find the best position to switch play to
         let player_position = ctx.player.position;
         let ball_position = ctx.tick_context.positions.ball.position;
@@ -96,7 +98,11 @@ impl MidfielderSwitchingPlayState {
             space_a.partial_cmp(&space_b).unwrap()
         });
 
-        best_teammate.map(|teammate| teammate.position)
+        if let Some(teammate) = best_teammate.map(|teammate| teammate) {
+           return Some((teammate.id, teammate.position))
+        }
+        
+        None
     }
 
     fn calculate_space_around_player(

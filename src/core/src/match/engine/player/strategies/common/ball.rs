@@ -183,6 +183,7 @@ impl<'b> BallOperationsImpl<'b> {
     }
 
     pub fn in_own_penalty_area(&self) -> bool {
+        // TODO
         let penalty_area = self
             .ctx
             .context
@@ -230,5 +231,65 @@ impl MatchBallLogic {
         let dot_product = normalized_velocity.dot(&normalized_direction);
 
         (dot_product >= angle, dot_product)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use nalgebra::Vector3;
+
+    #[test]
+    fn test_is_heading_towards_player_true() {
+        let ball_position = Vector3::new(0.0, 0.0, 0.0);
+        let ball_velocity = Vector3::new(1.0, 1.0, 0.0);
+        let player_position = Vector3::new(5.0, 5.0, 0.0);
+        let angle = 0.9;
+
+        let (result, dot_product) = MatchBallLogic::is_heading_towards_player(
+            &ball_position,
+            &ball_velocity,
+            &player_position,
+            angle,
+        );
+
+        assert!(result);
+        assert!(dot_product > angle);
+    }
+
+    #[test]
+    fn test_is_heading_towards_player_false() {
+        let ball_position = Vector3::new(0.0, 0.0, 0.0);
+        let ball_velocity = Vector3::new(1.0, 1.0, 0.0);
+        let player_position = Vector3::new(-5.0, -5.0, 0.0);
+        let angle = 0.9;
+
+        let (result, dot_product) = MatchBallLogic::is_heading_towards_player(
+            &ball_position,
+            &ball_velocity,
+            &player_position,
+            angle,
+        );
+
+        assert!(!result);
+        assert!(dot_product < angle);
+    }
+
+    #[test]
+    fn test_is_heading_towards_player_perpendicular() {
+        let ball_position = Vector3::new(0.0, 0.0, 0.0);
+        let ball_velocity = Vector3::new(1.0, 0.0, 0.0);
+        let player_position = Vector3::new(0.0, 5.0, 0.0);
+        let angle = 0.9;
+
+        let (result, dot_product) = MatchBallLogic::is_heading_towards_player(
+            &ball_position,
+            &ball_velocity,
+            &player_position,
+            angle,
+        );
+
+        assert!(!result);
+        assert!(dot_product < angle);
     }
 }

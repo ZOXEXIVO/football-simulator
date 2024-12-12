@@ -8,9 +8,10 @@ import {TopHeaderService} from "../../../shared/top-header/services/top.header.s
 import {ProcessService} from "../../../shared/process/services/process.service";
 
 @Component({
-  selector: 'country-list',
-  templateUrl: './country.list.component.html',
-  styleUrls: ['./country.list.component.scss']
+    selector: 'country-list',
+    templateUrl: './country.list.component.html',
+    standalone: false,
+    styleUrls: ['./country.list.component.scss']
 })
 export class CountryListComponent extends PageComponent {
   countries$: Observable<CountryListDto[]> = of([]);

@@ -5,6 +5,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::midfielders::states::MidfielderState;
 
 static MIDFIELDER_CROSSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_crossing_data.json")));
@@ -13,7 +14,14 @@ static MIDFIELDER_CROSSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 pub struct MidfielderCrossingState {}
 
 impl StateProcessingHandler for MidfielderCrossingState {
-    fn try_fast(&self, _ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+    fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
+        if !ctx.player.has_ball(ctx) {
+            // Lost possession, transition to Pressing
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Running,
+            ));
+        }
+
         None
     }
 

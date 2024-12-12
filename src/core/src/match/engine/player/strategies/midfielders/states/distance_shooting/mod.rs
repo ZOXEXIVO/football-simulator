@@ -60,11 +60,7 @@ impl StateProcessingHandler for MidfielderDistanceShootingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        // Move towards a better shooting position if necessary
-        let desired_position = self.calculate_desired_shooting_position(ctx);
-        let direction = (desired_position - ctx.player.position).normalize();
-        let speed = ctx.player.skills.physical.pace; // Adjust based on player's pace attribute
-        Some(direction * speed)
+        None
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {}

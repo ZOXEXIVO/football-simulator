@@ -66,13 +66,12 @@ impl StateProcessingHandler for DefenderPressingState {
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         // Move towards the opponent with the ball
 
-        // Identify the opponent player with the ball
-        let players = ctx.context.players.raw_players();
-        let opponent_with_ball = players
-            .iter()
-            .find(|p| p.team_id != ctx.player.team_id && p.has_ball(ctx));
+        let players = ctx.players();
+        let opponents = players.opponents();
+        
+        let mut opponent_with_ball = opponents.with_ball();
 
-        if let Some(opponent) = opponent_with_ball {
+        if let Some(opponent) = opponent_with_ball.next() {
             // Calculate direction towards the opponent
             let direction = (opponent.position - ctx.player.position).normalize();
             // Set speed based on player's acceleration and pace

@@ -103,7 +103,7 @@ fn setup_player_on_field(
 fn get_player_position(player: &MatchPlayer, side: PlayerSide) -> Option<Vector3<f32>> {
     POSITION_POSITIONING
         .iter()
-        .find(|(pos, _, _)| *pos == player.tactics_position)
+        .find(|(pos, _, _)| *pos == player.tactical_position.current_position)
         .and_then(|(_, home, away)| match side {
             PlayerSide::Left => {
                 if let PositionType::Home(x, y) = home {

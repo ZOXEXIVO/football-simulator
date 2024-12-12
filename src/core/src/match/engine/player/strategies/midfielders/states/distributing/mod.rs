@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
     ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
     StateProcessingHandler,
@@ -21,14 +21,14 @@ impl StateProcessingHandler for MidfielderDistributingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            let pass_power = self.calculate_pass_power(teammate.id, ctx);
-
             return Some(StateChangeResult::with_midfielder_state_and_event(
                 MidfielderState::Returning,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    ctx.tick_context.positions.players.position(teammate.id),
-                    pass_power,
+                    PassingEventModel::build()
+                        .with_player_id(ctx.player.id)
+                        .with_target(ctx.tick_context.positions.players.position(teammate.id))
+                        .with_force(ctx.player().pass_teammate_power(teammate.id))
+                        .build(),
                 )),
             ));
         }
@@ -63,13 +63,5 @@ impl MidfielderDistributingState {
         }
 
         None
-    }
-
-    pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx.player().distance_to_player(teammate_id);
-
-        let pass_skill = ctx.player.skills.technical.passing;
-
-        (distance / pass_skill as f32 * 10.0) as f64
     }
 }

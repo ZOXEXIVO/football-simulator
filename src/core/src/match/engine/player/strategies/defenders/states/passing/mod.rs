@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::{Event, EventCollection};
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
@@ -27,14 +27,14 @@ impl StateProcessingHandler for DefenderPassingState {
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
             let teammate_player_position = ctx.tick_context.positions.players.position(teammate_id);
 
-            let pass_power = self.calculate_pass_power(teammate_id, ctx);
-
             return Some(StateChangeResult::with_defender_state_and_event(
                 DefenderState::Returning,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    teammate_player_position,
-                    pass_power,
+                    PassingEventModel::build()
+                        .with_player_id(ctx.player.id)
+                        .with_target(teammate_player_position)
+                        .with_force(ctx.player().pass_teammate_power(teammate_id))
+                        .build()
                 )),
             ));
         }
@@ -50,10 +50,12 @@ impl StateProcessingHandler for DefenderPassingState {
         }
 
         if let Some(teammate_id) = best_player_id {
-             let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
-                ctx.player.id,
-                ctx.tick_context.positions.players.position(teammate_id),
-                1.0,
+            let events = EventCollection::with_event(Event::PlayerEvent(PlayerEvent::PassTo(
+                PassingEventModel::build()
+                    .with_player_id(ctx.player.id)
+                    .with_target(ctx.tick_context.positions.players.position(teammate_id))
+                    .with_force(ctx.player().pass_teammate_power(teammate_id))
+                    .build(),
             )));
 
             return Some(StateChangeResult::with_events(events));
@@ -88,10 +90,7 @@ impl DefenderPassingState {
     }
 
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx
-            .tick_context
-            .distances
-            .get(ctx.player.id, teammate_id);
+        let distance = ctx.tick_context.distances.get(ctx.player.id, teammate_id);
 
         let pass_skill = ctx.player.skills.technical.passing;
 

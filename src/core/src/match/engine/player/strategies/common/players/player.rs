@@ -56,22 +56,65 @@ impl<'p> PlayerOperationsImpl<'p> {
     }
 
     pub fn position_to_distance(&self) -> PlayerDistanceFromStartPosition {
-        MatchPlayerLogic::distance_to_start_position(&self.ctx.player)
+        MatchPlayerLogic::distance_to_start_position(self.ctx.player)
     }
 
     pub fn is_tired(&self) -> bool {
         self.ctx.player.player_attributes.condition_percentage() > 50
     }
 
-    pub fn calculate_pass_power(&self, teammate: &MatchPlayer) -> f64 {
+    pub fn pass_teammate_power(&self, teammate_id: u32) -> f64 {
         let distance = self
             .ctx
             .tick_context
             .distances
-            .get(self.ctx.player.id, teammate.id);
+            .get(self.ctx.player.id, teammate_id);
 
-        let pass_skill = self.ctx.player.skills.technical.passing;
-        (distance / pass_skill as f32 * 10.0) as f64
+        let pass_skill = self.ctx.player.skills.technical.passing / 20.0;
+
+        let raw_power = (distance / (pass_skill * 100.0)) as f64;
+
+        let min_power = 0.1;
+        let max_power = 1.0;
+        let normalized_power = (raw_power - min_power) / (max_power - min_power);
+
+        normalized_power.clamp(0.0, 1.0)
+    }
+
+    pub fn kick_teammate_power(&self, teammate_id: u32) -> f64 {
+        let distance = self
+            .ctx
+            .tick_context
+            .distances
+            .get(self.ctx.player.id, teammate_id);
+
+        let kick_skill = self.ctx.player.skills.technical.free_kicks / 20.0;
+
+        let raw_power = (distance / (kick_skill * 100.0)) as f64;
+
+        let min_power = 0.1;
+        let max_power = 1.0;
+        let normalized_power = (raw_power - min_power) / (max_power - min_power);
+
+        normalized_power.clamp(0.0, 1.0)
+    }
+
+    pub fn throw_teammate_power(&self, teammate_id: u32) -> f64 {
+        let distance = self
+            .ctx
+            .tick_context
+            .distances
+            .get(self.ctx.player.id, teammate_id);
+
+        let throw_skill = self.ctx.player.skills.technical.long_throws / 20.0;
+
+        let raw_power = (distance / (throw_skill * 100.0)) as f64;
+
+        let min_power = 0.1;
+        let max_power = 1.0;
+        let normalized_power = (raw_power - min_power) / (max_power - min_power);
+
+        normalized_power.clamp(0.0, 1.0)
     }
 
     pub fn distance_to_player(&self, player_id: u32) -> f32 {

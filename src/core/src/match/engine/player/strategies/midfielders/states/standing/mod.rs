@@ -33,11 +33,20 @@ impl StateProcessingHandler for MidfielderStandingState {
             ));
         }
 
-        if !ctx.team().is_control_ball() && ctx.ball().distance() < 10.0 {
-            // Transition to Tackling state to attempt to regain possession
-            return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Tackling,
-            ));
+
+
+        if !ctx.team().is_control_ball() {
+            if ctx.ball().distance() < 10.0 {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Tackling,
+                ));
+            }
+
+            if ctx.ball().distance() < 250.0 && ctx.ball().is_towards_player_with_angle(0.9) {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Intercepting,
+                ));
+            }
         }
 
         // 1. Check if the midfielder has the ball
@@ -117,24 +126,17 @@ impl MidfielderStandingState {
 
     /// Determines if the midfielder has passing options.
     fn has_passing_options(&self, ctx: &StateProcessingContext) -> bool {
-        const PASSING_DISTANCE_THRESHOLD: f32 = 30.0; // Distance within which a teammate is considered available for a pass
-
-        ctx.context
-            .players
-            .raw_players()
-            .iter()
-            .filter(|p| p.team_id == ctx.player.team_id && p.id != ctx.player.id)
-            .any(|teammate| {
-                let distance = (ctx.player.position - teammate.position).magnitude();
-                distance < PASSING_DISTANCE_THRESHOLD
-            })
+        const PASSING_DISTANCE_THRESHOLD: f32 = 30.0;
+        ctx.players().teammates().exists(PASSING_DISTANCE_THRESHOLD)
     }
 
     const PRESSING_DISTANCE_THRESHOLD: f32 = 10.0;
 
     /// Checks if an opponent player is nearby within the pressing threshold.
     fn is_opponent_nearby(&self, ctx: &StateProcessingContext) -> bool {
-         ctx.players().opponents().exists(PRESSING_DISTANCE_THRESHOLD)
+        ctx.players()
+            .opponents()
+            .exists(PRESSING_DISTANCE_THRESHOLD)
     }
 
     /// Determines if the midfielder should support an attacking play.

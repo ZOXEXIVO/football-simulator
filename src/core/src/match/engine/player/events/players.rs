@@ -3,6 +3,7 @@ use crate::r#match::player::state::PlayerState;
 use crate::r#match::{GoalDetail, MatchContext, MatchField};
 use log::info;
 use nalgebra::Vector3;
+use crate::r#match::player::events::PassingEventModel;
 use crate::r#match::statistics::MatchStatisticType;
 
 #[derive(Debug)]
@@ -12,7 +13,7 @@ pub enum PlayerEvent {
     BallCollision(u32),
     TacklingBall(u32),
     BallOwnerChange(u32),
-    PassTo(u32, Vector3<f32>, f64),
+    PassTo(PassingEventModel),
     ClearBall(Vector3<f32>),
     RushOut(u32),
     Shoot(u32, Vector3<f32>),
@@ -85,14 +86,20 @@ impl PlayerEventDispatcher {
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = Some(player_id);
             }
-            PlayerEvent::PassTo(_player_id, pass_target, _pass_power) => {
-                let ball_pass_vector = pass_target - field.ball.position;
-                field.ball.velocity = ball_pass_vector.normalize();
+            PlayerEvent::PassTo(event_model) => {
+                let ball_pass_vector = event_model.pass_target - field.ball.position;
+                let direction = ball_pass_vector.normalize();
+                let pass_force = event_model.pass_force as f32;
+                let pass_force_multiplier = 1.1;
+
+                let velocity = direction * (pass_force * pass_force_multiplier);
+
+                field.ball.velocity = velocity;
 
                 field.ball.previous_owner = field.ball.current_owner;
                 field.ball.current_owner = None;
 
-                field.ball.flags.in_passing_state_time = 50;
+                field.ball.flags.in_passing_state_time = 100;
             }
             PlayerEvent::RushOut(_) => {}
             PlayerEvent::StayInGoal(_) => {}

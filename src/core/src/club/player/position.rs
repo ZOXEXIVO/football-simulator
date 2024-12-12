@@ -86,26 +86,26 @@ impl PlayerPositionType {
     pub fn position_group(&self) -> PlayerFieldPositionGroup {
         match *self {
             PlayerPositionType::Goalkeeper => PlayerFieldPositionGroup::Goalkeeper,
-            PlayerPositionType::Sweeper => PlayerFieldPositionGroup::Defender,
-            PlayerPositionType::DefenderLeft => PlayerFieldPositionGroup::Defender,
-            PlayerPositionType::DefenderCenterLeft => PlayerFieldPositionGroup::Defender,
-            PlayerPositionType::DefenderCenter => PlayerFieldPositionGroup::Defender,
-            PlayerPositionType::DefenderCenterRight => PlayerFieldPositionGroup::Defender,
-            PlayerPositionType::DefenderRight => PlayerFieldPositionGroup::Defender,
+            PlayerPositionType::Sweeper |
+            PlayerPositionType::DefenderLeft |
+            PlayerPositionType::DefenderCenterLeft |
+            PlayerPositionType::DefenderCenter |
+            PlayerPositionType::DefenderCenterRight |
+            PlayerPositionType::DefenderRight |
             PlayerPositionType::DefensiveMidfielder => PlayerFieldPositionGroup::Defender,
-            PlayerPositionType::MidfielderLeft => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::MidfielderCenterLeft => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::MidfielderCenter => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::MidfielderCenterRight => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::MidfielderRight => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::AttackingMidfielderLeft => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::AttackingMidfielderCenter => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::AttackingMidfielderRight => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::WingbackLeft => PlayerFieldPositionGroup::Midfielder,
+            PlayerPositionType::MidfielderLeft |
+            PlayerPositionType::MidfielderCenterLeft |
+            PlayerPositionType::MidfielderCenter |
+            PlayerPositionType::MidfielderCenterRight |
+            PlayerPositionType::MidfielderRight |
+            PlayerPositionType::AttackingMidfielderLeft |
+            PlayerPositionType::AttackingMidfielderCenter |
+            PlayerPositionType::AttackingMidfielderRight |
+            PlayerPositionType::WingbackLeft |
             PlayerPositionType::WingbackRight => PlayerFieldPositionGroup::Midfielder,
-            PlayerPositionType::ForwardLeft => PlayerFieldPositionGroup::Forward,
-            PlayerPositionType::ForwardCenter => PlayerFieldPositionGroup::Forward,
-            PlayerPositionType::ForwardRight => PlayerFieldPositionGroup::Forward,
+            PlayerPositionType::ForwardLeft |
+            PlayerPositionType::ForwardCenter |
+            PlayerPositionType::ForwardRight |
             PlayerPositionType::Striker => PlayerFieldPositionGroup::Forward,
         }
     }

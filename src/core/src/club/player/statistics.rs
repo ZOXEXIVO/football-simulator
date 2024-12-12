@@ -1,6 +1,6 @@
 use crate::league::Season;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct PlayerStatistics {
     pub played: u16,
     pub played_subs: u16,
@@ -17,25 +17,6 @@ pub struct PlayerStatistics {
     pub passes: u8,
 
     pub average_rating: f32,
-}
-
-impl PlayerStatistics {
-    pub fn new() -> Self {
-        PlayerStatistics {
-            played: 0,
-            played_subs: 0,
-            goals: 0,
-            assists: 0,
-            penalties: 0,
-            player_of_the_match: 0,
-            yellow_cards: 0,
-            red_cards: 0,
-            shots_on_target: 0.0,
-            tackling: 0.0,
-            passes: 0,
-            average_rating: 0.0,
-        }
-    }
 }
 
 #[derive(Debug)]

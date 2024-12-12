@@ -1,7 +1,6 @@
 use crate::r#match::{
-    BallSide, MatchField, MatchObjectsPositions, PlayerDistanceClosure, Space, SphereCollider,
+    MatchField, MatchObjectsPositions, PlayerDistanceClosure, Space
 };
-use nalgebra::Vector3;
 
 pub struct GameTickContext {
     pub positions: MatchObjectsPositions,

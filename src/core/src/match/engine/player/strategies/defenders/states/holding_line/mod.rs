@@ -4,7 +4,7 @@ use nalgebra::Vector3;
 use std::sync::LazyLock;
 
 use crate::r#match::defenders::states::DefenderState;
-use crate::r#match::{ConditionContext, MatchPlayer, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext, StateProcessingHandler};
 
 static DEFENDER_HOLDING_LINE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_holding_line_data.json")));
@@ -57,8 +57,32 @@ impl StateProcessingHandler for DefenderHoldingLineState {
         None
     }
 
-    fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::zeros())
+    fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
+        let defensive_line_position = self.calculate_defensive_line_position(ctx);
+        let current_position = ctx.player.position;
+        let target_position = Vector3::new(current_position.x, defensive_line_position, current_position.z);
+
+        // Calculate the distance between the current position and the target position
+        let distance = (target_position - current_position).magnitude();
+
+        // Define a minimum distance threshold to prevent oscillation
+        const MIN_DISTANCE_THRESHOLD: f32 = 150.0;
+
+        if distance > MIN_DISTANCE_THRESHOLD {
+            // Calculate the direction from the current position to the target position
+            let direction = (target_position - current_position).normalize();
+
+            // Define a smooth speed factor based on the distance
+            let speed_factor = (distance / MAX_DEFENSIVE_LINE_DEVIATION).clamp(0.1, 1.0);
+
+            // Calculate the velocity based on the direction and speed factor
+            let velocity = direction * speed_factor * ctx.player.skills.physical.pace;
+
+            Some(velocity)
+        } else {
+            // If the distance is below the threshold, return zero velocity to prevent oscillation
+            Some(Vector3::zeros())
+        }
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {}

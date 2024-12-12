@@ -8,6 +8,7 @@ use crate::r#match::{
 use nalgebra::Vector3;
 use rand::Rng;
 use std::sync::LazyLock;
+use crate::r#match::events::Event;
 
 static DEFENDER_INTERCEPTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_intercepting_data.json")));
@@ -29,30 +30,23 @@ impl StateProcessingHandler for DefenderInterceptingState {
             ));
         }
 
-        // 1. Check if the ball is too far away, transition to Returning state
         let ball_ops = ctx.ball();
 
-        // 3. If the defender has intercepted the ball, transition to appropriate state
         let ball_distance = ball_ops.distance();
-        if ball_distance < 10.0 {
+        if ball_distance < 15.0 {
             if ctx.tick_context.ball.is_owned {
                 return Some(StateChangeResult::with_defender_state(
                     DefenderState::Tackling,
                 ));
-            } else {
-                if self.calculate_tackling_success(ctx) {
-                    let mut state = StateChangeResult::with_defender_state(DefenderState::Running);
-
-                    state
-                        .events
-                        .add_player_event(PlayerEvent::ClaimBall(ctx.player.id));
-
-                    return Some(state);
-                }
+            } else if self.calculate_tackling_success(ctx) {
+                return Some(StateChangeResult::with_defender_state_and_event(
+                    DefenderState::Running,
+                    Event::PlayerEvent(PlayerEvent::ClaimBall(ctx.player.id))
+                ));
             }
         }
 
-        if ball_ops.distance() > 150.0 {
+        if ball_distance > 150.0 {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Returning,
             ));
@@ -75,44 +69,55 @@ impl StateProcessingHandler for DefenderInterceptingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.in_state_time % 3 == 0 {
-            // Calculate the interception point
-            let interception_point = self.calculate_interception_point(ctx);
+        // Calculate the interception point
+        let interception_point = self.calculate_interception_point(ctx);
 
-            // Direction towards the interception point
-            let to_interception = interception_point - ctx.player.position;
-            let direction = if to_interception.magnitude() > f32::EPSILON {
-                to_interception.normalize()
-            } else {
-                // If the player is very close to the interception point, use their current direction
-                // or a default direction if the velocity is near zero
-                if ctx.player.velocity.magnitude() > f32::EPSILON {
-                    ctx.player.velocity.normalize()
-                } else {
-                    Vector3::new(1.0, 0.0, 0.0) // Default direction, e.g., positive x-axis
-                }
-            };
-
-            // Retrieve player's current speed magnitude
-            let current_speed = ctx.player.velocity.magnitude();
-
-            // Player's physical attributes (scaled appropriately)
-            let acceleration = ctx.player.skills.physical.acceleration / 10.0; // Scale down as needed
-            let max_speed = ctx.player.skills.physical.pace / 10.0; // Scale down as needed
-
-            // Ensure delta_time is available; if not, define it based on your simulation tick rate
-            let delta_time = 1.0 / 60.0; // ctx.delta_time; // Time elapsed since last update in seconds
-
-            // Calculate new speed, incrementing by acceleration, capped at max_speed
-            let new_speed = (current_speed + acceleration * delta_time).min(max_speed);
-
-            // Calculate new velocity vector
-            let new_velocity = direction * new_speed;
-
-            Some(new_velocity)
+        // Direction towards the interception point
+        let to_interception = interception_point - ctx.player.position;
+        let direction = if to_interception.magnitude() > f32::EPSILON {
+            to_interception.normalize()
         } else {
-            None
-        }
+            // If the player is very close to the interception point, use their current direction
+            // or a default direction if the velocity is near zero
+            if ctx.player.velocity.magnitude() > f32::EPSILON {
+                ctx.player.velocity.normalize()
+            } else {
+                Vector3::new(1.0, 0.0, 0.0) // Default direction, e.g., positive x-axis
+            }
+        };
+
+        // Calculate the distance to the interception point
+        let distance_to_interception = to_interception.magnitude();
+
+        // Calculate the time remaining until the ball reaches the interception point
+        let ball_velocity = ctx.tick_context.positions.ball.velocity;
+        let ball_speed = ball_velocity.magnitude();
+        let time_to_interception = distance_to_interception / ball_speed;
+
+        // Player's physical attributes (scaled appropriately)
+        let acceleration = ctx.player.skills.physical.acceleration / 5.0; // Scale down as needed
+        let max_speed = ctx.player.skills.physical.strength / 10.0; // Scale down as needed
+
+        // Ensure delta_time is available; if not, define it based on your simulation tick rate
+        let delta_time = 1.0 / 60.0; // ctx.delta_time; // Time elapsed since last update in seconds
+
+        // Calculate the required speed to reach the interception point in time
+        let required_speed = distance_to_interception / time_to_interception;
+
+        // Calculate the new speed based on the required speed and player's attributes
+        let new_speed = if required_speed > max_speed {
+            // If the required speed exceeds the player's maximum speed, use the maximum speed
+            max_speed
+        } else {
+            // Calculate the new speed based on the player's current speed, acceleration, and time available
+            let speed_increment = acceleration * delta_time;
+            (ctx.player.velocity.magnitude() + speed_increment).min(required_speed)
+        };
+
+        // Calculate new velocity vector
+        let new_velocity = direction * new_speed;
+
+        Some(new_velocity)
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {
@@ -153,13 +158,14 @@ impl DefenderInterceptingState {
 
         // Find the minimum time for any opponent to reach the interception point
         let opponent_time = ctx
-            .context
-            .players
-            .raw_players()
-            .iter()
-            .filter(|p| p.team_id != ctx.player.team_id)
+            .players()
+            .opponents()
+            .all()
             .map(|opponent| {
-                let opponent_speed = opponent.skills.physical.pace.max(0.1);
+                let player = ctx.player();
+                let skills = player.skills(opponent.id);
+                
+                let opponent_speed = skills.physical.pace.max(0.1);
                 let opponent_distance = (interception_point - opponent.position).magnitude();
                 opponent_distance / opponent_speed
             })

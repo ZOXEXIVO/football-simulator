@@ -2,12 +2,15 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::forwarders::states::ForwardState;
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::result::VectorExtensions;
-use crate::r#match::{ConditionContext, MatchPlayer, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler};
+use crate::r#match::{
+    ConditionContext, MatchPlayer, MatchPlayerLite, PlayerSide, StateChangeResult,
+    StateProcessingContext, StateProcessingHandler,
+};
 use nalgebra::Vector3;
-use std::sync::LazyLock;
 use rand::prelude::IteratorRandom;
+use std::sync::LazyLock;
 
 static FORWARD_PASSING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_passing_data.json")));
@@ -33,14 +36,14 @@ impl StateProcessingHandler for ForwardPassingState {
 
         // Find the best passing option
         if let Some(teammate) = self.find_best_pass_option(ctx) {
-            let pass_power = self.calculate_pass_power(teammate.id, ctx);
-
             return Some(StateChangeResult::with_forward_state_and_event(
                 ForwardState::Running,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    ctx.tick_context.positions.players.position(teammate.id),
-                    pass_power,
+                    PassingEventModel::build()
+                        .with_player_id(ctx.player.id)
+                        .with_target(ctx.tick_context.positions.players.position(teammate.id))
+                        .with_force(ctx.player().pass_teammate_power(teammate.id))
+                        .build(),
                 )),
             ));
         }
@@ -69,7 +72,7 @@ impl StateProcessingHandler for ForwardPassingState {
     }
 
     fn velocity(&self, _ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        Some(Vector3::new(0.0, 0.0, 0.0))
+        None
     }
 
     fn process_conditions(&self, _ctx: ConditionContext) {}
@@ -77,10 +80,7 @@ impl StateProcessingHandler for ForwardPassingState {
 
 impl ForwardPassingState {
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx
-            .tick_context
-            .distances
-            .get(ctx.player.id, teammate_id);
+        let distance = ctx.tick_context.distances.get(ctx.player.id, teammate_id);
 
         let pass_skill = ctx.player.skills.technical.passing;
 
@@ -93,7 +93,11 @@ impl ForwardPassingState {
     ) -> Option<MatchPlayerLite> {
         let players = ctx.players();
 
-        if let Some(player) = players.teammates().nearby(300.0).choose(&mut rand::thread_rng()) {
+        if let Some(player) = players
+            .teammates()
+            .nearby(300.0)
+            .choose(&mut rand::thread_rng())
+        {
             return Some(player);
         }
 
@@ -106,8 +110,7 @@ impl ForwardPassingState {
         let players = ctx.players();
         let opponents = players.opponents();
 
-        let distance = ctx.tick_context.distances
-            .get(ctx.player.id, teammate.id);
+        let distance = ctx.tick_context.distances.get(ctx.player.id, teammate.id);
 
         if distance > max_distance {
             return false;
@@ -115,8 +118,7 @@ impl ForwardPassingState {
 
         let mut all_opponents = opponents.all();
 
-        all_opponents
-            .all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
+        all_opponents.all(|opponent| opponent.position.distance_to(&teammate.position) > 5.0)
     }
 
     fn in_passing_lane(&self, ctx: &StateProcessingContext, teammate: &MatchPlayer) -> bool {

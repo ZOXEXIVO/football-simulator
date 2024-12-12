@@ -8,6 +8,7 @@ use crate::r#match::{
 use crate::IntegerUtils;
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use crate::r#match::defenders::states::DefenderState;
 
 static MIDFIELDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
@@ -40,6 +41,14 @@ impl StateProcessingHandler for MidfielderRunningState {
                 ));
             }
         } else {
+            if !ctx.team().is_control_ball() {
+                if ctx.ball().distance() < 250.0 && ctx.ball().is_towards_player_with_angle(0.9) {
+                    return Some(StateChangeResult::with_midfielder_state(
+                        MidfielderState::Intercepting
+                    ));
+                }
+            }
+
             // If the player doesn't have the ball, check if they should press, support attack, or return
             if self.should_press(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
@@ -133,11 +142,10 @@ impl MidfielderRunningState {
     }
 
     fn should_press(&self, ctx: &StateProcessingContext) -> bool {
-        let ball_distance = ctx.ball().distance();
         let pressing_distance = 100.0;
 
         !ctx.team().is_control_ball()
-            && ball_distance < pressing_distance
+            && ctx.ball().distance() < pressing_distance
             && ctx.ball().is_towards_player_with_angle(0.8)
     }
 

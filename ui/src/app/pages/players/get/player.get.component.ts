@@ -10,8 +10,9 @@ import {ProcessService} from "../../../shared/process/services/process.service";
 
 @UntilDestroy()
 @Component({
-  templateUrl: './player.get.component.html',
-  styleUrls: ['./player.get.component.scss']
+    templateUrl: './player.get.component.html',
+    standalone: false,
+    styleUrls: ['./player.get.component.scss']
 })
 export class PlayerGetComponent extends PageComponent {
   public player: PlayerDto | null = null;

@@ -3,7 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-    SteeringBehavior, VectorExtensions,
+    SteeringBehavior,
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
@@ -22,8 +22,14 @@ impl StateProcessingHandler for GoalkeeperPreparingForSaveState {
                 GoalkeeperState::Passing,
             ));
         } else {
+            if ctx.team().is_control_ball() {
+                return Some(StateChangeResult::with_goalkeeper_state(
+                    GoalkeeperState::ReturningToGoal
+                ));
+            }
+            
             // Transition to Walking if the ball is far away
-            if ctx.ball().distance() > 150.0 {
+            if ctx.ball().distance() > 250.0 {
                 return Some(StateChangeResult::with_goalkeeper_state(
                     GoalkeeperState::Walking,
                 ));
@@ -75,13 +81,13 @@ impl GoalkeeperPreparingForSaveState {
     fn should_dive(&self, ctx: &StateProcessingContext) -> bool {
         let ball_velocity = ctx.tick_context.positions.ball.velocity;
         let ball_distance = ctx.ball().distance();
-        let ball_speed = ball_velocity.norm();
 
+        if ball_distance > 10.0 {
+            return false;
+        }
+        
         // Check if the ball is moving fast towards the goal
-        let towards_goal =
-            ball_velocity.dot(&(ctx.ball().direction_to_own_goal() - ctx.player.position)) > 0.0;
-
-        ball_distance < 10.0 && ball_speed > 15.0 && towards_goal
+        ball_velocity.dot(&(ctx.ball().direction_to_own_goal() - ctx.player.position)) > 0.0
     }
 
     fn is_ball_catchable(&self, ctx: &StateProcessingContext) -> bool {
@@ -95,20 +101,10 @@ impl GoalkeeperPreparingForSaveState {
     fn should_come_out(&self, ctx: &StateProcessingContext) -> bool {
         let ball_distance = ctx.ball().distance();
         let goalkeeper_skills = &ctx.player.skills;
-        let ball_in_penalty_area = self.is_ball_in_penalty_area(ctx);
 
-        ball_distance < 30.0
-            && ball_in_penalty_area
-            && goalkeeper_skills.mental.decisions > 10.0
-            && goalkeeper_skills.physical.acceleration > 10.0
+        ball_distance < 150.0 && goalkeeper_skills.mental.decisions > 8.0
     }
-
-    fn is_ball_in_penalty_area(&self, _ctx: &StateProcessingContext) -> bool {
-        // Implement logic to check if the ball is in the penalty area
-        // This will depend on your field dimensions and coordinate system
-        true // Placeholder
-    }
-
+    
     fn calculate_optimal_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
         let goal_position = ctx.ball().direction_to_own_goal();
         let ball_position = ctx.tick_context.positions.ball.position;

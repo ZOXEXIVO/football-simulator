@@ -2,7 +2,7 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::events::EventCollection;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
     ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
@@ -46,17 +46,14 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
             });
 
         if let Some(teammate) = best_teammate {
-            // 3. Calculate the throw power based on the distance to the teammate
-            let distance_to_teammate = (ctx.player.position - teammate.position).magnitude();
-            let throw_power = distance_to_teammate / ctx.player.skills.technical.long_throws
-                * THROW_POWER_MULTIPLIER;
-
             let mut events = EventCollection::new();
 
             events.add_player_event(PlayerEvent::PassTo(
-                ctx.player.id,
-                teammate.position,
-                throw_power as f64,
+                PassingEventModel::build()
+                    .with_player_id(ctx.player.id)
+                    .with_target(teammate.position)
+                    .with_force(ctx.player().throw_teammate_power(teammate.id))
+                    .build()
             ));
             events.add_player_event(PlayerEvent::UnClaimBall(ctx.player.id));
 

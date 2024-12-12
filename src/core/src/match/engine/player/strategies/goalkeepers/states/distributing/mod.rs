@@ -2,13 +2,12 @@ use crate::common::loader::DefaultNeuralNetworkLoader;
 use crate::common::NeuralNetwork;
 use crate::r#match::events::Event;
 use crate::r#match::goalkeepers::states::state::GoalkeeperState;
-use crate::r#match::player::events::PlayerEvent;
+use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
+    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
 };
 use nalgebra::Vector3;
-use rand::prelude::{IteratorRandom};
+use rand::prelude::IteratorRandom;
 use std::sync::LazyLock;
 
 static GOALKEEPER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -29,14 +28,14 @@ impl StateProcessingHandler for GoalkeeperDistributingState {
         }
 
         if let Some(teammate_id) = self.find_best_pass_option(ctx) {
-            let pass_power = self.calculate_pass_power(teammate_id, ctx);
-
             return Some(StateChangeResult::with_goalkeeper_state_and_event(
                 GoalkeeperState::ReturningToGoal,
                 Event::PlayerEvent(PlayerEvent::PassTo(
-                    ctx.player.id,
-                    ctx.tick_context.positions.players.position(teammate_id),
-                    pass_power,
+                    PassingEventModel::build()
+                        .with_player_id(ctx.player.id)
+                        .with_target(ctx.tick_context.positions.players.position(teammate_id))
+                        .with_force(ctx.player().pass_teammate_power(teammate_id))
+                        .build()
                 )),
             ));
         }
@@ -59,7 +58,11 @@ impl GoalkeeperDistributingState {
     fn find_best_teammate_to_distribute(&self, ctx: &StateProcessingContext) -> Option<u32> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_ids(150.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players
+            .teammates()
+            .nearby_ids(150.0)
+            .choose(&mut rand::thread_rng())
+        {
             return Some(teammate_id);
         }
 
@@ -72,13 +75,14 @@ impl GoalkeeperDistributingState {
         distance_to_goal < 20.0 // Adjust based on your game's scale
     }
 
-    fn find_best_pass_option<'a>(
-        &'a self,
-        ctx: &'a StateProcessingContext<'a>,
-    ) -> Option<u32> {
+    fn find_best_pass_option<'a>(&'a self, ctx: &'a StateProcessingContext<'a>) -> Option<u32> {
         let players = ctx.players();
 
-        if let Some((teammate_id, _)) = players.teammates().nearby_ids(300.0).choose(&mut rand::thread_rng()) {
+        if let Some((teammate_id, _)) = players
+            .teammates()
+            .nearby_ids(300.0)
+            .choose(&mut rand::thread_rng())
+        {
             return Some(teammate_id);
         }
 
@@ -86,10 +90,7 @@ impl GoalkeeperDistributingState {
     }
 
     pub fn calculate_pass_power(&self, teammate_id: u32, ctx: &StateProcessingContext) -> f64 {
-        let distance = ctx
-            .tick_context
-            .distances
-            .get(ctx.player.id, teammate_id);
+        let distance = ctx.tick_context.distances.get(ctx.player.id, teammate_id);
 
         let pass_skill = ctx.player.skills.technical.passing;
 

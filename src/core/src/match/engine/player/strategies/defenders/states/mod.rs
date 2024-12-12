@@ -20,6 +20,7 @@ pub mod tackling;
 pub mod takeball;
 pub mod tracking_back;
 pub mod walking;
+pub mod common;
 
 pub use blocking::*;
 pub use clearing::*;

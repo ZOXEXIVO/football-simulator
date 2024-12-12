@@ -60,7 +60,7 @@ impl Technical {
             + self.passing
             + self.penalty_taking
             + self.tackling
-            + self.technique) as f32
+            + self.technique)
             / 14.0
     }
 
@@ -100,7 +100,7 @@ impl Mental {
             + self.positioning
             + self.teamwork
             + self.vision
-            + self.work_rate) as f32
+            + self.work_rate)
             / 14.0
     }
 
@@ -130,7 +130,7 @@ impl Physical {
             + self.natural_fitness
             + self.pace
             + self.stamina
-            + self.strength) as f32
+            + self.strength)
             / 8.0
     }
 

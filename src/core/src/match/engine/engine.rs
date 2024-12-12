@@ -58,7 +58,7 @@ impl<const W: usize, const H: usize> FootballEngine<W, H> {
         context: &mut MatchContext,
         match_data: &mut ResultMatchPositionData,
     ) -> PlayMatchStateResult {
-        let result = PlayMatchStateResult::new();
+        let result = PlayMatchStateResult::default();
 
         while context.increment_time() {
             Self::game_tick(field, context, match_data);
@@ -382,14 +382,9 @@ impl MatchTime {
     }
 }
 
+#[derive(Default)]
 pub struct PlayMatchStateResult {
     pub additional_time: u64,
-}
-
-impl PlayMatchStateResult {
-    pub fn new() -> Self {
-        PlayMatchStateResult { additional_time: 0 }
-    }
 }
 
 #[cfg(test)]

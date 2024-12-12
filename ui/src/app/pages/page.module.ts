@@ -12,7 +12,7 @@ import {SharedModule} from "../shared/shared.module";
 
 @NgModule({
     declarations: [
-        PageComponent,
+
     ],
     imports: [
         SharedModule,
@@ -21,9 +21,9 @@ import {SharedModule} from "../shared/shared.module";
         CountryModule,
         LeagueModule,
         TeamModule,
-        RouterModule.forChild(pageRoutes)
-    ],
-    bootstrap: [PageComponent]
+        RouterModule.forChild(pageRoutes),
+        PageComponent
+    ]
 })
 export class PageModule {
 }

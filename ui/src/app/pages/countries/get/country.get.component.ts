@@ -10,8 +10,9 @@ import {ProcessService} from "../../../shared/process/services/process.service";
 
 @UntilDestroy()
 @Component({
-  templateUrl: './country.get.component.html',
-  styleUrls: ['./country.get.component.scss']
+    templateUrl: './country.get.component.html',
+    standalone: false,
+    styleUrls: ['./country.get.component.scss']
 })
 export class CountryGetComponent extends PageComponent {
   public country: CountryDto | null = null;

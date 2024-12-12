@@ -11,9 +11,8 @@ use std::sync::LazyLock;
 static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_creating_space_data.json")));
 
-const CREATING_SPACE_THRESHOLD: f32 = 30.0; // Adjust based on your game's scale
-const OPPONENT_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust based on your game's scale
-const VELOCITY_CHANGE_THRESHOLD: f32 = 2.0; // Adjust based on your game's scale
+const CREATING_SPACE_THRESHOLD: f32 = 50.0;
+const OPPONENT_DISTANCE_THRESHOLD: f32 = 20.0;
 
 #[derive(Default)]
 pub struct ForwardCreatingSpaceState {}
@@ -43,9 +42,9 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
         }
 
         // Check if the player should run to the opponent's side between opponents
-        if self.should_run_to_opponent_side(ctx) {
-            return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        }
+        // if self.should_run_to_opponent_side(ctx) {
+        //     return Some(StateChangeResult::with_forward_state(ForwardState::Running));
+        // }
 
         None
     }
@@ -56,9 +55,8 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
         Some(
-            SteeringBehavior::Arrive {
-                target: ctx.tick_context.positions.ball.position,
-                slowing_distance: 150.0,
+            SteeringBehavior::Flee {
+                target: ctx.tick_context.positions.ball.position
             }
             .calculate(ctx.player)
             .velocity,
@@ -72,7 +70,7 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
 
 impl ForwardCreatingSpaceState {
     fn has_created_space(&self, ctx: &StateProcessingContext) -> bool {
-        ctx.players().opponents().exists(CREATING_SPACE_THRESHOLD)
+        !ctx.players().opponents().exists(CREATING_SPACE_THRESHOLD)
     }
 
     fn is_too_close_to_opponent(&self, ctx: &StateProcessingContext) -> bool {

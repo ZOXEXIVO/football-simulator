@@ -46,7 +46,6 @@ impl From<&MatchField> for PlayerDistanceClosure {
 impl PlayerDistanceClosure {
     pub fn get(&self, player_from_id: u32, player_to_id: u32) -> f32 {
         if player_from_id == player_to_id {
-            panic!("SAME");
             debug!(
                 "player {} and {} are the same",
                 player_from_id, player_to_id
