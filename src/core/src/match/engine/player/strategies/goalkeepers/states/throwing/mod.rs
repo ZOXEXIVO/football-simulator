@@ -46,18 +46,13 @@ impl StateProcessingHandler for GoalkeeperThrowingState {
             });
 
         if let Some(teammate) = best_teammate {
-            // 3. Calculate the throw power based on the distance to the teammate
-            let distance_to_teammate = (ctx.player.position - teammate.position).magnitude();
-            let throw_power = distance_to_teammate / ctx.player.skills.technical.long_throws
-                * THROW_POWER_MULTIPLIER;
-
             let mut events = EventCollection::new();
 
             events.add_player_event(PlayerEvent::PassTo(
                 PassingEventModel::build()
                     .with_player_id(ctx.player.id)
                     .with_target(teammate.position)
-                    .with_force(throw_power as f64)
+                    .with_force(ctx.player().throw_teammate_power(teammate.id))
                     .build()
             ));
             events.add_player_event(PlayerEvent::UnClaimBall(ctx.player.id));
