@@ -11,8 +11,6 @@ static DEFENDER_OFFSIDE_TRAP_STATE_NETWORK: LazyLock<NeuralNetwork> =
 
 const OFFSIDE_TRAP_DISTANCE: f32 = 5.0; // Distance to move forward to set the trap
 const OFFSIDE_TRAP_SPEED_MULTIPLIER: f32 = 1.2; // Speed multiplier when executing the trap
-const OFFSIDE_TRAP_SUCCESS_THRESHOLD: f32 = 0.7; // Threshold for offside trap success
-const STAMINA_THRESHOLD: f32 = 30.0; // Minimum stamina to execute the offside trap
 
 #[derive(Default)]
 pub struct DefenderOffsideTrapState {}
@@ -69,7 +67,7 @@ impl StateProcessingHandler for DefenderOffsideTrapState {
         let distance_to_target = (target_position - current_position).magnitude();
 
         // Define a threshold distance for smooth deceleration
-        let deceleration_threshold = 2.0;
+        let deceleration_threshold = 100.0;
 
         // Calculate the speed based on the distance to the target position
         let speed = if distance_to_target <= deceleration_threshold {

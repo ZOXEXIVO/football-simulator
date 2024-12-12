@@ -11,8 +11,8 @@ use std::sync::LazyLock;
 static FORWARD_CREATING_SPACE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_creating_space_data.json")));
 
-const CREATING_SPACE_THRESHOLD: f32 = 30.0; // Adjust based on your game's scale
-const OPPONENT_DISTANCE_THRESHOLD: f32 = 10.0; // Adjust based on your game's scale
+const CREATING_SPACE_THRESHOLD: f32 = 50.0;
+const OPPONENT_DISTANCE_THRESHOLD: f32 = 20.0;
 
 #[derive(Default)]
 pub struct ForwardCreatingSpaceState {}

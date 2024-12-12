@@ -93,7 +93,7 @@ impl StateProcessingHandler for DefenderInterceptingState {
 
             // Player's physical attributes (scaled appropriately)
             let acceleration = ctx.player.skills.physical.acceleration / 10.0; // Scale down as needed
-            let max_speed = ctx.player.skills.physical.pace / 10.0; // Scale down as needed
+            let max_speed = ctx.player.skills.physical.strength / 10.0; // Scale down as needed
 
             // Ensure delta_time is available; if not, define it based on your simulation tick rate
             let delta_time = 1.0 / 60.0; // ctx.delta_time; // Time elapsed since last update in seconds

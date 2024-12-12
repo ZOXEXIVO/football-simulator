@@ -1,5 +1,10 @@
 use crate::PlayerPositionType;
-use crate::r#match::position::MatchTacticalPosition;
+
+#[derive(Debug, Clone)]
+pub struct MatchTacticalPosition {
+    pub position: PlayerPositionType,
+    pub path: Vec<(f32, f32)>,
+}
 
 #[derive(Debug, Clone)]
 pub struct TacticalPositions {
