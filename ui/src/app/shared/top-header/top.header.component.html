@@ -6,8 +6,8 @@
   <div class="header-title-block">
     <div class="page-title">{{ content.mainContent }}</div>
     <div>
-      <a [routerLink]="[content.subContentLink]" class="sub-title-link">
-        {{ content.subContent }}
+      <a [routerLink]="[content!.subContentLink]" class="sub-title-link">
+        {{ content!.subContent }}
       </a>
     </div>
   </div>

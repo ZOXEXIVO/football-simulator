@@ -5,9 +5,10 @@ import { ProcessService } from './services/process.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'process',
-  templateUrl: './process.component.html',
-  styleUrls: ['./process.component.scss']
+    selector: 'process',
+    templateUrl: './process.component.html',
+    standalone: false,
+    styleUrls: ['./process.component.scss']
 })
 export class ProcessComponent implements OnInit {
   date: DateDto | undefined;

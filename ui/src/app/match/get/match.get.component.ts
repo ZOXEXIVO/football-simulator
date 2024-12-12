@@ -10,6 +10,7 @@ import {TopHeaderService} from "../../shared/top-header/services/top.header.serv
 @UntilDestroy()
 @Component({
     templateUrl: './match.get.component.html',
+    standalone: false,
     styleUrls: ['./match.get.component.scss']
 })
 export class MatchGetComponent implements OnInit {

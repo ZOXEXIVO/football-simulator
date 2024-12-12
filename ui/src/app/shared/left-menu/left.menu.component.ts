@@ -5,10 +5,11 @@ import { LeftMenuService, MenuSection } from './services/left.menu.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'left-menu',
-  templateUrl: './left.menu.component.html',
-  styleUrls: ['./left.menu.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'left-menu',
+    templateUrl: './left.menu.component.html',
+    styleUrls: ['./left.menu.component.scss'],
+    standalone: false,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeftMenuComponent implements OnInit {
   menuSections$: Subject<MenuSection[]> = new Subject<MenuSection[]>();

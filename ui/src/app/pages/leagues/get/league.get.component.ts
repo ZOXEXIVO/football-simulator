@@ -10,8 +10,9 @@ import {ProcessService} from "../../../shared/process/services/process.service";
 
 @UntilDestroy()
 @Component({
-  templateUrl: './league.get.component.html',
-  styleUrls: ['./league.get.component.scss']
+    templateUrl: './league.get.component.html',
+    standalone: false,
+    styleUrls: ['./league.get.component.scss']
 })
 export class LeagueGetComponent extends PageComponent {
   public league: LeagueDto | null = null;

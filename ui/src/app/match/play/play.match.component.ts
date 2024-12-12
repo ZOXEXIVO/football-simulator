@@ -17,6 +17,7 @@ import {MatchDataDto, MatchPlayerDto, MatchService, ObjectPositionDto} from "../
 @Component({
     selector: 'play-match',
     templateUrl: './play.match.component.html',
+    standalone: false,
     styleUrls: ['./play.match.component.scss']
 })
 export class MatchPlayComponent implements AfterViewInit, OnInit, OnDestroy {

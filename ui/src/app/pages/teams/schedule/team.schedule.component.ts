@@ -10,8 +10,9 @@ import {ProcessService} from "../../../shared/process/services/process.service";
 
 @UntilDestroy()
 @Component({
-  templateUrl: './team.schedule.component.html',
-  styleUrls: ['./team.schedule.component.scss']
+    templateUrl: './team.schedule.component.html',
+    standalone: false,
+    styleUrls: ['./team.schedule.component.scss']
 })
 export class TeamScheduleComponent extends PageComponent {
   public teamSchedule: TeamScheduleDto | null = null;

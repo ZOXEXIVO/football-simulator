@@ -11,6 +11,7 @@ import {LeftMenuService} from "../../../shared/left-menu/services/left.menu.serv
 @UntilDestroy()
 @Component({
   templateUrl: './team.get.component.html',
+  standalone: false,
   styleUrls: ['./team.get.component.scss']
 })
 export class TeamGetComponent extends PageComponent {
