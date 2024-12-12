@@ -18,7 +18,12 @@ pub struct MidfielderReturningState {}
 
 impl StateProcessingHandler for MidfielderReturningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        // 2. Check if the ball is moving towards the player and is close
+        if ctx.ball().distance() < 250.0 && ctx.ball().is_towards_player_with_angle(0.9) {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Intercepting,
+            ));
+        }
+        
         if ctx.ball().distance() < 10.0 {
             // Transition to Tackling state to attempt to regain possession
             return Some(StateChangeResult::with_midfielder_state(

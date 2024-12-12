@@ -33,11 +33,20 @@ impl StateProcessingHandler for MidfielderStandingState {
             ));
         }
 
-        if !ctx.team().is_control_ball() && ctx.ball().distance() < 10.0 {
-            // Transition to Tackling state to attempt to regain possession
-            return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Tackling,
-            ));
+
+
+        if !ctx.team().is_control_ball() {
+            if ctx.ball().distance() < 10.0 {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Tackling,
+                ));
+            }
+
+            if ctx.ball().distance() < 250.0 && ctx.ball().is_towards_player_with_angle(0.9) {
+                return Some(StateChangeResult::with_midfielder_state(
+                    MidfielderState::Intercepting,
+                ));
+            }
         }
 
         // 1. Check if the midfielder has the ball
