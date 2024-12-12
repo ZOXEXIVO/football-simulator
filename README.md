@@ -14,7 +14,7 @@ The goal is to get as close as possible to a real soccer simulation and based on
 
 - Predict match results
 - Predict the success of player transfers
-  Example: send Kylian Mbappé to Italian Bari and run simulation for 5 years and watch results
+  Example: send Kylian Mbappe to Italian Bari and run simulation for 5 years and watch results
 
 What do I need to do?
 1) Make a simulation of the match
