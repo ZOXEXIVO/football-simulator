@@ -24,25 +24,19 @@ impl From<&MatchField> for PlayerDistanceClosure {
 
         let mut distances = BinaryHeap::with_capacity(capacity);
 
-        for i in 0..n {
-            for j in (i + 1)..n {
-                let outer_player = &field.players[i];
-                let inner_player = &field.players[j];
+        for outer_player in &field.players {
+            for inner_player in &field.players {
+                if outer_player.id == inner_player.id {
+                    continue;
+                }
 
                 let distance = outer_player.position.distance_to(&inner_player.position);
 
-                // Normalize so that the smaller ID is always 'player_from_id'
-                let (p1_id, p1_team, p2_id, p2_team) = if outer_player.id < inner_player.id {
-                    (outer_player.id, outer_player.team_id, inner_player.id, inner_player.team_id)
-                } else {
-                    (inner_player.id, inner_player.team_id, outer_player.id, outer_player.team_id)
-                };
-
                 distances.push(PlayerDistanceItem {
-                    player_from_id: p1_id,
-                    player_from_team: p1_team,
-                    player_to_id: p2_id,
-                    player_to_team: p2_team,
+                    player_from_id: outer_player.id,
+                    player_from_team: outer_player.team_id,
+                    player_to_id: inner_player.id,
+                    player_to_team: inner_player.team_id,
                     distance,
                 });
             }
@@ -62,18 +56,17 @@ impl PlayerDistanceClosure {
             return 0.0;
         }
 
-        // Normalize the order of the IDs before searching.
-        let (a, b) = if player_from_id < player_to_id {
-            (player_from_id, player_to_id)
-        } else {
-            (player_to_id, player_from_id)
-        };
-
         self.distances
             .iter()
-            .find(|distance| distance.player_from_id == a && distance.player_to_id == b)
+            .find(|distance| {
+                (distance.player_from_id == player_from_id && distance.player_to_id == player_to_id)
+                    || (distance.player_from_id == player_to_id && distance.player_to_id == player_from_id)
+            })
             .map(|dist| dist.distance)
-            .unwrap_or_else(|| panic!("no distance between {} and {}", player_from_id, player_to_id))
+            .expect(&format!(
+                "no distance between {} and {}",
+                player_from_id, player_to_id
+            ))
     }
 
     pub fn get_collisions(&self, max_distance: f32) -> Vec<&PlayerDistanceItem> {
