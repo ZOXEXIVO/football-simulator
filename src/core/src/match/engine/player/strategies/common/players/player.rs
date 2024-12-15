@@ -21,6 +21,9 @@ impl<'p> PlayerOperationsImpl<'p> {
         MatchPlayerLite {
             id: player_id,
             position: self.ctx.tick_context.positions.players.position(player_id),
+            tactical_positions: self.ctx.context.players.by_id(player_id).expect(&format!(
+                "unknown player = {}", player_id
+            )).tactical_position.current_position
         }
     }
 

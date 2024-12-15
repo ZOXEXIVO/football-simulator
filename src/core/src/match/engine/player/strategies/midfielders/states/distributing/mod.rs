@@ -4,11 +4,12 @@ use crate::r#match::events::Event;
 use crate::r#match::midfielders::states::MidfielderState;
 use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
 use crate::r#match::{
-    ConditionContext, MatchPlayerLite, StateChangeResult, StateProcessingContext,
-    StateProcessingHandler,
+    ConditionContext, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext,
+    StateProcessingHandler, VectorExtensions,
 };
 use nalgebra::Vector3;
 use rand::prelude::IteratorRandom;
+use std::env::temp_dir;
 use std::sync::LazyLock;
 
 static MIDFIELDER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
@@ -54,14 +55,37 @@ impl MidfielderDistributingState {
     ) -> Option<MatchPlayerLite> {
         let players = ctx.players();
 
-        if let Some(player) = players
-            .teammates()
-            .nearby(300.0)
-            .choose(&mut rand::thread_rng())
-        {
-            return Some(player);
+        let teammates = players.teammates();
+
+        let nearby_teammates = teammates.nearby(300.0);
+
+        let mut nearest_to_goal: Option<MatchPlayerLite> = None;
+        let mut min_to_goal_distance = f32::MAX;
+
+        for teammate in nearby_teammates {
+            let player = ctx
+                .context
+                .players
+                .by_id(teammate.id)
+                .expect(&format!("can't find player with id = {}", teammate.id));
+
+            if player.tactical_position.current_position.is_goalkeeper() {
+                continue;
+            }
+
+            let opponent_goal_position = match ctx.player.side {
+                Some(PlayerSide::Left) => ctx.context.goal_positions.right,
+                Some(PlayerSide::Right) => ctx.context.goal_positions.left,
+                _ => Vector3::new(0.0, 0.0, 0.0),
+            }
+            .distance_to(&player.position);
+
+            if opponent_goal_position < min_to_goal_distance {
+                min_to_goal_distance = opponent_goal_position;
+                nearest_to_goal = Some(teammate);
+            }
         }
 
-        None
+        nearest_to_goal
     }
 }

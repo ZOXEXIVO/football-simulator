@@ -57,16 +57,21 @@ impl SteeringBehavior {
                 let to_target = *target - player.position;
                 let distance = to_target.norm();
 
+                // Normalize skill values to a range of 0.5 to 1.5
+                let acceleration_normalized = 0.5 + (player.skills.physical.acceleration - 1.0) / 19.0;
+                let pace_normalized = 0.5 + (player.skills.physical.pace - 1.0) / 19.0;
+                let agility_normalized = 0.5 + (player.skills.physical.agility - 1.0) / 19.0;
+
                 let desired_velocity = if distance > 0.0 {
-                    let speed =
-                        (distance / *slowing_distance).clamp(0.0, 1.0) * player.skills.max_speed();
+                    let speed_factor = acceleration_normalized * pace_normalized;
+                    let speed = (distance / *slowing_distance).clamp(0.0, 1.0) * player.skills.max_speed() * speed_factor;
                     to_target.normalize() * speed
                 } else {
                     Vector3::zeros()
                 };
 
                 let steering = desired_velocity - player.velocity;
-                let max_acceleration = player.skills.max_speed();
+                let max_acceleration = player.skills.max_speed() * agility_normalized;
                 let steering_length = steering.norm();
 
                 let limited_steering = if steering_length > 0.0 {
@@ -78,7 +83,7 @@ impl SteeringBehavior {
 
                 // Update player's move velocity based on the steering output
                 let move_velocity = player.velocity + limited_steering;
-                let max_speed = player.skills.max_speed();
+                let max_speed = player.skills.max_speed() * pace_normalized;
                 let move_velocity_length = move_velocity.norm();
 
                 let final_move_velocity = if move_velocity_length > max_speed {

@@ -67,12 +67,12 @@ impl StateProcessingHandler for MidfielderPassingState {
     }
 
     fn velocity(&self, ctx: &StateProcessingContext) -> Option<Vector3<f32>> {
-        if ctx.in_state_time % 30 == 0 {
+        if ctx.in_state_time % 10 == 0 {
             if let Some(nearest_teammate) = ctx.players().teammates().nearby_to_opponent_goal() {
                 return Some(
                     SteeringBehavior::Arrive {
                         target: nearest_teammate.position,
-                        slowing_distance: 50.0,
+                        slowing_distance: 30.0,
                     }
                     .calculate(ctx.player)
                     .velocity,

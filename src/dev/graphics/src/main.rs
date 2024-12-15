@@ -1,3 +1,4 @@
+use core::r#match::VectorExtensions;
 use core::r#match::ball::Ball;
 use core::r#match::player::MatchPlayer;
 use core::r#match::FootballEngine;
@@ -9,14 +10,14 @@ use std::time::Duration;
 //tactics
 use core::club::player::Player;
 use core::club::player::PlayerPositionType;
-use core::club::team::tactics::{Tactics, MatchTacticType};
+use core::club::team::tactics::{MatchTacticType, Tactics};
 use core::r#match::squad::TeamSquad;
+use core::r#match::strategies::ball::MatchBallLogic;
 use core::r#match::MatchPlayerCollection;
+use core::r#match::ResultMatchPositionData;
 use core::Vector3;
 use env_logger::Env;
 use std::time::Instant;
-use core::r#match::ResultMatchPositionData;
-use core::r#match::strategies::ball::MatchBallLogic;
 
 use core::r#match::PlayerSide;
 use core::r#match::Score;
@@ -141,9 +142,9 @@ async fn main() {
 
         let fps_data_current_idx = (current_frame % AVERAGE_FPS_BUCKET_SIZE as u64) as usize;
 
-        let elapsed_mcs = elapsed.as_micros() as u128;
+        let elapsed_mcs = elapsed.as_micros();
 
-        fps_data[fps_data_current_idx] = elapsed.as_micros() as u128;
+        fps_data[fps_data_current_idx] = elapsed.as_micros();
 
         if current_frame > 100 && elapsed_mcs > max_fps {
             max_fps = elapsed_mcs;
@@ -342,7 +343,13 @@ fn draw_goals(offset_x: f32, offset_y: f32, context: &MatchContext, field_width:
     );
 }
 
-fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, ball_owner_id: Option<u32>, scale: f32) {
+fn draw_players(
+    offset_x: f32,
+    offset_y: f32,
+    field: &MatchField,
+    ball_owner_id: Option<u32>,
+    scale: f32,
+) {
     field.players.iter().for_each(|player| {
         let translated_x = offset_x + player.position.x * scale;
         let translated_y = offset_y + player.position.y * scale;
@@ -413,6 +420,45 @@ fn draw_players(offset_x: f32, offset_y: f32, field: &MatchField, ball_owner_id:
             state_distance_font_size,
             DARKGRAY,
         );
+
+        // ID
+
+        let left_goal = Vector3::new(0.0, field.size.height as f32 / 2.0, 0.0);
+        let right_goal = Vector3::new(field.size.width as f32, (field.size.height / 2usize) as f32, 0.0);
+        
+        let target_goal = match player.side {
+            Some(PlayerSide::Left) => Vector3::new(
+                right_goal.x,
+                right_goal.y,
+                0.0,
+            ),
+            Some(PlayerSide::Right) => Vector3::new(
+                left_goal.x,
+                left_goal.y,
+                0.0,
+            ),
+            _ => Vector3::new(0.0, 0.0, 0.0),
+        };
+        
+        let goal_distance = field.ball.position.distance_to(&target_goal);
+        
+        let distance_to_opponent_goal = &format!("g_d = {}", goal_distance);
+
+        let distance_to_opponent_goal_font_size = 13.0 * scale;
+        let distance_to_opponent_goal_text_dimensions = measure_text(
+            distance_to_opponent_goal,
+            None,
+            distance_to_opponent_goal_font_size as u16,
+            1.0,
+        );
+
+        draw_text(
+            distance_to_opponent_goal,
+            translated_x - distance_to_opponent_goal_text_dimensions.width / 2.5,
+            translated_y + circle_radius + distance_to_opponent_goal_text_dimensions.height + 15.0,
+            distance_to_opponent_goal_font_size,
+            DARKGRAY,
+        );
     });
 }
 
@@ -427,7 +473,13 @@ fn draw_ball(offset_x: f32, offset_y: f32, ball: &Ball, scale: f32) {
     }
 
     draw_text(
-        &format!("BALL POSITION, {:?}, IS_OUTSIDE: {:?}, IS_STANDS_OUTSIDE: {:?}, NOTIFIED_PLAYER: {:?}", ball.position, ball.is_ball_outside(), ball.is_stands_outside(), ball.take_ball_notified_player),
+        &format!(
+            "BALL POSITION, {:?}, IS_OUTSIDE: {:?}, IS_STANDS_OUTSIDE: {:?}, NOTIFIED_PLAYER: {:?}",
+            ball.position,
+            ball.is_ball_outside(),
+            ball.is_stands_outside(),
+            ball.take_ball_notified_player
+        ),
         20.0,
         15.0,
         15.0,
@@ -443,7 +495,13 @@ fn draw_ball(offset_x: f32, offset_y: f32, ball: &Ball, scale: f32) {
     );
 }
 
-fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, ball_owner_id: Option<u32>, scale: f32) {
+fn draw_player_list(
+    offset_x: f32,
+    offset_y: f32,
+    players: Vec<&MatchPlayer>,
+    ball_owner_id: Option<u32>,
+    scale: f32,
+) {
     let player_width = 25.0 * scale;
     let player_height = 25.0 * scale;
     let player_spacing = 40.0 * scale;
@@ -453,15 +511,14 @@ fn draw_player_list(offset_x: f32, offset_y: f32, players: Vec<&MatchPlayer>, ba
         let player_y = offset_y;
 
         // Draw player circle
-        let player_color: Color = if player.tactical_position.current_position == PlayerPositionType::Goalkeeper {
-            YELLOW
-        } else {
-            if player.team_id == 1 {
+        let player_color: Color =
+            if player.tactical_position.current_position == PlayerPositionType::Goalkeeper {
+                YELLOW
+            } else if player.team_id == 1 {
                 Color::from_rgba(0, 184, 186, 255)
             } else {
                 Color::from_rgba(208, 139, 255, 255)
-            }
-        };
+            };
 
         let circle_radius = player_width / 2.0;
 
