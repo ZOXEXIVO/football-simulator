@@ -149,6 +149,7 @@ impl MatchPlayer {
 pub struct MatchPlayerLite {
     pub id: u32,
     pub position: Vector3<f32>,
+    pub tactical_positions: PlayerPositionType
 }
 
 impl MatchPlayerLite {

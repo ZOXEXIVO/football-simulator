@@ -49,6 +49,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             .map(|player| MatchPlayerLite {
                 id: player.id,
                 position: self.ctx.tick_context.positions.players.position(player.id),
+                tactical_positions: player.tactical_position.current_position
             })
     }
 
@@ -71,6 +72,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             .map(|player| MatchPlayerLite {
                 id: player.id,
                 position: self.ctx.tick_context.positions.players.position(player.id),
+                tactical_positions: player.tactical_position.current_position
             })
     }
 
@@ -82,6 +84,9 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
             .map(|(pid, _)| MatchPlayerLite {
                 id: pid,
                 position: self.ctx.tick_context.positions.players.position(pid),
+                tactical_positions: self.ctx.context.players.by_id(pid).expect(&format!(
+                    "unknown player = {}", pid
+                )).tactical_position.current_position
             })
     }
 
