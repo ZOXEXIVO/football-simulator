@@ -10,7 +10,7 @@ static DEFENDER_HOLDING_LINE_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_holding_line_data.json")));
 
 const MAX_DEFENSIVE_LINE_DEVIATION: f32 = 50.0;
-const BALL_PROXIMITY_THRESHOLD: f32 = 10.0;
+const BALL_PROXIMITY_THRESHOLD: f32 = 100.0;
 const MARKING_DISTANCE_THRESHOLD: f32 = 5.0;
 
 #[derive(Default)]
@@ -28,6 +28,12 @@ impl StateProcessingHandler for DefenderHoldingLineState {
         if distance_from_line > MAX_DEFENSIVE_LINE_DEVIATION {
             return Some(StateChangeResult::with_defender_state(
                 DefenderState::Running,
+            ));
+        }
+
+        if ctx.ball().distance() < 250.0 && ctx.ball().is_towards_player_with_angle(0.9) {
+            return Some(StateChangeResult::with_defender_state(
+                DefenderState::Intercepting
             ));
         }
 

@@ -1,10 +1,10 @@
 use crate::r#match::events::Event;
+use crate::r#match::player::events::PassingEventModel;
 use crate::r#match::player::state::PlayerState;
+use crate::r#match::statistics::MatchStatisticType;
 use crate::r#match::{GoalDetail, MatchContext, MatchField};
 use log::info;
 use nalgebra::Vector3;
-use crate::r#match::player::events::PassingEventModel;
-use crate::r#match::statistics::MatchStatisticType;
 
 #[derive(Debug)]
 pub enum PlayerEvent {
@@ -41,121 +41,166 @@ impl PlayerEventDispatcher {
         field: &mut MatchField,
         context: &mut MatchContext,
     ) -> Vec<Event> {
-        let remaining_events = Vec::new();
+        let mut remaining_events = Vec::new();
 
         info!("PLAYER EVENT: {:?}", event);
 
         match event {
             PlayerEvent::Goal(player_id) => {
-                let player = field.get_player_mut(player_id).unwrap();
-                player.statistics.add_goal(context.time.time);
-
-                context.score.add_goal_detail(GoalDetail{
-                    player_id,
-                    stat_type: MatchStatisticType::Goal,
-                    time: context.time.time,
-                });
-
-                field.ball.previous_owner = None;
-                field.ball.current_owner = None;
+                Self::handle_goal_event(player_id, field, context);
             }
             PlayerEvent::Assist(player_id) => {
-                let player = field.get_player_mut(player_id).unwrap();
-
-                context.score.add_goal_detail(GoalDetail{
-                    player_id,
-                    stat_type: MatchStatisticType::Assist,
-                    time: context.time.time,
-                });
-
-                player.statistics.add_assist(context.time.time)
+                Self::handle_assist_event(player_id, field, context);
             }
             PlayerEvent::BallCollision(player_id) => {
-                let player = field.get_player_mut(player_id).unwrap();
-
-                if player.skills.technical.first_touch > 10.0 {
-                    //player.has_ball = true;
-                    //field.ball.velocity = Vector3::<f32>::zeros();
-                }
+                Self::handle_ball_collision_event(player_id, field);
             }
             PlayerEvent::TacklingBall(player_id) => {
-                field.ball.previous_owner = field.ball.current_owner;
-                field.ball.current_owner = Some(player_id);
+                Self::handle_tackling_ball_event(player_id, field);
             }
             PlayerEvent::BallOwnerChange(player_id) => {
-                field.ball.previous_owner = field.ball.current_owner;
-                field.ball.current_owner = Some(player_id);
+                Self::handle_ball_owner_change_event(player_id, field);
             }
             PlayerEvent::PassTo(event_model) => {
-                let ball_pass_vector = event_model.pass_target - field.ball.position;
-                let direction = ball_pass_vector.normalize();
-                let pass_force = event_model.pass_force as f32;
-                let pass_force_multiplier = 1.1;
-
-                let velocity = direction * (pass_force * pass_force_multiplier);
-
-                field.ball.velocity = velocity;
-
-                field.ball.previous_owner = field.ball.current_owner;
-                field.ball.current_owner = None;
-
-                field.ball.flags.in_passing_state_time = 100;
+                Self::handle_pass_to_event(event_model, field);
             }
-            PlayerEvent::RushOut(_) => {}
-            PlayerEvent::StayInGoal(_) => {}
-            PlayerEvent::CommunicateMessage(_player_id, _message) => {}
-            PlayerEvent::OfferSupport(_) => {}
             PlayerEvent::ClaimBall(player_id) => {
-                field.ball.previous_owner = field.ball.current_owner;
-                field.ball.current_owner = Some(player_id);
-
-                field.ball.flags.in_passing_state_time = 30;
-            }
-            PlayerEvent::ClearBall(_ball_velocity) => {
-                //field.ball.velocity = *ball_velocity;
+                Self::handle_claim_ball_event(player_id, field);
             }
             PlayerEvent::MoveBall(player_id, ball_velocity) => {
-                field.ball.previous_owner = field.ball.current_owner;
-                field.ball.current_owner = Some(player_id);
-
-                field.ball.velocity = ball_velocity;
+                Self::handle_move_ball_event(player_id, ball_velocity, field);
             }
             PlayerEvent::GainBall(player_id) => {
-                field.ball.previous_owner = field.ball.current_owner;
-                field.ball.current_owner = Some(player_id);
+                Self::handle_gain_ball_event(player_id, field);
             }
-            PlayerEvent::CommitFoul => {}
             PlayerEvent::Shoot(player_id, target_direction) => {
-                let ball_pass_vector = target_direction - field.ball.position;
-
-                field.ball.previous_owner = Some(player_id);
-                field.ball.current_owner = None;
-                field.ball.velocity = ball_pass_vector.normalize();
-
-                field.ball.flags.in_passing_state_time = 100;
+                Self::handle_shoot_event(player_id, target_direction, field);
             }
-            PlayerEvent::RequestHeading(_, _) => {}
-            PlayerEvent::RequestShot(_, _) => {}
-            PlayerEvent::RequestBallReceive(_) => {}
             PlayerEvent::UnClaimBall(player_id) => {
-                let player = field.get_player_mut(player_id).unwrap();
-
-                player.state = PlayerState::Injured
+                Self::handle_unclaim_ball_event(player_id, field);
             }
             PlayerEvent::CaughtBall(player_id) => {
-                field.ball.previous_owner = field.ball.current_owner;
-                field.ball.current_owner = Some(player_id);
+                Self::handle_caught_ball_event(player_id, field);
             }
             PlayerEvent::MovePlayer(player_id, position) => {
-                let player = field.get_player_mut(player_id).unwrap();
-                player.position = position
+                Self::handle_move_player_event(player_id, position, field);
             }
             PlayerEvent::TakeBall(player_id) => {
-                let player = field.get_player_mut(player_id).unwrap();
-                player.run_for_ball();
+                Self::handle_take_ball_event(player_id, field);
             }
+            _ => {} // Ignore unsupported events
         }
 
         remaining_events
+    }
+
+    fn handle_goal_event(player_id: u32, field: &mut MatchField, context: &mut MatchContext) {
+        let player = field.get_player_mut(player_id).unwrap();
+        player.statistics.add_goal(context.time.time);
+
+        context.score.add_goal_detail(GoalDetail {
+            player_id,
+            stat_type: MatchStatisticType::Goal,
+            time: context.time.time,
+        });
+
+        field.ball.previous_owner = None;
+        field.ball.current_owner = None;
+    }
+
+    fn handle_assist_event(player_id: u32, field: &mut MatchField, context: &mut MatchContext) {
+        let player = field.get_player_mut(player_id).unwrap();
+
+        context.score.add_goal_detail(GoalDetail {
+            player_id,
+            stat_type: MatchStatisticType::Assist,
+            time: context.time.time,
+        });
+
+        player.statistics.add_assist(context.time.time);
+    }
+
+    fn handle_ball_collision_event(player_id: u32, field: &mut MatchField) {
+        let player = field.get_player_mut(player_id).unwrap();
+
+        if player.skills.technical.first_touch > 10.0 {
+            // Handle player gaining control of the ball after collision
+        }
+    }
+
+    fn handle_tackling_ball_event(player_id: u32, field: &mut MatchField) {
+        field.ball.previous_owner = field.ball.current_owner;
+        field.ball.current_owner = Some(player_id);
+    }
+
+    fn handle_ball_owner_change_event(player_id: u32, field: &mut MatchField) {
+        field.ball.previous_owner = field.ball.current_owner;
+        field.ball.current_owner = Some(player_id);
+    }
+
+    fn handle_pass_to_event(event_model: PassingEventModel, field: &mut MatchField) {
+        let ball_pass_vector = event_model.pass_target - field.ball.position;
+        let direction = ball_pass_vector.normalize();
+        let pass_force = event_model.pass_force as f32;
+        let pass_force_multiplier = 1.1;
+
+        let velocity = direction * (pass_force * pass_force_multiplier);
+
+        field.ball.velocity = velocity;
+
+        field.ball.previous_owner = field.ball.current_owner;
+        field.ball.current_owner = None;
+
+        field.ball.flags.in_passing_state_time = 100;
+    }
+
+    fn handle_claim_ball_event(player_id: u32, field: &mut MatchField) {
+        field.ball.previous_owner = field.ball.current_owner;
+        field.ball.current_owner = Some(player_id);
+
+        field.ball.flags.in_passing_state_time = 30;
+    }
+
+    fn handle_move_ball_event(player_id: u32, ball_velocity: Vector3<f32>, field: &mut MatchField) {
+        field.ball.previous_owner = field.ball.current_owner;
+        field.ball.current_owner = Some(player_id);
+
+        field.ball.velocity = ball_velocity;
+    }
+
+    fn handle_gain_ball_event(player_id: u32, field: &mut MatchField) {
+        field.ball.previous_owner = field.ball.current_owner;
+        field.ball.current_owner = Some(player_id);
+    }
+
+    fn handle_shoot_event(player_id: u32, target_direction: Vector3<f32>, field: &mut MatchField) {
+        let ball_pass_vector = target_direction - field.ball.position;
+
+        field.ball.previous_owner = Some(player_id);
+        field.ball.current_owner = None;
+        field.ball.velocity = ball_pass_vector.normalize();
+
+        field.ball.flags.in_passing_state_time = 100;
+    }
+
+    fn handle_unclaim_ball_event(player_id: u32, field: &mut MatchField) {
+        let player = field.get_player_mut(player_id).unwrap();
+
+        player.state = PlayerState::Injured;
+    }
+
+    fn handle_caught_ball_event(player_id: u32, field: &mut MatchField) {
+        field.ball.previous_owner = field.ball.current_owner;
+        field.ball.current_owner = Some(player_id);
+    }
+
+    fn handle_move_player_event(player_id: u32, position: Vector3<f32>, field: &mut MatchField) {
+        let player = field.get_player_mut(player_id).unwrap();
+        player.position = position;
+    }
+
+    fn handle_take_ball_event(player_id: u32, field: &mut MatchField) {
+        let player = field.get_player_mut(player_id).unwrap();
+        player.run_for_ball();
     }
 }

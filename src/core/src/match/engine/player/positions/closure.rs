@@ -24,9 +24,11 @@ impl From<&MatchField> for PlayerDistanceClosure {
 
         let mut distances = BinaryHeap::with_capacity(capacity);
 
-        for (i, outer_player) in field.players.iter().enumerate() {
-            // Start from i+1 to avoid duplicates and self-comparisons
-            for inner_player in field.players[i + 1..].iter() {
+        for i in 0..n {
+            for j in (i + 1)..n {
+                let outer_player = &field.players[i];
+                let inner_player = &field.players[j];
+
                 let distance = outer_player.position.distance_to(&inner_player.position);
 
                 distances.push(PlayerDistanceItem {

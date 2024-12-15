@@ -23,7 +23,7 @@ impl StateProcessingHandler for MidfielderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball(ctx) {
             // If the player has the ball, consider shooting, passing, or dribbling
-            if self.in_shooting_range(ctx) && ctx.player.skills.technical.long_shots > 13.0 {
+            if self.in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::DistanceShooting,
                 ));
@@ -96,7 +96,7 @@ impl StateProcessingHandler for MidfielderRunningState {
             Some(
                 SteeringBehavior::Arrive {
                     target: ctx.ball().direction_to_opponent_goal(),
-                    slowing_distance: 200.0,
+                    slowing_distance: 150.0,
                 }
                 .calculate(ctx.player)
                 .velocity,
