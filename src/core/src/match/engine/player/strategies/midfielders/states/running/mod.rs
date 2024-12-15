@@ -14,7 +14,7 @@ static MIDFIELDER_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
 
 const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
-const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
+const MIN_SHOOTING_DISTANCE: f32 = 10.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
 
 #[derive(Default)]
 pub struct MidfielderRunningState {}
@@ -23,7 +23,7 @@ impl StateProcessingHandler for MidfielderRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
         if ctx.player.has_ball(ctx) {
             // If the player has the ball, consider shooting, passing, or dribbling
-            if self.in_shooting_range(ctx) {
+            if self.in_shooting_range(ctx) && ctx.player.skills.technical.long_shots  {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::DistanceShooting,
                 ));
