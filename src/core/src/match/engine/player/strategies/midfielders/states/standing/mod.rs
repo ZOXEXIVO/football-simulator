@@ -13,43 +13,26 @@ static MIDFIELDER_STANDING_STATE_NETWORK: LazyLock<NeuralNetwork> =
 
 const PASSING_DISTANCE_THRESHOLD: f32 = 30.0; // Adjust as needed
 const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0; // Adjust as needed
-const STAMINA_THRESHOLD: u32 = 20; // Minimum stamina percentage before resting
 
 #[derive(Default)]
 pub struct MidfielderStandingState {}
 
 impl StateProcessingHandler for MidfielderStandingState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
-        if ctx.player.player_attributes.condition_percentage() < STAMINA_THRESHOLD {
-            // Transition to Resting state
-            return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Resting,
-            ));
-        }
-
-        if ctx.in_state_time > 100 {
-            return Some(StateChangeResult::with_midfielder_state(
-                MidfielderState::Running,
-            ));
-        }
-
-
-
         if !ctx.team().is_control_ball() {
-            if ctx.ball().distance() < 10.0 {
+            if ctx.ball().distance() < 150.0 {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Tackling,
                 ));
             }
 
-            if ctx.ball().distance() < 250.0 && ctx.ball().is_towards_player_with_angle(0.9) {
+            if ctx.ball().distance() < 250.0 && ctx.ball().is_towards_player_with_angle(0.8) {
                 return Some(StateChangeResult::with_midfielder_state(
                     MidfielderState::Intercepting,
                 ));
             }
         }
 
-        // 1. Check if the midfielder has the ball
         if ctx.player.has_ball(ctx) {
             // Decide whether to hold possession or distribute the ball
             return if self.should_hold_possession(ctx) {

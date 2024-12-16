@@ -13,8 +13,6 @@ use std::sync::LazyLock;
 static GOALKEEPER_DISTRIBUTING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_distributing_data.json")));
 
-const DISTRIBUTION_DISTANCE_THRESHOLD: f32 = 50.0;
-
 #[derive(Default)]
 pub struct GoalkeeperDistributingState {}
 

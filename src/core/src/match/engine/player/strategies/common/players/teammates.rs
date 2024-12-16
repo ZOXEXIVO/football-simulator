@@ -93,7 +93,7 @@ impl<'b> PlayerTeammatesOperationsImpl<'b> {
     pub fn nearby_to_opponent_goal(&'b self) -> Option<MatchPlayerLite> {
         let mut teammates: Vec<MatchPlayerLite> = self.nearby(300.0).collect();
 
-        if teammates.len() == 0 {
+        if teammates.is_empty() {
             return None;
         }
 

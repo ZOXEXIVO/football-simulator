@@ -11,8 +11,7 @@ use std::sync::LazyLock;
 static GOALKEEPER_COMINGOUT_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_comingout_data.json")));
 
-const COMINGOUT_DISTANCE_THRESHOLD: f32 = 20.0; // Maximum distance from the goal to consider coming out
-const COMINGOUT_SPEED_MULTIPLIER: f32 = 1.2; // Multiplier for coming out speed
+const COMING_OUT_DISTANCE_THRESHOLD: f32 = 20.0; // Maximum distance from the goal to consider coming out
 
 #[derive(Default)]
 pub struct GoalkeeperComingOutState {}
@@ -27,7 +26,7 @@ impl StateProcessingHandler for GoalkeeperComingOutState {
 
         // 1. Check if the ball is within the coming out distance threshold
         let ball_distance = ctx.ball().distance_to_own_goal();
-        if ball_distance > COMINGOUT_DISTANCE_THRESHOLD {
+        if ball_distance > COMING_OUT_DISTANCE_THRESHOLD {
             // Ball is too far, transition to appropriate state (e.g., ReturningToGoal)
             return Some(StateChangeResult::with_goalkeeper_state(
                 GoalkeeperState::ReturningToGoal,

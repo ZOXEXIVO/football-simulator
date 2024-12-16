@@ -41,7 +41,7 @@ impl PlayerEventDispatcher {
         field: &mut MatchField,
         context: &mut MatchContext,
     ) -> Vec<Event> {
-        let mut remaining_events = Vec::new();
+        let remaining_events = Vec::new();
 
         info!("PLAYER EVENT: {:?}", event);
 

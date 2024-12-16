@@ -85,6 +85,11 @@ impl PlayerDistanceClosure {
             .iter()
             .filter(move |p| p.distance <= distance)
             .filter_map(|item| {
+                if item.player_from_id == item.player_to_id
+                {
+                    return None;
+                }
+                
                 if item.player_from_id == player.id && item.player_from_team == item.player_to_team
                 {
                     return Some((item.player_to_id, item.distance));
@@ -107,6 +112,11 @@ impl PlayerDistanceClosure {
             .iter()
             .filter(move |p| p.distance <= distance)
             .filter_map(|item| {
+                if item.player_from_id == item.player_to_id
+                {
+                    return None;
+                }
+                
                 if item.player_from_id == player.id && item.player_from_team != item.player_to_team
                 {
                     return Some((item.player_to_id, item.distance));

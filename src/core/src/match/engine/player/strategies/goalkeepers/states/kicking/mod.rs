@@ -13,7 +13,6 @@ static GOALKEEPER_KICKING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_kicking_data.json")));
 
 const KICK_DISTANCE_THRESHOLD: f32 = 30.0; // Maximum distance to consider for kicking
-const KICK_POWER_MULTIPLIER: f32 = 1.5; // Multiplier for kick power calculation
 
 #[derive(Default)]
 pub struct GoalkeeperKickingState {}
