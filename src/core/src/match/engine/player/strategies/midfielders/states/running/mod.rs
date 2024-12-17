@@ -156,7 +156,10 @@ impl MidfielderRunningState {
         let mut nearest_opponents = opponents.nearby_raw(200.0);
 
         if let Some((first_id, _)) = nearest_opponents.next() {
-            if let Some((second_id, _)) = nearest_opponents.next() {
+            while let Some((second_id, _)) = nearest_opponents.next() {
+                if first_id == second_id {
+                    continue;
+                }
                 let distance_between_opponents =
                     ctx.tick_context.distances.get(first_id, second_id);
                 if distance_between_opponents > 10.0 {

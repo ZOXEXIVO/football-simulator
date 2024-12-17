@@ -78,7 +78,7 @@ impl StateProcessingHandler for ForwardAssistingState {
         Some(
             SteeringBehavior::Arrive {
                 target: ctx.ball().direction_to_opponent_goal(),
-                slowing_distance: 200.0,
+                slowing_distance: 10.0,
             }
             .calculate(ctx.player)
             .velocity,

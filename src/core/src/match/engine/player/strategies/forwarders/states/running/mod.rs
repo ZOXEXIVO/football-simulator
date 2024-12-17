@@ -53,11 +53,16 @@ impl StateProcessingHandler for ForwardRunningState {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
         } else {
-            if ctx.team().is_control_ball() && !self.is_leading_forward(ctx) {
-                return Some(StateChangeResult::with_forward_state(
-                    ForwardState::Assisting,
-                ));
+            if ctx.team().is_control_ball() {
+                if self.should_support_attack(ctx) || !self.is_leading_forward(ctx){
+                    return Some(StateChangeResult::with_forward_state(ForwardState::Assisting));
+                }
+
+                if self.should_create_space(ctx) {
+                    return Some(StateChangeResult::with_forward_state(ForwardState::CreatingSpace));
+                }
             }
+
             if ctx.ball().distance() < 200.0 && ctx.ball().is_towards_player_with_angle(0.9) {
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Intercepting
@@ -207,6 +212,39 @@ impl ForwardRunningState {
             if let Some(second) = nearest_opponents.next() {
                 return ctx.tick_context.distances.get(first.id, second.id)
                     > CREATING_SPACE_THRESHOLD;
+            }
+        }
+
+        false
+    }
+
+    fn should_support_attack(&self, ctx: &StateProcessingContext) -> bool {
+        let player_position = ctx.player.position;
+        let goal_position = ctx.ball().direction_to_opponent_goal();
+        let distance_to_goal = (player_position - goal_position).magnitude();
+
+        // Check if the player is in the attacking half of the field
+        let in_attacking_half = player_position.x > ctx.context.field_size.width as f32 / 2.0;
+
+        // Check if the player is within a certain distance from the goal
+        let goal_distance_threshold = ctx.context.field_size.width as f32 * 0.3; // Adjust the threshold as needed
+
+        in_attacking_half && distance_to_goal < goal_distance_threshold
+    }
+
+    fn should_create_space(&self, ctx: &StateProcessingContext) -> bool {
+        let player_position = ctx.player.position;
+        let opponents_nearby = ctx.players().opponents().nearby(20.0).collect::<Vec<_>>();
+
+        // Check if there are opponents nearby
+        if !opponents_nearby.is_empty() {
+            // Find the largest gap between opponents
+            let max_gap = opponents_nearby.windows(2).map(|w| (w[1].position - w[0].position).magnitude()).max_by(|a, b| a.partial_cmp(b).unwrap());
+
+            if let Some(gap) = max_gap {
+                // Check if the gap is large enough for the player to exploit
+                let gap_threshold = 10.0; // Adjust the threshold as needed
+                return gap > gap_threshold;
             }
         }
 
