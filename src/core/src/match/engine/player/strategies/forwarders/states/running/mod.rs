@@ -27,7 +27,6 @@ const MAX_PLAYER_SPEED: f32 = 50.0;
 const SHOOTING_DISTANCE_THRESHOLD: f32 = 200.0;
 const PASSING_DISTANCE_THRESHOLD: f32 = 400.0;
 const ASSISTING_DISTANCE_THRESHOLD: f32 = 200.0;
-const TARGET_REACHED_THRESHOLD: f32 = 10.0;
 
 impl StateProcessingHandler for ForwardRunningState {
     fn try_fast(&self, ctx: &StateProcessingContext) -> Option<StateChangeResult> {
@@ -40,7 +39,7 @@ impl StateProcessingHandler for ForwardRunningState {
                 ));
             }
 
-            if ctx.players().opponents().nearby_raw(100.0).count() > 1 {
+            if ctx.players().opponents().exists(100.0) {
                 return Some(StateChangeResult::with_forward_state(ForwardState::Passing));
             }
 
@@ -55,9 +54,13 @@ impl StateProcessingHandler for ForwardRunningState {
             }
         } else {
             if ctx.team().is_control_ball() && !self.is_leading_forward(ctx) {
-                // If not the leading forward, transition to a supporting state
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Assisting,
+                ));
+            }
+            if ctx.ball().distance() < 200.0 && ctx.ball().is_towards_player_with_angle(0.9) {
+                return Some(StateChangeResult::with_forward_state(
+                    ForwardState::Intercepting
                 ));
             }
 
@@ -70,12 +73,6 @@ impl StateProcessingHandler for ForwardRunningState {
                     ));
                 }
             }
-
-            // if ctx.ball().distance() < 80.0 {
-            //     return Some(StateChangeResult::with_forward_state(
-            //         ForwardState::Intercepting,
-            //     ));
-            // }
         }
 
         None
@@ -91,14 +88,13 @@ impl StateProcessingHandler for ForwardRunningState {
 
             let player_goal_velocity = SteeringBehavior::Arrive {
                 target: goal_direction,
-                slowing_distance: 200.0,
+                slowing_distance: 100.0,
             }
             .calculate(ctx.player)
             .velocity;
 
             Some(player_goal_velocity)
         } else {
-            // Apply pursuit behavior
             let result = SteeringBehavior::Arrive {
                 target: ctx.tick_context.positions.ball.position,
                 slowing_distance: 10.0,
