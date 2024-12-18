@@ -39,11 +39,6 @@ impl StateProcessingHandler for ForwardCreatingSpaceState {
             ));
         }
 
-        // Check if the player should run to the opponent's side between opponents
-        // if self.should_run_to_opponent_side(ctx) {
-        //     return Some(StateChangeResult::with_forward_state(ForwardState::Running));
-        // }
-
         None
     }
 
@@ -88,13 +83,6 @@ impl ForwardCreatingSpaceState {
         ctx.players()
             .opponents()
             .exists(OPPONENT_DISTANCE_THRESHOLD)
-    }
-
-    fn should_run_to_opponent_side(&self, ctx: &StateProcessingContext) -> bool {
-        let player_position = ctx.player.position;
-        let field_half_length = ctx.context.field_size.width as f32 / 2.0;
-
-        player_position.x < field_half_length && self.has_space_between_opponents(ctx)
     }
 
     fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {

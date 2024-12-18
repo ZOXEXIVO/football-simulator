@@ -7,6 +7,7 @@ use crate::r#match::{
 };
 use nalgebra::Vector3;
 use std::sync::LazyLock;
+use itertools::Itertools;
 
 const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
 const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
@@ -15,15 +16,11 @@ static FORWARD_RUNNING_STATE_NETWORK: LazyLock<NeuralNetwork> =
     LazyLock::new(|| DefaultNeuralNetworkLoader::load(include_str!("nn_running_data.json")));
 
 const CREATING_SPACE_THRESHOLD: f32 = 100.0; // Adjust based on your game's scale
-const OPPONENT_DISTANCE_THRESHOLD: f32 = 5.0; // Adjust based on your game's scale
-const VELOCITY_CHANGE_THRESHOLD: f32 = 2.0; // Adjust based on your game's scale
 
 #[derive(Default)]
 pub struct ForwardRunningState {}
 
 const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0;
-const BALL_DISTANCE_THRESHOLD: f32 = 20.0;
-const MAX_PLAYER_SPEED: f32 = 50.0;
 const SHOOTING_DISTANCE_THRESHOLD: f32 = 200.0;
 const PASSING_DISTANCE_THRESHOLD: f32 = 400.0;
 const ASSISTING_DISTANCE_THRESHOLD: f32 = 200.0;
@@ -191,17 +188,6 @@ impl ForwardRunningState {
         }
     }
 
-    fn calculate_target_position(&self, ctx: &StateProcessingContext) -> Vector3<f32> {
-        let player_position = ctx.player.position;
-        let field_half_length = ctx.context.field_size.width as f32 / 2.0;
-        let field_width = ctx.context.field_size.width as f32;
-
-        let target_x = field_half_length + (field_half_length - player_position.x) * 0.8;
-        let target_y = player_position.y + (field_width / 4.0) * (rand::random::<f32>() - 0.5);
-
-        Vector3::new(target_x, target_y, 0.0)
-    }
-
     fn has_space_between_opponents(&self, ctx: &StateProcessingContext) -> bool {
         let players = ctx.players();
         let opponents = players.opponents();
@@ -233,8 +219,10 @@ impl ForwardRunningState {
     }
 
     fn should_create_space(&self, ctx: &StateProcessingContext) -> bool {
-        let player_position = ctx.player.position;
-        let opponents_nearby = ctx.players().opponents().nearby(20.0).collect::<Vec<_>>();
+        let opponents_nearby = ctx.players()
+            .opponents()
+            .nearby(50.0)
+            .collect_vec();
 
         // Check if there are opponents nearby
         if !opponents_nearby.is_empty() {
