@@ -3,7 +3,7 @@ use crate::r#match::player::events::PassingEventModel;
 use crate::r#match::player::state::PlayerState;
 use crate::r#match::statistics::MatchStatisticType;
 use crate::r#match::{GoalDetail, MatchContext, MatchField};
-use log::info;
+use log::{debug, info};
 use nalgebra::Vector3;
 
 #[derive(Debug)]
@@ -43,7 +43,7 @@ impl PlayerEventDispatcher {
     ) -> Vec<Event> {
         let remaining_events = Vec::new();
 
-        info!("PLAYER EVENT: {:?}", event);
+        debug!("Player event: {:?}", event);
 
         match event {
             PlayerEvent::Goal(player_id) => {
