@@ -30,6 +30,15 @@ impl StateProcessingHandler for MidfielderWalkingState {
             ));
         }
 
+        let nearby_opponents = ctx.players().opponents().nearby(150.0);
+
+
+        if {
+            return Some(StateChangeResult::with_midfielder_state(
+                MidfielderState::Pressing,
+            ));
+        }
+
         None
     }
 
