@@ -128,6 +128,18 @@ impl ForwardCreatingSpaceState {
             }
         }
 
-        largest_gap_position
+        if let Some(position) = largest_gap_position {
+            // Clamp the position within the field boundaries
+            let field_width = ctx.context.field_size.width as f32;
+            let field_height = ctx.context.field_size.height as f32;
+            let clamped_position = Vector3::new(
+                position.x.clamp(0.0, field_width),
+                position.y.clamp(0.0, field_height),
+                0.0,
+            );
+            Some(clamped_position)
+        } else {
+            None
+        }
     }
 }
