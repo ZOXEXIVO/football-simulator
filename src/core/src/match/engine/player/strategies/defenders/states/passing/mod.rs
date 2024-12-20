@@ -3,9 +3,7 @@ use crate::common::NeuralNetwork;
 use crate::r#match::defenders::states::DefenderState;
 use crate::r#match::events::{Event, EventCollection};
 use crate::r#match::player::events::{PassingEventModel, PlayerEvent};
-use crate::r#match::{
-    ConditionContext, StateChangeResult, StateProcessingContext, StateProcessingHandler,
-};
+use crate::r#match::{ConditionContext, MatchPlayerLite, PlayerSide, StateChangeResult, StateProcessingContext, StateProcessingHandler, VectorExtensions};
 use nalgebra::Vector3;
 use rand::prelude::IteratorRandom;
 use std::sync::LazyLock;
@@ -77,13 +75,37 @@ impl StateProcessingHandler for DefenderPassingState {
 
 impl DefenderPassingState {
     fn find_best_pass_option<'a>(&'a self, ctx: &'a StateProcessingContext<'a>) -> Option<u32> {
-        if let Some((teammate_id, _)) = ctx
-            .players()
-            .teammates()
-            .nearby_ids(250.0)
-            .choose(&mut rand::thread_rng())
-        {
-            return Some(teammate_id);
+        let teammates = ctx.players().teammates();
+        let nearby_teammates = teammates.nearby(300.0);
+
+        let mut nearest_to_goal: Option<MatchPlayerLite> = None;
+        let mut min_to_goal_distance = f32::MAX;
+
+        for teammate in nearby_teammates {
+            let player = ctx
+                .context
+                .players
+                .by_id(teammate.id)
+                .expect(&format!("can't find player with id = {}", teammate.id));
+
+            if player.tactical_position.current_position.is_goalkeeper() {
+                continue;
+            }
+
+            let opponent_goal_position = match ctx.player.side {
+                Some(PlayerSide::Left) => ctx.context.goal_positions.right,
+                Some(PlayerSide::Right) => ctx.context.goal_positions.left,
+                _ => Vector3::new(0.0, 0.0, 0.0),
+            }.distance_to(&player.position);
+
+            if opponent_goal_position < min_to_goal_distance {
+                min_to_goal_distance = opponent_goal_position;
+                nearest_to_goal = Some(teammate);
+            }
+        }
+
+        if let Some(nearest) = nearest_to_goal {
+            return Some(nearest.id);
         }
 
         None

@@ -150,6 +150,54 @@ impl<'p> PlayerOperationsImpl<'p> {
             Vector3::new(0.0, field_width / 2.0, 0.0)
         }
     }
+
+    pub fn has_clear_shot(&self) -> bool {
+        let player_position = self.ctx.player.position;
+        let goal_position = self.ctx.ball().direction_to_opponent_goal();
+        let direction_to_goal = (goal_position - player_position).normalize();
+
+        // Check if the distance to the goal is within the player's shooting range
+        let distance_to_goal = (goal_position - player_position).magnitude();
+        let max_shooting_distance = calculate_max_shooting_distance(self.ctx.player);
+
+        if distance_to_goal > max_shooting_distance {
+            return false;
+        }
+
+        // Check if there are any opponents obstructing the shot
+        let ray_cast_result = self.ctx.tick_context.space.cast_ray(
+            player_position,
+            direction_to_goal,
+            distance_to_goal,
+            false,
+        );
+
+        return ray_cast_result.is_none();
+
+        fn calculate_max_shooting_distance(player: &MatchPlayer) -> f32 {
+            let long_shots_skill = player.skills.technical.long_shots;
+            let technique_skill = player.skills.technical.technique;
+            let strength_skill = player.skills.physical.strength;
+
+            // Calculate the base maximum shooting distance
+            let base_distance = 350.0;
+
+            // Calculate the additional distance based on long shots skill
+            let long_shots_factor = long_shots_skill / 20.0;
+            let long_shots_distance = base_distance * long_shots_factor * 0.5;
+
+            // Calculate the additional distance based on technique skill
+            let technique_factor = technique_skill / 20.0;
+            let technique_distance = base_distance * technique_factor * 0.3;
+
+            // Calculate the additional distance based on strength skill
+            let strength_factor = strength_skill / 20.0;
+            let strength_distance = base_distance * strength_factor * 0.2;
+
+            // Calculate the total maximum shooting distance
+            base_distance + long_shots_distance + technique_distance + strength_distance
+        }
+    }
 }
 
 pub struct MatchPlayerLogic;

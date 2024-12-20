@@ -8,6 +8,7 @@ use crate::r#match::{
 use nalgebra::Vector3;
 use std::sync::LazyLock;
 use itertools::Itertools;
+use crate::r#match::midfielders::states::MidfielderState;
 
 const MAX_SHOOTING_DISTANCE: f32 = 300.0; // Maximum distance to attempt a shot
 const MIN_SHOOTING_DISTANCE: f32 = 20.0; // Minimum distance to attempt a shot (e.g., edge of penalty area)
@@ -21,7 +22,7 @@ const CREATING_SPACE_THRESHOLD: f32 = 100.0; // Adjust based on your game's scal
 pub struct ForwardRunningState {}
 
 const PRESSING_DISTANCE_THRESHOLD: f32 = 50.0;
-const SHOOTING_DISTANCE_THRESHOLD: f32 = 200.0;
+const SHOOTING_DISTANCE_THRESHOLD: f32 = 250.0;
 const PASSING_DISTANCE_THRESHOLD: f32 = 400.0;
 const ASSISTING_DISTANCE_THRESHOLD: f32 = 200.0;
 
@@ -30,6 +31,12 @@ impl StateProcessingHandler for ForwardRunningState {
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
 
         if ctx.player.has_ball(ctx) {
+            if self.has_clear_shot(ctx) {
+                return Some(StateChangeResult::with_forward_state(
+                    ForwardState::Shooting,
+                ));
+            }
+
             if self.is_in_shooting_range(ctx) {
                 return Some(StateChangeResult::with_forward_state(
                     ForwardState::Shooting,
@@ -114,6 +121,14 @@ impl ForwardRunningState {
     fn is_in_shooting_range(&self, ctx: &StateProcessingContext) -> bool {
         let distance_to_goal = ctx.ball().distance_to_opponent_goal();
         (MIN_SHOOTING_DISTANCE..=MAX_SHOOTING_DISTANCE).contains(&distance_to_goal)
+    }
+
+    fn has_clear_shot(&self, ctx: &StateProcessingContext) -> bool {
+        if ctx.ball().distance_to_opponent_goal() < SHOOTING_DISTANCE_THRESHOLD {
+            return ctx.player().has_clear_shot()
+        }
+
+        false
     }
 
     fn is_leading_forward(&self, ctx: &StateProcessingContext) -> bool {
