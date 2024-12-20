@@ -126,6 +126,30 @@ impl<'p> PlayerOperationsImpl<'p> {
             .distances
             .get(self.ctx.player.id, player_id)
     }
+
+    pub fn goal_angle(&self) -> f32 {
+        // Calculate the angle between the player's facing direction and the goal direction
+        let player_direction = self.ctx.player.velocity.normalize();
+        let goal_direction = (self.goal_position() - self.ctx.player.position).normalize();
+        player_direction.angle(&goal_direction)
+    }
+
+    pub fn goal_distance(&self) -> f32 {
+        let player_position = self.ctx.player.position;
+        let goal_position = self.goal_position();
+        (player_position - goal_position).magnitude()
+    }
+
+    pub fn goal_position(&self) -> Vector3<f32> {
+        let field_length = self.ctx.context.field_size.width as f32;
+        let field_width = self.ctx.context.field_size.width as f32;
+
+        if self.ctx.player.side == Some(PlayerSide::Left) {
+            Vector3::new(field_length, field_width / 2.0, 0.0)
+        } else {
+            Vector3::new(0.0, field_width / 2.0, 0.0)
+        }
+    }
 }
 
 pub struct MatchPlayerLogic;
